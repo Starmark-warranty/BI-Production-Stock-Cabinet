@@ -841,6 +841,26 @@
   /* มือถือ: ปุ่มท้ายหน้าต่างแก้ตู้ 2 คอลัมน์ (มี Save As แล้วปุ่มบันทึกตกบรรทัดชิดซ้ายโดด ๆ) */
   @media (max-width: 760px){ .cbfoot{ display:grid; grid-template-columns:1fr 1fr; gap:8px } .cbfoot .cbwho{ grid-column:1/-1 } .cbfoot .dangr{ margin-right:0 }
     .cbfoot > button{ width:100%; justify-content:center; height:40px; margin-bottom:3px } .cbfoot #cbSave{ min-width:0 } }
+
+  /* ═════════ v1.19 Stock Cabinet: จำนวนแยกตามที่เก็บ (คลัง · หน้าลานขาย …) ═════════ */
+  .cblocs{ gap:6px }
+  #cbLocs{ display:flex; flex-direction:column; gap:6px; padding:8px 8px 8px 12px; border:.5px solid var(--line-strong); border-radius:12px; background:var(--bg2) }
+  .cblrow{ display:flex; align-items:center; gap:10px }
+  .cbln{ flex:1; font-size:14px; color:var(--ink); min-width:0; overflow:hidden; text-overflow:ellipsis } .cbln small{ color:var(--ink-faint); font-size:11px }
+  .cblrow .cbsn{ width:172px; flex:none; height:38px }
+  .cblrow:not(.has) .cbsn input{ color:var(--ink-faint); font-weight:500 }
+  .cblrow.has .cbln{ font-weight:600 }
+  .cblfoot{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:2px; flex-wrap:wrap }
+  .cblfoot .tbtn{ padding:5px 10px; font-size:12.5px }
+  #cbTot{ font-size:13px; color:var(--ink-dim) } #cbTot b{ color:var(--ink); font-variant-numeric:tabular-nums }
+  .cbform > .cbavail{ align-self:end; min-height:42px; line-height:26px }   /* ไม่ใช้ flex: ข้อความกับตัวเลขตัวหนาจะแยกเป็นชิ้น ช่องว่างหาย */
+  .clocs{ display:flex; flex-wrap:wrap; gap:1px 10px; font-size:12px; color:var(--ink-dim); margin-top:1px }
+  .clocs b{ color:var(--ink); font-variant-numeric:tabular-nums } .clocs .on, .clocs .on b{ color:var(--wood) }
+  #cabSum .sumlocs{ color:var(--ink-dim) }
+  @media (max-width: 560px){ .cblrow .cbsn{ width:148px } }
+
+  /* ═════════ v1.20 รหัสเชื่อมต่อในตัว = ซ่อนปุ่ม Google Drive (เปิดด้วย ?drive = ปุ่มกลับมา) ═════════ */
+  body.drvFixed #btnDrive, body.drvFixed #wTools [data-act="drive"]{ display:none!important }
 </style>
 </head>
 <body>
@@ -851,7 +871,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.18</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.20</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <span id="fresh" class="stockOnly">กำลังเชื่อมต่อ…</span>
@@ -1686,10 +1706,16 @@ var GasFS = (function () {
    v1.18 (2026-10-16 10:57 ผู้ใช้: “1. เพิ่มให้ SAVE AS ได้ · 2. Location ให้เลือกเป็น Dropdown เพิ่มภายหลังได้ · 3. เพิ่มรุ่น ทำเป็น Dropdown เช่นกัน”)
      · Stock Cabinet: ปุ่ม “บันทึกเป็นตู้ใหม่” (Save As) · ช่องรุ่น + ที่เก็บ เป็นรายการให้เลือก (＋ เพิ่ม…) · ปุ่ม “☰ รุ่น / ที่เก็บ” จัดการรายการ
        · กรองตามรุ่น/ที่เก็บ · เรียงตามรุ่น — ดูหัวบล็อก v1.17/v1.18 ของ Stock Cabinet ข้างล่าง
+
+   v1.19 (2026-10-16 11:18 ผู้ใช้: “มันมีที่เก็บคือ คลัง กับที่วางอยู่หน้าลานขาย ผมต้องใส่ยอดไว้ 2 ที่”)
+     · Stock Cabinet: จำนวนในสต็อกแยกตามที่เก็บ (locs) แทนที่เก็บเดียว — ดูหัวบล็อก v1.19 ของ Stock Cabinet ข้างล่าง
+
+   v1.20 (2026-10-16 11:25 ผู้ใช้: “ต้องใส่คีย์ เชื่อมต่อไปเลย แล้วปิดปุ่มเชื่อมต่อไว้ด้วย”)
+     · รหัสเชื่อมต่อ Google Drive อยู่ในไฟล์ (DRIVE_CODE) · ไม่ถามรหัส · ซ่อนปุ่ม Google Drive (?drive = ปุ่มกลับมา) — ดูหัวบล็อก v1.20 ข้างล่าง
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.18';
+var VER = '1.20';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4843,6 +4869,14 @@ function bdScanIdx() {
        รายการเก็บที่ cabinet/lists.json { v, model:[…], loc:[…], at, by } (บันทึกแบบกันทับ + อ่านของล่าสุดก่อนเขียน เหมือน lots/done.json)
        ยังไม่มีไฟล์ = ใช้ค่าที่ตู้ต่าง ๆ ใช้อยู่แล้วเป็นรายการตั้งต้น (เช่น “Mock Up” ที่พิมพ์ไว้แล้ว) · ตู้ที่มีค่านอกรายการยังเห็นค่าเดิม (ไม่หาย)
        จัดการรายการ (เพิ่ม/เอาออก) ที่ปุ่ม “รุ่น / ที่เก็บ” บนแถบ · กรองหน้ารายการตามรุ่น/ที่เก็บได้
+
+   v1.19 (ผู้ใช้ 16/10/2026 11:18: “มันมีที่เก็บคือ คลัง กับที่วางอยู่หน้าลานขาย ผมต้องใส่ยอดไว้ 2 ที่”)
+     · เดิม (v1.17–1.18) ตู้หนึ่งแบบมีที่เก็บได้ที่เดียว (loc) + จำนวนเดียว (qty) → ตู้ที่วางทั้งในคลังและหน้าลานขายใส่ไม่ได้
+     · ตอนนี้จำนวนแยกตามที่เก็บ: locs = { "คลัง": 25, "หน้าลานขาย": 6 } · qty = ผลรวม (หน้า HOME/สรุป/สถานะใช้ตัวนี้เหมือนเดิม)
+       หน้าต่างแก้ตู้มีช่องจำนวนทุกที่เก็บในรายการ (ปุ่ม − +) + “＋ เพิ่มที่เก็บใหม่” · ที่เป็น 0 ไม่บันทึก
+       loc ที่บันทึก = ที่ที่มีมากสุด (ให้เครื่องที่ยังเปิดรุ่นเก่าอยู่เห็นค่าใกล้เคียง) · จองแล้ว (rsv) ยังนับรวมทั้งแบบ
+     · ข้อมูลเดิม: ตู้ที่มี loc + qty แปลงเป็น locs { loc: qty } ตอนอ่าน (ไม่ต้องแก้ไฟล์) · ไม่มีที่เก็บ = “ไม่ระบุที่เก็บ”
+     · การ์ดโชว์จำนวนแยกที่เก็บ · แถบสรุปบอกยอดรวมของแต่ละที่เก็บ · กรอง “ที่เก็บ” = ตู้ที่มีของอยู่ที่นั้น
    ═══════════════════════════════════════════════════════════════════════ */
 var CAB_IT = 'cabinet/items', CAB_IMG = 'cabinet/img', CAB_TH = 'cabinet/thumb', CAB_PREF_K = 'sxlocaltrial:furnitech:cabPrefs';
 var CB = { items: new Map(), u: {}, loaded: false, loading: null, err: null, none: true, at: 0, thU: new Map(), thUrl: new Map(), thBusy: {}, dirOk: false, ed: null,
@@ -4861,10 +4895,18 @@ function cabNorm(o) {
   var n = function (v, min) { var x = num(v); return x == null ? null : Math.max(min || 0, x); }, i = function (v) { var x = num(v); return x == null ? 0 : Math.max(0, Math.round(x)); };
   o.name = String(o.name || '').trim(); o.code = String(o.code || '').trim(); o.color = String(o.color || '').trim(); o.loc = String(o.loc || '').trim(); o.note = String(o.note || ''); o.model = String(o.model || '').trim();   // v1.18 + รุ่น
   o.w = n(o.w); o.h = n(o.h); o.d = n(o.d); o.price = n(o.price); o.qty = i(o.qty); o.rsv = i(o.rsv);
+  /* v1.19 จำนวนแยกตามที่เก็บ · ข้อมูลก่อน v1.19 = ที่เดียว (loc) */
+  var lm = {}, src = o.locs && typeof o.locs === 'object' && !Array.isArray(o.locs) ? o.locs : null;
+  if (src) Object.keys(src).forEach(function (k) { var q = i(src[k]), kk = String(k).trim(); if (q > 0) lm[kk] = (lm[kk] || 0) + q; });
+  else if (o.qty > 0) lm[o.loc] = o.qty;
+  o.locs = lm; o.qty = Object.keys(lm).reduce(function (a, k) { return a + lm[k]; }, 0);
+  var main = Object.keys(lm).sort(function (a, b) { return lm[b] - lm[a]; })[0]; if (main != null) o.loc = main;
   o.photos = Array.isArray(o.photos) ? o.photos.filter(function (p) { return typeof p === 'string' && p; }) : [];
   if (!o.created || typeof o.created !== 'object') o.created = { at: o.at || '', by: o.by || '' };
   return o;
 }
+function cabLocName(k) { return k ? k : 'ไม่ระบุที่เก็บ'; }
+function cabLocKeys(x) { var L = cabListOf('loc'); return Object.keys(x.locs || {}).sort(function (a, b) { var i = L.indexOf(a), j = L.indexOf(b); return (i < 0 ? 999 : i) - (j < 0 ? 999 : j) || coll.compare(a, b); }); }
 function cabAvail(x) { return Math.max(0, (x.qty || 0) - (x.rsv || 0)); }
 function cabSt(x) { var a = cabAvail(x); return x.qty <= 0 ? { k: 'out', t: 'ขายหมด' } : a <= 0 ? { k: 'rsv', t: 'จองครบ' } : { k: 'ok', t: 'พร้อมขาย ' + a.toLocaleString('th-TH') + ' ใบ' }; }
 function cabSize(x) { if (x.w == null && x.h == null && x.d == null) return ''; var f = function (v) { return v == null ? '?' : fmtN(v); }; return f(x.w) + ' × ' + f(x.h) + ' × ' + f(x.d) + ' มม.'; }
@@ -4963,9 +5005,9 @@ function cabFiltered() {
   var a = cabList().filter(function (x) {
     if (!cabMatch(x, CB.f.st)) return false;
     if (CB.f.model && x.model !== CB.f.model) return false;   // v1.18
-    if (CB.f.loc && x.loc !== CB.f.loc) return false;
+    if (CB.f.loc && !(x.locs[CB.f.loc] > 0)) return false;   // v1.19 มีของอยู่ที่นั้น
     if (!toks.length) return true;
-    var s = x._s || (x._s = [x.name, x.model, x.code, x.color, x.loc, x.note, [x.w, x.h, x.d].join('x'), [x.w, x.h, x.d].join('×'), cabSize(x)].join(' ').toLowerCase());
+    var s = x._s || (x._s = [x.name, x.model, x.code, x.color, Object.keys(x.locs).join(' '), x.note, [x.w, x.h, x.d].join('x'), [x.w, x.h, x.d].join('×'), cabSize(x)].join(' ').toLowerCase());
     return toks.every(function (t) { return s.indexOf(t) >= 0; });
   });
   var k = CB.f.sort, at = function (x) { return (x.created && x.created.at) || x.at || ''; };
@@ -4987,7 +5029,9 @@ function cabCard(x) {
     + '<span class="cinfo"><span class="cname">' + esc(x.name || '(ไม่มีชื่อ)') + '</span>'
     + (cabSize(x) ? '<span class="csz">' + esc(cabSize(x)) + '</span>' : '')
     + (x.model ? '<span class="cmodel">รุ่น ' + esc(x.model) + '</span>' : '')   /* v1.18 */
-    + ((x.color || x.loc) ? '<span class="cmeta">' + esc([x.color, x.loc].filter(Boolean).join(' · ')) + '</span>' : '')
+    + (x.color ? '<span class="cmeta">' + esc(x.color) + '</span>' : '')
+    /* v1.19 จำนวนแยกตามที่เก็บ (ที่กรองอยู่ = ตัวเข้ม) */
+    + (cabLocKeys(x).length ? '<span class="clocs">' + cabLocKeys(x).map(function (k) { return '<span class="' + (CB.f.loc && CB.f.loc === k ? 'on' : '') + '">' + esc(cabLocName(k)) + ' <b>' + x.locs[k].toLocaleString('th-TH') + '</b></span>'; }).join('') + '</span>' : '')
     + '<span class="crow"><span class="cprice">' + (x.price != null ? esc(cabBaht(x.price)) : '<span class="muted">ยังไม่ใส่ราคา</span>') + '</span>'
     + '<span class="cqty" title="ในสต็อก ' + x.qty + ' · จองแล้ว ' + x.rsv + '">มี <b>' + x.qty.toLocaleString('th-TH') + '</b>' + (x.rsv ? ' · จอง <b>' + x.rsv.toLocaleString('th-TH') + '</b>' : '') + '</span></span></span></button>';
 }
@@ -5003,6 +5047,10 @@ function cabRender() {
     : !CB.loaded ? 'กำลังอ่านจาก Google Drive…'
     : all.length ? '<span><b>' + all.length.toLocaleString('th-TH') + '</b> แบบ</span><span>พร้อมขาย <b>' + avail.toLocaleString('th-TH') + '</b> ใบ</span><span>จองแล้ว <b>' + rsv.toLocaleString('th-TH') + '</b> ใบ</span>'
       + (val ? '<span>มูลค่าพร้อมขาย <b>' + esc(cabBaht(val)) + '</b>' + (noPrice ? ' <small>(' + noPrice + ' แบบยังไม่ใส่ราคา)</small>' : '') + '</span>' : '') : '';
+  /* v1.19 ยอดในสต็อกแยกตามที่เก็บ */
+  if (CB.loaded && all.length) { var lt = {}; all.forEach(function (x) { Object.keys(x.locs).forEach(function (k) { lt[k] = (lt[k] || 0) + x.locs[k]; }); });
+    var lk = Object.keys(lt).sort(function (a, b) { var L = cabListOf('loc'), i = L.indexOf(a), j = L.indexOf(b); return (i < 0 ? 999 : i) - (j < 0 ? 999 : j) || coll.compare(a, b); });
+    if (lk.length) $('cabSum').innerHTML += '<span class="sumlocs">' + lk.map(function (k) { return esc(cabLocName(k)) + ' <b>' + lt[k].toLocaleString('th-TH') + '</b>'; }).join(' · ') + ' ใบ</span>'; }
   if (!CB.loaded && !CB.err) { G.innerHTML = '<div class="cabempty"><p>กำลังอ่านรายการตู้…</p></div>'; return; }
   if (!all.length) {
     G.innerHTML = '<div class="cabempty">' + CAB_LINE + '<h2>ยังไม่มีตู้ในสต็อก</h2><p>เพิ่มตู้ที่ทำเสร็จแล้วรอขาย พร้อมขนาด จำนวน และรูปถ่าย<br>ทุกเครื่องเห็นรายการเดียวกัน</p><button class="cabadd" data-cabnew>＋ เพิ่มตู้ใบแรก</button></div>';
@@ -5042,9 +5090,9 @@ function cabOpen(id) {
     + '<label class="cbf"><span>สี / วัสดุ</span><input name="color" value="' + v('color') + '" placeholder="เช่น ขาว Hi-Gloss"></label>'
     + '<div class="cbf wide"><span>ขนาด (มม.)</span><div class="cbsize"><label><input name="w" inputmode="numeric" value="' + v('w') + '" aria-label="กว้าง"><small>กว้าง</small></label><i>×</i>'
     + '<label><input name="h" inputmode="numeric" value="' + v('h') + '" aria-label="สูง"><small>สูง</small></label><i>×</i><label><input name="d" inputmode="numeric" value="' + v('d') + '" aria-label="ลึก"><small>ลึก</small></label></div></div>'
-    + stp('qty', 'ในสต็อก') + stp('rsv', 'จองแล้ว')
-    + '<div class="cbavail wide" id="cbAvail"></div>'
-    + '<label class="cbf"><span>ที่เก็บ</span>' + cabSelHtml('loc', base ? base.loc : '') + '</label>'   /* v1.18 ที่เก็บ = รายการให้เลือก */
+    /* v1.19 จำนวนในสต็อกแยกตามที่เก็บ (แทน “ในสต็อก” + “ที่เก็บ” ช่องเดียว) */
+    + '<div class="cbf wide cblocs"><span>จำนวนในสต็อก แยกตามที่เก็บ</span><div id="cbLocs">' + cabLocsHtml(ed, base ? base.locs : {}) + '</div></div>'
+    + stp('rsv', 'จองแล้ว') + '<div class="cbavail" id="cbAvail"></div>'
     + '<label class="cbf"><span>ราคาขาย (บาท)</span><input name="price" inputmode="decimal" value="' + v('price') + '" placeholder="ไม่บังคับ"></label>'
     + '<label class="cbf wide"><span>รหัสสินค้า AX</span><input name="code" value="' + v('code') + '" placeholder="ไม่บังคับ — ใส่แล้วเห็นยอดคงเหลือใน AX"><small id="cbAx" class="cbax"></small></label>'
     + '<label class="cbf wide"><span>หมายเหตุ</span><textarea name="note" rows="2" placeholder="เช่น ลูกค้าที่จอง · ตำหนิ · ของโชว์">' + v('note') + '</textarea></label>'
@@ -5063,8 +5111,14 @@ function cabOpen(id) {
     var del = box.querySelector('#cbDel'); if (del) del.onclick = cabDelete;
     var F = box.querySelector('#cbForm');
     F.onsubmit = function (e) { e.preventDefault(); cabSave(); };
-    F.addEventListener('input', function (e) { if (e.target.name === 'qty' || e.target.name === 'rsv') cabAvailTxt(); if (e.target.name === 'code') cabAxTxt(); });
-    box.querySelectorAll('[data-step]').forEach(function (b) { b.onclick = function () { var p = b.dataset.step.split(':'), i = F.elements[p[0]], n = Math.max(0, (Math.round(num(i.value)) || 0) + +p[1]); i.value = n; cabAvailTxt(); }; });
+    F.addEventListener('input', function (e) { var nm = e.target.name || ''; if (nm === 'rsv' || /^lq\d+$/.test(nm)) cabAvailTxt(); if (nm === 'code') cabAxTxt();
+      if (/^lq\d+$/.test(nm)) { var rw = e.target.closest('.cblrow'); if (rw) rw.classList.toggle('has', (num(e.target.value) || 0) > 0); } });   // พิมพ์ตัวเลขเอง = แถวเข้มเหมือนกด +
+    /* v1.19 ปุ่ม − + ผูกที่ฟอร์ม (แถวที่เก็บวาดใหม่ได้ระหว่างแก้) · “＋ เพิ่มที่เก็บใหม่” */
+    F.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-step]');
+      if (b) { var p = b.dataset.step.split(':'), i = F.elements[p[0]]; if (!i) return; i.value = Math.max(0, (Math.round(num(i.value)) || 0) + +p[1]); i.closest('.cblrow') && i.closest('.cblrow').classList.toggle('has', +i.value > 0); cabAvailTxt(); return; }
+      if (e.target.closest('[data-lqadd]')) cabLocAdd();
+    });
     var fi = box.querySelector('#cbFile'); fi.onchange = function () { cabAddFiles(Array.from(fi.files || [])); fi.value = ''; };
     var gal = box.querySelector('.cbgal');
     gal.addEventListener('dragover', function (e) { e.preventDefault(); gal.classList.add('drop'); });
@@ -5085,15 +5139,17 @@ function cabOpen(id) {
 }
 function cabFormVals() {
   var F = CB.ed && CB.ed.box && CB.ed.box.querySelector('#cbForm'); if (!F) return null; var o = {};
-  ['name', 'model', 'code', 'color', 'loc', 'note', 'w', 'h', 'd', 'qty', 'rsv', 'price'].forEach(function (k) { o[k] = F.elements[k] ? F.elements[k].value : ''; });
+  ['name', 'model', 'code', 'color', 'note', 'w', 'h', 'd', 'rsv', 'price'].forEach(function (k) { o[k] = F.elements[k] ? F.elements[k].value : ''; });
+  o.locs = cabLocRaw();   // v1.19 { ที่เก็บ: ข้อความในช่อง }
   return o;
 }
 function cabFormSig() { var o = cabFormVals(); return JSON.stringify(o) + '|' + (CB.ed ? CB.ed.photos.join(',') : ''); }
 function cabAvailTxt() {
   var o = cabFormVals(), el = CB.ed && CB.ed.box.querySelector('#cbAvail'); if (!o || !el) return;
-  var q = Math.max(0, Math.round(num(o.qty)) || 0), r = Math.max(0, Math.round(num(o.rsv)) || 0), a = Math.max(0, q - r);
-  el.className = 'cbavail wide ' + (q <= 0 ? 'out' : a <= 0 ? 'rsv' : 'ok');
-  el.innerHTML = q <= 0 ? 'ขายหมดแล้ว' : a <= 0 ? 'จองครบทุกใบ — ไม่เหลือให้ขาย' : 'พร้อมขาย <b>' + a.toLocaleString('th-TH') + '</b> ใบ' + (r > q ? ' · จองเกินจำนวนที่มี' : '');
+  var lv = cabLocRaw(), q = Object.keys(lv).reduce(function (s2, k) { return s2 + Math.max(0, Math.round(num(lv[k])) || 0); }, 0), r = Math.max(0, Math.round(num(o.rsv)) || 0), a = Math.max(0, q - r);
+  var tot = CB.ed.box.querySelector('#cbTot'); if (tot) tot.innerHTML = 'รวมในสต็อก <b>' + q.toLocaleString('th-TH') + '</b> ใบ';   // v1.19
+  el.className = 'cbavail ' + (q <= 0 ? 'out' : a <= 0 ? 'rsv' : 'ok');
+  el.innerHTML = q <= 0 ? (CB.ed.base ? 'ขายหมดแล้ว' : 'ยังไม่ได้ใส่จำนวน') : a <= 0 ? 'จองครบทุกใบ — ไม่เหลือให้ขาย' : 'พร้อมขาย <b>' + a.toLocaleString('th-TH') + '</b> ใบ' + (r > q ? ' · จองเกินจำนวนที่มี' : '');
 }
 function cabAxTxt() {
   var o = cabFormVals(), el = CB.ed && CB.ed.box.querySelector('#cbAx'); if (!o || !el) return;
@@ -5152,11 +5208,14 @@ function cabCancel() {
 function cabCollect(ed) {
   var o = cabFormVals(), F = ed.box.querySelector('#cbForm');
   if (!o.name.trim()) { toast('ใส่ชื่อตู้ก่อน'); F.elements.name.focus(); return null; }
-  var bad = ['w', 'h', 'd', 'qty', 'rsv', 'price'].find(function (k) { return String(o[k]).trim() !== '' && num(String(o[k]).replace(/,/g, '')) == null; });
+  var bad = ['w', 'h', 'd', 'rsv', 'price'].find(function (k) { return String(o[k]).trim() !== '' && num(String(o[k]).replace(/,/g, '')) == null; });
   if (bad) { toast('ช่องนี้ต้องเป็นตัวเลข'); F.elements[bad].focus(); return null; }
+  var locs = {}, badL = -1;
+  CB.ed.locKeys.forEach(function (k, i) { var t = String(o.locs[k] == null ? '' : o.locs[k]).replace(/,/g, '').trim(), q = t === '' ? 0 : num(t); if (q == null) { if (badL < 0) badL = i; return; } q = Math.max(0, Math.round(q)); if (q > 0) locs[k] = q; });
+  if (badL >= 0) { toast('จำนวนต้องเป็นตัวเลข'); F.elements['lq' + badL].focus(); return null; }
   var nv = function (k) { var t = String(o[k]).replace(/,/g, '').trim(); return t === '' ? null : num(t); };
   var lv = function (k) { var t = String(o[k] || ''); return t === '__add' ? '' : t; };
-  return { name: o.name, model: lv('model'), code: o.code, w: nv('w'), h: nv('h'), d: nv('d'), color: o.color, qty: nv('qty'), rsv: nv('rsv'), loc: lv('loc'), price: nv('price'), note: o.note.trim() };
+  return { name: o.name, model: lv('model'), code: o.code, w: nv('w'), h: nv('h'), d: nv('d'), color: o.color, locs: locs, rsv: nv('rsv'), price: nv('price'), note: o.note.trim() };   // v1.19 qty/loc คิดจาก locs ใน cabNorm
 }
 /* เขียน cabinet/items/<id>.json แบบกันทับ · คืน u ใหม่ หรือ null = มีคนเขียนแทรก (ifU ไม่ตรง) */
 async function cabWrite(rec, ifU) {
@@ -5227,7 +5286,7 @@ function cabFlash(id) { var c = document.querySelector('#cabGrid [data-cab="' + 
 
 /* ═════════ v1.18 รายการรุ่น / ที่เก็บ (cabinet/lists.json) ═════════ */
 function cabUniq(a) { var seen = {}, out = []; (a || []).forEach(function (x) { x = String(x == null ? '' : x).trim(); if (x && !seen[x.toLowerCase()]) { seen[x.toLowerCase()] = 1; out.push(x); } }); return out; }
-function cabUsed(kind) { return cabUniq(cabList().map(function (x) { return x[kind]; })).sort(coll.compare); }
+function cabUsed(kind) { var a = []; cabList().forEach(function (x) { if (kind === 'loc') a = a.concat(Object.keys(x.locs || {})); else a.push(x[kind]); }); return cabUniq(a).sort(coll.compare); }   // v1.19 ที่เก็บ = ทุกที่ที่มีของ
 function cabListsNorm(o) { o = o && typeof o === 'object' ? o : {}; return { v: 1, model: cabUniq(o.model), loc: cabUniq(o.loc), at: o.at || '', by: o.by || '' }; }
 /* ยังไม่มีไฟล์ = ค่าที่ตู้ใช้อยู่แล้วเป็นรายการตั้งต้น */
 function cabListOf(kind) { return CB.lists ? CB.lists[kind] : cabUsed(kind); }
@@ -5280,12 +5339,35 @@ function cabListOp(kind, name, del) {
     .catch(function (e) { console.error(e); settle(null); toast('บันทึกรายการ' + CAB_LK[kind] + 'ไม่สำเร็จ: ' + netMsg(e), 5000); CB.listsU = 0; cabLoad().then(function () { if (CB.lmRedraw) CB.lmRedraw(); }); });
   return CB.listSaving;
 }
+/* ═════════ v1.19 จำนวนแยกตามที่เก็บ (หน้าต่างแก้ตู้) ═════════
+   แถว = ทุกที่เก็บในรายการ + ที่ที่ตู้นี้มีของแต่ไม่อยู่ในรายการ · ยังไม่มีที่เก็บเลย = แถว “ไม่ระบุที่เก็บ” แถวเดียว */
+function cabLocsHtml(ed, vals) {
+  vals = vals || {}; var L = cabListOf('loc'), keys = L.slice();
+  Object.keys(vals).forEach(function (k) { if (keys.indexOf(k) < 0 && (k || +vals[k] > 0)) keys.push(k); });
+  if (!keys.length) keys = [''];
+  ed.locKeys = keys;
+  return keys.map(function (k, i) {
+    var v = vals[k] == null ? 0 : vals[k], nm = esc(cabLocName(k));
+    return '<div class="cblrow' + (+v > 0 ? ' has' : '') + '"><span class="cbln">' + nm + (k && L.indexOf(k) < 0 ? ' <small>(ไม่อยู่ในรายการ)</small>' : '') + '</span>'
+      + '<div class="cbsn"><button type="button" data-step="lq' + i + ':-1" aria-label="ลดจำนวนที่ ' + nm + '">−</button><input name="lq' + i + '" inputmode="numeric" value="' + esc(v) + '" aria-label="จำนวนที่ ' + nm + '"><button type="button" data-step="lq' + i + ':1" aria-label="เพิ่มจำนวนที่ ' + nm + '">+</button></div></div>';
+  }).join('') + '<div class="cblfoot"><button type="button" class="tbtn" data-lqadd>＋ เพิ่มที่เก็บใหม่</button><span id="cbTot"></span></div>';
+}
+function cabLocRaw() { var ed = CB.ed, o = {}; if (!ed || !ed.box || !ed.locKeys) return o; var F = ed.box.querySelector('#cbForm'); ed.locKeys.forEach(function (k, i) { var el = F && F.elements['lq' + i]; o[k] = el ? el.value : ''; }); return o; }
+function cabLocAdd() {
+  var ed = CB.ed; if (!ed) return;
+  var nm = (prompt('ชื่อที่เก็บใหม่ (เช่น หน้าลานขาย)', '') || '').trim(); if (!nm) return;
+  var have = cabListOf('loc').find(function (o) { return o.toLowerCase() === nm.toLowerCase(); }); if (!have) cabListOp('loc', nm, false);
+  var key = have || nm, vals = cabLocRaw(); if (vals[key] == null) vals[key] = 0;
+  ed.box.querySelector('#cbLocs').innerHTML = cabLocsHtml(ed, vals); cabAvailTxt();
+  var i = ed.locKeys.indexOf(key), inp = ed.box.querySelector('#cbForm').elements['lq' + i]; if (inp) { inp.focus(); inp.select(); }
+}
+
 /* ปุ่ม “☰ รุ่น / ที่เก็บ” บนแถบ */
 function cabListMgr() {
   if (!ensureFs()) { connectDialog(); return; }
   var body = function () {
     return ['model', 'loc'].map(function (kind) {
-      var used = {}; cabList().forEach(function (x) { if (x[kind]) used[x[kind]] = (used[x[kind]] || 0) + 1; });
+      var used = {}; cabList().forEach(function (x) { (kind === 'loc' ? Object.keys(x.locs || {}) : [x[kind]]).forEach(function (v) { if (v) used[v] = (used[v] || 0) + 1; }); });
       var L = cabListOf(kind);
       return '<section class="cblm" data-kind="' + kind + '"><h3>' + CAB_LK[kind] + ' <small>' + L.length + ' รายการ</small></h3><div class="cblmrows">'
         + (L.length ? L.map(function (o) { return '<div class="cblmrow"><span>' + esc(o) + '</span><small>' + (used[o] ? 'ใช้อยู่ ' + used[o] + ' ตู้' : 'ยังไม่มีตู้ใช้') + '</small><button class="tbtn" data-lmdel="' + esc(o) + '" title="เอาออกจากรายการ">เอาออก</button></div>'; }).join('')
@@ -5352,6 +5434,26 @@ function homePress(v) {
   if (!b || matchMedia('(prefers-reduced-motion: reduce)').matches) { go(v); return; }
   b.classList.add('press'); setTimeout(function () { b.classList.remove('press'); go(v); }, 140);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.20 รหัสเชื่อมต่อ Google Drive ในตัวไฟล์ + ซ่อนปุ่มเชื่อมต่อ
+   ผู้ใช้ 16/10/2026 11:25 วางรหัส SNGAS1:… มา: “ต้องใส่คีย์ เชื่อมต่อไปเลย แล้วปิดปุ่มเชื่อมต่อไว้ด้วยครับ”
+   ถามแล้ว (repo BI-Production-Stock-Cabinet เป็น public — ใครได้ลิงก์ github.io ก็อ่าน/แก้/ลบข้อมูลบน Drive ได้ รวมราคาหน้า STOCK
+   และขัดกติกาเดิม “URL + กุญแจ Apps Script อยู่ใน localStorage / drive.key เท่านั้น”) → ผู้ใช้เลือก “ใส่คีย์ในไฟล์บน GitHub เลย”
+   เดิม: เปิดเครื่องใหม่ = หน้าต่าง “☁ เชื่อมต่อ Google Drive” ต้องวางรหัสทุกเครื่อง · มีปุ่ม Google Drive บนแถบ/หน้า HOME
+   ตอนนี้: เปิดหน้าแล้วตั้งค่าการเชื่อมต่อจากรหัสในตัวให้เลย (ทับค่าเดิมในเครื่องถ้าไม่ตรง) · ซ่อนปุ่ม Google Drive ทั้งแถบบนและหน้า HOME
+     · ผู้ดูแลเปิดด้วย ?drive ต่อท้ายลิงก์ = ไม่ใช้รหัสในตัว + ปุ่มกลับมา (ไว้ทดสอบ/เปลี่ยนรหัสชั่วคราว)
+     · เปลี่ยนกุญแจที่ Apps Script แล้ว = ต้องแก้รหัสในไฟล์นี้ (DRIVE_CODE) แล้วอัปขึ้นใหม่ — ไม่งั้นทุกเครื่องจะต่อไม่ติด
+   ═══════════════════════════════════════════════════════════════════════ */
+var DRIVE_CODE = 'SNGAS1:eyJ1IjoiaHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4eEI4WktGR0YycU5Ibkk2SzYxSXh3TWJWb28tV3JXQ2ZzRlhuaWxOYzlWc3BobFNFQjZHY2NBVkkxcXJzRmswY1ZXQS9leGVjIiwiayI6ImY5MzkyZjg5MzIwMjQzNzJhOTRjZmFhNTM2YjA0ZGNhOTM1YzFjYTcifQ==';
+var DRIVE_FIXED = (function () {
+  if (/[?&]drive(=|&|$)/.test(location.search)) return false;     // ผู้ดูแล: ใช้ค่าของเครื่อง + มีปุ่มเชื่อมต่อ
+  var cd = codeDec(DRIVE_CODE); if (!cd) return false;
+  var c = GasFS.cfgGet() || {};
+  if (!(c.on && c.url === cd.u && c.key === cd.k)) GasFS.cfgSet({ on: true, url: cd.u, key: cd.k });
+  return true;
+})();
+if (DRIVE_FIXED) document.body.classList.add('drvFixed');
 
 window.StarStock = { S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
