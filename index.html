@@ -1371,6 +1371,21 @@
   .dbsaw td.mt small{display:block;font-weight:600;font-size:11px;color:var(--db-faint);margin-top:2px;white-space:normal}
   @media (max-width: 760px){ .dbsaw td.mt{white-space:normal;font-size:12px} .dbsaw td.mt small{display:none} }
   body.tv .dbsaw td.mt{font-size:16px}
+  /* ───────── v1.31: Dashboard หน้าเครื่องเดียว — แถบเลือกวัน (วันทำงานถัดไป + ล่วงหน้า 6 วัน) ───────── */
+  .dbd7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:2px 0 12px}
+  .dbd7 button{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 4px 9px;border-radius:10px;border:1px solid var(--db-track);background:var(--db-card);color:var(--db-ink);cursor:pointer;font:inherit;min-width:0}
+  .dbd7 button b{font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .dbd7 button small{font:700 11px var(--mono);color:var(--db-faint)}
+  .dbd7 button i{position:absolute;left:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--db-a),var(--db-b))}
+  .dbd7 button.low small{color:#b7791f} .dbd7 button.low i{background:#e0a33a}
+  .dbd7 button.empty{color:var(--db-faint);background:color-mix(in srgb,var(--db-track) 35%,var(--db-card))}
+  .dbd7 button:hover{border-color:color-mix(in srgb,var(--db-a) 45%,var(--db-track))}
+  .dbd7 button.on{background:var(--db-a);border-color:var(--db-a);color:#fff} .dbd7 button.on small{color:#fff;opacity:.9} .dbd7 button.on i{background:rgba(255,255,255,.75)}
+  .dbd7 button:focus-visible{outline:2px solid var(--db-a);outline-offset:2px}
+  .dbsaw tr.cont td.lot{color:var(--db-dim)}
+  .dbsaw td.mt.unk small{color:#b7791f}
+  @media (max-width: 760px){ .dbd7{grid-template-columns:repeat(7,minmax(46px,1fr));overflow-x:auto} .dbd7 button b{font-size:11px} .dbd7 button small{font-size:10px} }
+  body.tv .dbd7 button b{font-size:15px} body.tv .dbd7 button small{font-size:13px}
 </style>
 </head>
 <body>
@@ -1381,7 +1396,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.30</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.31</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2270,10 +2285,14 @@ var GasFS = (function () {
    v1.30 (2026-10-17 15:48 ผู้ใช้: “ตรงนี้เพิ่มอีกคอลัมน์ว่าวัตถุดิบครบแล้ว สถานะ ถ้าไม่ครบ ยังไม่ต้องขึ้นมาที่แผนตัด”)
      · ⚙ “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ” (needRm) เปิดเป็นค่าตั้งต้น — Lot ไม่มีข้อมูลวัตถุดิบ = ติดอยู่ (เดิมเข้าคิวได้) — ดูบล็อก v1.30 ใน bdNormSet
      · Dashboard หน้าเครื่องเดียว: + คอลัมน์ “วัตถุดิบ” (✓ เบิกครบแล้ว / ✓ ครบ พอในคลัง รอเบิก) — ดูบล็อก v1.30 (dbMatCell)
+
+   v1.31 (2026-10-17 16:48 ผู้ใช้: “เพิ่มให้ดูอีกล่วงหน้า 6 วันได้ด้วยครับ หน้านี้ · รู้ได้ไงว่าเบิกไม้แล้ว กับ วัตถุดิบครบ”)
+     · หน้าเครื่องเดียว: แถบเลือกวัน 7 ปุ่ม (วันทำงานถัดไป + อีก 6 วัน) · ← → เลื่อนวัน — ดูบล็อก v1.31 (dbDaySec)
+     · คอลัมน์วัตถุดิบ: “เบิกครบแล้ว” ที่อนุมานจาก rm.csv เช็คซ้ำกับ lots/rmcut.csv · ไม่มีรายการแผ่นใน AX = “⚠ ไม่พบแผ่นใน AX”
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.30';
+var VER = '1.31';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -7188,8 +7207,16 @@ function dbSawNos(id) { var a = crxOf(id); return a && a.length ? a.map(function
    ผู้ใช้ 15:48: “ตรงนี้เพิ่มอีกคอลัมน์ว่าวัตถุดิบครบแล้ว สถานะ ถ้าไม่ครบ ยังไม่ต้องขึ้นมาที่แผนตัด”
    ✓ เบิกครบแล้ว (AX ไม่มีรายการค้างเบิก) · ✓ ครบ — พอในคลัง รอเบิก N รายการ · ? ยังไม่เช็ค (เฉพาะเมื่อปิด ⚙ “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ”)
    Lot ที่วัตถุดิบขาด/ไม่มีข้อมูล ไม่เข้าแผน (bdPlan + needRm เปิดเป็นค่าตั้งต้น v1.30 — ดูบล็อก v1.30 ใน bdNormSet) */
+/* v1.31 (ผู้ใช้ 16:48 “รู้ได้ไงว่าเบิกไม้แล้ว กับ วัตถุดิบครบ”): “เบิกครบแล้ว” ของ Lot ที่ไม่อยู่ใน rm.csv เป็นการอนุมาน (ไม่มีแถวค้างเบิก + enddate อยู่ในช่วงที่ StarSync ดึง)
+   → เช็คซ้ำกับ lots/rmcut.csv (แผ่นทุก Lot ทั้งค้างและเบิกแล้ว · StarSync v1.7): มีรายการแผ่น = ยืนยัน “เบิกแผ่นครบแล้ว N รายการ”
+     ไม่มีรายการแผ่นของ Lot นี้ใน AX เลย = “⚠ ไม่พบแผ่นใน AX” (ไม่ใช่เบิกครบจริง — อาจไม่มี BOM แผ่น) · ยังไม่มี rmcut.csv = แบบเดิม */
 function dbMatCell(g) {
-  if (g.mat === 'ok') return '<td class="mt ok" title="' + esc(g.rmCut ? 'วัตถุดิบที่ยังต้องเบิก ' + g.rmCut + ' รายการ มีพอในคลัง (กันให้ Lot ก่อนหน้าแล้ว)' : 'AX ไม่มีรายการค้างเบิกของ Lot นี้') + '">✓ ' + (g.rmCut ? 'ครบ<small>พอในคลัง · รอเบิก ' + g.rmCut + ' รายการ</small>' : 'เบิกครบแล้ว') + '</td>';
+  if (g.mat === 'ok' && !g.rmCut && g.rmSrc === 'ax' && !(g.rmAll && g.rmAll.length) && B.rc && B.rc.map) {
+    var rb = (rcOf(g.id) || []).filter(function (r) { return isBoardCode(r.code); });
+    if (!rb.length) return '<td class="mt unk" title="ไม่มีรายการค้างเบิกใน AX แต่ AX ก็ไม่มีรายการแผ่นของ Lot นี้เลย (lots/rmcut.csv) — ยืนยันไม่ได้ว่าเบิกไม้แล้ว">⚠ ไม่พบแผ่นใน AX<small>ไม่มีค้างเบิก · ไม่มีรายการแผ่น</small></td>';
+    return '<td class="mt ok" title="' + esc('AX: แผ่น ' + rb.length + ' รายการ BOM = เบิกแล้ว (lots/rmcut.csv)\n' + rb.slice(0, 6).map(function (r) { return r.code + ' BOM ' + fmtN(r.bom, 3) + ' เบิก ' + fmtN(r.issued, 3); }).join('\n')) + '">✓ เบิกครบแล้ว<small>แผ่น ' + rb.length + ' รายการ เบิกครบ (AX)</small></td>';
+  }
+  if (g.mat === 'ok') return '<td class="mt ok" title="' + esc(g.rmCut ? 'วัตถุดิบที่ยังต้องเบิก ' + g.rmCut + ' รายการ มีพอในคลัง (กันให้ Lot ก่อนหน้าแล้ว)' : 'AX ไม่มีรายการค้างเบิกของ Lot นี้') + '">✓ ' + (g.rmCut ? 'ครบ<small>พอในคลัง · รอเบิก ' + g.rmCut + ' รายการ</small>' : 'เบิกครบแล้ว<small>ไม่มีค้างเบิกใน AX</small>') + '</td>';
   if (g.mat === 'short') return '<td class="mt bad" title="' + esc(g.matWhy || '') + '">✗ ไม่ครบ<small>' + esc(g.matWhy || 'วัตถุดิบไม่พอ') + '</small></td>';
   return '<td class="mt unk" title="ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้ — ⚙ “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ” ปิดอยู่จึงเข้าแผนได้">? ยังไม่เช็ค</td>';
 }
@@ -7211,16 +7238,59 @@ function dbTodayLots(c, cur, run, idle, GU, P) {
       + '<div><b>' + esc(lot) + '</b>' + crxChip(lot) + (on ? '<span class="tg">' + (run ? 'กำลังยิง' : 'หยุด ' + esc(bdH(idle))) + '</span>' : '')
       + '<small>วันนี้ <b>' + fmtN(nOf(lot)) + '</b> ชิ้น' + (pr ? ' · ' + esc(pr) : '') + '</small></div></li>'; }).join('') + '</ol>';
 }
+/* ───────── v1.31: หน้าเครื่องเดียว — ดูล่วงหน้า 6 วัน ─────────
+   ผู้ใช้ 17/10/2026 16:48 (รูปตาราง “วันจันทร์ต้องตัด”): “เพิ่มให้ดูอีกล่วงหน้า 6 วันได้ด้วยครับ หน้านี้”
+   เดิม (v1.27–1.30): ตารางเฉพาะวันทำงานถัดไป
+   ตอนนี้: แถบวัน 7 ปุ่ม = วันทำงานถัดไป + อีก 6 วันทำงาน (ข้ามวันหยุดตาม ⚙ — bdMqDayMs ตัวเดียวกับคิวรอตัดใน Machine Queue)
+     · ปุ่มบอก % ที่จัดคิวได้ของวันนั้น (คิวหมด = “ว่าง”) · กด / ← → = ตาราง Lot ของวันนั้น (คอลัมน์เดิม: เลข .saw · วัตถุดิบ · ชิ้น · เวลาตัด)
+     · วันของ Lot = ไล่คิวเครื่องต่อกันวันละ “ชิ้น/วัน” (ไม่นับ Lot ค้างตัด — กติกาเดียวกับ v1.26) · Lot ที่คร่อมวันขึ้นทั้งสองวัน (“ต่อจากวันก่อน X” / “ต่อวันถัดไป Y”)
+     · แถบ Cap/แถวรวม = ชิ้นที่ได้ตัด “ในวันนั้น” (เดิมรวมชิ้นทั้ง Lot — Lot ที่ต่อจากวันก่อนจะนับซ้ำ)
+     · วันที่เลือกจำไว้ระหว่างสลับเครื่อง (ไม่จำข้ามการเปิดใหม่ — จอทีวีเปิดมา = วันทำงานถัดไปเสมอ) */
+var DB_DAYS = 7;
+DB.day = 0;
+function dbDayLots(pm, k) {
+  if (!pm || !(pm.ppd > 0)) return [];
+  var a0 = k * pm.ppd, a1 = a0 + pm.ppd, acc = 0, out = [];
+  pm.q.forEach(function (e) { if (e.carry) return; var p = e.p || 0, s0 = acc, t = acc + p; acc = t;
+    if ((p > 0 && t > a0 + 1e-9 && s0 < a1 - 1e-9) || (!(p > 0) && s0 >= a0 - 1e-9 && s0 < a1 - 1e-9))
+      out.push({ g: e.g, p: p, start: s0, pre: Math.max(0, Math.min(p, a0 - s0)), inD: Math.max(0, Math.min(t, a1) - Math.max(s0, a0)), post: Math.max(0, t - Math.max(a1, s0)) }); });
+  return out;
+}
+function dbDayW(P, k, long) { var d = new Date(bdMqDayMs(P, k)); return k === 0 ? bdTmrW(P) : long ? 'วัน' + TH_DAYS[d.getDay()] : TH_D1[d.getDay()]; }
+function dbDayTabs(P, pm, k) {
+  var ppd = pm && pm.ppd || 0, h = '<nav class="dbd7" aria-label="เลือกวัน">';
+  for (var i = 0; i < DB_DAYS; i++) { var L = dbDayLots(pm, i), dp = L.reduce(function (a, t) { return a + t.inD; }, 0), d = new Date(bdMqDayMs(P, i)), u = ppd ? dp / ppd : 0;
+    h += '<button type="button" data-dbday="' + i + '" class="' + (i === k ? 'on' : '') + (!L.length ? ' empty' : u < 0.999 ? ' low' : '') + '" aria-pressed="' + (i === k) + '" title="' + esc(bdDayTxt(d.getTime()) + ' · ' + L.length + ' Lot · ' + Math.round(dp).toLocaleString('th-TH') + (ppd ? ' / ' + ppd.toLocaleString('th-TH') : '') + ' ชิ้น') + '">'
+      + '<b>' + esc(dbDayW(P, i)) + ' ' + d.getDate() + '</b><small>' + (!L.length ? 'ว่าง' : ppd ? dbPct(Math.min(1, u)) : L.length + ' Lot') + '</small><i style="width:' + Math.min(100, u * 100).toFixed(1) + '%"></i></button>'; }
+  return h + '</nav>';
+}
+function dbDaySec(x, P, k) {
+  var pm = x.o.pm, ppd = x.m.ppd || 0, L = dbDayLots(pm, k), ms = bdMqDayMs(P, k), W = dbDayW(P, k, true);
+  var sawN = 0, secT = 0, dP = 0, tl = L.map(function (t, i) { var nos = dbSawNos(t.g.id), sec = dbSawSec(t.g.id), ra = crxOf(t.g.id) || [], pp = Math.round(t.p || 0), pre = Math.round(t.pre), inD = Math.round(t.inD), post = Math.round(t.post); if (nos.length) sawN++; if (sec) secT += sec; dP += t.inD;
+    var sp = (pre || post) ? [pre ? 'ต่อจากวันก่อน ' + fmtN(pre) : '', W + ' ' + fmtN(inD), post ? 'ต่อวันถัดไป ' + fmtN(post) : ''].filter(Boolean).join(' · ') : '';
+    return '<tr data-dbl="' + esc(t.g.id) + '"' + (pre ? ' class="cont"' : '') + '><td class="no">' + (i + 1) + '</td><td class="lot">' + esc(t.g.id) + '</td><td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
+      + dbMatCell(t.g)
+      + '<td class="pc">' + fmtN(pp) + (sp ? '<small>' + esc(sp) + '</small>' : '') + '</td>'
+      + '<td class="tm"' + (ra.length > 1 ? ' title="' + esc(crxTip(ra)) + '"' : '') + '>' + (sec ? esc(crxDur(sec / 60)) + (ra.length > 1 ? '<small>' + ra.length + ' Run</small>' : '') : '<em>—</em>') + '</td></tr>'; });
+  dP = Math.round(dP); var full = ppd && dP >= ppd - 0.5, last = L[L.length - 1], spill = last ? Math.round(last.post) : 0;
+  var h = '<section class="dbc dbonetmr"><header><h3>' + esc(W) + 'ต้องตัด<small>' + esc(bdDayTxt(ms)) + ' · ' + L.length + ' Lot' + (L.length ? ' · มีเลข .saw ' + sawN + '/' + L.length : '') + '</small></h3></header>' + dbDayTabs(P, pm, k)
+    + (tl.length && ppd ? '<div class="dbcap' + (full ? ' full' : '') + '"><div class="t"><span>จัดคิวได้ <b>' + fmtN(Math.min(dP, ppd)) + '</b> / ' + fmtN(ppd) + ' ชิ้น (Cap)</span><b>' + dbPct(Math.min(dP, ppd) / ppd) + '</b></div>'
+        + '<div class="bar" role="img" aria-label="' + esc('จัดคิว' + W + ' ' + fmtN(Math.min(dP, ppd)) + ' จาก ' + fmtN(ppd) + ' ชิ้น') + '"><i style="width:' + Math.min(100, dP / ppd * 100).toFixed(1) + '%"></i></div>'
+        + '<small>' + (full ? '✓ เต็ม Cap' + (spill ? ' · Lot สุดท้ายตัดต่อวันถัดไป ' + fmtN(spill) + ' ชิ้น' : '') : '⚠ ยังว่าง ' + fmtN(ppd - dP) + ' ชิ้น — Lot ที่วัตถุดิบครบหมดคิวแล้ว') + '</small></div>' : '')
+    + (tl.length ? '<table class="dbsaw"><thead><tr><th>#</th><th>Lot</th><th>เลข .saw</th><th class="mt">วัตถุดิบ</th><th class="pc">ชิ้น</th><th class="tm">เวลาตัด (.saw)</th></tr></thead><tbody>' + tl.join('') + '</tbody>'
+        + '<tfoot><tr><td></td><td colspan="3">รวม' + esc(W) + (ppd ? '<small>Cap ' + fmtN(ppd) + ' ชิ้น/วัน</small>' : '') + '</td><td class="pc">' + fmtN(dP) + (ppd ? '<small class="' + (full ? 'ok' : 'neg') + '">' + (full ? 'เต็ม Cap ✓' : 'ขาด ' + fmtN(ppd - dP)) + '</small>' : '') + '</td>'
+        + '<td class="tm">' + (secT ? esc(crxDur(secT / 60)) + '<small>' + (sawN < L.length ? 'เฉพาะ ' + sawN + '/' + L.length + ' Lot ที่มีเลข .saw' : 'ทั้ง Lot') + '</small>' : '<em>—</em>') + '</td></tr></tfoot></table>'
+      : '<p class="mqnone">' + (pm ? (k ? 'คิวเครื่องนี้ไปไม่ถึง' + esc(W) + ' — Lot ที่วัตถุดิบครบหมดคิวแล้ว' : 'ไม่มี Lot ใหม่ลงเครื่องนี้' + esc(W)) : x.m.on ? 'ไม่ได้ตั้งชิ้น/วัน' : 'เครื่องนี้ปิดไว้ — ไม่ได้วางแผน') + '</p>')
+    + (k === 0 && x.carry.length ? '<p class="cy">+ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ไม่นับในแผน — หน้างานหาเวลาตัดเอง)</p>' : '') + '</section>';
+  return h;
+}
+function dbSelDay(k) { DB.day = Math.max(0, Math.min(DB_DAYS - 1, k | 0)); var E = $('bdDash'), keep = E ? E.scrollTop : 0; if (B.plan) bdDashRender(B.plan); if (E) E.scrollTop = keep; }
 function bdDashMcView(S, x, P) {
   var c = x.o.c, now = Date.now(), idle = bdMqIdle(c, now), run = idle != null && idle <= 20, ppd = x.m.ppd || 0, tp1 = c ? c.codes.size : 0;
   var cur = c && c.lot ? c.lot : '', g = cur ? S.GU.get(cur.toUpperCase()) : null, s0 = g ? bdMqLotNow(g, P) : null, tdy = x.ser[x.ser.length - 1];
   var stT = !x.m.on && !c ? 'ปิดไว้ใน ⚙' : !c ? 'วันนี้ยังไม่ยิง' : run ? 'กำลังตัด' : 'ว่าง ' + bdH(idle);
   var avgU = ppd && x.avgP != null ? x.avgP / ppd : null, hN = S.hist.length;
-  var sawN = 0, secT = 0, pT = 0, tl = x.tmr.map(function (t, i) { var nos = dbSawNos(t.g.id), sec = dbSawSec(t.g.id), ra = crxOf(t.g.id) || [], pp = Math.round(t.p || 0), inT = Math.max(0, Math.min(pp, Math.round(ppd - t.start))); if (nos.length) sawN++; if (sec) secT += sec; pT += pp;
-    return '<tr data-dbl="' + esc(t.g.id) + '"><td class="no">' + (i + 1) + '</td><td class="lot">' + esc(t.g.id) + '</td><td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
-      + dbMatCell(t.g)   // v1.30 วัตถุดิบ
-      + '<td class="pc">' + fmtN(pp) + (inT < pp ? '<small>' + bdTmrW(P) + ' ' + fmtN(inT) + ' · ต่อวันถัดไป ' + fmtN(pp - inT) + '</small>' : '') + '</td>'   // v1.28 ชิ้น
-      + '<td class="tm"' + (ra.length > 1 ? ' title="' + esc(crxTip(ra)) + '"' : '') + '>' + (sec ? esc(crxDur(sec / 60)) + (ra.length > 1 ? '<small>' + ra.length + ' Run</small>' : '') : '<em>—</em>') + '</td></tr>'; });   // v1.28 เวลาตัดจาก .saw
+  /* v1.31 ตาราง “…ต้องตัด” ย้ายไป dbDaySec (เลือกวันล่วงหน้าได้ 7 วัน) — เดิม (v1.27–1.30) สร้างที่นี่จาก x.tmr */
   var h = dbDefs() + '<div class="dbwrap dbonewrap">' + dbMcPick(S);
   h += '<div class="dbone">';
   h += '<section class="dbc dbonering' + (run ? ' run' : '') + '"><header><h3>' + esc(x.m.n) + '<small><i></i>' + esc(stT) + (x.m.pc ? ' · ' + esc(x.m.pc) : '') + '</small></h3></header>'
@@ -7229,15 +7299,7 @@ function bdDashMcView(S, x, P) {
     + '<div class="dbpl"><span>0%</span><span class="avg">เฉลี่ย ' + hN + ' วันทำงาน <b>' + dbPct(avgU) + '</b> · ' + bdDashN(x.avgL, 1) + ' Lot/วัน</span><span>100%</span></div>'
     + '<div class="now">' + (cur ? dbTodayLots(c, cur, run, idle, S.GU, P)   // v1.29 ชื่อ Lot ที่ตัดวันนี้ทุก Lot (เดิมโชว์แค่ Lot ล่าสุด)
       : '<span class="l">วันนี้</span><b class="muted">ยังไม่มีการยิงตัด</b>') + '</div></section>';
-  h += '<section class="dbc dbonetmr"><header><h3>' + bdTmrW(P) + 'ต้องตัด<small>' + esc(bdDayTxt(P.tmr)) + ' · ' + x.tmr.length + ' Lot' + (x.tmr.length ? ' · มีเลข .saw ' + sawN + '/' + x.tmr.length : '') + '</small></h3></header>'
-    + (tl.length && ppd ? '<div class="dbcap' + (pT >= ppd ? ' full' : '') + '"><div class="t"><span>จัดคิวได้ <b>' + fmtN(Math.min(pT, ppd)) + '</b> / ' + fmtN(ppd) + ' ชิ้น (Cap)</span><b>' + dbPct(Math.min(pT, ppd) / ppd) + '</b></div>'
-        + '<div class="bar" role="img" aria-label="' + esc('จัดคิว' + bdTmrW(P) + ' ' + fmtN(Math.min(pT, ppd)) + ' จาก ' + fmtN(ppd) + ' ชิ้น') + '"><i style="width:' + Math.min(100, pT / ppd * 100).toFixed(1) + '%"></i></div>'
-        + '<small>' + (pT >= ppd ? '✓ เต็ม Cap' + (pT > ppd ? ' · Lot สุดท้ายตัดต่อวันถัดไป ' + fmtN(pT - ppd) + ' ชิ้น' : '') : '⚠ ยังว่าง ' + fmtN(ppd - pT) + ' ชิ้น — Lot ที่วัตถุดิบครบหมดคิวแล้ว') + '</small></div>' : '')   // v1.28 แถบ Cap
-    + (tl.length ? '<table class="dbsaw"><thead><tr><th>#</th><th>Lot</th><th>เลข .saw</th><th class="mt">วัตถุดิบ</th><th class="pc">ชิ้น</th><th class="tm">เวลาตัด (.saw)</th></tr></thead><tbody>' + tl.join('') + '</tbody>'
-        + '<tfoot><tr><td></td><td colspan="3">รวม' + bdTmrW(P) + (ppd ? '<small>Cap ' + fmtN(ppd) + ' ชิ้น/วัน</small>' : '') + '</td><td class="pc">' + fmtN(pT) + (ppd ? '<small class="' + (pT >= ppd ? 'ok' : 'neg') + '">' + (pT >= ppd ? 'เต็ม Cap ✓' : 'ขาด ' + fmtN(ppd - pT)) + '</small>' : '') + '</td>'
-        + '<td class="tm">' + (secT ? esc(crxDur(secT / 60)) + (sawN < x.tmr.length ? '<small>เฉพาะ ' + sawN + '/' + x.tmr.length + ' Lot ที่มีเลข .saw</small>' : '') : '<em>—</em>') + '</td></tr></tfoot></table>'   // v1.28 แถวรวม (ชิ้น · เวลาตัด)
-      : '<p class="mqnone">' + (x.o.pm ? 'ไม่มี Lot ใหม่ลงเครื่องนี้' + bdTmrW(P) : x.m.on ? 'ไม่ได้ตั้งชิ้น/วัน' : 'เครื่องนี้ปิดไว้ — ไม่ได้วางแผน') + '</p>')
-    + (x.carry.length ? '<p class="cy">+ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ไม่นับในแผน — หน้างานหาเวลาตัดเอง)</p>' : '') + '</section>';
+  h += dbDaySec(x, P, DB.day);   // v1.31 วันทำงานถัดไป + ล่วงหน้า 6 วัน
   h += '</div>';
   var rows = x.ser.map(function (s) { return { v: s.p, today: s.d.today, lbl: bdDashDayLbl(s.d), tip: bdDashTip([bdDayTxt(s.d.ms) + (s.d.today ? ' (ถึงตอนนี้)' : ''), s.p.toLocaleString('th-TH') + ' ชิ้น · ' + s.l + ' Lot'].concat(s.lots.slice(0, 8).map(function (l) { return '  ' + l; }))) }; });
   h += '<section class="dbc dbdays"><header><h3>ชิ้นที่ตัดต่อวัน · ' + esc(x.m.n) + '<small>' + x.ser.length + ' วันทำงานล่าสุด · เส้นประ = ชิ้น/วันของเครื่อง ' + fmtN(ppd) + '</small></h3></header>'
@@ -7248,8 +7310,9 @@ function bdDashMcView(S, x, P) {
 }
 document.addEventListener('click', function (e) {
   if (view() !== 'board' || B.tab !== 'dash') return;
-  var a = e.target.closest && e.target.closest('[data-dbsel],[data-dbmq]'); if (!a || !a.closest('#bdDash')) return;
+  var a = e.target.closest && e.target.closest('[data-dbsel],[data-dbmq],[data-dbday]'); if (!a || !a.closest('#bdDash')) return;
   e.preventDefault(); e.stopPropagation();
+  if (a.dataset.dbday != null) { dbSelDay(+a.dataset.dbday); return; }   // v1.31
   if (a.dataset.dbmq) { BQ.lot = ''; bdTabGo('mc', a.dataset.dbmq); return; }
   dbSelMc(a.dataset.dbsel);
 }, true);
@@ -7258,8 +7321,15 @@ document.addEventListener('keydown', function (e) {
   if (!$('ov').classList.contains('hide') || B.sel) return;   // กล่องตั้งค่า / แผงรายละเอียดปิดก่อน
   e.preventDefault(); e.stopPropagation(); dbSelMc('');
 }, true);
+/* v1.31 ← → = เลื่อนวันในหน้าเครื่องเดียว (จอทีวี/รีโมต) */
+document.addEventListener('keydown', function (e) {
+  if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || !DB.mc || view() !== 'board' || B.tab !== 'dash') return;
+  if (!$('ov').classList.contains('hide') || B.sel || /^(INPUT|SELECT|TEXTAREA)$/.test((e.target && e.target.tagName) || '')) return;
+  var k = DB.day + (e.key === 'ArrowRight' ? 1 : -1); if (k < 0 || k >= DB_DAYS) return;
+  e.preventDefault(); dbSelDay(k);
+});
 
-window.StarStock = { bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+window.StarStock = { dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
