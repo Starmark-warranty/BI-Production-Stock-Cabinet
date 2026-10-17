@@ -1283,6 +1283,49 @@
     .dbt{display:block;overflow-x:auto}
   }
   body.tv .dbring .in b{font-size:40px} body.tv .dbmc .nm h3{font-size:20px} body.tv .dbmc .tmr li{font-size:13.5px} body.tv .dbhero b{font-size:36px}
+
+  /* ───────── v1.27 Dashboard: เลือกเครื่อง · หน้าเครื่องเดียว (วันนี้ตัดได้ % · พรุ่งนี้ต้องตัด: Lot + เลข .saw) ───────── */
+  .dbpick{display:flex;flex-wrap:wrap;gap:8px}
+  .dbpick button{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;border:0;background:var(--db-card);box-shadow:var(--db-shadow);font:700 13px var(--font);color:var(--db-dim);cursor:pointer}
+  .dbpick button i{width:8px;height:8px;border-radius:50%;background:var(--db-faint)}
+  .dbpick button.run i{background:var(--db-c2)}
+  .dbpick button small{font:700 11.5px var(--mono);color:var(--db-faint)}
+  .dbpick button:hover{color:var(--db-ink)}
+  .dbpick button.on{background:linear-gradient(135deg,var(--db-a),var(--db-b));color:#fff}
+  .dbpick button.on small{color:rgba(255,255,255,.9)} .dbpick button.on i{background:#fff}
+  .dbpick button:focus-visible{outline:2px solid var(--db-a);outline-offset:2px}
+  .dbone{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.4fr);gap:16px;align-items:start}
+  .dbonering{display:flex;flex-direction:column;align-items:center}
+  .dbonering > header{align-self:stretch}
+  .dbonering > header h3{font-size:22px}
+  .dbonering > header h3 small{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--db-dim)}
+  .dbonering > header h3 small i{width:8px;height:8px;border-radius:50%;background:var(--db-faint)}
+  .dbonering.run > header h3 small{color:var(--db-c2)} .dbonering.run > header h3 small i{background:var(--db-c2)}
+  .dbonering .cap{margin:0 0 8px;font-size:14px;font-weight:700;color:var(--db-dim)}
+  .dbonering .dbring .in b{font-size:52px}
+  .dbonering .dbring .in small{font-size:13px}
+  .dbonering .now{align-self:stretch;margin-top:14px;background:color-mix(in srgb,var(--db-a) 6%,var(--db-card));border-radius:12px;padding:10px 12px}
+  .dbonering .now .l{display:block;font-size:11px;font-weight:700;color:var(--db-faint)}
+  .dbonering .now b{font:800 14px var(--mono);word-break:break-all;color:var(--db-ink)}
+  .dbonering .now b.muted{font:600 13px var(--font);color:var(--db-dim)}
+  .dbonering .now small{display:block;font:400 11.5px var(--mono);color:var(--db-dim);margin-top:3px}
+  .dbonetmr > header h3{font-size:20px}
+  .dbonetmr > header h3 small{font-size:12.5px}
+  table.dbsaw{width:100%;border-collapse:separate;border-spacing:0}
+  .dbsaw th{font-size:11px;color:var(--db-faint);font-weight:700;text-align:left;padding:8px 10px;background:color-mix(in srgb,var(--db-a) 5%,var(--db-card))}
+  .dbsaw th:first-child{border-radius:10px 0 0 10px;width:36px;text-align:right} .dbsaw th:last-child{border-radius:0 10px 10px 0}
+  .dbsaw td{padding:11px 10px;border-bottom:1px solid var(--db-track);vertical-align:middle}
+  .dbsaw td.no{font:700 12px var(--mono);color:var(--db-faint);text-align:right}
+  .dbsaw td.lot{font:800 15px var(--mono);color:var(--db-ink);word-break:break-all}
+  .dbsaw td.saw{white-space:nowrap}
+  .dbsaw td.saw span{display:inline-block;margin:2px 6px 2px 0;padding:3px 10px;border-radius:8px;font:800 15px var(--mono);color:var(--db-a);background:color-mix(in srgb,var(--db-a) 10%,transparent)}
+  .dbsaw td.saw em{font-style:normal;color:var(--db-faint);font:700 15px var(--mono)}
+  .dbsaw tbody tr{cursor:pointer} .dbsaw tbody tr:hover td{background:color-mix(in srgb,var(--db-a) 5%,transparent)}
+  .dbonetmr .cy{font-size:12px;color:var(--db-c4);font-weight:700;margin:10px 4px 0}
+  .dbonewrap .dbfoot a{color:var(--db-a);font-weight:700;text-decoration:none}
+  @media (max-width: 900px){ .dbone{grid-template-columns:minmax(0,1fr)} .dbonering .dbring{width:190px!important;height:190px!important} .dbonering .dbring .in b{font-size:42px} }
+  @media (max-width: 760px){ .dbpick{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px} .dbpick button{flex:none} .dbsaw td.lot{font-size:13.5px} .dbsaw td.saw span{font-size:13.5px} }
+  body.tv .dbsaw td.lot,body.tv .dbsaw td.saw span{font-size:19px} body.tv .dbonering .dbring .in b{font-size:60px}
 </style>
 </head>
 <body>
@@ -1293,7 +1336,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.26</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.27</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2164,10 +2207,15 @@ var GasFS = (function () {
    v1.26 (2026-10-17 14:23 ผู้ใช้: “ทำเป็น Dashboard สำหรับให้ผู้บริหารดู · วันนี้ตัด Lot ไหนอยู่ · 1 วันตัดได้กี่ Lot · พรุ่งนี้ต้องขึ้น Lot ไหน
       · เก็บ Lot ที่ตัดไม่จบไว้ให้ไปดูกันเอง · Lot ที่เลยกำหนด = Enddate ย้อนหลังมา 15 วันต้องตัดแล้ว”)
      · แท็บใหม่ Dashboard (#board-dash · จอทีวี #board-dash-tv) อยู่ก่อน Machine Queue — ดูหัวบล็อก v1.26 ข้างล่าง
+
+   v1.27 (2026-10-17 15:01 ผู้ใช้: “เลือกเครื่องก็แสดงเฉพาะเครื่องที่หน้า Dashboard ว่าวันนี้ตัดได้กี่เปอร์เซ็นต์แทน · แสดงชื่อ Lot ที่ต้องตัดพรุ่งนี้ เฉพาะชื่อ Lot และเลข .SAW”)
+     · แถวเลือกเครื่องบน Dashboard · กดเครื่อง = หน้าเครื่องเดียว (ไม่ไป Machine Queue) — ดูหัวบล็อก v1.27 ข้างล่าง
+     · (15:05 “ตรงนี้แสดงเฉพาะจาก AX วัตถุดิบใบตัดไม่ต้องแสดง มันจะซ้ำกัน”) Machine Queue กด Lot: วัตถุดิบในการตัด = จาก AX อย่างเดียว
+       ตารางแผ่นตัดตาม Cut Rite ขึ้นแทนเฉพาะ Lot ที่ AX ยังไม่มีรายการแผ่น — ดูบล็อก v1.27 ใน bdMqLot
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.26';
+var VER = '1.27';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -6647,25 +6695,35 @@ function bdMqLot(g, P) {
         + '<em>' + esc(crxDur(r.sec / 60) || '—') + '</em><span class="muted">' + (r.waste != null ? 'เศษ ' + (Math.round(r.waste * 1000) / 10) + '%' : '') + '</span></div>'; }).join('') + '</div>';
   else h += '<p class="mqnone">' + esc(crxNoneTxt()) + '</p>';
   /* วัตถุดิบในการตัด: ① แผ่นตัดตาม Cut Rite ② วัตถุดิบจาก AX (ค้าง + เบิกแล้ว) */
+  /* ───────── v1.27: วัตถุดิบในการตัด = จาก AX อย่างเดียว (ไม่แสดงแผ่นตัดตาม Cut Rite ซ้ำ) ─────────
+     ผู้ใช้ 17/10/2026 15:05 (รูป “แผ่นตัดตาม Cut Rite 379 แผ่น · 1 รหัส” แล้วตามด้วย “จาก AX: แผ่น 1 รายการ” รหัสเดียวกัน):
+       “ตรงนี้แสดงเฉพาะจาก AX วัตถุดิบใบตัดไม่ต้องแสดงครับ มันจะซ้ำกัน”
+     เดิม (v1.24–1.26): ① ตารางแผ่นตัดตาม Cut Rite (รวมทุก Run) + ② ตารางจาก AX → แผ่นรหัสเดียวกันขึ้น 2 ตาราง
+     ตอนนี้: แสดงเฉพาะจาก AX (rm.csv → ไม่มีก็ lots/rmcut.csv) · ตาราง Cut Rite ขึ้นแทนเฉพาะ Lot ที่ AX ยังไม่มีรายการแผ่นเลย
+       (ไม่ซ้ำ และไม่ปล่อยช่องว่าง) — จำนวนแผ่น/แพทเทิร์น/เวลาตัดของ Cut Rite ยังอยู่ที่หัว Lot และ “Cut Rite (.saw)” ตามเดิม */
   h += '<h4 class="mqlh4">วัตถุดิบในการตัด</h4>';
-  var cx = bdMqCrSheets([g]);
-  if (cx.rows.length) h += '<p class="mqrmsum">แผ่นตัดตาม Cut Rite <b>' + fmtN(cx.n, 3) + '</b> แผ่น · ' + cx.rows.length + ' รหัส' + (B.stock ? ' · เทียบยอด' + (rmBasis() === 'avail' ? 'ใช้ได้' : 'ในคลัง') + 'รวมทุกคลัง' : '') + '</p>' + bdMqCrTable(cx, false);
+  var cx = bdMqCrSheets([g]), axBd = false, h0 = h; h = '';
   var all = (g.rmAll || []).filter(function (r) { return r.code; });
   if (all.length) {
     var bd = all.filter(function (r) { return isBoardCode(r.code); }), ot = all.filter(function (r) { return !isBoardCode(r.code); });
     var tr = function (r) { var left = Math.max(0, Number(r.qty) || 0);
       return '<tr class="' + (left > 1e-9 ? 'short' : '') + '"><td>' + rmCodeLink(r.code) + (r.name ? '<small>' + esc(r.name) + '</small>' : '') + '</td><td>' + (r.bom != null ? fmtN(r.bom, 3) : '—') + (r.unit ? '<small>' + esc(r.unit) + '</small>' : '') + '</td><td>' + (r.issued != null ? fmtN(r.issued, 3) : '—') + '</td><td class="' + (left > 1e-9 ? 'neg' : 'ok') + '">' + (left > 1e-9 ? fmtN(left, 3) : '✓') + '</td></tr>'; };
     var hd = '<thead><tr><th>รหัส · ชื่อ</th><th>BOM</th><th>เบิกแล้ว</th><th>ค้าง</th></tr></thead>';
+    axBd = bd.length > 0;
     h += '<p class="mqrmsum">จาก AX: แผ่น <b>' + bd.length + '</b> รายการ · อุปกรณ์/อื่น ๆ <b>' + ot.length + '</b>' + (all.some(function (r) { return r.qty > 0; }) ? ' · <span class="neg">ยังค้างเบิก ' + all.filter(function (r) { return r.qty > 0; }).length + '</span>' : ' · <span class="ok">เบิกครบแล้ว</span>') + '</p>'
       + (bd.length ? '<table class="mqrmt">' + hd + '<tbody>' + bd.map(tr).join('') + '</tbody></table>' : '')
       + (ot.length ? '<details class="mqacc"' + (BQ.accOpen || !bd.length ? ' open' : '') + '><summary>อุปกรณ์ / อื่น ๆ · ' + ot.length + ' รายการ</summary><table class="mqrmt">' + hd + '<tbody>' + ot.map(tr).join('') + '</tbody></table></details>' : '');
   } else {
     /* v1.25 Lot ที่ไม่อยู่ใน rm.csv (เบิกครบแล้ว): แผ่นจาก lots/rmcut.csv ทันที · อุปกรณ์ = ปุ่มดูรายการทั้งหมด (ไม่ขอเอง) · ไม่มีทั้งคู่ = ขอ StarSync แบบ v1.24 */
     var rb = rcBoards(g);
+    axBd = !!(rb && rb.rows.length);
     if (rb && rb.rows.length) h += '<p class="mqrmsum">จาก AX: แผ่น <b>' + rb.rows.length + '</b> รายการ' + (rb.rows.some(function (r) { return r.qty > 0; }) ? ' · <span class="neg">ยังค้างเบิก ' + rb.rows.filter(function (r) { return r.qty > 0; }).length + '</span>' : ' · <span class="ok">เบิกครบแล้ว</span>') + (rcWhen() ? ' · ดึงเมื่อ ' + esc(rcWhen()) : '') + '</p>'
       + rcTable(rb.rows) + '<div class="mqlrx"><p class="mqrmsum">อุปกรณ์ / อื่น ๆ:</p>' + rxBox(g.id) + '</div>';
     else h += '<div class="mqlrx"><p class="mqrmsum">จาก AX' + (g.rmSrc === 'ax' && g.mat === 'ok' ? ' (ไม่มีรายการค้างเบิก = เบิกครบแล้ว)' : '') + ':</p>' + rxBox(g.id) + '</div>';
   }
+  /* v1.27 AX ยังไม่มีรายการแผ่น → แผ่นตัดตาม Cut Rite แทน (มีอย่างใดอย่างหนึ่ง ไม่ซ้ำ) */
+  if (!axBd && cx.rows.length) h = '<p class="mqrmsum">AX ยังไม่มีรายการแผ่นของ Lot นี้ — แผ่นตัดตาม Cut Rite <b>' + fmtN(cx.n, 3) + '</b> แผ่น · ' + cx.rows.length + ' รหัส' + (B.stock ? ' · เทียบยอด' + (rmBasis() === 'avail' ? 'ใช้ได้' : 'ในคลัง') + 'รวมทุกคลัง' : '') + '</p>' + bdMqCrTable(cx, false) + h;
+  h = h0 + h;
   return h + '</div></aside>';
 }
 document.addEventListener('click', function (e) {
@@ -6880,19 +6938,24 @@ function dbSpark(vals, tip) {
   var mx = Math.max.apply(null, vals.concat([1])), n = vals.length, pts = vals.map(function (v, i) { return (n > 1 ? i / (n - 1) * 100 : 50).toFixed(1) + ',' + (28 - v / mx * 24).toFixed(1); }).join(' ');
   return '<svg class="dbspark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"' + (tip ? ' data-tip="' + tip + '"' : '') + '><polyline points="' + pts + '" vector-effect="non-scaling-stroke"/></svg>';
 }
+/* สีไล่ของวงแหวน (url(#dbGr)) — ทุกหน้าที่มีวงแหวนต้องใส่ (v1.27 หน้าเครื่องเดียวลืมใส่ = วงแหวนไม่มีสี) */
+function dbDefs() { return '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="dbGr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--db-a)"/><stop offset="1" style="stop-color:var(--db-b)"/></linearGradient></defs></svg>'; }
 function dbPct(v) { return v == null ? '—' : Math.round(v * 100) + '%'; }
 function bdDashRender(P) {
   var E = $('bdDash'); if (!E || !P) return;
   cphEnsure();
   var S = bdDashStat(P), st = B.set, now = Date.now(), cutN = st.cutDue != null ? st.cutDue : 15, keep = E.scrollTop;
+  /* v1.27 เลือกเครื่องไว้ = Dashboard ของเครื่องนั้นอย่างเดียว (วันนี้ตัดได้กี่ % · พรุ่งนี้ต้องตัด: ชื่อ Lot + เลข .saw) — ดูหัวบล็อก v1.27 */
+  var xsel = DB.mc ? S.mcs.find(function (x) { return x.m.n === DB.mc; }) : null;
+  if (xsel) { E.innerHTML = bdDashMcView(S, xsel, P); E.scrollTop = keep; return; }
   var tp = S.todayT.p, util = S.cap ? tp / S.cap : null, avgU = S.cap && S.avgP != null ? S.avgP / S.cap : null, hN = S.hist.length;
   var tmrN = S.tmrAll.length, tmrP = S.tmrAll.reduce(function (a, z) { return a + z.t.p; }, 0), tmrCap = S.mcs.reduce(function (a, x) { return a + (x.o.pm ? x.o.pm.ppd : 0); }, 0);
   var carryRem = S.carry.reduce(function (a, g) { return a + (g.remP || 0); }, 0);
   var lateC = S.late.filter(function (z) { return P.cutting.indexOf(z.g) >= 0; }).length, lateB = S.late.filter(function (z) { return P.blocked.indexOf(z.g) >= 0; }).length, lateQ = S.late.length - lateC - lateB;
   var runN = S.mcs.filter(function (x) { var i = bdMqIdle(x.o.c, now); return i != null && i <= 20; }).length;
   var upd = B.cp.last ? String(B.cp.last).slice(11, 16) : '';
-  var h = '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="dbGr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--db-a)"/><stop offset="1" style="stop-color:var(--db-b)"/></linearGradient></defs></svg>';
-  h += '<div class="dbwrap"><div class="dbtop">';
+  var h = dbDefs();
+  h += '<div class="dbwrap">' + dbMcPick(S) + '<div class="dbtop">';   // v1.27 + แถวเลือกเครื่อง
   /* ① กำลังเครื่องวันนี้ (วงแหวนใหญ่) */
   h += '<section class="dbc dbpct"><header><h3>กำลังเครื่องวันนี้<small>ชิ้นที่ตัด ÷ ชิ้น/วันของทุกเครื่อง</small></h3></header>'
     + dbRing(util, 168, 18, '<b>' + dbPct(util) + '</b><small>' + fmtN(tp) + ' / ' + fmtN(S.cap) + ' ชิ้น</small>', bdDashTip(['ตัดวันนี้ ' + tp.toLocaleString('th-TH') + ' ชิ้น (ถึง ' + (upd || '—') + ')', 'กำลังเครื่องรวม ' + S.cap.toLocaleString('th-TH') + ' ชิ้น/วัน']))
@@ -6932,7 +6995,7 @@ function bdDashRender(P) {
     var mini = bdDashBars(x.ser.map(function (s) { return { v: s.p, today: s.d.today, lbl: bdDashDayLbl(s.d), tip: bdDashTip([bdDayTxt(s.d.ms) + (s.d.today ? ' (ถึงตอนนี้)' : ''), s.p.toLocaleString('th-TH') + ' ชิ้น · ' + s.l + ' Lot'].concat(s.lots.slice(0, 8).map(function (l) { return '  ' + l; })).concat(s.lots.length > 8 ? ['  … อีก ' + (s.lots.length - 8) + ' Lot'] : [])) }; }),
       ppd, { grid: false, label: x.m.n + ' ชิ้นต่อวัน', cls: 'sm thin' });
     var tl = x.tmr.slice(0, 6);
-    return '<article class="dbmc' + (run ? ' run' : '') + '" data-dbm="' + esc(x.m.n) + '" tabindex="0" title="กดเพื่อดูคิวของ ' + esc(x.m.n) + ' (Machine Queue)">'
+    return '<article class="dbmc' + (run ? ' run' : '') + '" data-dbm="' + esc(x.m.n) + '" tabindex="0" title="กดเพื่อดูเฉพาะ ' + esc(x.m.n) + '">'
       + '<div class="hd">' + dbRing(ppd ? tp1 / ppd : null, 92, 10, '<b>' + (ppd ? dbPct(tp1 / ppd) : '—') + '</b><small>' + fmtN(tp1) + ' ชิ้น</small>')
         + '<div class="nm"><h3>' + esc(x.m.n) + '</h3><span class="st"><i></i>' + esc(stT) + '</span><span class="sub">' + fmtN(ppd) + ' ชิ้น/วัน · วันนี้ ' + fmtN(tdy.l) + ' Lot</span>'
         + '<span class="avg">1 วันตัดได้ <b>' + bdDashN(x.avgL, 1) + '</b> Lot · ' + (x.avgP != null ? fmtN(Math.round(x.avgP)) : '—') + ' ชิ้น</span></div></div>'
@@ -6985,12 +7048,12 @@ document.addEventListener('click', function (e) {
   if (a.dataset.dball) { if (a.dataset.dball === 'late') DB.allLate = !DB.allLate; else DB.allCarry = !DB.allCarry; bdDashRender(B.plan); return; }
   if (a.dataset.dbjump) { var t = $(a.dataset.dbjump); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   if (a.dataset.dbl) { bdDashOpenLot(a.dataset.dbl); return; }
-  if (a.dataset.dbm) { BQ.lot = ''; bdTabGo('mc', a.dataset.dbm); }
+  if (a.dataset.dbm) { dbSelMc(a.dataset.dbm); }   // v1.27 เดิมไป Machine Queue → Dashboard ของเครื่องนั้น
 });
 document.addEventListener('keydown', function (e) {
   if (e.key !== 'Enter' || view() !== 'board' || B.tab !== 'dash') return;
   var t = e.target; if (!t || !t.closest || !t.closest('#bdDash')) return;
-  if (t.dataset && t.dataset.dbm) { e.preventDefault(); BQ.lot = ''; bdTabGo('mc', t.dataset.dbm); }
+  if (t.dataset && t.dataset.dbm) { e.preventDefault(); dbSelMc(t.dataset.dbm); }   // v1.27
 });
 /* ป้ายชี้ (แท่งกราฟ) — ข้อความหลายบรรทัด ตามเมาส์ */
 var DBT = { el: null };
@@ -7007,7 +7070,77 @@ document.addEventListener('mousemove', function (e) {
   DBT.el.style.left = Math.max(4, x) + 'px'; DBT.el.style.top = Math.max(4, y) + 'px';
 });
 
-window.StarStock = { bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.27: Dashboard — เลือกเครื่อง = Dashboard ของเครื่องนั้นอย่างเดียว (ไม่ไป Machine Queue)
+   ผู้ใช้ 17/10/2026 15:01: “หน้า Dashboard ถ้าไปเลือกเครื่อง ก็แสดงเฉพาะเครื่องที่หน้า Dashboard ว่าวันนี้ตัดได้กี่เปอร์เซ็นต์แทน
+     แล้วก็แสดงชื่อ Lot ที่ต้องตัดพรุ่งนี้ เฉพาะชื่อ Lot และเลข .SAW”
+   เดิม (v1.26): กดการ์ดเครื่อง / แถบเครื่อง = ย้ายไปแท็บ Machine Queue ของเครื่องนั้น (หน้าทำงานของหน้าเครื่อง ข้อมูลเยอะ)
+   ตอนนี้:
+     · แถวเลือกเครื่องบนสุดของ Dashboard: “ทุกเครื่อง” · HPP 300/1 · … (กดการ์ด/แถบเครื่องก็เลือกได้) · จำเครื่องที่เลือกไว้ในเครื่องนี้
+       (จอทีวีหน้าเครื่องตั้งค้างไว้ที่เครื่องเดียวได้) · Esc / “ทุกเครื่อง” = กลับภาพรวม
+     · หน้าเครื่องเดียว: วงแหวนใหญ่ “วันนี้ตัดได้ X%” (ชิ้นที่ยิงวันนี้ ÷ ชิ้น/วันของเครื่อง) + กำลังตัด Lot ไหน + เฉลี่ยวันทำงานก่อนหน้า
+       · “พรุ่งนี้ต้องตัด” = ชื่อ Lot + เลข .saw เท่านั้น (Lot ใหม่ตามคิวเครื่องนี้ ไม่รวม Lot ค้างตัด — กติกาเดียวกับ v1.26)
+         Lot ที่มีหลาย Run = เลข .saw ทุกตัว (ใหม่ก่อน) · ยังไม่มีเลข = “—”
+       · ชิ้นที่ตัดต่อวันของเครื่องนี้ 7 วันทำงาน · ลิงก์ไปคิวเต็มใน Machine Queue (ถ้าต้องการรายละเอียด)
+   ═══════════════════════════════════════════════════════════════════════ */
+var DB_MC_K = 'sxlocaltrial:furnitech:dbMc';
+DB.mc = String((lsGetJ(DB_MC_K, {}) || {}).mc || '');
+function dbSelMc(n) {
+  DB.mc = n || ''; lsSetJ(DB_MC_K, { mc: DB.mc });
+  var E = $('bdDash'); if (E) E.scrollTop = 0;
+  if (B.plan) bdDashRender(B.plan);
+}
+/* แถวเลือกเครื่อง (ทั้งภาพรวมและหน้าเครื่องเดียว) */
+function dbMcPick(S) {
+  return '<nav class="dbpick" aria-label="เลือกเครื่อง"><button type="button" data-dbsel=""' + (!DB.mc ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>ทุกเครื่อง</button>'
+    + S.mcs.map(function (x) { var on = DB.mc === x.m.n, c = x.o.c, i = bdMqIdle(c, Date.now()), run = i != null && i <= 20, ppd = x.m.ppd || 0, v = c ? c.codes.size : 0;
+      return '<button type="button" data-dbsel="' + esc(x.m.n) + '" class="' + (on ? 'on' : '') + (run ? ' run' : '') + '" aria-pressed="' + on + '"><i></i>' + esc(x.m.n) + (ppd ? '<small>' + dbPct(v / ppd) + '</small>' : '') + '</button>'; }).join('')
+    + '</nav>';
+}
+/* เลข .saw ของ Lot (ทุก Run ใหม่ก่อน) */
+function dbSawNos(id) { var a = crxOf(id); return a && a.length ? a.map(function (r) { return r.run; }) : []; }
+function bdDashMcView(S, x, P) {
+  var c = x.o.c, now = Date.now(), idle = bdMqIdle(c, now), run = idle != null && idle <= 20, ppd = x.m.ppd || 0, tp1 = c ? c.codes.size : 0;
+  var cur = c && c.lot ? c.lot : '', g = cur ? S.GU.get(cur.toUpperCase()) : null, s0 = g ? bdMqLotNow(g, P) : null, tdy = x.ser[x.ser.length - 1];
+  var stT = !x.m.on && !c ? 'ปิดไว้ใน ⚙' : !c ? 'วันนี้ยังไม่ยิง' : run ? 'กำลังตัด' : 'ว่าง ' + bdH(idle);
+  var avgU = ppd && x.avgP != null ? x.avgP / ppd : null, hN = S.hist.length;
+  var sawN = 0, tl = x.tmr.map(function (t, i) { var nos = dbSawNos(t.g.id); if (nos.length) sawN++;
+    return '<tr data-dbl="' + esc(t.g.id) + '"><td class="no">' + (i + 1) + '</td><td class="lot">' + esc(t.g.id) + '</td><td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td></tr>'; });
+  var h = dbDefs() + '<div class="dbwrap dbonewrap">' + dbMcPick(S);
+  h += '<div class="dbone">';
+  h += '<section class="dbc dbonering' + (run ? ' run' : '') + '"><header><h3>' + esc(x.m.n) + '<small><i></i>' + esc(stT) + (x.m.pc ? ' · ' + esc(x.m.pc) : '') + '</small></h3></header>'
+    + '<p class="cap">วันนี้ตัดได้</p>'
+    + dbRing(ppd ? tp1 / ppd : null, 230, 22, '<b>' + (ppd ? dbPct(tp1 / ppd) : '—') + '</b><small>' + fmtN(tp1) + (ppd ? ' / ' + fmtN(ppd) : '') + ' ชิ้น</small>', bdDashTip([x.m.n + ' วันนี้ ' + tp1.toLocaleString('th-TH') + ' ชิ้น', ppd ? 'ชิ้น/วันของเครื่อง (⚙) ' + ppd.toLocaleString('th-TH') : 'ยังไม่ได้ตั้งชิ้น/วัน']))
+    + '<div class="dbpl"><span>0%</span><span class="avg">เฉลี่ย ' + hN + ' วันทำงาน <b>' + dbPct(avgU) + '</b> · ' + bdDashN(x.avgL, 1) + ' Lot/วัน</span><span>100%</span></div>'
+    + '<div class="now">' + (cur ? '<span class="l">' + (run ? 'กำลังตัด' : 'ยิงล่าสุด') + ' · วันนี้ ' + fmtN(tdy.l) + ' Lot</span><b>' + esc(cur) + '</b>' + crxChip(cur)
+        + (s0 && s0.s0 ? '<small>ตัดแล้ว ' + fmtN(s0.done ? s0.s0.tt : s0.s0.v) + ' / ' + fmtN(s0.s0.tt) + ' ชิ้น' + (g && g.remP && !s0.done ? ' · เหลือ ' + fmtN(g.remP) : s0.done ? ' · ครบแล้ว ✓' : '') + '</small>' : '')
+      : '<span class="l">วันนี้</span><b class="muted">ยังไม่มีการยิงตัด</b>') + '</div></section>';
+  h += '<section class="dbc dbonetmr"><header><h3>พรุ่งนี้ต้องตัด<small>' + esc(bdDayTxt(P.tmr)) + ' · ' + x.tmr.length + ' Lot' + (x.tmr.length ? ' · มีเลข .saw ' + sawN + '/' + x.tmr.length : '') + '</small></h3></header>'
+    + (tl.length ? '<table class="dbsaw"><thead><tr><th>#</th><th>Lot</th><th>เลข .saw</th></tr></thead><tbody>' + tl.join('') + '</tbody></table>'
+      : '<p class="mqnone">' + (x.o.pm ? 'ไม่มี Lot ใหม่ลงเครื่องนี้พรุ่งนี้' : x.m.on ? 'ไม่ได้ตั้งชิ้น/วัน' : 'เครื่องนี้ปิดไว้ — ไม่ได้วางแผน') + '</p>')
+    + (x.carry.length ? '<p class="cy">+ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ไม่นับในแผน — หน้างานหาเวลาตัดเอง)</p>' : '') + '</section>';
+  h += '</div>';
+  var rows = x.ser.map(function (s) { return { v: s.p, today: s.d.today, lbl: bdDashDayLbl(s.d), tip: bdDashTip([bdDayTxt(s.d.ms) + (s.d.today ? ' (ถึงตอนนี้)' : ''), s.p.toLocaleString('th-TH') + ' ชิ้น · ' + s.l + ' Lot'].concat(s.lots.slice(0, 8).map(function (l) { return '  ' + l; }))) }; });
+  h += '<section class="dbc dbdays"><header><h3>ชิ้นที่ตัดต่อวัน · ' + esc(x.m.n) + '<small>' + x.ser.length + ' วันทำงานล่าสุด · เส้นประ = ชิ้น/วันของเครื่อง ' + fmtN(ppd) + '</small></h3></header>'
+    + bdDashBars(rows, ppd, { values: true, label: x.m.n + ' ชิ้นต่อวัน', cls: 'thin', grid: false })
+    + '<div class="dblot">' + x.ser.map(function (s) { return '<span' + (s.d.today ? ' class="t"' : '') + '><b>' + s.l + '</b> Lot</span>'; }).join('') + '</div></section>';
+  h += '<p class="dbfoot"><a href="#board-mc" data-dbmq="' + esc(x.m.n) + '">ดูคิวทั้งหมดของ ' + esc(x.m.n) + ' ใน Machine Queue →</a> · Esc = กลับภาพรวมทุกเครื่อง</p></div>';
+  return h;
+}
+document.addEventListener('click', function (e) {
+  if (view() !== 'board' || B.tab !== 'dash') return;
+  var a = e.target.closest && e.target.closest('[data-dbsel],[data-dbmq]'); if (!a || !a.closest('#bdDash')) return;
+  e.preventDefault(); e.stopPropagation();
+  if (a.dataset.dbmq) { BQ.lot = ''; bdTabGo('mc', a.dataset.dbmq); return; }
+  dbSelMc(a.dataset.dbsel);
+}, true);
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' || e.defaultPrevented || !DB.mc || view() !== 'board' || B.tab !== 'dash') return;
+  if (!$('ov').classList.contains('hide') || B.sel) return;   // กล่องตั้งค่า / แผงรายละเอียดปิดก่อน
+  e.preventDefault(); e.stopPropagation(); dbSelMc('');
+}, true);
+
+window.StarStock = { dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
