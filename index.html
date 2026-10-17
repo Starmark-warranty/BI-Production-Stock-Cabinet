@@ -1125,6 +1125,10 @@
   .mqcrt td:nth-child(2) small{text-align:right}
   .mqlrx .rxbox{margin-top:4px}
   @media (max-width: 760px){ .mqlrun{grid-template-columns:auto minmax(0,1fr) auto} .mqlrun span:nth-of-type(2),.mqlrun span.muted{grid-column:2 / -1} }
+
+  /* ───────── v1.25 แผ่นตาม BOM (AX) จาก lots/rmcut.csv ───────── */
+  .rct td:last-child{width:auto;min-width:22px}
+  #bdDetail table.rct{margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -1135,7 +1139,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.24</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.25</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -1998,10 +2002,14 @@ var GasFS = (function () {
       หมายถึงวัตถุดิบในการตัด · ไม่ต้องขึ้น Pop up ด้านข้าง แสดงรายละเอียดที่ด้านข้างของ Lot นั้น”)
      · Machine Queue: กด Lot = คอลัมน์ขวาเป็นรายละเอียด Lot (ไม่เด้งแผงข้าง) — .saw ทุก Run · วัตถุดิบในการตัด (แผ่นตัด Cut Rite + AX แม้เบิกครบ)
      · วัตถุดิบ Lot พรุ่งนี้ + แผ่นตัดตาม Cut Rite · ป้าย SAW มีเวลาตัด · StarSync v1.6 อ่านไฟล์ Export ครบทุก Lot — ดูหัวบล็อก v1.24 ข้างล่าง
+
+   v1.25 (2026-10-17 13:44–13:47 ผู้ใช้: “ดึงรายการมาเติมไว้ที่ Drive เบื้องหลัง … ทำเลยครับ เพราะตอนนี้ไม่เห็น .SAW เลยสักอัน”)
+     · อ่าน lots/rmcut.csv (StarSync v1.7: แผ่นของทุก Lot ทั้งค้าง/เบิกแล้ว) → กด Lot เห็นแผ่นทันที · Lot พรุ่งนี้ที่ยังไม่มีเลข .saw = แผ่นตาม BOM (AX)
+     · StarSync v1.7 อ่านไฟล์ Export เร็วขึ้น (พร้อมกัน 6 ไฟล์) และอ่านไฟล์ที่เปิดค้างใน Excel ได้ — ดูหัวบล็อก v1.25 ข้างล่าง
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.24';
+var VER = '1.25';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -3737,6 +3745,7 @@ async function bdLoadAux() {
   if (await rmLoad()) ch = true;   // v1.8 ตัวเดียวกับหน้า Lot ผลิต / STOCK
   if (await pgLoad()) ch = true;   // v1.16 ความคืบหน้าราย Lot จาก AX (StarSync · lots/progress.csv) — แทน lot_progress ที่ค้าง
   if (await crxLoad()) ch = true;  // v1.23 Cut Rite (.saw) ↔ Lot จากไฟล์ Export XLSX (StarSync v1.5 · lots/cutrite.csv) — ดูหัวบล็อก v1.23
+  if (await rcLoad()) ch = true;   // v1.25 วัตถุดิบในการตัด (แผ่น) ทุก Lot (StarSync v1.7 · lots/rmcut.csv)
   if (await ext) ch = true;
   B.lastCheck = Date.now();
   return ch;
@@ -4163,6 +4172,7 @@ function bdBanner(P) {
   else it.push(off('เวลาตัด Cut Rite: กำลังอ่าน…'));
   /* v1.23 ไฟล์ Cut Rite (.saw) ของ StarSync — ไม่มี = บอกให้อัปเดต (ไม่นับเป็น ✗) · ไม่ได้ตรวจโฟลเดอร์นาน / อ่านไม่ได้ = ✗ */
   var cxi = crxBanner(); it.push(cxi[0] === 'ok' ? ok(cxi[1]) : cxi[0] === 'no' ? no(cxi[1]) : off(cxi[1])); if (cxi[0] === 'no') warn = true;
+  var rci = rcBanner(); it.push(rci[0] === 'ok' ? ok(rci[1]) : rci[0] === 'no' ? no(rci[1]) : off(rci[1]));   // v1.25 แผ่นทุก Lot (lots/rmcut.csv)
   if (B.stockNone) { it.push(no('ยอด Stock (items/stock.csv) ไม่มี — เช็ควัตถุดิบไม่ได้')); warn = true; }
   else if (B.rm) it.push(ok('วัตถุดิบราย Lot (AX) ' + B.rm.size.toLocaleString('th-TH') + ' Lot ที่ยังต้องเบิก' + (B.rmMeta && B.rmMeta.at ? ' · ' + esc(String(B.rmMeta.at).replace('T', ' ').slice(5, 16)) : '') + ' · เทียบ' + (st.rmBasis === 'avail' ? 'ยอดใช้ได้' : 'ยอดในคลัง')));
   else it.push(off('วัตถุดิบราย Lot: ยังไม่มี lots/rm.csv — อัปเดต StarSync (sync-ax-lots.ps1 v1.1) แล้วจะเช็คให้เอง' + (B.extra.size ? ' · ตอนนี้เช็คได้เฉพาะ ' + B.extra.size + ' Lot ที่มีข้อมูลเพิ่ม' : '')));
@@ -4218,6 +4228,7 @@ function bdDetail(id) {
         + (r.bom != null ? '<small>BOM ' + fmtN(r.bom, 3) + ' · เบิกแล้ว ' + fmtN(r.issued || 0, 3) + '</small>' : '') + '</td><td>' + fmtN(r.qty, 3) + (r.unit ? '<small>' + esc(r.unit) + '</small>' : '') + '</td><td>' + (r.have == null ? '0' : fmtN(r.have, 3))
         + (r.onhand != null ? '<small>คลัง ' + fmtN(r.onhand, 3) + ' · ใช้ได้ ' + fmtN(r.avail, 3) + '</small>' : '') + '</td><td class="' + (r.ok ? 'ok' : 'neg') + '">' + (r.ok ? '✓' : '✗') + '</td></tr>'; }).join('') + '</table>';
   } else if (!(g.rmAll && g.rmAll.length)) h += '<div class="muted">' + (g.rmSrc === 'ax' && g.mat === 'ok' ? 'ไม่มีรายการค้างเบิกใน AX (เบิกครบแล้ว)' : g.rmSrc === 'x' ? 'ข้อมูลเพิ่มของ Lot นี้ไม่มีรายการวัตถุดิบ (rm)' : B.rm ? 'Lot นี้อยู่นอกช่วงวันที่ StarSync ดึงวัตถุดิบ' + (B.rmMeta && B.rmMeta.from ? ' (' + esc(B.rmMeta.from) + ' ถึง ' + esc(B.rmMeta.to || '') + ')' : '') : 'ยังไม่มี lots/rm.csv จาก StarSync — ยังเช็ควัตถุดิบไม่ได้') + '</div>'
+    + (g.rmSrc !== 'x' && rcOf(g.id) ? '<div class="muted" style="margin:8px 0 4px">แผ่นของ Lot นี้ (AX · ทั้งค้างและเบิกแล้ว)</div>' + rcTable(rcOf(g.id).filter(function (r) { return isBoardCode(r.code); })) : '')   // v1.25 lots/rmcut.csv
     + (g.rmSrc !== 'x' ? rxBox(g.id) : '');   // v1.13 ดูว่า Lot นี้ใช้ของอะไร (Smart Production lot_rm / ขอดึงจาก AX)
   h += rmDoneHtml(g.rmAll) + '</div>';   // v1.8 รายการที่เบิกครบแล้ว (StarSync v1.2)
   if (x) h += '<div class="sec"><h3>ข้อมูลเพิ่ม</h3><div class="kv">' + kv('ส่งโดย', esc(x.by || '')) + kv('เมื่อ', esc(String(x.at || '').replace('T', ' ').slice(0, 16))) + (x.note ? kv('หมายเหตุ', esc(x.note)) : '') + '</div></div>';
@@ -6034,8 +6045,13 @@ function bdMqRm(P, pm) {
   var cx = bdMqCrSheets(lots);
   h += '<h4 class="mqlh4">แผ่นตัดตาม Cut Rite<small>' + (cx.rows.length ? fmtN(cx.n, 3) + ' แผ่น · ' + cx.rows.length + ' รหัส · ' : '') + (lots.length - cx.none.length) + '/' + lots.length + ' Lot มีเลข .saw</small></h4>'
     + (cx.rows.length ? bdMqCrTable(cx, true) : '<p class="mqnone">' + (B.crx && B.crx.map ? 'Lot พรุ่งนี้ยังไม่มีเลข .saw — ' + esc(crxNoneTxt()) : 'ยังไม่มี lots/cutrite.csv จาก StarSync (sync-ax-lots.ps1 v1.6)') + '</p>')
-    + (cx.rows.length && cx.none.length ? '<p class="mqrmnote">ยังไม่มีเลข .saw: <b>' + cx.none.map(function (g) { return esc(g.id); }).join(' · ') + '</b></p>' : '')
-    + '<h4 class="mqlh4">ค้างเบิก (AX)</h4>';
+    + (cx.rows.length && cx.none.length ? '<p class="mqrmnote">ยังไม่มีเลข .saw: <b>' + cx.none.map(function (g) { return esc(g.id); }).join(' · ') + '</b></p>' : '');
+  /* v1.25 Lot ที่ยังไม่มีเลข .saw → แผ่นตาม BOM จาก AX (rm.csv / rmcut.csv ทั้งค้างและเบิกแล้ว) รวมตามรหัส */
+  if (cx.none.length) { var ag = rcAgg(cx.none);
+    h += '<h4 class="mqlh4">แผ่นตาม BOM (AX)<small>' + (cx.none.length - ag.none.length) + '/' + cx.none.length + ' Lot ที่ยังไม่มีเลข .saw' + (ag.rows.length ? ' · ' + ag.rows.length + ' รหัส' : '') + '</small></h4>'
+      + (ag.rows.length ? rcAggTable(ag) : '<p class="mqnone">' + (B.rc && B.rc.map ? 'ไม่มีรายการแผ่นของ Lot เหล่านี้ใน AX (นอกช่วงที่ StarSync ดึง หรือยังไม่มี BOM)' : 'ยังไม่มี lots/rmcut.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.7') + '</p>')
+      + (ag.rows.length && ag.none.length ? '<p class="mqrmnote">ไม่มีรายการแผ่นใน AX: <b>' + ag.none.map(function (g) { return esc(g.id); }).join(' · ') + '</b></p>' : ''); }
+  h += '<h4 class="mqlh4">ค้างเบิก (AX)</h4>';
   if (!B.rm && !lots.some(function (g) { return g.rmSrc === 'x'; })) return h + '<p class="mqnone">ยังไม่มี lots/rm.csv จาก StarSync — ยังดูวัตถุดิบไม่ได้</p></div></aside>';
   h += '<p class="mqrmsum">แผ่นต้องตัด <b>' + boards.length + '</b> รายการ · อุปกรณ์/อื่น ๆ <b>' + others.length + '</b>' + (nShort ? ' · <span class="neg">ไม่พอ ' + nShort + '</span>' : all.length && stOk ? ' · <span class="ok">พอทุกรายการ</span>' : '')
     + ' · เทียบ' + (basis === 'avail' ? 'ยอดใช้ได้' : 'ยอดในคลัง') + 'รวมทุกคลัง' + (stOk ? '' : ' (ยังไม่มียอด Stock)') + '</p>';
@@ -6218,11 +6234,11 @@ function crxBanner() {
   var X = B.crx;
   if (!X.map) {
     if (X.err) return ['no', 'Cut Rite (.saw) จาก StarSync: อ่าน lots/cutrite.csv ไม่ได้ — ' + esc(netMsg(X.err))];
-    return ['off', 'Cut Rite (.saw): ยังไม่มี lots/cutrite.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.6 แล้วจะจับคู่ .saw ↔ Lot ให้เอง (อ่านไฟล์ Export XLSX ของ Cut Rite)'];
+    return ['off', 'Cut Rite (.saw): ยังไม่มี lots/cutrite.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.7 แล้วจะจับคู่ .saw ↔ Lot ให้เอง (อ่านไฟล์ Export XLSX ของ Cut Rite)'];
   }
   var t = crxCheckedMs(), age = t ? Math.max(0, (Date.now() - t) / 60000) : null, old = age != null && age > crxStaleMin(), m = X.meta || {};
   var er = Array.isArray(m.errors) ? m.errors.length : 0;
-  return [old || X.err ? 'no' : 'ok', 'Cut Rite (.saw) จากไฟล์ Export <b>' + fmtN(X.runs) + '</b> Run · ' + fmtN(X.map.size) + ' Lot' + (crxRangeTxt() ? ' · ' + crxRangeTxt() : '') + (crxV2() ? '' : ' · <b>อัปเดต StarSync เป็น v1.6</b> ให้เห็นเลข .saw ทุก Lot (v1.5 อ่านแค่ 7 วัน)')
+  return [old || X.err ? 'no' : 'ok', 'Cut Rite (.saw) จากไฟล์ Export <b>' + fmtN(X.runs) + '</b> Run · ' + fmtN(X.map.size) + ' Lot' + (crxRangeTxt() ? ' · ' + crxRangeTxt() : '') + (crxV2() ? '' : ' · <b>อัปเดต StarSync เป็น v1.7</b> ให้เห็นเลข .saw ทุก Lot (v1.5 อ่านแค่ 7 วัน)')
     + (t ? ' · ตรวจเมื่อ ' + esc((new Date(t).toDateString() === new Date().toDateString() ? '' : fD(t) + ' ') + bdHM(t)) : '')
     + (old ? ' — <b>StarSync ไม่ได้ตรวจโฟลเดอร์มา ' + durTh(age) + '</b> (หน้าต่าง StarSync ปิด หรือเครื่องออฟฟิศเข้า \\\\10.11.0.6 ไม่ได้?)' : '')
     + (er ? ' · อ่านไฟล์ไม่ได้ ' + er + ' ไฟล์' : '') + (m.wait ? ' · รออ่าน ' + m.wait + ' ไฟล์' : '')
@@ -6231,7 +6247,7 @@ function crxBanner() {
 /* v1.24 Lot ที่ยังไม่มี Run: StarSync v1.6 ยังทยอยอ่านอยู่ = อาจยังมาไม่ถึง · อ่านครบแล้ว = ยังไม่ได้ optimize · v1.5 = อ่านแค่ 7 วัน */
 function crxNoneTxt() {
   var m = B.crx.meta || {}, f = bdLocalMs(String(m.from || '').slice(0, 10) + 'T00:00:00');
-  if (!crxV2()) return 'ไม่พบไฟล์ Export ของ Lot นี้ใน ' + (crxDaysTxt() || 'ช่วงที่ StarSync อ่าน') + ' — StarSync v1.5 อ่านแค่ 7 วันทำงาน · อัปเดตเป็น sync-ax-lots.ps1 v1.6 แล้วจะอ่านย้อนจนครบทุก Lot';
+  if (!crxV2()) return 'ไม่พบไฟล์ Export ของ Lot นี้ใน ' + (crxDaysTxt() || 'ช่วงที่ StarSync อ่าน') + ' — StarSync v1.5 อ่านแค่ 7 วันทำงาน · อัปเดตเป็น sync-ax-lots.ps1 v1.7 แล้วจะอ่านย้อนจนครบทุก Lot';
   if (crxPending()) return 'StarSync กำลังทยอยอ่านไฟล์ Export ย้อนหลัง (' + crxRangeTxt().replace(/<[^>]+>/g, '') + ') — Lot นี้อาจยังมาไม่ถึง';
   return 'ยังไม่มีไฟล์ Export ของ Lot นี้ — ยังไม่ได้ optimize ใน Cut Rite' + (f ? ' (StarSync อ่านไฟล์ตั้งแต่ ' + fD(f) + ')' : '');
 }
@@ -6401,6 +6417,7 @@ function bdMqUnpick() { if (!BQ.lot) return; BQ.lot = ''; if (B.plan) bdMqRender
 /* Lot ที่ rm.csv ไม่มี (เบิกครบแล้ว) → ดึงรายการทั้งหมดให้เอง ครั้งเดียวต่อ Lot ต่อการเปิดหน้า (rxOpen: Drive lots/rmlot → lot_rm → ขอ StarSync) */
 function bdMqRxAuto(g) {
   if (g.rmAll && g.rmAll.length) return;
+  var rb = rcBoards(g); if (rb && rb.rows.length) return;   // v1.25 มีแผ่นจาก lots/rmcut.csv แล้ว — ไม่ต้องขอ StarSync
   var K = String(g.id).toUpperCase(), s = RX.st.get(K);
   if (BQ.rxAuto[K] || (s && (s.busy || (s.rows && s.rows.length) || s.none || s.err))) return;
   BQ.rxAuto[K] = 1;
@@ -6473,7 +6490,13 @@ function bdMqLot(g, P) {
     h += '<p class="mqrmsum">จาก AX: แผ่น <b>' + bd.length + '</b> รายการ · อุปกรณ์/อื่น ๆ <b>' + ot.length + '</b>' + (all.some(function (r) { return r.qty > 0; }) ? ' · <span class="neg">ยังค้างเบิก ' + all.filter(function (r) { return r.qty > 0; }).length + '</span>' : ' · <span class="ok">เบิกครบแล้ว</span>') + '</p>'
       + (bd.length ? '<table class="mqrmt">' + hd + '<tbody>' + bd.map(tr).join('') + '</tbody></table>' : '')
       + (ot.length ? '<details class="mqacc"' + (BQ.accOpen || !bd.length ? ' open' : '') + '><summary>อุปกรณ์ / อื่น ๆ · ' + ot.length + ' รายการ</summary><table class="mqrmt">' + hd + '<tbody>' + ot.map(tr).join('') + '</tbody></table></details>' : '');
-  } else h += '<div class="mqlrx"><p class="mqrmsum">จาก AX' + (g.rmSrc === 'ax' && g.mat === 'ok' ? ' (ไม่มีรายการค้างเบิก = เบิกครบแล้ว)' : '') + ':</p>' + rxBox(g.id) + '</div>';
+  } else {
+    /* v1.25 Lot ที่ไม่อยู่ใน rm.csv (เบิกครบแล้ว): แผ่นจาก lots/rmcut.csv ทันที · อุปกรณ์ = ปุ่มดูรายการทั้งหมด (ไม่ขอเอง) · ไม่มีทั้งคู่ = ขอ StarSync แบบ v1.24 */
+    var rb = rcBoards(g);
+    if (rb && rb.rows.length) h += '<p class="mqrmsum">จาก AX: แผ่น <b>' + rb.rows.length + '</b> รายการ' + (rb.rows.some(function (r) { return r.qty > 0; }) ? ' · <span class="neg">ยังค้างเบิก ' + rb.rows.filter(function (r) { return r.qty > 0; }).length + '</span>' : ' · <span class="ok">เบิกครบแล้ว</span>') + (rcWhen() ? ' · ดึงเมื่อ ' + esc(rcWhen()) : '') + '</p>'
+      + rcTable(rb.rows) + '<div class="mqlrx"><p class="mqrmsum">อุปกรณ์ / อื่น ๆ:</p>' + rxBox(g.id) + '</div>';
+    else h += '<div class="mqlrx"><p class="mqrmsum">จาก AX' + (g.rmSrc === 'ax' && g.mat === 'ok' ? ' (ไม่มีรายการค้างเบิก = เบิกครบแล้ว)' : '') + ':</p>' + rxBox(g.id) + '</div>';
+  }
   return h + '</div></aside>';
 }
 document.addEventListener('click', function (e) {
@@ -6489,7 +6512,103 @@ document.addEventListener('keydown', function (e) {
   e.preventDefault(); e.stopPropagation(); bdMqUnpick();
 }, true);
 
-window.StarStock = { bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.25: วัตถุดิบในการตัด (แผ่น) ทุก Lot จาก StarSync (lots/rmcut.csv) · ไม่ต้องรอขอทีละ Lot
+   ผู้ใช้ 17/10/2026 13:44 “ถ้าเราดึงรายการมาเติมไว้ที่ Drive Google เบื้องหลัง กินเนื้อที่เพิ่มเยอะไหม”
+     → 13:47 (รูป Machine Queue “แผ่นตัดตาม Cut Rite 0/18 Lot มีเลข .saw” + log StarSync “ยังเหลือ 4371 ไฟล์ · อ่านไม่ได้ … being used by another process”)
+     “ทำเลยครับ เพราะตอนนี้ไม่เห็น .SAW เลยสักอันครับ”
+   เดิม (v1.24): Lot ที่เบิกของครบแล้วไม่อยู่ใน lots/rm.csv → รายการแผ่นต้องขอ StarSync ทีละ Lot ตอนกด (1–3 นาที)
+     · Lot พรุ่งนี้ที่ยังไม่มีเลข .saw (StarSync ยังทยอยอ่านไฟล์ Export เก่าไม่ถึง) = คอลัมน์ขวาไม่มีแผ่นให้ดูเลย
+   ตอนนี้:
+     1. StarSync sync-ax-lots.ps1 v1.7 ส่ง lots/rmcut.csv = แผ่น (isBoardCode) ของทุก Lot ในช่วง enddate เดียวกับ rm.csv ทั้งค้างและเบิกแล้ว
+        (lot,item,need,bom,issued,…) ทุก 30 นาที · ~0.1–0.3 MB บน Drive · หน้านี้อ่าน (rcLoad) → B.rc
+        + StarSync v1.7 อ่านไฟล์ Export เร็วขึ้น (พร้อมกัน 6 ไฟล์) และอ่านไฟล์ที่เปิดค้างใน Excel ได้ → เลข .saw มาครบเร็วขึ้น
+     2. Machine Queue กด Lot: “วัตถุดิบในการตัด ② จาก AX” ใช้ rm.csv (ครบทุกรายการ) → ไม่มีก็ใช้ rmcut.csv (แผ่น) ทันที
+        → ไม่มีทั้งคู่ค่อยขอ StarSync (แบบ v1.24) · อุปกรณ์ของ Lot ที่เบิกครบแล้ว = ปุ่มดูรายการทั้งหมด (ไม่ขอเอง)
+     3. วัตถุดิบ Lot พรุ่งนี้: Lot ที่ยังไม่มีเลข .saw → ตาราง “แผ่นตาม BOM (AX)” รวมตามรหัส (BOM · เบิกแล้ว · Lot ที่ใช้) ต่อจากแผ่นตัด Cut Rite
+     4. Master Plan รายละเอียด Lot (แผงข้าง): Lot ที่ไม่มีใน rm.csv แสดงแผ่นจาก rmcut.csv ด้วย
+     5. กระดิ่ง: บรรทัด “วัตถุดิบในการตัด (แผ่น · ทุก Lot)” — ยังไม่มีไฟล์ = บอกให้อัปเดต StarSync v1.7 (ไม่นับ ✗)
+   ═══════════════════════════════════════════════════════════════════════ */
+var BD_RCF = 'rmcut.csv', BD_RCMF = 'rmcut.meta.json';
+B.rc = { map: null, u: 0, meta: null, metaU: 0, err: null, at: 0, loading: null, n: 0 };
+function rcParse(t) {
+  var o = csvObjs(t), m = new Map(), n = 0;
+  o.rows.forEach(function (r) {
+    var lot = String(r.lot || '').trim(), code = String(r.item || '').trim(); if (!lot || !code) return;
+    var K = lot.toUpperCase(), a = m.get(K); if (!a) m.set(K, a = []);
+    a.push({ code: code, qty: num(r.need) || 0, bom: num(r.bom), issued: num(r.issued) }); n++;
+  });
+  B.rc.n = n;
+  return m;
+}
+async function rcLoad() {
+  var fs = ensureFs(); if (!fs) return false;
+  var X = B.rc;
+  if (X.loading) return X.loading;
+  X.loading = (async function () {
+    await null;   // เหมือน pgLoad / crxLoad
+    var ch = false;
+    try { if (L.loading) await L.loading; } catch (e) { }
+    try {
+      var Ld = fs.L[LOT_DIR];
+      if (!Ld || !Ld.ok || Date.now() - (Ld.at || 0) > 25000) Ld = await retryNet(async function () { try { return await fs.list(LOT_DIR, true); } catch (e) { if (e && e.name === 'NotFoundError') return null; throw e; } }, 'รายการไฟล์ lots');
+      var cf = Ld && Ld.ok && Ld.files[BD_RCF], mf = Ld && Ld.ok && Ld.files[BD_RCMF];
+      if (cf && cf.u !== X.u) { X.map = rcParse(await readText(LOT_DIR, BD_RCF)); X.u = cf.u; ch = true; }
+      if ((!Ld || Ld.ok) && !cf && X.map) { X.map = null; X.u = 0; X.n = 0; ch = true; }
+      if (mf && mf.u !== X.metaU) { try { X.meta = JSON.parse(await readText(LOT_DIR, BD_RCMF)); } catch (e) { X.meta = null; } X.metaU = mf.u; ch = true; }
+      if (X.err) ch = true;
+      X.at = Date.now(); X.err = null;
+    } catch (e) { console.warn('StarStock: อ่าน lots/rmcut.csv (วัตถุดิบในการตัดจาก StarSync) ไม่ได้', e); if (!X.err) ch = true; X.err = e; }
+    finally { X.loading = null; }
+    return ch;
+  })();
+  return X.loading;
+}
+function rcOf(id) { var m = B.rc && B.rc.map; return m ? m.get(String(id).toUpperCase()) || null : null; }
+/* แผ่นของ Lot จาก AX: rm.csv (ครบทุกรายการของ Lot ที่ยังค้างเบิก) ก่อน → rmcut.csv (แผ่น ทุก Lot) */
+function rcBoards(g) {
+  var a = (g.rmAll || []).filter(function (r) { return r.code && isBoardCode(r.code); });
+  if (g.rmAll && g.rmAll.length) return { src: 'rm', rows: a };
+  var b = rcOf(g.id); return b ? { src: 'rc', rows: b.filter(function (r) { return isBoardCode(r.code); }) } : null;
+}
+/* ตารางแผ่นของ Lot เดียว (BOM · เบิกแล้ว · ค้าง) */
+function rcTable(rows) {
+  if (!rows || !rows.length) return '';
+  var hd = '<thead><tr><th>รหัส · ชื่อ</th><th>BOM</th><th>เบิกแล้ว</th><th>ค้าง</th></tr></thead>';
+  return '<table class="mqrmt rct">' + hd + '<tbody>' + rows.map(function (r) {
+    var nm = rmNameOf(r.code), left = Math.max(0, Number(r.qty) || 0);
+    return '<tr class="' + (left > 1e-9 ? 'short' : '') + '"><td>' + rmCodeLink(r.code) + (nm && nm.name ? '<small>' + esc(nm.name) + '</small>' : '') + '</td><td>' + (r.bom != null ? fmtN(r.bom, 3) : '—') + (nm && nm.unit ? '<small>' + esc(nm.unit) + '</small>' : '') + '</td><td>' + (r.issued != null ? fmtN(r.issued, 3) : '—') + '</td><td class="' + (left > 1e-9 ? 'neg' : 'ok') + '">' + (left > 1e-9 ? fmtN(left, 3) : '✓') + '</td></tr>';
+  }).join('') + '</tbody></table>';
+}
+function rcWhen() { var m = B.rc.meta, t = m && (bdLocalMs(m.at) || bdLocalMs(m.checked)); return t ? (new Date(t).toDateString() === new Date().toDateString() ? '' : fD(t) + ' ') + bdHM(t) : ''; }
+/* แผ่นตาม BOM ของหลาย Lot รวมตามรหัส (Lot พรุ่งนี้ที่ยังไม่มีเลข .saw) */
+function rcAgg(gs) {
+  var m = new Map(), none = [];
+  gs.forEach(function (g) {
+    var b = rcBoards(g); if (!b || !b.rows.length) { none.push(g); return; }
+    b.rows.forEach(function (r) { var k = r.code.toUpperCase(), e = m.get(k);
+      if (!e) { e = { code: r.code, bom: 0, issued: 0, qty: 0, lots: [] }; m.set(k, e); }
+      e.bom += Number(r.bom) || 0; e.issued += Number(r.issued) || 0; e.qty += Number(r.qty) || 0; e.lots.push({ id: g.id, q: Number(r.bom) || 0 }); });
+  });
+  return { rows: Array.from(m.values()).sort(function (a, b) { return a.code < b.code ? -1 : 1; }), none: none };
+}
+function rcAggTable(ag) {
+  if (!ag.rows.length) return '';
+  return '<table class="mqrmt rct">' + '<thead><tr><th>รหัส · ชื่อ · Lot ที่ใช้</th><th>BOM</th><th>เบิกแล้ว</th><th>ค้าง</th></tr></thead><tbody>' + ag.rows.map(function (e) {
+    var nm = rmNameOf(e.code), left = Math.max(0, e.qty);
+    return '<tr class="' + (left > 1e-9 ? 'short' : '') + '"><td>' + rmCodeLink(e.code) + (nm && nm.name ? '<small>' + esc(nm.name) + '</small>' : '') + '<small class="lt">' + e.lots.map(function (l) { return esc(l.id) + ' ×' + fmtN(l.q, 3); }).join(' · ') + '</small></td>'
+      + '<td>' + fmtN(e.bom, 3) + (nm && nm.unit ? '<small>' + esc(nm.unit) + '</small>' : '') + '</td><td>' + fmtN(e.issued, 3) + '</td><td class="' + (left > 1e-9 ? 'neg' : 'ok') + '">' + (left > 1e-9 ? fmtN(left, 3) : '✓') + '</td></tr>';
+  }).join('') + '</tbody></table>';
+}
+/* บรรทัดในกระดิ่ง */
+function rcBanner() {
+  var X = B.rc;
+  if (!X.map) return X.err ? ['no', 'วัตถุดิบในการตัด (แผ่น · ทุก Lot): อ่าน lots/rmcut.csv ไม่ได้ — ' + esc(netMsg(X.err))]
+    : ['off', 'วัตถุดิบในการตัด (แผ่น · ทุก Lot): ยังไม่มี lots/rmcut.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.7 แล้ว Lot ที่เบิกครบแล้วจะเห็นแผ่นทันที (ตอนนี้ขอทีละ Lot)'];
+  return ['ok', 'วัตถุดิบในการตัด (แผ่น · ทุก Lot) จาก AX <b>' + fmtN(X.map.size) + '</b> Lot · ' + fmtN(X.n) + ' รายการ' + (rcWhen() ? ' · ดึงเมื่อ ' + esc(rcWhen()) : '') + (X.err ? ' · รอบล่าสุดอ่านไม่ได้: ' + esc(netMsg(X.err)) + ' (ใช้ข้อมูลเดิม)' : '')];
+}
+
+window.StarStock = { rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
