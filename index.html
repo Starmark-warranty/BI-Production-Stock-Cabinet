@@ -1349,6 +1349,21 @@
     .dbsaw td.saw,.dbsaw td.pc,.dbsaw td.tm,.dbsaw th.tm{white-space:normal} .dbsaw td.saw span{font-size:12.5px;padding:2px 6px;margin-right:3px}
     .dbsaw td.lot{font-size:12.5px} .dbsaw th:first-child{width:18px} .dbsaw td.pc small,.dbsaw td.tm small{font-size:10.5px} .dbcap .t>b{font-size:16px} }
   body.tv .dbsaw td.tm,body.tv .dbsaw td.pc{font-size:19px} body.tv .dbsaw tfoot td.tm,body.tv .dbsaw tfoot td.pc{font-size:20px} body.tv .dbcap .t{font-size:16px}
+  /* ───────── v1.29: Dashboard หน้าเครื่องเดียว — รายชื่อ Lot ที่ตัดแล้ววันนี้ (ใต้วงแหวน) ───────── */
+  .dbonering ol.dbtl{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:2px;max-height:330px;overflow:auto}
+  .dbtl li{display:grid;grid-template-columns:20px 1fr;gap:6px;align-items:start;padding:7px 6px;border-radius:9px;cursor:pointer}
+  .dbtl li+li{border-top:1px solid color-mix(in srgb,var(--db-track) 80%,transparent)}
+  .dbtl li:hover{background:color-mix(in srgb,var(--db-a) 8%,transparent)}
+  .dbtl li>i{font-style:normal;font-weight:800;font-size:12px;color:var(--db-faint);text-align:center;line-height:20px}
+  .dbtl li.cur>i{color:var(--db-a)} .dbtl li.done>i{color:#1f9d55}
+  .dbtl li>div{min-width:0}
+  .dbonering .dbtl li b{font:800 14px var(--mono);word-break:break-all;color:var(--db-ink);margin-right:6px}
+  .dbtl li .sawc{vertical-align:1px}
+  .dbtl li .tg{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:6px;font-size:10.5px;font-weight:700;color:#fff;background:var(--db-a)}
+  .dbonering .dbtl li small{display:block;font:400 11.5px var(--mono);color:var(--db-dim);margin-top:3px}
+  .dbonering .dbtl li small b{font:800 11.5px var(--mono);margin:0}
+  .dbtl li.done small{color:#1f9d55}
+  body.tv .dbonering .dbtl li b{font-size:17px} body.tv .dbonering .dbtl li small{font-size:13.5px} body.tv .dbonering ol.dbtl{max-height:none}
 </style>
 </head>
 <body>
@@ -1359,7 +1374,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.28</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.29</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2241,10 +2256,13 @@ var GasFS = (function () {
      · (15:22 “เพิ่มคอลัมน์จำนวนชิ้น จะได้รู้ว่าจัดคิวได้เต็ม Cap 1000 ชิ้นต่อวันไหม ถ้าวัตถุดิบครบ”) + คอลัมน์ “ชิ้น” + แถบ “จัดคิวได้ X / Cap ชิ้น”
      · (15:27 “พรุ่งนี้มันวันอาทิตย์ ถ้าพรุ่งนี้วันอาทิตย์ให้บอกว่าวันจันทร์ต้องตัด ถ้าไปดูวันจันทร์ค่อยบอกว่าพรุ่งนี้”)
        ป้าย “พรุ่งนี้” ทุกจุดที่หมายถึงวันทำงานถัดไป = “พรุ่งนี้” เฉพาะเมื่อเป็นวันถัดไปจริง · มีวันหยุดคั่น = “วันจันทร์” — ดูบล็อก v1.28 (bdTmrW) ใน v15
+
+   v1.29 (2026-10-17 15:41 ผู้ใช้: รูปหน้าเครื่อง HPP 300/2 “เพิ่มชื่อ Lot ที่ตัดไปแล้วให้ตรงนี้หน่อยครับ”)
+     · Dashboard หน้าเครื่องเดียว: ใต้วงแหวน “วันนี้ตัดได้” = ทุก Lot ที่ยิงวันนี้ (ชิ้นวันนี้ · ตัดแล้ว x / ทั้งหมด · ครบ ✓) — ดูบล็อก v1.29 (dbTodayLots)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.28';
+var VER = '1.29';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -7149,6 +7167,23 @@ function dbSawNos(id) { var a = crxOf(id); return a && a.length ? a.map(function
      · คิวเครื่องมีแต่ Lot ที่วัตถุดิบครบ (Lot ติดอยู่ไม่เข้าคิว — bdPlan v1.21) ไม่ถึง Cap = Lot ที่วัตถุดิบครบหมดแล้ว
      · ไม่นับ Lot ค้างตัด (กติกาเดียวกับ v1.26 — หน้างานหาเวลาตัดเอง) */
 function dbSawSec(id) { var a = crxOf(id); return a && a.length ? crxAgg(a).total_sec || 0 : null; }
+/* ───────── v1.29: หน้าเครื่องเดียว — ชื่อ Lot ที่ตัดไปแล้ววันนี้ (ใต้วงแหวน “วันนี้ตัดได้”) ─────────
+   ผู้ใช้ 17/10/2026 15:41 (รูป HPP 300/2 วันนี้ตัดได้ 75% · กล่อง “กำลังตัด · วันนี้ 2 Lot” โชว์แค่ FGH_M613xe_2026-02):
+     “เพิ่มชื่อ Lot ที่ตัดไปแล้วให้ตรงนี้หน่อยครับ”
+   เดิม (v1.27): บอกจำนวน Lot วันนี้ แต่ชื่อแค่ Lot ที่ยิงล่าสุด
+   ตอนนี้: “ตัดแล้ววันนี้ · N Lot · X ชิ้น” + ทุก Lot ที่ยิงวันนี้ (ลำดับแบบ Machine Queue: Lot ที่ยิงล่าสุดก่อน แล้วตามชิ้นที่ยิงวันนี้มาก→น้อย)
+     แต่ละ Lot: ▶ กำลังยิง / ❚❚ หยุด / ✓ ตัดครบแล้ว · ป้าย SAW · ชิ้นที่ยิงวันนี้ · ตัดแล้ว x / ทั้งหมด (เหลือ) · กด = รายละเอียด Lot
+     ชิ้นวันนี้ = รหัสชิ้นไม่ซ้ำ (ยิงซ้ำชิ้นเดิมไม่นับ — แบบ Machine Queue) */
+function dbTodayLots(c, cur, run, idle, GU, P) {
+  var ks = Object.keys(c.lots || {}), nOf = function (k) { return c.lotCodes && c.lotCodes[k] ? c.lotCodes[k].size : c.lots[k] || 0; };
+  ks.sort(function (a, b) { return a === cur ? -1 : b === cur ? 1 : nOf(b) - nOf(a); });
+  return '<span class="l">ตัดแล้ววันนี้ · ' + ks.length + ' Lot · ' + fmtN(c.codes ? c.codes.size : 0) + ' ชิ้น</span><ol class="dbtl">' + ks.map(function (lot) {
+    var g = GU.get(lot.toUpperCase()), on = lot === cur, s0 = g ? bdMqLotNow(g, P) : null, done = !!(s0 && s0.done);
+    var pr = s0 && s0.s0 ? 'ตัดแล้ว ' + fmtN(done ? s0.s0.tt : s0.s0.v) + ' / ' + fmtN(s0.s0.tt) + (done ? ' · ครบแล้ว ✓' : g.remP ? ' · เหลือ ' + fmtN(g.remP) : '') : !g ? 'ไม่พบใน data 6' : g.closed ? 'ปิดว่าจบแล้ว' : done ? 'ครบแล้ว ✓' : '';
+    return '<li class="' + (on ? 'cur' : '') + (done ? ' done' : '') + '"' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + '><i>' + (on ? (run ? '▶' : '❚❚') : done ? '✓' : '·') + '</i>'
+      + '<div><b>' + esc(lot) + '</b>' + crxChip(lot) + (on ? '<span class="tg">' + (run ? 'กำลังยิง' : 'หยุด ' + esc(bdH(idle))) + '</span>' : '')
+      + '<small>วันนี้ <b>' + fmtN(nOf(lot)) + '</b> ชิ้น' + (pr ? ' · ' + esc(pr) : '') + '</small></div></li>'; }).join('') + '</ol>';
+}
 function bdDashMcView(S, x, P) {
   var c = x.o.c, now = Date.now(), idle = bdMqIdle(c, now), run = idle != null && idle <= 20, ppd = x.m.ppd || 0, tp1 = c ? c.codes.size : 0;
   var cur = c && c.lot ? c.lot : '', g = cur ? S.GU.get(cur.toUpperCase()) : null, s0 = g ? bdMqLotNow(g, P) : null, tdy = x.ser[x.ser.length - 1];
@@ -7164,8 +7199,7 @@ function bdDashMcView(S, x, P) {
     + '<p class="cap">วันนี้ตัดได้</p>'
     + dbRing(ppd ? tp1 / ppd : null, 230, 22, '<b>' + (ppd ? dbPct(tp1 / ppd) : '—') + '</b><small>' + fmtN(tp1) + (ppd ? ' / ' + fmtN(ppd) : '') + ' ชิ้น</small>', bdDashTip([x.m.n + ' วันนี้ ' + tp1.toLocaleString('th-TH') + ' ชิ้น', ppd ? 'ชิ้น/วันของเครื่อง (⚙) ' + ppd.toLocaleString('th-TH') : 'ยังไม่ได้ตั้งชิ้น/วัน']))
     + '<div class="dbpl"><span>0%</span><span class="avg">เฉลี่ย ' + hN + ' วันทำงาน <b>' + dbPct(avgU) + '</b> · ' + bdDashN(x.avgL, 1) + ' Lot/วัน</span><span>100%</span></div>'
-    + '<div class="now">' + (cur ? '<span class="l">' + (run ? 'กำลังตัด' : 'ยิงล่าสุด') + ' · วันนี้ ' + fmtN(tdy.l) + ' Lot</span><b>' + esc(cur) + '</b>' + crxChip(cur)
-        + (s0 && s0.s0 ? '<small>ตัดแล้ว ' + fmtN(s0.done ? s0.s0.tt : s0.s0.v) + ' / ' + fmtN(s0.s0.tt) + ' ชิ้น' + (g && g.remP && !s0.done ? ' · เหลือ ' + fmtN(g.remP) : s0.done ? ' · ครบแล้ว ✓' : '') + '</small>' : '')
+    + '<div class="now">' + (cur ? dbTodayLots(c, cur, run, idle, S.GU, P)   // v1.29 ชื่อ Lot ที่ตัดวันนี้ทุก Lot (เดิมโชว์แค่ Lot ล่าสุด)
       : '<span class="l">วันนี้</span><b class="muted">ยังไม่มีการยิงตัด</b>') + '</div></section>';
   h += '<section class="dbc dbonetmr"><header><h3>' + bdTmrW(P) + 'ต้องตัด<small>' + esc(bdDayTxt(P.tmr)) + ' · ' + x.tmr.length + ' Lot' + (x.tmr.length ? ' · มีเลข .saw ' + sawN + '/' + x.tmr.length : '') + '</small></h3></header>'
     + (tl.length && ppd ? '<div class="dbcap' + (pT >= ppd ? ' full' : '') + '"><div class="t"><span>จัดคิวได้ <b>' + fmtN(Math.min(pT, ppd)) + '</b> / ' + fmtN(ppd) + ' ชิ้น (Cap)</span><b>' + dbPct(Math.min(pT, ppd) / ppd) + '</b></div>'
