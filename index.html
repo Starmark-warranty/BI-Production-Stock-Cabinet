@@ -861,6 +861,158 @@
 
   /* ═════════ v1.20 รหัสเชื่อมต่อในตัว = ซ่อนปุ่ม Google Drive (เปิดด้วย ?drive = ปุ่มกลับมา) ═════════ */
   body.drvFixed #btnDrive, body.drvFixed #wTools [data-act="drive"]{ display:none!important }
+
+  /* ═════════ v1.21: แท็บคิวตัดงาน (Master Plan · Machine Queue) + คิวรายเครื่อง ═════════ */
+  #bdTabs{flex:none;background:var(--solid);border-bottom:.5px solid var(--line-strong);padding:0 10px}
+  .bdtabs{display:flex;gap:2px;overflow-x:auto}
+  .bdtab{display:flex;align-items:center;gap:9px;padding:8px 14px 7px;border:0;border-bottom:3px solid transparent;background:none;color:var(--ink-dim);cursor:pointer;font:inherit;text-align:left;white-space:nowrap;margin-bottom:-.5px}
+  .bdtab svg{width:20px;height:20px;flex:none}
+  .bdtab b{display:block;font-size:14.5px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+  .bdtab small{display:block;font-size:11px;color:var(--ink-faint);font-weight:500;line-height:1.3}
+  .bdtab:hover{color:var(--ink)}
+  .bdtab.on{color:var(--accent);border-bottom-color:var(--accent)}
+  body[data-theme="dark"] .bdtab.on{color:#8fb0f0;border-bottom-color:#8fb0f0}
+  .bdtab.on small{color:var(--ink-dim)}
+  .bdtab:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:8px}
+  body.tv #bdTabs{display:none}
+  /* แท็บรายเครื่อง: ซ่อนของ Master Plan (แถบแหล่งข้อมูลโชว์เฉพาะตอนมีเรื่องเตือน) */
+  #board.mq #bdMc,#board.mq #bdFlt,#board.mq #bdCols,#board.mq #bdSelBar,#board.mq #bdBanner:not(.warn){display:none!important}
+  #board:not(.mq) #bdMq{display:none!important}
+  #bdMq{flex:1;min-height:0;overflow:auto;padding-bottom:24px}
+
+  /* ปุ่มเครื่อง */
+  .mqtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px;padding:12px 14px 0}
+  .mqm{box-sizing:border-box;display:flex;flex-direction:column;gap:5px;min-width:0;padding:10px 12px 11px;border-radius:12px;background:var(--solid);border:1px solid var(--line-strong);color:var(--ink);font:inherit;text-align:left;cursor:pointer;position:relative}
+  .mqm:hover{border-color:var(--accent)}
+  .mqm:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .mqm .mqh{display:flex;align-items:center;gap:7px}
+  .mqm .mqh b{font-size:15.5px;font-weight:800;letter-spacing:-.01em}
+  .mqm .mqh i{width:9px;height:9px;border-radius:50%;background:var(--ink-faint);flex:none}
+  .mqm.on .mqh i{background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 25%,transparent)}
+  .mqm.idle .mqh i{background:var(--orange)}
+  .mqm kbd{margin-left:auto;font:600 10.5px var(--mono);color:var(--ink-faint);border:.5px solid var(--line-strong);border-radius:5px;padding:0 5px;line-height:16px}
+  .mqm .mqtd{font-size:11.5px;color:var(--ink-dim)}
+  .mqm .mqtd b{font:800 19px var(--mono);color:var(--ink);letter-spacing:-.02em}
+  .mqm .mqbar{height:5px;border-radius:3px;background:var(--bg2);overflow:hidden}
+  .mqm .mqbar i{display:block;height:100%;background:var(--good);border-radius:3px}
+  .mqm .mqnow{font-size:11.5px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mqm .mqqq{font-size:12px;color:var(--ink-dim);line-height:1.35}
+  .mqm .mqqq small{display:block;font-size:11px;margin-top:1px}
+  @media (hover: none){ .mqm kbd{display:none} }
+  .mqm .mqqq b{font-family:var(--mono);color:var(--ink)}
+  .mqm.off{border-style:dashed}
+  .mqm.sel{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 10px 24px -12px color-mix(in srgb,var(--accent) 80%,transparent)}
+  .mqm.sel .mqtd,.mqm.sel .mqnow,.mqm.sel .mqqq,.mqm.sel kbd{color:rgba(255,255,255,.82)}
+  .mqm.sel .mqtd b,.mqm.sel .mqqq b{color:#fff}
+  .mqm.sel kbd{border-color:rgba(255,255,255,.4)}
+  .mqm.sel .mqbar{background:rgba(255,255,255,.22)}
+  .mqm.sel .mqbar i{background:#fff}
+  .mqm.sel::after{content:"";position:absolute;left:22px;bottom:-9px;border:8px solid transparent;border-bottom:0;border-top-color:var(--accent)}
+
+  /* แผงของเครื่องที่เลือก */
+  .mqpanel{margin:12px 14px 0;background:var(--solid);border:1px solid var(--line-strong);border-radius:14px}
+  .mqhead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 28px;padding:14px 18px 12px;border-bottom:.5px solid var(--line)}
+  .mqname h2{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .mqname span{font-size:12px;color:var(--ink-dim)}
+  .mqk{display:flex;flex-wrap:wrap;gap:6px 26px;margin:0}
+  .mqk div{display:flex;flex-direction:column}
+  .mqk dt{font-size:11px;color:var(--ink-faint)}
+  .mqk dd{margin:0;font:800 16px var(--mono);letter-spacing:-.01em}
+  .mqsec{padding:4px 18px 12px}
+  .mqsec > h3{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:14px;font-weight:800;margin:12px 0 6px}
+  .mqsec > h3 small{font-size:11.5px;font-weight:500;color:var(--ink-dim)}
+  .mqsec > h3 small b{font-family:var(--mono);color:var(--ink)}
+  /* ตัวแผง: คิว (ซ้าย) · วันนี้ + หมายเหตุ (ขวา) — จอแคบซ้อนกัน วันนี้อยู่บน */
+  .mqside{background:var(--bg2);border-bottom:.5px solid var(--line)}
+  @media (min-width: 1180px){
+    .mqbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,380px);grid-template-areas:"main side"}
+    .mqmain{grid-area:main;min-width:0}
+    .mqside{grid-area:side;border-bottom:0;border-left:.5px solid var(--line);border-radius:0 0 14px 0;align-self:stretch}
+    .mqside .mqtoday{position:sticky;top:0;z-index:1;background:var(--bg2);border-bottom:.5px solid var(--line)}
+  }
+  .mqnone{font-size:12.5px;color:var(--ink-dim);padding:6px 2px 4px}
+  .mqmore{font-size:12px;color:var(--ink-dim);padding:10px 0 0 26px}
+  .mqempty{max-width:520px;margin:60px auto;text-align:center;color:var(--ink-dim);font-size:13px}
+  .mqempty h3{font-size:17px;color:var(--ink);margin-bottom:6px}
+  .mqempty .tbtn{margin-top:12px}
+
+  /* เส้นเวลา: แกนซ้าย = วัน · แถว = Lot ตามลำดับที่เครื่องจะได้ตัด */
+  .mqline{position:relative;padding-left:26px}
+  .mqline::before{content:"";position:absolute;left:8px;top:16px;bottom:10px;width:2px;border-radius:2px;background:var(--line-strong)}
+  .mqday{position:relative;display:grid;grid-template-columns:minmax(150px,auto) minmax(80px,1fr) auto;align-items:center;gap:12px;padding:14px 10px 6px 0}
+  .mqday::before{content:"";position:absolute;left:-23px;top:17px;width:12px;height:12px;box-sizing:border-box;border-radius:50%;background:var(--solid);border:2.5px solid var(--accent)}
+  .mqday.t0::before{background:var(--accent)}
+  .mqday .dt{font-size:13.5px;font-weight:700;white-space:nowrap}
+  .mqday .dt b{color:var(--accent);margin-right:2px}
+  body[data-theme="dark"] .mqday .dt b{color:#8fb0f0}
+  .mqday .segs{display:flex;gap:1px;height:10px;border-radius:5px;overflow:hidden;background:var(--bg2)}
+  .mqday .segs i{display:block;height:100%;flex:none;background:var(--s2)}
+  .mqday .segs i.b{background:color-mix(in srgb,var(--s2) 55%,var(--solid))}
+  .mqday .segs i.c{background:var(--orange)}
+  .mqday .use{font-size:11.5px;color:var(--ink-dim);white-space:nowrap}
+  .mqday .use b{font-family:var(--mono);color:var(--ink)}
+
+  .mqrow{display:grid;grid-template-columns:30px minmax(0,1fr) 84px 150px 84px 98px;align-items:center;gap:10px;padding:7px 10px;cursor:pointer;font-size:12.5px;line-height:1.35}
+  .mqline .mqrow:not(.cont) + .mqrow:not(.cont){border-top:.5px solid var(--line)}
+  .mqrow:hover{background:var(--bg2)}
+  .mqtoday .mqrow{border-radius:9px}
+  .mqtoday .mqrow:hover{background:var(--solid)}
+  .mqrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .mqrow.sel{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+  .mqrow .ix{font:800 12px var(--mono);color:var(--ink-faint);text-align:right}
+  .mqrow.carry .ix{color:var(--orange)}
+  .mqrow .lot{min-width:0}
+  .mqrow .lot b{font:800 13px var(--mono);word-break:break-all}
+  .mqrow .lot small{display:block;color:var(--ink-dim);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mqrow .lot small.pdr{color:var(--warn)}
+  .mqrow .lot small.spn{color:var(--accent)}
+  body[data-theme="dark"] .mqrow .lot small.spn{color:#8fb0f0}
+  .mqtag{display:inline-block;margin-left:7px;padding:0 7px;border-radius:10px;font-size:10.5px;font-weight:800;line-height:17px;vertical-align:1px;color:var(--orange);background:color-mix(in srgb,var(--orange) 14%,transparent)}
+  .mqtag.now{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
+  .mqrow .pcs{font:800 13px var(--mono);text-align:right;white-space:nowrap}
+  .mqrow .pcs small{display:block;font:400 10.5px var(--font);color:var(--ink-faint)}
+  .mqmat{justify-self:start;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:20px}
+  .mqmat.ok{color:var(--good);background:color-mix(in srgb,var(--good) 13%,transparent)}
+  .mqmat.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+  .mqmat.unk{color:var(--ink-dim);border:.5px dashed var(--line-strong)}
+  .mqrow .sb,.mqrow .due{font:700 12px var(--mono);white-space:nowrap}
+  .mqrow .sb small,.mqrow .due small{display:block;font:400 10.5px var(--font);color:var(--ink-faint)}
+  .mqrow .sb.late,.mqrow .due.red{color:var(--bad)}
+  .mqrow .due.amb{color:var(--warn)}
+  .mqrow.cont{grid-template-columns:30px minmax(0,1fr);padding-top:3px;padding-bottom:3px;opacity:.72}
+  .mqrow.cont .lot b{font-size:12px}
+  /* วันนี้ (ยิงจริง) */
+  .mqrow.mqt{grid-template-columns:22px minmax(0,1fr) auto;grid-template-areas:"ix lot pcs" ". pr st";row-gap:5px;cursor:default;padding:8px 8px}
+  .mqrow.mqt .ix{grid-area:ix} .mqrow.mqt .lot{grid-area:lot} .mqrow.mqt .pcs{grid-area:pcs} .mqrow.mqt .mqprog{grid-area:pr} .mqrow.mqt .mqst{grid-area:st;text-align:right}
+  .mqrow.mqt[data-bd]{cursor:pointer}
+  .mqrow.mqt .ix{color:var(--good);font-size:11px}
+  .mqrow.mqt.done{opacity:.7}
+  .mqprog .pb{display:block;height:6px;border-radius:4px;background:var(--line);overflow:hidden}
+  .mqprog .pb i{display:block;height:100%;background:var(--s2);border-radius:4px}
+  .mqrow.mqt.done .mqprog .pb i{background:var(--good)}
+  .mqprog small{display:block;font:400 10.5px var(--mono);color:var(--ink-dim);margin-top:2px}
+  .mqst{font-size:12px;font-weight:700;color:var(--ink-dim);white-space:nowrap}
+  .mqst.ok{color:var(--good)}
+  .mqfoot{padding:10px 18px 16px;border-top:.5px solid var(--line);font-size:12px;line-height:1.55;display:flex;flex-direction:column;gap:6px;color:var(--ink-dim)}
+  .mqfoot b{color:var(--ink)}
+  .mqfoot .tbtn{padding:2px 10px;margin-left:6px}
+  .mcpop .mqlink{align-self:flex-start;padding:3px 10px;font-size:12px}
+
+  /* จอทีวี (#board-mc-tv) */
+  body.tv .mqm .mqh b{font-size:18px} body.tv .mqm .mqtd b{font-size:22px} body.tv .mqm .mqqq,body.tv .mqm .mqnow{font-size:13.5px}
+  body.tv .mqname h2{font-size:32px} body.tv .mqrow{font-size:15px} body.tv .mqrow .lot b{font-size:16px} body.tv .mqrow .lot small{font-size:13.5px}
+  body.tv .mqday .dt{font-size:16px} body.tv .mqm kbd{display:none}
+
+  @media (max-width: 760px){
+    .mqtiles{grid-template-columns:repeat(2,minmax(0,1fr));padding:10px 10px 0}
+    .mqpanel{margin:12px 10px 0}
+    .mqhead,.mqsec,.mqfoot{padding-left:12px;padding-right:12px}
+    .mqday{grid-template-columns:1fr auto;padding-right:2px}
+    .mqday .segs{grid-column:1/-1;order:3}
+    .mqrow{grid-template-columns:24px minmax(0,1fr) auto;grid-template-areas:"ix lot pcs" ". mat mat" ". sb due";row-gap:4px;padding:8px 6px}
+    .mqrow .ix{grid-area:ix} .mqrow .lot{grid-area:lot} .mqrow .pcs{grid-area:pcs} .mqrow .mqmat{grid-area:mat} .mqrow .sb{grid-area:sb} .mqrow .due{grid-area:due;text-align:right}
+    .mqrow.cont{grid-template-areas:none} .mqrow.cont .ix,.mqrow.cont .lot{grid-area:auto}
+  }
 </style>
 </head>
 <body>
@@ -871,7 +1023,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.20</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.21</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <span id="fresh" class="stockOnly">กำลังเชื่อมต่อ…</span>
@@ -1712,10 +1864,15 @@ var GasFS = (function () {
 
    v1.20 (2026-10-16 11:25 ผู้ใช้: “ต้องใส่คีย์ เชื่อมต่อไปเลย แล้วปิดปุ่มเชื่อมต่อไว้ด้วย”)
      · รหัสเชื่อมต่อ Google Drive อยู่ในไฟล์ (DRIVE_CODE) · ไม่ถามรหัส · ซ่อนปุ่ม Google Drive (?drive = ปุ่มกลับมา) — ดูหัวบล็อก v1.20 ข้างล่าง
+
+   v1.21 (2026-10-17 08:50 ผู้ใช้: “เพิ่มแท็บ แผนงานตัดทั้งหมด กับ งานตัดรายเครื่อง ชื่อแท็บเท่ ๆ ภาษาอังกฤษ · กด 1 เครื่อง แสดง Lot ที่ต้องตัดของเครื่องนั้น
+      วัตถุดิบครบ = ตัดได้ ให้เข้ามารอตัดได้เลย · UI ดูง่าย ไม่ใช่แบบ KFC”)
+     · คิวตัดงานมี 2 แท็บ: Master Plan (#board · 6 ช่องเดิม) · Machine Queue (#board-mc · จอทีวี #board-mc-tv)
+     · Machine Queue: เลือกเครื่อง → วันนี้ยิงจริง + คิวรอตัดของเครื่องนั้นเป็นเส้นเวลาแยกวัน (คิวถัดไปได้เครื่องด้วย) — ดูหัวบล็อก v1.21 ข้างล่าง
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.20';
+var VER = '1.21';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -2504,7 +2661,7 @@ function afterConnect() {
 /* ═════════ เส้นทาง: #home · #stock · #lots ═════════ */
 function viewOf() {
   var h = String(location.hash || '').replace(/^#\/?/, '').toLowerCase();
-  return h === 'stock' ? 'stock' : (h === 'lots' || h === 'lot' || h === 'data6') ? 'lots' : (h === 'board' || h === 'board-tv' || h === 'queue') ? 'board' : (h === 'cabinet' || h === 'cab' || h === 'stock-cabinet') ? 'cabinet' : 'home';   // v1.5: + คิวตัดงาน · v1.17 + Stock Cabinet
+  return h === 'stock' ? 'stock' : (h === 'lots' || h === 'lot' || h === 'data6') ? 'lots' : (h === 'board' || h === 'board-tv' || h === 'queue' || h === 'board-mc' || h === 'board-mc-tv') ? 'board' : (h === 'cabinet' || h === 'cab' || h === 'stock-cabinet') ? 'cabinet' : 'home';   // v1.5: + คิวตัดงาน · v1.17 + Stock Cabinet
 }
 function go(v) { var h = '#' + v; if (location.hash === h) route(); else location.hash = h; }
 function route() {
@@ -2607,7 +2764,7 @@ function renderHome() {
       /* v1.17 ช่องที่ 4: ตู้สำเร็จรูปรอขาย */
       + '<button class="rcard cb" data-go="cabinet"><span class="rkey" title="กดปุ่ม 4">4</span><div class="ricon">' + CAB_ICON + '</div><div class="rlabel">Stock Cabinet</div><div class="rdesc">ตู้สำเร็จรูปรอขาย<br>รูป · ขนาด · จำนวนพร้อมขาย</div><div class="rstat" id="wCab"></div></button>'
       + '</div><div class="wstatus" id="wStatus"></div>'
-      + '<div class="wnote">ลิงก์ตรง: เติม <span class="mono">#stock</span> · <span class="mono">#lots</span> · <span class="mono">#board</span> (จอทีวี <span class="mono">#board-tv</span>) · <span class="mono">#cabinet</span> ท้ายที่อยู่หน้านี้ · ปุ่ม ⌂ บนแถบ = กลับมาหน้านี้</div></div>';
+      + '<div class="wnote">ลิงก์ตรง: เติม <span class="mono">#stock</span> · <span class="mono">#lots</span> · <span class="mono">#board</span> (จอทีวี <span class="mono">#board-tv</span>) · <span class="mono">#board-mc</span> คิวรายเครื่อง (จอทีวี <span class="mono">#board-mc-tv</span>) · <span class="mono">#cabinet</span> ท้ายที่อยู่หน้านี้ · ปุ่ม ⌂ บนแถบ = กลับมาหน้านี้</div></div>';
     tickClock();
   }
   $('wUser').textContent = ' ' + me();
@@ -3633,6 +3790,16 @@ function bdPlan() {
     });
     cap = 0; T = 0; M.forEach(function (m) { cap += m.ppd; T += m.load; });
     sawNew = T - carry;
+    /* ───────── v1.21: คิวรายเครื่อง (Machine Queue) ─────────
+       เดิม: วางเครื่องให้แค่ Lot กำลังตัด + Lot ที่ได้เริ่มพรุ่งนี้ · “คิวถัดไป” (พร้อมตัด แต่เกินกำลังพรุ่งนี้) ไม่มีเครื่อง → ดูรายเครื่องไม่ได้
+       ผู้ใช้ 17/10/2026 08:50: “กด 1 เครื่อง รายการด้านล่างเป็นเครื่องนั้น แสดง Lot ที่ต้องตัดของเครื่องนั้น · วัตถุดิบครบ คือตัดได้ ก็ให้เอาเข้ามารอตัดได้เลย”
+       ตอนนี้: ไล่คิวถัดไปลงเครื่องต่อจากพรุ่งนี้ ด้วยกติกาเดียวกับพรุ่งนี้ (เครื่องที่สัดส่วนงาน ÷ ชิ้นต่อวัน น้อยสุด ตามลำดับวันต้องเริ่ม)
+       ใช้ตัวนับแยก (qload) — ไม่แตะ m.load / ตัวเลขพรุ่งนี้ของแถบบน · m.q = คิวทั้งหมดของเครื่อง (ค้างตัดต่อ + พรุ่งนี้ + ถัดไป) เรียงตามจุดเริ่ม (ชิ้นสะสม)
+       Lot ติดอยู่ (วัตถุดิบไม่ครบ · ไม่มี BOM) ไม่เข้าคิวเครื่อง · g.mq = เครื่อง/ลำดับ/วันเริ่มโดยประมาณ (รายละเอียด Lot) */
+    M.forEach(function (m) { m.q = m.lots.slice(); m.qload = m.load; });
+    var leastQ = function () { var b = null; M.forEach(function (m) { if (!b || m.qload / m.ppd < b.qload / b.ppd) b = m; }); return b; };
+    next.forEach(function (g) { var m = leastQ(); m.q.push({ g: g, p: g.remP, start: m.qload, later: true }); m.qload += g.remP; });
+    M.forEach(function (m) { m.q.forEach(function (o, i) { o.pos = i + 1; if (!o.carry) o.g.mq = { n: m.n, pos: i + 1, start: o.start, p: o.p, ppd: m.ppd, day: Math.floor(o.start / m.ppd + 1e-9) }; }); });
   } else {
     /* ปิดวางตามเครื่อง (หรือไม่มีเครื่องเปิด) = แบบ v1.6: นาทีเลื่อยก้อนเดียว (capSaw) */
     cap = st.capSaw;
@@ -3659,6 +3826,7 @@ function bdPlan() {
 /* ═════════ หน้าจอ ═════════ */
 function bdShow() {
   document.body.classList.toggle('tv', /tv$/i.test(location.hash));
+  B.tab = /^#?\/?board-mc/i.test(location.hash) ? 'mc' : 'plan';   // v1.21 แท็บ: #board = Master Plan · #board-mc = Machine Queue (จอทีวี #board-mc-tv)
   bdRender();
   if (!ensureFs()) return;
   Promise.all([lotLoad({ quiet: L.loaded }), bdLoadAux()]).then(function () { if (view() === 'board') bdRender(); });
@@ -3750,11 +3918,22 @@ function bdCol(id, title, sub, color, list, P, col, extraHead) {
 function bdRender() {
   var E = $('board'); if (!E || view() !== 'board') return;
   if (!$('bdCols')) {
-    E.innerHTML = '<div id="bdBar"></div><div id="bdMc"></div><div id="bdBanner" class="hide"></div><div id="bdFlt"></div><div id="bdCols"></div><div id="bdSelBar" class="hide"></div><aside id="bdDetail" class="hide"></aside>';   // v1.7 + แถบเครื่อง · v1.12 + ตัวกรอง/แถบที่เลือก
+    E.innerHTML = '<div id="bdTabs"></div><div id="bdBar"></div><div id="bdMc"></div><div id="bdBanner" class="hide"></div><div id="bdFlt"></div><div id="bdCols"></div><div id="bdMq"></div><div id="bdSelBar" class="hide"></div><aside id="bdDetail" class="hide"></aside>';   // v1.7 + แถบเครื่อง · v1.12 + ตัวกรอง/แถบที่เลือก · v1.21 + แท็บ/คิวรายเครื่อง
   }
-  if (!L.loaded && !L.rows.length) { $('bdCols').innerHTML = '<div class="muted" style="padding:40px;grid-column:1/-1;text-align:center">กำลังอ่าน data 6 จาก Google Drive…</div>'; bdBar(null); return; }
-  if (L.none) { $('bdCols').innerHTML = '<div class="lempty" style="grid-column:1/-1"><h3>ยังไม่มีข้อมูล Lot ผลิต (data 6)</h3>เข้าหน้า Lot ผลิต แล้วลากไฟล์ CSV จาก BI มาวางก่อน<br><button class="tbtn pri" data-go="lots">ไปหน้า Lot ผลิต</button></div>'; bdBar(null); return; }
+  /* ───────── v1.21: แท็บ Master Plan / Machine Queue ─────────
+     เดิม: หน้าคิวตัดงานมีแบบเดียว (6 ช่องแบบจอครัว) · ผู้ใช้ 17/10/2026 08:50 ขอแท็บ “แผนงานตัดทั้งหมด” กับ “งานตัดรายเครื่อง”
+     ตอนนี้: #board.mq = แท็บรายเครื่อง (CSS ซ่อน แถบเครื่อง/ตัวกรอง/6 ช่อง · แสดง #bdMq) · ไม่วาด 6 ช่องตอนอยู่แท็บรายเครื่อง (ไม่เปลืองเครื่อง) */
+  var mq = B.tab === 'mc', msgEl = mq ? $('bdMq') : $('bdCols');
+  E.classList.toggle('mq', mq); bdTabs(null);
+  if (!L.loaded && !L.rows.length) { msgEl.innerHTML = '<div class="muted" style="padding:40px;grid-column:1/-1;text-align:center">กำลังอ่าน data 6 จาก Google Drive…</div>'; bdBar(null); return; }
+  if (L.none) { msgEl.innerHTML = '<div class="lempty" style="grid-column:1/-1"><h3>ยังไม่มีข้อมูล Lot ผลิต (data 6)</h3>เข้าหน้า Lot ผลิต แล้วลากไฟล์ CSV จาก BI มาวางก่อน<br><button class="tbtn pri" data-go="lots">ไปหน้า Lot ผลิต</button></div>'; bdBar(null); return; }
   var P = B.plan = bdPlan(), st = B.set;
+  bdTabs(P);
+  if (mq) {
+    bdBar(P); bdBanner(P); bdMqRender(P);
+    if (B.sel) { var gq = P.G.get(B.sel); if (gq && !gq.closed) bdDetail(B.sel); else bdCloseDetail(); }
+    return;
+  }
   var sc = $('bdCols'), keep = {}; sc.querySelectorAll('.blist').forEach(function (l) { keep[l.id] = l.scrollTop; });
   sc.innerHTML = bdCol('bdB', 'ติดอยู่', 'ไม่มี BOM · วัตถุดิบไม่พอ', 'var(--bad)', P.blocked, P, 'blk')
     + bdCol('bdT', 'ตัดพรุ่งนี้', bdDayTxt(P.tmr) + ' · เลื่อยที่เหลือหลังงานค้าง', 'var(--orange)', P.tomorrow, P, 'tmr')
@@ -3855,6 +4034,7 @@ function bdDetail(id) {
   var P = B.plan, g = P && P.G.get(id); if (!g || g.closed) return;   // v1.10 ปิดเองแล้วไม่มีข้อมูลแผน
   B.sel = id; var D = $('bdDetail'); D.classList.remove('hide');
   $('bdCols').querySelectorAll('.bcard').forEach(function (c) { c.classList.toggle('sel', c.dataset.bd === id); });
+  var MQ = $('bdMq'); if (MQ) MQ.querySelectorAll('.mqrow[data-bd]').forEach(function (c) { c.classList.toggle('sel', c.dataset.bd === id); });   // v1.21 แถวในคิวรายเครื่อง
   var x = g.x, st = B.set, inT = P.tomorrow.indexOf(g) >= 0, inN = P.next.indexOf(g) >= 0, inB = P.blocked.indexOf(g) >= 0, inC = P.cutting.indexOf(g) >= 0, inA = P.after.indexOf(g) >= 0, inF = P.fin.indexOf(g) >= 0;
   var where = inT ? 'ตัดพรุ่งนี้ (' + bdDayTxt(P.tmr) + ') ลำดับ ' + g.q : inN ? 'คิวถัดไป ลำดับ ' + g.q : inB ? 'ติดอยู่ — ' + g.why : inC ? 'กำลังตัด' : inA ? 'หลังตัด — ' + bdAtTxt(g) : inF ? 'พร้อมส่ง' : g.st === 3 ? 'Finish' : g.sg && g.sg.fin ? 'เข้าคลังครบแล้ว' : '—';
   var kv = function (k, v) { return '<span class="k">' + esc(k) + '</span><span class="v">' + (v === '' || v == null ? '<span class="muted">—</span>' : v) + '</span>'; };
@@ -3875,6 +4055,8 @@ function bdDetail(id) {
     + kv('เวลาเจาะ', (g.drillEst ? '≈ ' : '') + bdH(g.drill) + (g.drillEst ? ' <span class="muted">(' + st.drillPP + ' นาที/ชิ้น)</span>' : srcT(g.drillSrc)) + (g.cr && g.cr.nc_panels != null ? ' <span class="muted">· ' + fmtN((g.cr.nc_vhole || 0) + (g.cr.nc_hhole || 0)) + ' รู · ' + fmtN(g.cr.nc_panels) + ' แผ่น</span>' : ''))
     + (P.unit === 'p' && (g.mc || g.mcs.length) ? kv('เครื่อง', (g.mcs.length ? 'วันนี้ ' + g.mcs.map(function (m) { return esc(m.n) + ' <span class="muted">' + String(m.last).slice(11, 16) + '</span>'; }).join(' · ') : '')
         + (g.mc ? (g.mcs.length ? '<br>' : '') + 'พรุ่งนี้ ' + esc(g.mc) + (g.startAt != null ? ' <span class="muted">(ต่อจาก ' + fmtN(Math.round(g.startAt)) + ' ชิ้น)</span>' : '') : '')) : '')
+    /* v1.21 คิวรายเครื่อง: Lot รอตัด (พรุ่งนี้ + คิวถัดไป) ลงเครื่องไหน ลำดับที่เท่าไร เริ่มวันไหนโดยประมาณ */
+    + (g.mq ? kv('คิวเครื่อง (แผน)', '<a href="#board-mc" data-mqgo="' + esc(g.mq.n) + '">' + esc(g.mq.n) + '</a> · คิวที่ ' + g.mq.pos + ' · เริ่ม ≈ ' + esc(bdMqDayTxt(P, g.mq.day)) + ' <span class="muted">(ต่อจาก ' + fmtN(Math.round(g.mq.start)) + ' ชิ้นของเครื่อง)</span>') : '')
     + (g.remP ? kv('ชิ้นที่ยังไม่ตัด', fmtN(g.remP)) : '')
     + kv('Shelf · Bu · Pool', esc([g.shelf, g.bu, g.pool].filter(Boolean).join(' · ')))
     + '</div></div>';
@@ -3897,7 +4079,8 @@ function bdDetail(id) {
   if (x) h += '<div class="sec"><h3>ข้อมูลเพิ่ม</h3><div class="kv">' + kv('ส่งโดย', esc(x.by || '')) + kv('เมื่อ', esc(String(x.at || '').replace('T', ' ').slice(0, 16))) + (x.note ? kv('หมายเหตุ', esc(x.note)) : '') + '</div></div>';
   D.innerHTML = h; D.scrollTop = 0;
 }
-function bdCloseDetail() { B.sel = null; var D = $('bdDetail'); if (D) D.classList.add('hide'); var c = $('bdCols'); if (c) c.querySelectorAll('.bcard.sel').forEach(function (e) { e.classList.remove('sel'); }); }
+function bdCloseDetail() { B.sel = null; var D = $('bdDetail'); if (D) D.classList.add('hide'); var c = $('bdCols'); if (c) c.querySelectorAll('.bcard.sel').forEach(function (e) { e.classList.remove('sel'); });
+  var q = $('bdMq'); if (q) q.querySelectorAll('.mqrow.sel').forEach(function (e) { e.classList.remove('sel'); }); }   // v1.21
 function bdSettings() {
   var s = B.set, wd = [1, 2, 3, 4, 5, 6, 0];
   /* v1.7.1: ช่องที่กรอกเป็นนาที (กำลังเครื่องต่อวัน) โชว์ “= 8 ชม.” ข้างช่อง ไม่ต้องหาร 60 เอง (dur = true) */
@@ -3949,13 +4132,13 @@ function bdSettings() {
   });
 }
 function bdKey(e) {
-  if (e.key === 'Escape') { if (!$('ov').classList.contains('hide')) return; if (B.sel) { bdCloseDetail(); return; } if (document.body.classList.contains('tv')) go('board'); }
+  if (e.key === 'Escape') { if (!$('ov').classList.contains('hide')) return; if (B.sel) { bdCloseDetail(); return; } if (document.body.classList.contains('tv')) go(B.tab === 'mc' ? 'board-mc' : 'board'); }   // v1.21 ออกจากจอทีวีกลับแท็บเดิม
 }
 function bdBindUi() {
   $('board').addEventListener('click', function (e) {
     var a = e.target.closest('[data-bact]');
     if (a) { var k = a.dataset.bact;
-      if (k === 'set') bdSettings(); else if (k === 'tv') { if (document.body.classList.contains('tv')) go('board'); else go('board-tv'); }
+      if (k === 'set') bdSettings(); else if (k === 'tv') { var bm = B.tab === 'mc' ? 'board-mc' : 'board'; if (document.body.classList.contains('tv')) go(bm); else go(bm + '-tv'); }   // v1.21 จอทีวีของแท็บที่เปิดอยู่
       else if (k === 'x') bdCloseDetail(); else if (k === 'tolot') { var id = B.sel, g = B.plan && B.plan.G.get(id); go('lots'); if (g) setTimeout(function () { L.f.q = ''; var q = $('lq'); if (q) q.value = ''; lotRefresh(false); lotShowDetail(g.key); }, 60); }
       return; }
     var gl = e.target.closest('[data-go]'); if (gl) { go(gl.dataset.go); return; }
@@ -4735,7 +4918,8 @@ function bdMcPop(name, anchor) {
   var P = B.plan, st = B.set, m = st.machines.find(function (x) { return x.n === name; }) || { n: name, pc: name, ppd: 0 };
   var pm = P && P.M ? P.M.find(function (x) { return x.n === name; }) : null;
   var X = B.cp, c = X && X.pc ? X.pc[String(m.pc || name).toUpperCase()] || null : null;
-  var h = '<div class="h"><b>' + esc(name) + '</b><span class="muted">' + esc(m.pc && m.pc !== name ? m.pc : '') + '</span><button class="tbtn" data-mcx title="ปิด (Esc)">✕</button></div>';
+  var h = '<div class="h"><b>' + esc(name) + '</b><span class="muted">' + esc(m.pc && m.pc !== name ? m.pc : '') + '</span><button class="tbtn" data-mcx title="ปิด (Esc)">✕</button></div>'
+    + (pm ? '<button class="tbtn mqlink" data-mqgo="' + esc(name) + '" title="แท็บ Machine Queue: คิวทั้งหมดของเครื่องนี้ (ค้างตัดต่อ + พรุ่งนี้ + Lot ที่รอตัดถัดไป)">ดูคิวทั้งหมดของเครื่องนี้</button>' : '');   // v1.21
   if (pm) {
     var cum = 0;
     h += '<div class="sec1">พรุ่งนี้ ' + esc(bdDayTxt(P.tmr)) + ' · <b>' + pm.lots.length + '</b> Lot · <b class="mono">' + fmtN(Math.round(pm.load)) + '</b> / ' + fmtN(pm.ppd) + ' ชิ้น' + (pm.load > pm.ppd ? ' <span class="lo">ล้น ' + fmtN(Math.round(pm.load - pm.ppd)) + '</span>' : '') + '</div>'
@@ -5455,7 +5639,215 @@ var DRIVE_FIXED = (function () {
 })();
 if (DRIVE_FIXED) document.body.classList.add('drvFixed');
 
-window.StarStock = { S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.21: คิวตัดงาน 2 แท็บ — Master Plan (แผนตัดทั้งหมด) · Machine Queue (งานตัดรายเครื่อง)
+   ผู้ใช้ 17/10/2026 08:50 (รูปหน้าคิวตัดงาน): “ในหน้าคิวงานตัด เพิ่มแท็บ เป็นแผนงานตัดทั้งหมด กับ งานตัดรายเครื่อง หาชื่อแท็บเท่ ๆ ภาษาอังกฤษ
+     · หน้างานตัดรายเครื่อง มี 6 เครื่องเริ่มต้นนี้ถูกต้อง เมื่อกด 1 เครื่อง รายการด้านล่างเป็นเครื่องนั้น แสดง Lot ที่ต้องตัดของเครื่องนั้น
+       โดยวัตถุดิบครบ คือตัดได้ ก็ให้เอาเข้ามารอตัดได้เลย · UI ดูง่าย ๆ เอาแบบอื่นที่ไม่ใช่แบบ KFC”
+   เดิม: หน้าคิวตัดงานมีแบบเดียว = 6 ช่องแบบจอครัว (KFC) · เครื่องรู้แค่ Lot พรุ่งนี้ (กล่องรายชื่อ v1.15) · Lot คิวถัดไปไม่มีเครื่อง
+   ตอนนี้:
+     · แท็บบนสุด: Master Plan (#board = 6 ช่องเดิมทุกอย่าง) · Machine Queue (#board-mc · จอทีวี #board-mc-tv)
+       สลับแท็บไม่โหลดข้อมูลใหม่ (ใช้แผนเดิม) · จอทีวีเปิดตามแท็บที่อยู่ · Esc ออกจากจอทีวีกลับแท็บเดิม
+     · Machine Queue: ปุ่มเครื่องตามแถบเครื่องเดิม (เครื่องที่เปิดใน ⚙ + เครื่องปิดที่ยิงวันนี้) — วันนี้ยิงกี่ชิ้น/ชิ้นต่อวัน · กำลังตัด/ว่าง · Lot รอตัด
+       กดเครื่อง = รายการด้านล่างเป็นของเครื่องนั้น (จำเครื่องที่เลือกไว้ในเครื่องนี้ — จอหน้าเครื่องเปิดค้างได้) · ปุ่ม 1–9 / ← → เลือกเครื่อง
+       ① วันนี้ที่เครื่องนี้ (ยิงจริงจาก check_part): Lot ที่ยิงวันนี้ · ▶ ตัวที่กำลังยิง · ตัดไปแล้วเท่าไร / ตัดครบแล้ว
+       ② คิวรอตัดเป็นเส้นเวลาแยกวัน (พรุ่งนี้ → วันทำงานถัดไป): ค้างตัดต่อ (กำลังตัด) ก่อน → Lot ที่วัตถุดิบครบ (หรือยังไม่รู้วัตถุดิบ) ตามลำดับวันต้องเริ่ม
+          หนึ่งวัน = ชิ้นต่อวันของเครื่อง (⚙) · แถบหัววัน = ชิ้นที่ลงวันนั้น · Lot ใหญ่เกินวัน = “ต่อถึง …” + แถวต่อในวันถัดไป
+          Lot ติดอยู่ (วัตถุดิบไม่ครบ · ไม่มี BOM · ยังไม่แตกชิ้นงาน) ไม่เข้าคิวเครื่อง — บอกจำนวน + ปุ่มไปดูใน Master Plan
+       กดแถว = รายละเอียด Lot (แผงขวาเดิม) · รายละเอียดบอก “คิวเครื่อง (แผน)” ด้วย · กล่องรายชื่อเครื่อง (v1.15) มีปุ่ม “ดูคิวทั้งหมดของเครื่องนี้”
+     · การจัดเครื่อง = แผนอัตโนมัติ (ดูหัวบล็อก v1.21 ใน bdPlan): Lot กำลังตัด = เครื่องที่ยิงจริง · Lot ใหม่ = เครื่องที่งานน้อยสุด
+       ยังไม่มีกติกา “Lot นี้ต้องลงเครื่องไหน” (ขนาดแผ่น · ชนิดงาน) — ผู้ใช้จะเช็คอีกที
+   ═══════════════════════════════════════════════════════════════════════ */
+var BQ_K = 'sxlocaltrial:furnitech:bdMq';   // { mc: ชื่อเครื่องที่เลือกไว้ } — เก็บในเครื่องนี้เท่านั้น
+var BQ = { mc: String((lsGetJ(BQ_K, {}) || {}).mc || ''), shown: '', MAXL: 120 };
+if (!B.tab) B.tab = 'plan';
+var BQ_IC_PLAN = '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="4" height="14" rx="1.2" fill="currentColor" opacity=".9"/><rect x="8" y="3" width="4" height="9" rx="1.2" fill="currentColor" opacity=".6"/><rect x="14" y="3" width="4" height="11" rx="1.2" fill="currentColor" opacity=".75"/></svg>';
+var BQ_IC_MC = '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5" cy="5" r="2.2" fill="currentColor"/><rect x="9" y="3.6" width="9" height="2.8" rx="1.4" fill="currentColor" opacity=".85"/><circle cx="5" cy="10" r="2.2" fill="currentColor" opacity=".7"/><rect x="9" y="8.6" width="6" height="2.8" rx="1.4" fill="currentColor" opacity=".6"/><circle cx="5" cy="15" r="2.2" fill="currentColor" opacity=".5"/><rect x="9" y="13.6" width="7.5" height="2.8" rx="1.4" fill="currentColor" opacity=".45"/></svg>';
+
+/* วันที่ k ของคิวเครื่อง: 0 = พรุ่งนี้ (วันทำงานถัดไป · ตรงกับ Master Plan) · k = เลื่อนไป k วันทำงาน */
+function bdMqDayMs(P, k) { return k > 0 ? bdShiftWork(P.tmr, k) : P.tmr; }
+function bdMqDayTxt(P, k) { return (k > 0 ? '' : 'พรุ่งนี้ ') + bdDayTxt(bdMqDayMs(P, k)); }
+
+function bdTabs(P) {
+  var E = $('bdTabs'); if (!E) return;
+  var nAll = P ? P.blocked.length + P.tomorrow.length + P.next.length + P.cutting.length + P.after.length + P.fin.length : 0;
+  var nM = P && P.M ? P.M.length : 0;
+  var t = function (k, en, th, sub, ic, tip) {
+    return '<button class="bdtab' + (B.tab === k ? ' on' : '') + '" data-btab="' + k + '" role="tab" aria-selected="' + (B.tab === k) + '" title="' + esc(tip) + '">' + ic
+      + '<span><b>' + en + '</b><small>' + th + (sub ? ' · ' + sub : '') + '</small></span></button>'; };
+  E.innerHTML = '<div class="bdtabs" role="tablist" aria-label="มุมมองคิวตัดงาน">'
+    + t('plan', 'Master Plan', 'แผนตัดทั้งหมด', P ? nAll.toLocaleString('th-TH') + ' Lot' : '', BQ_IC_PLAN, 'ทุก Lot ตามขั้น: ติดอยู่ → ตัดพรุ่งนี้ → คิวถัดไป → กำลังตัด → หลังตัด → พร้อมส่ง (#board)')
+    + t('mc', 'Machine Queue', 'งานตัดรายเครื่อง', nM ? nM + ' เครื่อง' : '', BQ_IC_MC, 'เลือกเครื่อง แล้วดูคิว Lot ที่เครื่องนั้นต้องตัด เรียงตามวัน (#board-mc)')
+    + '</div>';
+}
+/* สลับแท็บ: ไม่ผ่าน route() (ไม่โหลดใหม่) — แก้ที่อยู่ให้ตรงด้วย replaceState เปิดซ้ำ/แชร์ลิงก์ได้แท็บเดิม */
+function bdTabGo(k, mcName) {
+  if (mcName) { BQ.mc = mcName; lsSetJ(BQ_K, { mc: mcName }); }
+  var h = (k === 'mc' ? 'board-mc' : 'board') + (document.body.classList.contains('tv') ? '-tv' : '');
+  if (view() !== 'board') { go(h); return; }
+  bdMcPopClose();
+  if (B.tab === k) { if (k === 'mc') bdMqRender(B.plan, true); return; }
+  B.tab = k;
+  try { history.replaceState(null, '', '#' + h); } catch (e) { go(h); return; }
+  bdRender();
+  var q = $('bdMq'); if (q && k === 'mc') q.scrollTop = 0;
+}
+
+/* เครื่องที่โชว์ = ชุดเดียวกับแถบเครื่องของ Master Plan (เปิดใน ⚙ + ปิดแต่ยิงวันนี้) · เครื่องนอกรายการไม่มีคิวให้ดู = ไม่โชว์ */
+function bdMqMachines(P) {
+  var st = B.set, X = B.cp, today0 = X.day === bdIsoLocal(Date.now()).slice(0, 10), plan = {}, out = [];
+  if (P && P.M) P.M.forEach(function (m) { plan[m.n] = m; });
+  st.machines.forEach(function (m) { var c = today0 && m.pc ? X.pc[String(m.pc).toUpperCase()] || null : null; if (plan[m.n] || (c && st.cutOn)) out.push({ m: m, pm: plan[m.n] || null, c: st.cutOn ? c : null }); });
+  return out;
+}
+function bdMqIdle(c, now) { var ms = c ? bdLocalMs(c.last) : null; return ms != null ? Math.max(0, Math.round((now - ms) / 60000)) : null; }
+function bdMqTile(o, sel, now, k) {
+  var m = o.m, c = o.c, pm = o.pm, X = B.cp, n = c ? c.codes.size : 0, idle = bdMqIdle(c, now);
+  var dot = !c ? 'quiet' : idle != null && idle <= 20 ? 'on' : 'idle', pct = m.ppd > 0 ? Math.min(100, n / m.ppd * 100) : 0;
+  var nCar = pm ? pm.q.filter(function (e) { return e.carry; }).length : 0, nWait = pm ? pm.q.length - nCar : 0, days = pm && pm.ppd ? pm.qload / pm.ppd : 0;
+  var now1 = c ? (dot === 'on' ? 'กำลังตัด ' : 'ว่าง ' + bdH(idle) + ' · ') + (c.lot || '—') : !B.set.cutOn ? 'ปิดอ่านการยิงตัดใน ⚙' : X.ok ? 'วันนี้ยังไม่ยิง' : X.err ? 'อ่านการยิงตัดไม่ได้' : 'กำลังอ่านการยิงตัด…';
+  return '<button class="mqm ' + dot + (sel ? ' sel' : '') + (pm ? '' : ' off') + '" data-mqm="' + esc(m.n) + '" role="tab" aria-selected="' + sel + '" title="' + esc(m.n + (m.pc ? ' (' + m.pc + ')' : '') + (k <= 9 ? ' · กดเลข ' + k + ' บนคีย์บอร์ดก็ได้' : '')) + '">'
+    + '<span class="mqh"><i></i><b>' + esc(m.n) + '</b>' + (k <= 9 ? '<kbd>' + k + '</kbd>' : '') + '</span>'
+    + '<span class="mqtd"><b>' + fmtN(n) + '</b>' + (m.ppd ? ' / ' + fmtN(m.ppd) : '') + ' ชิ้นวันนี้</span>'
+    + '<span class="mqbar"><i style="width:' + pct.toFixed(1) + '%"></i></span>'
+    + '<span class="mqnow">' + esc(now1) + '</span>'
+    + '<span class="mqqq">' + (pm ? '<b>' + fmtN(nWait) + '</b> Lot รอตัด' + (nCar ? ' · ค้างตัดต่อ ' + nCar : '') + '<small>' + (days > 0 ? 'งานในคิว ≈ ' + (Math.round(days * 10) / 10).toLocaleString('th-TH') + ' วันเครื่อง' : 'คิวว่าง') + '</small>' : (m.on ? 'ชิ้น/วัน = 0 ใน ⚙ (ไม่วางแผนให้)' : 'ปิดไว้ใน ⚙ (ไม่วางแผนให้)')) + '</span>'
+    + '</button>';
+}
+
+function bdMqRender(P, toTop) {
+  var E = $('bdMq'); if (!E || !P) return;
+  if (!P.M) {
+    E.innerHTML = '<div class="mqempty"><h3>ยังไม่ได้วางแผนตามเครื่อง</h3><p>' + (B.set.mcOn ? 'ไม่มีเครื่องที่เปิดและมีชิ้น/วัน มากกว่า 0' : 'ตอนนี้ปิด “วางแผนตามเครื่อง” อยู่ — คิวคิดเป็นนาทีเลื่อยก้อนเดียว จึงแบ่งรายเครื่องไม่ได้') + '</p><button class="tbtn pri" data-bact="set">⚙ ตั้งค่าคิว</button></div>';
+    return;
+  }
+  var list = bdMqMachines(P), now = Date.now();
+  if (!list.length) { E.innerHTML = '<div class="mqempty"><h3>ไม่มีเครื่องเปิดใน ⚙</h3><button class="tbtn pri" data-bact="set">⚙ ตั้งค่าคิว</button></div>'; return; }
+  var sel = list.find(function (o) { return o.m.n === BQ.mc; }) || list.find(function (o) { return o.pm; }) || list[0];
+  var keep = !toTop && BQ.shown === sel.m.n ? E.scrollTop : 0; BQ.shown = sel.m.n;
+  E.innerHTML = '<div class="mqtiles" role="tablist" aria-label="เครื่องตัด">' + list.map(function (o, i) { return bdMqTile(o, o === sel, now, i + 1); }).join('') + '</div>'
+    + bdMqPanel(sel, P, now);
+  E.scrollTop = keep;
+}
+
+function bdMqDue(g, P) {
+  if (g.end == null) return '<span class="due"><small>ส่ง</small>—</span>';
+  var d = Math.round((g.end - P.today) / DAY);
+  return '<span class="due' + (d < 0 ? ' red' : d <= 3 ? ' amb' : '') + '"><small>ส่ง ' + esc(fD(g.end)) + '</small>' + (d < 0 ? 'เลย ' + (-d) + ' วัน' : d === 0 ? 'วันนี้' : 'อีก ' + d + ' วัน') + '</span>';
+}
+function bdMqMat(g) {
+  if (g.mat === 'ok') return '<span class="mqmat ok" title="' + esc(g.rmCut ? 'วัตถุดิบที่ต้องใช้ก่อนตัดมีพอ ' + g.rmCut + ' รายการ (กันให้ Lot ก่อนหน้าแล้ว)' : 'ไม่มีรายการค้างเบิกใน AX') + '">✓ วัตถุดิบครบ</span>';
+  if (g.mat === 'short') return '<span class="mqmat bad" title="' + esc(g.matWhy) + '">' + esc(g.matWhy || 'วัตถุดิบไม่พอ') + '</span>';
+  return '<span class="mqmat unk" title="ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้ (นอกช่วงที่ StarSync ดึง) — ตั้ง “ต้องมีข้อมูลวัตถุดิบก่อนเข้าคิว” ใน ⚙ ได้">? ยังไม่เช็ควัตถุดิบ</span>';
+}
+function bdMqRow(o, P) {
+  var g = o.g, pdr = g.pr && g.pr.pd_remark ? String(g.pr.pd_remark).trim() : '', late = g.startBy != null && g.startBy < P.tmr;
+  var tag = '';
+  if (o.carry) { var how = !g.mcs.length ? 'ไม่รู้เครื่อง — ลงเครื่องที่ว่างสุด' : g.mcs[0].prev ? 'ยิงล่าสุด ' + fD(bdLocalMs(g.mcs[0].last)) : 'ยิงวันนี้ ' + String(g.mcs[0].last).slice(11, 16);
+    tag = '<span class="mqtag" title="' + esc('กำลังตัด · ' + how + (g.mc && g.mc.indexOf(' + ') > 0 ? ' · แบ่งงานกับ ' + g.mc : '')) + '">ตัดต่อ ' + Math.round((g.cutDone || 0) * 100) + '%</span>'; }
+  var tot = g.remP, part = o.carry && g.mc && g.mc.indexOf(' + ') > 0;   // Lot กำลังตัดที่ยิงหลายเครื่อง = แบ่งชิ้นที่เหลือเท่า ๆ กัน
+  return '<div class="mqrow' + (o.carry ? ' carry' : '') + (B.sel === g.id ? ' sel' : '') + '" data-bd="' + esc(g.id) + '" tabindex="0">'
+    + '<span class="ix" title="คิวที่ ' + o.pos + ' ของเครื่องนี้">' + o.pos + '</span>'
+    + '<span class="lot"><b>' + esc(g.id) + '</b>' + tag + '<small title="' + esc(g.remark) + '">' + esc(g.remark || '—') + '</small>' + (pdr ? '<small class="pdr" title="หมายเหตุวางแผน (AX)">📝 ' + esc(pdr) + '</small>' : '')
+    + (o.d1 > o.d0 ? '<small class="spn">ใช้เครื่อง ' + (o.d1 - o.d0 + 1) + ' วัน · ต่อถึง ' + esc(bdDayTxt(bdMqDayMs(P, o.d1))) + '</small>' : '') + '</span>'
+    + '<span class="pcs">' + (o.p > 0 ? fmtN(Math.round(o.p)) : '—') + '<small>ชิ้น' + (part ? ' (แบ่ง ' + fmtN(Math.round(tot)) + ')' : '') + '</small></span>'
+    + bdMqMat(g)
+    + '<span class="sb' + (late ? ' late' : '') + '"><small>ต้องเริ่ม</small>' + (g.startBy != null ? esc(fD(g.startBy)) : '—') + '</span>'
+    + bdMqDue(g, P)
+    + '</div>';
+}
+
+function bdMqPanel(o, P, now) {
+  var m = o.m, pm = o.pm, c = o.c, X = B.cp, h = '';
+  var nCar = 0, nWait = 0, pcs = 0, nOk = 0, nUnk = 0;
+  if (pm) pm.q.forEach(function (e) { if (e.carry) nCar++; else { nWait++; if (e.g.mat === 'ok') nOk++; else nUnk++; } pcs += e.p || 0; });
+  var lastDay = pm && pm.qload > 0 ? Math.floor(pm.qload / pm.ppd - 1e-9) : -1;
+  var kd = function (t, v, tip) { return '<div' + (tip ? ' title="' + esc(tip) + '"' : '') + '><dt>' + t + '</dt><dd>' + v + '</dd></div>'; };
+  h += '<section class="mqpanel" aria-label="' + esc(m.n) + '"><header class="mqhead"><div class="mqname"><h2>' + esc(m.n) + '</h2><span>' + esc(m.pc || '') + (m.ppd ? ' · ตัดได้ ' + fmtN(m.ppd) + ' ชิ้น/วัน (⚙)' : '') + '</span></div>';
+  if (pm) h += '<dl class="mqk">' + kd('ค้างตัดต่อ', nCar + ' Lot', 'Lot ที่กำลังตัดอยู่ที่เครื่องนี้ — ชิ้นที่เหลือกินเครื่องก่อน')
+    + kd('รอตัด', fmtN(nWait) + ' Lot', 'วัตถุดิบครบ ' + nOk + ' · ยังไม่เช็ควัตถุดิบ ' + nUnk + ' (Lot ที่วัตถุดิบไม่ครบอยู่ช่องติดอยู่ ไม่เข้าคิว)')
+    + kd('ชิ้นในคิว', fmtN(Math.round(pcs))) + kd('คิวหมด ≈', lastDay >= 0 ? esc(bdDayTxt(bdMqDayMs(P, lastDay))) : 'ว่าง', 'ถ้าตัดได้ ' + fmtN(pm.ppd) + ' ชิ้นทุกวันทำงาน และไม่มีงานแทรก') + '</dl>';
+  h += '</header><div class="mqbody">';
+
+  /* ① วันนี้ (ยิงจริง) — จอกว้างอยู่คอลัมน์ขวา · จอแคบอยู่บนคิว */
+  var GU = new Map(); P.G.forEach(function (g, id) { GU.set(String(id).toUpperCase(), g); });
+  h += '<aside class="mqside"><div class="mqsec mqtoday"><h3>วันนี้ ' + esc(bdDayTxt(P.today)) + '<small>' + (c ? 'ยิงตัดแล้ว <b>' + fmtN(c.codes.size) + '</b>' + (m.ppd ? ' / ' + fmtN(m.ppd) : '') + ' ชิ้น' + (c.ot.size ? ' (OT ' + fmtN(c.ot.size) + ')' : '') + ' · ล่าสุด ' + esc(String(c.last).slice(11, 16)) : 'ตามการยิงตัด (check_part)') + '</small></h3>';
+  if (c && Object.keys(c.lots).length) {
+    var idle = bdMqIdle(c, now), run = idle != null && idle <= 20, ks = Object.keys(c.lots);
+    ks.sort(function (a, b) { return a === c.lot ? -1 : b === c.lot ? 1 : (c.lotCodes[b] ? c.lotCodes[b].size : 0) - (c.lotCodes[a] ? c.lotCodes[a].size : 0); });
+    h += ks.map(function (lot) {
+      var g = GU.get(lot.toUpperCase()), nT = c.lotCodes[lot] ? c.lotCodes[lot].size : c.lots[lot], cur = lot === c.lot;
+      var s0 = g && g.sg ? g.sg.st[0] : null, done = g && (P.after.indexOf(g) >= 0 || P.fin.indexOf(g) >= 0 || (g.sg && g.sg.at >= 1));
+      var prog = g ? (done ? 1 : Math.max(0, Math.min(1, g.cutDone || 0))) : null;
+      var st = !g ? 'ไม่พบใน data 6' : g.closed ? 'ปิดว่าจบแล้ว' : done ? 'ตัดครบแล้ว ✓' : P.cutting.indexOf(g) >= 0 ? 'เหลือ ' + fmtN(g.remP || 0) + ' ชิ้น' : '';
+      return '<div class="mqrow mqt' + (cur ? ' cur' : '') + (done ? ' done' : '') + (g && B.sel === g.id ? ' sel' : '') + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
+        + '<span class="ix">' + (cur ? (run ? '▶' : '❚❚') : '') + '</span>'
+        + '<span class="lot"><b>' + esc(lot) + '</b>' + (cur ? '<span class="mqtag now">' + (run ? 'กำลังยิง' : 'ยิงล่าสุด · หยุด ' + bdH(idle)) + '</span>' : '') + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
+        + '<span class="pcs">' + fmtN(nT) + '<small>ชิ้นวันนี้</small></span>'
+        + '<span class="mqprog">' + (prog != null ? '<span class="pb"><i style="width:' + Math.round(prog * 100) + '%"></i></span><small>' + (s0 ? 'ตัดแล้ว ' + fmtN(done ? s0.tt : Math.min(s0.tt, Math.max(s0.v, g.scanLead || 0))) + ' / ' + fmtN(s0.tt) : Math.round(prog * 100) + '%') + '</small>' : '') + '</span>'
+        + '<span class="mqst' + (done ? ' ok' : '') + '">' + esc(st) + '</span></div>';
+    }).join('');
+  } else h += '<p class="mqnone">' + (!B.set.cutOn ? 'ปิดอ่านการยิงตัดอยู่ (⚙ แหล่งข้อมูล)' : X.err ? 'อ่านการยิงตัดไม่ได้ — ' + esc(X.err) : X.ok ? 'วันนี้เครื่องนี้ยังไม่ได้ยิงตัด' : 'กำลังอ่านการยิงตัด…') + '</p>';
+  h += '</div>' + bdMqFoot(P) + '</aside>';
+
+  /* ② คิวรอตัด แยกวัน */
+  if (!pm) { h += '<div class="mqsec mqmain"><p class="mqnone">' + (m.on ? 'เครื่องนี้ตั้งชิ้น/วัน = 0 ใน ⚙ — ไม่ได้วางแผนให้' : 'เครื่องนี้ปิดไว้ใน ⚙ — ไม่ได้วางแผนให้ (เปิดแล้วจะมีคิว)') + '</p></div></div></section>'; return h; }
+  h += '<div class="mqsec mqmain"><h3>คิวรอตัด<small>เรียงตามที่เครื่องนี้จะได้ตัด · หนึ่งวัน = ' + fmtN(pm.ppd) + ' ชิ้น</small></h3>';
+  if (!pm.q.length) h += '<p class="mqnone">ยังไม่มี Lot ลงเครื่องนี้ — Lot ที่พร้อมตัดลงเครื่องอื่นที่ว่างกว่าหมดแล้ว</p>';
+  else {
+    var ppd = pm.ppd, days = new Map(), D = function (k) { var d = days.get(k); if (!d) { d = { k: k, rows: [], segs: [], used: 0 }; days.set(k, d); } return d; };
+    pm.q.forEach(function (e) {
+      var s = e.start, f = e.start + (e.p || 0), d0 = Math.floor(s / ppd + 1e-9), d1 = e.p > 0 ? Math.max(d0, Math.floor(f / ppd - 1e-9)) : d0;
+      e.d0 = d0; e.d1 = d1; D(d0).rows.push({ e: e });
+      for (var k = d0; k <= d1; k++) { var ov = Math.min(f, (k + 1) * ppd) - Math.max(s, k * ppd); if (ov > 0) { D(k).segs.push({ e: e, v: ov }); D(k).used += ov; } if (k > d0) D(k).rows.push({ e: e, cont: true, v: ov }); }
+    });
+    var shown = 0, cut = false, keys = Array.from(days.keys()).sort(function (a, b) { return a - b; });
+    h += '<div class="mqline">';
+    for (var ki = 0; ki < keys.length && !cut; ki++) {
+      var d = days.get(keys[ki]), alt = 0;
+      h += '<div class="mqday' + (d.k === 0 ? ' t0' : '') + '"><span class="dt">' + (d.k === 0 ? '<b>พรุ่งนี้</b> ' + esc(bdDayTxt(P.tmr)) : esc(bdDayTxt(bdMqDayMs(P, d.k)))) + '</span>'
+        + '<span class="segs" aria-hidden="true">' + d.segs.map(function (sg) { return '<i class="' + (sg.e.carry ? 'c' : (alt++ % 2 ? 'b' : 'a')) + '" style="width:' + Math.min(100, sg.v / ppd * 100).toFixed(2) + '%" title="' + esc(sg.e.g.id + ' · ' + fmtN(Math.round(sg.v)) + ' ชิ้น') + '"></i>'; }).join('') + '</span>'
+        + '<span class="use"><b>' + fmtN(Math.round(d.used)) + '</b> / ' + fmtN(ppd) + ' ชิ้น</span></div>';
+      for (var ri = 0; ri < d.rows.length; ri++) {
+        var r = d.rows[ri];
+        if (r.cont) { h += '<div class="mqrow cont" data-bd="' + esc(r.e.g.id) + '"><span class="ix">↳</span><span class="lot"><b>' + esc(r.e.g.id) + '</b><small>ต่อจากวันก่อน · ' + fmtN(Math.round(r.v)) + ' ชิ้นในวันนี้</small></span></div>'; continue; }
+        if (shown >= BQ.MAXL) { cut = true; break; }
+        h += bdMqRow(r.e, P); shown++;
+      }
+    }
+    h += '</div>';
+    if (cut) { var rest = pm.q.length - shown, restP = pm.q.slice(shown).reduce(function (a, e) { return a + (e.p || 0); }, 0);
+      h += '<p class="mqmore">… อีก ' + fmtN(rest) + ' Lot (' + fmtN(Math.round(restP)) + ' ชิ้น) ถึง ≈ ' + esc(bdDayTxt(bdMqDayMs(P, lastDay))) + ' — โชว์ ' + BQ.MAXL + ' Lot แรก</p>'; }
+  }
+  return h + '</div></div></section>';
+}
+/* ท้าย: Lot ที่ไม่เข้าคิวเครื่อง + วิธีจัด */
+function bdMqFoot(P) {
+  var nB = P.blocked.length, nRm = P.blocked.filter(function (g) { return g.mat === 'short'; }).length;
+  return '<footer class="mqfoot">' + (nB ? '<p>ยังไม่เข้าคิวเครื่อง: <b>ติดอยู่ ' + fmtN(nB) + ' Lot</b>' + (nRm ? ' (วัตถุดิบไม่ครบ ' + fmtN(nRm) + ' · ไม่มี BOM / ยังไม่แตกชิ้นงาน ' + fmtN(nB - nRm) + ')' : ' (ไม่มี BOM / ยังไม่แตกชิ้นงาน)') + ' — ของครบเมื่อไหร่เข้าคิวเอง <button class="tbtn" data-btab="plan">ดูใน Master Plan</button></p>' : '')
+    + '<p class="muted">วิธีจัดเครื่อง (แผนอัตโนมัติ): Lot ที่กำลังตัด = เครื่องที่ยิงจริง (ยังไม่ยิงวันนี้ = เครื่องของวันก่อน) · Lot ใหม่ = ลงเครื่องที่งานน้อยสุดเทียบกับชิ้นต่อวัน ตามลำดับวันต้องเริ่ม → enddate · หน้างานสลับเครื่องได้ ยิงที่เครื่องไหน รอบถัดไปคิวย้ายตามเอง</p></footer>';
+}
+
+/* ── ปุ่ม/คีย์ ── */
+document.addEventListener('click', function (e) {
+  var t = e.target.closest && e.target.closest('[data-btab],[data-mqm],[data-mqgo]'); if (!t) return;
+  if (t.dataset.btab) { e.preventDefault(); bdTabGo(t.dataset.btab); return; }
+  if (t.dataset.mqgo) { e.preventDefault(); bdTabGo('mc', t.dataset.mqgo); return; }
+  if (t.dataset.mqm) { e.preventDefault(); var n = t.dataset.mqm, same = BQ.mc === n; BQ.mc = n; lsSetJ(BQ_K, { mc: n }); bdMqRender(B.plan, !same); var b = $('bdMq') && $('bdMq').querySelector('.mqm.sel'); if (b) b.focus(); }
+});
+document.addEventListener('keydown', function (e) {
+  if (view() !== 'board' || B.tab !== 'mc' || e.ctrlKey || e.metaKey || e.altKey) return;
+  var tg = e.target, tn = tg && tg.tagName; if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable)) return;
+  if (!$('ov').classList.contains('hide')) return;
+  if (e.key === 'Enter' && tg && tg.classList && tg.classList.contains('mqrow') && tg.dataset.bd) { e.preventDefault(); bdDetail(tg.dataset.bd); return; }
+  var list = B.plan ? bdMqMachines(B.plan) : []; if (!list.length) return;
+  var i = list.findIndex(function (o) { return o.m.n === BQ.shown; }), j = -1;
+  if (/^[1-9]$/.test(e.key)) j = +e.key - 1; else if (e.key === 'ArrowRight') j = (i + 1) % list.length; else if (e.key === 'ArrowLeft') j = (i - 1 + list.length) % list.length;
+  if (j < 0 || j >= list.length) return;
+  e.preventDefault(); BQ.mc = list[j].m.n; lsSetJ(BQ_K, { mc: BQ.mc }); bdMqRender(B.plan, true);
+});
+
+window.StarStock = { BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
