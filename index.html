@@ -1096,6 +1096,35 @@
   table.crxt small.crxs{display:flex;flex-wrap:wrap;gap:2px 8px;margin-top:3px;font-family:var(--mono)!important;color:var(--ink-dim)!important}
   .crxf{font-size:11.5px;margin-top:6px;line-height:1.5}
   body.tv .sawc{font-size:12.5px;line-height:20px}
+
+  /* ───────── v1.24 Machine Queue: รายละเอียด Lot ในคอลัมน์ขวา · แผ่นตัดตาม Cut Rite · เวลาตัดในป้าย SAW ───────── */
+  .sawc em{font-style:normal;font-weight:600;margin-left:6px;padding-left:6px;border-left:.5px solid currentColor;opacity:.9}
+  .mqlh4{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:13px;font-weight:800;margin:16px 0 6px;padding-top:10px;border-top:.5px solid var(--line)}
+  .mqlh4 small{font-size:11.5px;font-weight:500;color:var(--ink-dim)}
+  .mqrm .mqrmlots + .mqlh4{border-top:0;padding-top:0;margin-top:6px}
+  .mqlot{background:var(--solid)}
+  .mqlot .mqsec{padding-top:10px}
+  .mqlh{display:flex;align-items:center;gap:8px;margin:4px 0 2px}
+  .mqlh h3{flex:1;min-width:0;margin:0;font-size:15px}
+  .mqlh h3 b{font:800 16px var(--mono);word-break:break-all}
+  .mqlh .tbtn{padding:3px 10px;font-size:12px;flex:none}
+  .mqlh .mqlx{width:30px;padding:3px 0;text-align:center}
+  .mqlrm{font-size:12.5px;color:var(--ink-dim);margin-bottom:8px}
+  .mqlst{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:12.5px;margin-bottom:6px}
+  .mqlst span:not(.stg){color:var(--ink-dim)}
+  .mqlpd{font-size:12px;color:var(--warn);margin-bottom:6px}
+  .mqlkv{gap:8px 22px;margin:10px 0 2px}
+  .mqlkv dd{font-size:14.5px}
+  .mqlruns{display:flex;flex-direction:column;gap:2px}
+  .mqlrun{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;align-items:baseline;gap:4px 12px;padding:6px 8px;border-radius:8px;background:var(--bg2);font-size:12px}
+  .mqlrun b{font:800 13px var(--mono);color:var(--s2)}
+  body[data-theme="dark"] .mqlrun b{color:#9cc6ff}
+  .mqlrun span{color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mqlrun em{font-style:normal;font:700 12.5px var(--mono);white-space:nowrap}
+  .mqlot .mqrmt td:last-child{width:auto;min-width:22px}
+  .mqcrt td:nth-child(2) small{text-align:right}
+  .mqlrx .rxbox{margin-top:4px}
+  @media (max-width: 760px){ .mqlrun{grid-template-columns:auto minmax(0,1fr) auto} .mqlrun span:nth-of-type(2),.mqlrun span.muted{grid-column:2 / -1} }
 </style>
 </head>
 <body>
@@ -1106,7 +1135,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.23</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.24</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -1964,10 +1993,15 @@ var GasFS = (function () {
       · เอา Lot ที่ตัดสัก 7 วัน รวมวันนี้ เว้นวันหยุด · Lot รอคิวตัดแสดง 1 อาทิตย์พอ”)
      · StarSync sync-ax-lots.ps1 v1.5 → lots/cutrite.csv (Run = .saw ↔ Lot · เวลาตัด · แผ่น · ชิ้น · เศษ · แผ่นที่ใช้) — ป้าย SAW ที่ Lot + หัวข้อในรายละเอียด
      · Machine Queue: คิวรอตัดโชว์ 1 สัปดาห์ (ปุ่มดูทั้งคิว) · ตัดแล้ว 7 วันทำงาน (ย้อนหลังจาก check_part ข้ามวันหยุด) — ดูหัวบล็อก v1.23 ข้างล่าง
+
+   v1.24 (2026-10-17 13:17–13:19 ผู้ใช้: “ตัวเลข .SAW เวลาตัด ต้องเห็นทุก Lot ทยอยส่งขึ้น Google ก็ได้ · กด Lot แล้วแสดงแผ่นตัดเลย
+      หมายถึงวัตถุดิบในการตัด · ไม่ต้องขึ้น Pop up ด้านข้าง แสดงรายละเอียดที่ด้านข้างของ Lot นั้น”)
+     · Machine Queue: กด Lot = คอลัมน์ขวาเป็นรายละเอียด Lot (ไม่เด้งแผงข้าง) — .saw ทุก Run · วัตถุดิบในการตัด (แผ่นตัด Cut Rite + AX แม้เบิกครบ)
+     · วัตถุดิบ Lot พรุ่งนี้ + แผ่นตัดตาม Cut Rite · ป้าย SAW มีเวลาตัด · StarSync v1.6 อ่านไฟล์ Export ครบทุก Lot — ดูหัวบล็อก v1.24 ข้างล่าง
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.23';
+var VER = '1.24';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4253,7 +4287,8 @@ function bdBindUi() {
       else if (k === 'x') bdCloseDetail(); else if (k === 'tolot') { var id = B.sel, g = B.plan && B.plan.G.get(id); go('lots'); if (g) setTimeout(function () { L.f.q = ''; var q = $('lq'); if (q) q.value = ''; lotRefresh(false); lotShowDetail(g.key); }, 60); }
       return; }
     var gl = e.target.closest('[data-go]'); if (gl) { go(gl.dataset.go); return; }
-    var c = e.target.closest('[data-bd]'); if (c) bdDetail(c.dataset.bd);
+    var c = e.target.closest('[data-bd]');
+    if (c) { if (B.tab === 'mc' && c.closest('#bdMq')) bdMqPick(c.dataset.bd); else bdDetail(c.dataset.bd); }   // v1.24 Machine Queue: รายละเอียดอยู่คอลัมน์ขวา (ไม่เด้งแผงข้าง)
   });
   window.addEventListener('resize', function () { if (view() === 'board' && B.sel) bdDetail(B.sel); });
   setInterval(bdClock, 1000);
@@ -5851,6 +5886,7 @@ function bdMqRender(P, toTop) {
   var list = bdMqMachines(P), now = Date.now();
   if (!list.length) { E.innerHTML = '<div class="mqempty"><h3>ไม่มีเครื่องเปิดใน ⚙</h3><button class="tbtn pri" data-bact="set">⚙ ตั้งค่า</button></div>'; return; }
   var sel = list.find(function (o) { return o.m.n === BQ.mc; }) || list.find(function (o) { return o.pm; }) || list[0];
+  if (BQ.lot) { var gl0 = P.G.get(BQ.lot); if (!gl0 || gl0.closed) BQ.lot = ''; }   // v1.24 Lot ที่เลือกหายจากแผน (ปิดเอง ฯลฯ) = กลับเป็นวัตถุดิบ Lot พรุ่งนี้
   var keep = !toTop && BQ.shown === sel.m.n ? E.scrollTop : 0; BQ.shown = sel.m.n;
   E.innerHTML = '<div class="mqtiles" role="tablist" aria-label="เครื่องตัด">' + list.map(function (o, i) { return bdMqTile(o, o === sel, now, i + 1); }).join('') + '</div>'
     + bdMqPanel(sel, P, now);
@@ -5873,7 +5909,7 @@ function bdMqRow(o, P) {
   if (o.carry) { var how = !g.mcs.length ? 'ไม่รู้เครื่อง — ลงเครื่องที่ว่างสุด' : g.mcs[0].prev ? 'ยิงล่าสุด ' + fD(bdLocalMs(g.mcs[0].last)) : 'ยิงวันนี้ ' + String(g.mcs[0].last).slice(11, 16);
     tag = '<span class="mqtag" title="' + esc('กำลังตัด · ' + how + (g.mc && g.mc.indexOf(' + ') > 0 ? ' · แบ่งงานกับ ' + g.mc : '')) + '">ตัดต่อ ' + Math.round((g.cutDone || 0) * 100) + '%</span>'; }
   var tot = g.remP, part = o.carry && g.mc && g.mc.indexOf(' + ') > 0;   // Lot กำลังตัดที่ยิงหลายเครื่อง = แบ่งชิ้นที่เหลือเท่า ๆ กัน
-  return '<div class="mqrow' + (o.carry ? ' carry' : '') + (B.sel === g.id ? ' sel' : '') + '" data-bd="' + esc(g.id) + '" tabindex="0">'
+  return '<div class="mqrow' + (o.carry ? ' carry' : '') + (bdMqSelId() === g.id ? ' sel' : '') /* v1.24 Lot ที่เลือก (คอลัมน์ขวา) */ + '" data-bd="' + esc(g.id) + '" tabindex="0">'
     + '<span class="ix" title="คิวที่ ' + o.pos + ' ของเครื่องนี้">' + o.pos + '</span>'
     + '<span class="lot"><b>' + esc(g.id) + '</b>' + tag + /* v1.23 ป้าย .saw (Cut Rite Run) */ crxChip(g.id) + '<small title="' + esc(g.remark) + '">' + esc(g.remark || '—') + '</small>' + (pdr ? '<small class="pdr" title="หมายเหตุวางแผน (AX)">📝 ' + esc(pdr) + '</small>' : '')
     + (o.d1 > o.d0 ? '<small class="spn">ใช้เครื่อง ' + (o.d1 - o.d0 + 1) + ' วัน · ต่อถึง ' + esc(bdDayTxt(bdMqDayMs(P, o.d1))) + '</small>' : '') + '</span>'
@@ -5909,7 +5945,7 @@ function bdMqPanel(o, P, now) {
       var s0 = g && g.sg ? g.sg.st[0] : null, done = g && (P.after.indexOf(g) >= 0 || P.fin.indexOf(g) >= 0 || (g.sg && g.sg.at >= 1));
       var prog = g ? (done ? 1 : Math.max(0, Math.min(1, g.cutDone || 0))) : null;
       var st = !g ? 'ไม่พบใน data 6' : g.closed ? 'ปิดว่าจบแล้ว' : done ? 'ตัดครบแล้ว ✓' : P.cutting.indexOf(g) >= 0 ? 'เหลือ ' + fmtN(g.remP || 0) + ' ชิ้น' : '';
-      return '<div class="mqrow mqt' + (cur ? ' cur' : '') + (done ? ' done' : '') + (g && B.sel === g.id ? ' sel' : '') + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
+      return '<div class="mqrow mqt' + (cur ? ' cur' : '') + (done ? ' done' : '') + (g && bdMqSelId() === g.id ? ' sel' : '') + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
         + '<span class="ix">' + (cur ? (run ? '▶' : '❚❚') : '') + '</span>'
         + '<span class="lot"><b>' + esc(lot) + '</b>' + /* v1.23 */ crxChip(lot) + (cur ? '<span class="mqtag now">' + (run ? 'กำลังยิง' : 'ยิงล่าสุด · หยุด ' + bdH(idle)) + '</span>' : '') + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
         + '<span class="pcs">' + fmtN(nT) + '<small>ชิ้นวันนี้</small></span>'
@@ -5954,7 +5990,9 @@ function bdMqPanel(o, P, now) {
     else if (BQ.all && lastDay >= WK) h += '<p class="mqmore mqwk"><button class="tbtn" data-mqall="0">ย่อเหลือ 1 สัปดาห์</button></p>';
   }
   h += '</div>' + bdMqFoot(P) + '</div>';   // คิว · ท้ายคอลัมน์ซ้าย
-  return h + bdMqRm(P, pm) + '</div></section>';   // v1.22 คอลัมน์ขวา = วัตถุดิบ Lot พรุ่งนี้
+  /* v1.24 เลือก Lot ไว้ (กดแถว) = คอลัมน์ขวาเป็นรายละเอียด Lot นั้น แทนแผงที่เด้งออกข้าง */
+  var gl = BQ.lot && P.G.get(BQ.lot);
+  return h + (gl && !gl.closed ? bdMqLot(gl, P) : bdMqRm(P, pm)) + '</div></section>';   // v1.22 คอลัมน์ขวา = วัตถุดิบ Lot พรุ่งนี้
 }
 /* ท้าย: Lot ที่ไม่เข้าคิวเครื่อง + วิธีจัด */
 function bdMqFoot(P) {
@@ -5992,6 +6030,12 @@ function bdMqRm(P, pm) {
   if (!lots.length) return h + '<p class="mqnone">พรุ่งนี้ยังไม่มี Lot เริ่มตัดที่เครื่องนี้</p></div></aside>';
   h += '<div class="mqrmlots">' + lots.map(function (g) { var s1 = lotSt(g);
     return '<button type="button" data-bd="' + esc(g.id) + '" class="' + s1 + '" title="' + esc((g.remark || '') + (s1 === 'bad' ? ' · วัตถุดิบไม่พอ' : s1 === 'unk' ? ' · ยังไม่มีข้อมูลวัตถุดิบ' : '')) + '">' + esc(g.id) + '<i>' + (s1 === 'ok' ? '✓' : s1 === 'bad' ? '✗' : '?') + '</i></button>'; }).join('') + '</div>';
+  /* v1.24 แผ่นตัดตาม Cut Rite ของ Lot พรุ่งนี้ (แสดงแม้เบิกครบแล้ว — เดิมตารางว่างเพราะดูแค่รายการค้างเบิก) */
+  var cx = bdMqCrSheets(lots);
+  h += '<h4 class="mqlh4">แผ่นตัดตาม Cut Rite<small>' + (cx.rows.length ? fmtN(cx.n, 3) + ' แผ่น · ' + cx.rows.length + ' รหัส · ' : '') + (lots.length - cx.none.length) + '/' + lots.length + ' Lot มีเลข .saw</small></h4>'
+    + (cx.rows.length ? bdMqCrTable(cx, true) : '<p class="mqnone">' + (B.crx && B.crx.map ? 'Lot พรุ่งนี้ยังไม่มีเลข .saw — ' + esc(crxNoneTxt()) : 'ยังไม่มี lots/cutrite.csv จาก StarSync (sync-ax-lots.ps1 v1.6)') + '</p>')
+    + (cx.rows.length && cx.none.length ? '<p class="mqrmnote">ยังไม่มีเลข .saw: <b>' + cx.none.map(function (g) { return esc(g.id); }).join(' · ') + '</b></p>' : '')
+    + '<h4 class="mqlh4">ค้างเบิก (AX)</h4>';
   if (!B.rm && !lots.some(function (g) { return g.rmSrc === 'x'; })) return h + '<p class="mqnone">ยังไม่มี lots/rm.csv จาก StarSync — ยังดูวัตถุดิบไม่ได้</p></div></aside>';
   h += '<p class="mqrmsum">แผ่นต้องตัด <b>' + boards.length + '</b> รายการ · อุปกรณ์/อื่น ๆ <b>' + others.length + '</b>' + (nShort ? ' · <span class="neg">ไม่พอ ' + nShort + '</span>' : all.length && stOk ? ' · <span class="ok">พอทุกรายการ</span>' : '')
     + ' · เทียบ' + (basis === 'avail' ? 'ยอดใช้ได้' : 'ยอดในคลัง') + 'รวมทุกคลัง' + (stOk ? '' : ' (ยังไม่มียอด Stock)') + '</p>';
@@ -6045,18 +6089,18 @@ document.addEventListener('click', function (e) {
   var t = e.target.closest && e.target.closest('[data-btab],[data-mqm],[data-mqgo]'); if (!t) return;
   if (t.dataset.btab) { e.preventDefault(); bdTabGo(t.dataset.btab); return; }
   if (t.dataset.mqgo) { e.preventDefault(); bdTabGo('mc', t.dataset.mqgo); return; }
-  if (t.dataset.mqm) { e.preventDefault(); var n = t.dataset.mqm, same = BQ.mc === n; BQ.mc = n; bqSave(); bdMqRender(B.plan, !same); var b = $('bdMq') && $('bdMq').querySelector('.mqm.sel'); if (b) b.focus(); }
+  if (t.dataset.mqm) { e.preventDefault(); var n = t.dataset.mqm, same = BQ.mc === n; BQ.mc = n; if (!same) BQ.lot = ''; /* v1.24 เปลี่ยนเครื่อง = เลิกเลือก Lot */ bqSave(); bdMqRender(B.plan, !same); var b = $('bdMq') && $('bdMq').querySelector('.mqm.sel'); if (b) b.focus(); }
 });
 document.addEventListener('keydown', function (e) {
   if (view() !== 'board' || B.tab !== 'mc' || e.ctrlKey || e.metaKey || e.altKey) return;
   var tg = e.target, tn = tg && tg.tagName; if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable)) return;
   if (!$('ov').classList.contains('hide')) return;
-  if (e.key === 'Enter' && tg && tg.classList && tg.classList.contains('mqrow') && tg.dataset.bd) { e.preventDefault(); bdDetail(tg.dataset.bd); return; }
+  if (e.key === 'Enter' && tg && tg.classList && tg.classList.contains('mqrow') && tg.dataset.bd) { e.preventDefault(); bdMqPick(tg.dataset.bd); return; }   // v1.24 คอลัมน์ขวา (ไม่เด้งแผงข้าง)
   var list = B.plan ? bdMqMachines(B.plan) : []; if (!list.length) return;
   var i = list.findIndex(function (o) { return o.m.n === BQ.shown; }), j = -1;
   if (/^[1-9]$/.test(e.key)) j = +e.key - 1; else if (e.key === 'ArrowRight') j = (i + 1) % list.length; else if (e.key === 'ArrowLeft') j = (i - 1 + list.length) % list.length;
   if (j < 0 || j >= list.length) return;
-  e.preventDefault(); BQ.mc = list[j].m.n; bqSave(); bdMqRender(B.plan, true);
+  e.preventDefault(); if (BQ.mc !== list[j].m.n) BQ.lot = ''; BQ.mc = list[j].m.n; bqSave(); bdMqRender(B.plan, true);
 });
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -6091,7 +6135,9 @@ function crxParse(t) {
     try { var j = r.sheets ? JSON.parse(r.sheets) : []; sh = Array.isArray(j) ? j : j && typeof j === 'object' ? [j] : []; } catch (e) { }   // PowerShell ส่งแผ่นเดียวเป็นวัตถุ (ไม่ใช่รายการ) ได้
     var x = { run: run, lot: lot, saw: String(r.saw || '').trim(), param: String(r.param || '').trim(), at: bdLocalMs(r.run_at), fat: bdLocalMs(r.file_at),
       parts: num(r.parts), boards: num(r.boards), ptn: num(r.ptn), cyc: num(r.cyc), sec: num(r.cut_sec), waste: num(r.waste), pm2: num(r.parts_m2), bm2: num(r.boards_m2),
-      file: String(r.file || '').trim(), sheets: sh.filter(function (s) { return s && s.c; }) };
+      file: String(r.file || '').trim(),
+      /* v1.24 StarSync v1.6 ส่งแบบสั้น [[รหัส, จำนวน, ตร.ม., หนา, ชื่อ], …] (ไฟล์ใหญ่ขึ้นเพราะมีทุก Lot) · v1.5 = วัตถุ {c,q,m2,m,d,t} */
+      sheets: sh.map(function (s) { return Array.isArray(s) ? { c: s[0], q: s[1], m2: s[2], t: s[3], d: s[4] } : s; }).filter(function (s) { return s && s.c; }) };
     var K = lot.toUpperCase(), a = m.get(K); if (!a) m.set(K, a = []);
     if (a.some(function (y) { return y.run === run; })) return;
     a.push(x); n++;
@@ -6140,10 +6186,13 @@ function crxWhen(r) { var t = r.fat || r.at; return t ? fD(t) + ' ' + bdHM(t) : 
 function crxTip(a) {
   return a.map(function (r) { return 'Run ' + r.run + ' (.saw)' + (crxWhen(r) ? ' · ' + crxWhen(r) : '') + (r.boards != null ? ' · ' + fmtN(r.boards) + ' แผ่น' : '') + (r.parts != null ? ' · ' + fmtN(r.parts) + ' ชิ้น' : '') + (r.sec ? ' · ตัด ' + durTh(r.sec / 60) : ''); }).join('\n');
 }
-/* ป้ายเล็กหลังชื่อ Lot: “SAW 6930237 +1” (ใหม่สุดก่อน · ชี้ดูทุก Run) */
+/* ป้ายเล็กหลังชื่อ Lot: “SAW 6930237 +1” (ใหม่สุดก่อน · ชี้ดูทุก Run)
+   v1.24 (ผู้ใช้ 13:17 “ตัวเลข .SAW เวลาตัด ต้องเห็นทุก Lot”) + เวลาตัดรวมของทุก Run ในป้าย: “SAW 6930237 · 52 นาที” */
+function crxDur(min) { if (min == null || !(min > 0)) return ''; var m = Math.max(1, Math.round(min)); if (m < 60) return m + ' นาที'; var h = Math.floor(m / 60), r = m % 60; return h + ' ชม.' + (r ? ' ' + r + ' น.' : ''); }
 function crxChip(id) {
   var a = crxOf(id); if (!a || !a.length) return '';
-  return '<span class="sawc" title="' + esc('Cut Rite ' + a.length + ' Run\n' + crxTip(a)) + '">SAW ' + esc(a[0].run) + (a.length > 1 ? '<i>+' + (a.length - 1) + '</i>' : '') + '</span>';
+  var tm = crxDur(crxAgg(a).total_sec / 60);
+  return '<span class="sawc" title="' + esc('Cut Rite ' + a.length + ' Run\n' + crxTip(a)) + '">SAW ' + esc(a[0].run) + (a.length > 1 ? '<i>+' + (a.length - 1) + '</i>' : '') + (tm ? '<em>' + esc(tm) + '</em>' : '') + '</span>';
 }
 /* เวลาที่ StarSync ตรวจโฟลเดอร์ล่าสุด · เก่ากว่า max(45 นาที, 5 รอบ) = ไม่ได้อัปเดต (StarSync ปิด / เข้าไดรฟ์เครือข่ายไม่ได้) */
 function crxCheckedMs() { var m = B.crx.meta, t = m && (bdLocalMs(m.checked) || bdLocalMs(m.at)); return t || (B.crx.u > 1e12 ? B.crx.u : null); }
@@ -6153,27 +6202,45 @@ function crxDaysTxt() {
   var last = bdLocalMs(String(d[d.length - 1]) + 'T00:00:00');
   return d.length + ' วันทำงาน' + (last ? ' (ตั้งแต่ ' + fD(last) + ')' : '');
 }
+/* v1.24 StarSync v1.6 (meta v 2): อ่านย้อนถึง Lot เก่าสุดใน data 6 · ทยอยอ่าน → บอก “อ่านครบถึง … เหลือ N ไฟล์” */
+function crxV2() { var m = B.crx.meta; return !!(m && Number(m.v) >= 2); }
+function crxPending() { var m = B.crx.meta; return crxV2() && Number(m.pending) > 0 ? Number(m.pending) : 0; }
+function crxRangeTxt() {
+  var m = B.crx.meta || {};
+  if (!crxV2()) return crxDaysTxt();
+  var f = bdLocalMs(String(m.from || '').slice(0, 10) + 'T00:00:00'), d = bdLocalMs(String(m.done || '').replace(' ', 'T')) || bdLocalMs(String(m.done || '').slice(0, 10) + 'T00:00:00');
+  return (f ? 'ไฟล์ตั้งแต่ ' + fD(f) : '') + (crxPending() ? ' · <b>กำลังทยอยอ่านไฟล์เก่า</b> เหลือ ' + fmtN(crxPending()) + ' ไฟล์' + (d ? ' (อ่านครบถึง ' + fD(d) + ')' : '') : ' · อ่านครบแล้ว')
+    + (m.lotsAll ? ' · Lot ใน data 6 มีเลข .saw ' + fmtN(m.lotsMapped != null ? m.lotsMapped : crxMappedN()) + ' / ' + fmtN(m.lotsAll) : '');
+}
+function crxMappedN() { var n = 0; if (B.crx.map && L.rows) { var seen = {}; L.rows.forEach(function (x) { var k = String(x.id).toUpperCase(); if (!seen[k] && B.crx.map.has(k)) { seen[k] = 1; n++; } }); } return n; }
 /* บรรทัดในกระดิ่ง/แถบแหล่งข้อมูล: [ชนิด ok|no|off, html] */
 function crxBanner() {
   var X = B.crx;
   if (!X.map) {
     if (X.err) return ['no', 'Cut Rite (.saw) จาก StarSync: อ่าน lots/cutrite.csv ไม่ได้ — ' + esc(netMsg(X.err))];
-    return ['off', 'Cut Rite (.saw): ยังไม่มี lots/cutrite.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.5 แล้วจะจับคู่ .saw ↔ Lot ให้เอง (อ่านไฟล์ Export XLSX ของ Cut Rite)'];
+    return ['off', 'Cut Rite (.saw): ยังไม่มี lots/cutrite.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.6 แล้วจะจับคู่ .saw ↔ Lot ให้เอง (อ่านไฟล์ Export XLSX ของ Cut Rite)'];
   }
   var t = crxCheckedMs(), age = t ? Math.max(0, (Date.now() - t) / 60000) : null, old = age != null && age > crxStaleMin(), m = X.meta || {};
   var er = Array.isArray(m.errors) ? m.errors.length : 0;
-  return [old || X.err ? 'no' : 'ok', 'Cut Rite (.saw) จากไฟล์ Export <b>' + fmtN(X.runs) + '</b> Run · ' + fmtN(X.map.size) + ' Lot' + (crxDaysTxt() ? ' · ' + crxDaysTxt() : '')
+  return [old || X.err ? 'no' : 'ok', 'Cut Rite (.saw) จากไฟล์ Export <b>' + fmtN(X.runs) + '</b> Run · ' + fmtN(X.map.size) + ' Lot' + (crxRangeTxt() ? ' · ' + crxRangeTxt() : '') + (crxV2() ? '' : ' · <b>อัปเดต StarSync เป็น v1.6</b> ให้เห็นเลข .saw ทุก Lot (v1.5 อ่านแค่ 7 วัน)')
     + (t ? ' · ตรวจเมื่อ ' + esc((new Date(t).toDateString() === new Date().toDateString() ? '' : fD(t) + ' ') + bdHM(t)) : '')
     + (old ? ' — <b>StarSync ไม่ได้ตรวจโฟลเดอร์มา ' + durTh(age) + '</b> (หน้าต่าง StarSync ปิด หรือเครื่องออฟฟิศเข้า \\\\10.11.0.6 ไม่ได้?)' : '')
     + (er ? ' · อ่านไฟล์ไม่ได้ ' + er + ' ไฟล์' : '') + (m.wait ? ' · รออ่าน ' + m.wait + ' ไฟล์' : '')
     + (X.err ? ' · รอบล่าสุดอ่านไม่ได้: ' + esc(netMsg(X.err)) + ' (ใช้ข้อมูลเดิม)' : '')];
+}
+/* v1.24 Lot ที่ยังไม่มี Run: StarSync v1.6 ยังทยอยอ่านอยู่ = อาจยังมาไม่ถึง · อ่านครบแล้ว = ยังไม่ได้ optimize · v1.5 = อ่านแค่ 7 วัน */
+function crxNoneTxt() {
+  var m = B.crx.meta || {}, f = bdLocalMs(String(m.from || '').slice(0, 10) + 'T00:00:00');
+  if (!crxV2()) return 'ไม่พบไฟล์ Export ของ Lot นี้ใน ' + (crxDaysTxt() || 'ช่วงที่ StarSync อ่าน') + ' — StarSync v1.5 อ่านแค่ 7 วันทำงาน · อัปเดตเป็น sync-ax-lots.ps1 v1.6 แล้วจะอ่านย้อนจนครบทุก Lot';
+  if (crxPending()) return 'StarSync กำลังทยอยอ่านไฟล์ Export ย้อนหลัง (' + crxRangeTxt().replace(/<[^>]+>/g, '') + ') — Lot นี้อาจยังมาไม่ถึง';
+  return 'ยังไม่มีไฟล์ Export ของ Lot นี้ — ยังไม่ได้ optimize ใน Cut Rite' + (f ? ' (StarSync อ่านไฟล์ตั้งแต่ ' + fD(f) + ')' : '');
 }
 /* หัวข้อในรายละเอียด Lot (แผงขวา) */
 function crxSec(g) {
   var a = g.crx;
   if (!a || !a.length) {
     if (!B.crx.map) return '';
-    return '<div class="sec"><h3>Cut Rite (.saw)</h3><div class="muted">ไม่พบไฟล์ Export ของ Lot นี้ใน ' + (crxDaysTxt() || 'ช่วงที่ StarSync อ่าน') + ' — ยังไม่ได้ optimize หรือ optimize ก่อนช่วงนั้น (เพิ่ม cutriteDays ใน config.json ของ StarSync)</div></div>';
+    return '<div class="sec"><h3>Cut Rite (.saw)</h3><div class="muted">' + crxNoneTxt() + '</div></div>';
   }
   var saws = [], params = [];
   a.forEach(function (r) { if (r.saw && saws.indexOf(r.saw) < 0) saws.push(r.saw); if (r.param && params.indexOf(r.param) < 0) params.push(r.param); });
@@ -6279,7 +6346,7 @@ function bdMqHist(o, P, GU) {
     dd.lots.sort(function (a, b) { return c.l[b][0] - c.l[a][0]; });
     h += dd.lots.map(function (lot) {
       var v = c.l[lot], g = GU.get(lot.toUpperCase()), s = bdMqLotNow(g, P);
-      return '<div class="mqrow mqt mqh' + (s.done ? ' done' : '') + (g && B.sel === g.id ? ' sel' : '') + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
+      return '<div class="mqrow mqt mqh' + (s.done ? ' done' : '') + (g && bdMqSelId() === g.id ? ' sel' : '') /* v1.24 */ + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
         + '<span class="ix"></span>'
         + '<span class="lot"><b>' + esc(lot) + '</b>' + crxChip(lot) + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
         + '<span class="pcs">' + fmtN(v[0]) + '<small>' + esc(v[1] + (v[2] && v[2] !== v[1] ? '–' + v[2] : '')) + '</small></span>'
@@ -6295,7 +6362,134 @@ document.addEventListener('click', function (e) {
   e.preventDefault(); BQ.all = t.dataset.mqall === '1'; if (B.plan) bdMqRender(B.plan);
 });
 
-window.StarStock = { crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.24: Machine Queue — กด Lot = รายละเอียดอยู่คอลัมน์ขวา (ไม่เด้งแผงข้าง) · วัตถุดิบในการตัด · .saw + เวลาตัดทุก Lot
+   ผู้ใช้ 17/10/2026 13:17 (รูปรายละเอียด Lot “ไม่พบไฟล์ Export ของ Lot นี้ใน 7 วันทำงาน”):
+     “แสดงแค่ 7 วัน แต่ตัวเลข .SAW เวลาตัด ต้องเห็นทุก Lot ครับ ทยอยส่งขึ้น Google ก็ได้”
+   13:19 (รูปรายการ “แผ่น (ต้องตัด)” ของ Lot + รูป Machine Queue จริง: คอลัมน์ขวา “แผ่นต้องตัด 0 รายการ · เบิกครบแล้ว” ทุก Lot):
+     “เช่น ผมกด Lot แล้วแสดง … แล้วแสดงแผ่นตัดเลย · หมายถึงวัตถุดิบในการตัด
+      · ไม่ต้องขึ้น Pop up ด้านข้างมา แสดงรายละเอียดที่ด้านข้างของ Lot นั้น”
+   เดิม (v1.21–1.23): กดแถว Lot ใน Machine Queue = แผงรายละเอียดเลื่อนออกมาทับด้านขวา (#bdDetail แบบ Master Plan)
+     · คอลัมน์ขวา “วัตถุดิบ Lot พรุ่งนี้” มาจากรายการค้างเบิกใน AX (lots/rm.csv) อย่างเดียว → Lot ที่เบิกของครบแล้ว (ส่วนใหญ่ของ Lot ที่จะตัด)
+       ไม่มีแผ่นให้ดูเลย ทั้งที่หน้างานต้องรู้ว่าจะตัดแผ่นอะไรกี่แผ่น
+   ตอนนี้:
+     1. กดแถว Lot (วันนี้ · ตัดแล้ว 7 วัน · คิวรอตัด · ปุ่ม Lot ในคอลัมน์ขวา) = คอลัมน์ขวาเปลี่ยนเป็นรายละเอียด Lot นั้น (BQ.lot) — ไม่เปิดแผงข้าง
+        สถานะ/คิว · ส่ง · ต้องเริ่ม · ชิ้น · ตัดแล้ว · เวลาตัด · แผ่น → Cut Rite (.saw) ทุก Run → วัตถุดิบในการตัด:
+          ① แผ่นตัดตาม Cut Rite (รวมทุก Run ตามรหัสแผ่น · เทียบยอดในคลัง)
+          ② วัตถุดิบของ Lot จาก AX ทั้งที่ค้างและเบิกแล้ว (lots/rm.csv) — Lot ที่เบิกครบแล้ว (ไม่อยู่ใน rm.csv) = ดึงรายการทั้งหมดให้เอง
+             ทางเดียวกับปุ่ม “📋 ดูรายการวัตถุดิบทั้งหมดของ Lot นี้” (lots/rmlot → lot_rm → ขอ StarSync) ครั้งเดียวต่อ Lot
+        ปุ่ม ✕ / Esc = กลับเป็น “วัตถุดิบ Lot พรุ่งนี้” · เปลี่ยนเครื่อง = กลับเหมือนกัน · ↗ Lot ผลิต = เปิดหน้า Lot ผลิต
+        จอแคบ (คอลัมน์ขวาอยู่ใต้คิว) กดแล้วเลื่อนลงไปที่รายละเอียดให้
+     2. “วัตถุดิบ Lot พรุ่งนี้” + ตาราง “แผ่นตัดตาม Cut Rite” ของ Lot ที่เริ่มพรุ่งนี้ (รวมตามรหัสแผ่น · Lot ไหนใช้กี่แผ่น · ในคลัง)
+        แสดงแม้เบิกครบแล้ว · Lot ที่ยังไม่มีเลข .saw บอกชื่อไว้ · ตารางค้างเบิกจาก AX ยังอยู่ต่อท้ายเหมือนเดิม
+     3. ป้าย SAW มีเวลาตัดรวมของทุก Run (“SAW 6930237 · 52 นาที”) · ข้อความ Lot ที่ยังไม่มี .saw บอกว่า StarSync ยังทยอยอ่าน / ยังไม่ได้ optimize
+        (StarSync sync-ax-lots.ps1 v1.6 อ่านไฟล์ Export ย้อนจนครบทุก Lot ใน data 6 — ดูหัวไฟล์ของ StarSync) · “ตัดแล้ว” ยังแสดง 7 วันทำงานเท่าเดิม
+   Master Plan ยังเปิดแผงข้างเหมือนเดิม (ไม่มีคอลัมน์ขวา)
+   ═══════════════════════════════════════════════════════════════════════ */
+BQ.lot = ''; BQ.rxAuto = {};
+function bdMqSelId() { return B.tab === 'mc' ? BQ.lot || '' : B.sel || ''; }
+function bdMqPick(id) {
+  var P = B.plan, g = P && P.G.get(id); if (!g || g.closed) return;
+  BQ.lot = id;
+  if (B.sel) bdCloseDetail();                       // แผงข้างที่เปิดค้างจาก Master Plan ปิดไป
+  bdMqRender(P);
+  bdMqRxAuto(g);
+  var E = $('bdMq'), A = E && E.querySelector('.mqlot');
+  if (A && window.innerWidth < 1180) { try { A.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) { A.scrollIntoView(); } }
+}
+function bdMqUnpick() { if (!BQ.lot) return; BQ.lot = ''; if (B.plan) bdMqRender(B.plan); }
+/* Lot ที่ rm.csv ไม่มี (เบิกครบแล้ว) → ดึงรายการทั้งหมดให้เอง ครั้งเดียวต่อ Lot ต่อการเปิดหน้า (rxOpen: Drive lots/rmlot → lot_rm → ขอ StarSync) */
+function bdMqRxAuto(g) {
+  if (g.rmAll && g.rmAll.length) return;
+  var K = String(g.id).toUpperCase(), s = RX.st.get(K);
+  if (BQ.rxAuto[K] || (s && (s.busy || (s.rows && s.rows.length) || s.none || s.err))) return;
+  BQ.rxAuto[K] = 1;
+  try { rxOpen(g.id); } catch (e) { console.warn(e); }
+}
+/* แผ่นตัดตาม Cut Rite ของหลาย Lot รวมตามรหัสแผ่น (Run ที่ export ซ้ำ = นับครั้งเดียว แบบ crxAgg) */
+function bdMqCrSheets(gs) {
+  var m = new Map(), none = [], n = 0;
+  gs.forEach(function (g) {
+    var a = crxOf(g.id); if (!a || !a.length) { none.push(g); return; }
+    var seen = {};
+    a.forEach(function (r) {
+      var sig = [r.parts, r.boards, r.sec, r.ptn].join('|'); if (seen[sig]) return; seen[sig] = 1;
+      r.sheets.forEach(function (s) {
+        var k = String(s.c).toUpperCase(), e = m.get(k);
+        if (!e) { e = { c: s.c, d: s.d || '', t: s.t, q: 0, m2: 0, lots: [] }; m.set(k, e); }
+        var q = Number(s.q) || 0; e.q += q; e.m2 += Number(s.m2) || 0; n += q;
+        var l = e.lots.find(function (x) { return x.id === g.id; }); if (l) l.q += q; else e.lots.push({ id: g.id, q: q });
+      });
+    });
+  });
+  var rows = Array.from(m.values()).sort(function (a, b) { return ((Number(b.t) || 0) - (Number(a.t) || 0)) || (a.c < b.c ? -1 : 1); });
+  return { rows: rows, none: none, n: n };
+}
+function bdMqStock(code) { var h = rmHave(code), b = rmBasis(); return h && h.known ? h[b] : null; }
+function bdMqCrTable(cx, withLots) {
+  if (!cx.rows.length) return '';
+  var stOk = !!B.stock;
+  return '<table class="mqrmt mqcrt"><thead><tr><th>รหัสแผ่น · ชื่อ' + (withLots ? ' · Lot ที่ใช้' : '') + '</th><th>แผ่น</th><th>' + (rmBasis() === 'avail' ? 'ใช้ได้' : 'ในคลัง') + '</th><th></th></tr></thead><tbody>'
+    + cx.rows.map(function (e) {
+      var st = stOk ? bdMqStock(e.c) : null, ok = st != null && st >= e.q;
+      return '<tr class="' + (stOk && st != null && !ok ? 'short' : '') + '"><td>' + rmCodeLink(e.c) + '<small>' + esc(e.d || '') + (e.t ? ' · หนา ' + esc(e.t) + ' มม.' : '') + '</small>'
+        + (withLots ? '<small class="lt">' + e.lots.map(function (l) { return esc(l.id) + ' ×' + fmtN(l.q, 3); }).join(' · ') + '</small>' : '') + '</td>'
+        + '<td>' + fmtN(e.q, 3) + (e.m2 ? '<small>' + fmtN(Math.round(e.m2 * 100) / 100) + ' ตร.ม.</small>' : '') + '</td>'
+        + '<td>' + (st == null ? '<span class="muted">' + (stOk ? 'ไม่มีรหัสนี้' : '—') + '</span>' : fmtN(st, 3)) + '</td>'
+        + '<td class="' + (st == null ? 'muted' : ok ? 'ok' : 'neg') + '">' + (st == null ? '' : ok ? '✓' : '✗') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+/* คอลัมน์ขวาเมื่อเลือก Lot */
+function bdMqLot(g, P) {
+  var s = bdMqLotNow(g, P), a = g.crx || [], pdr = g.pr && g.pr.pd_remark ? String(g.pr.pd_remark).trim() : '';
+  var inT = P.tomorrow.indexOf(g) >= 0, inN = P.next.indexOf(g) >= 0, inB = P.blocked.indexOf(g) >= 0, inC = P.cutting.indexOf(g) >= 0, inA = P.after.indexOf(g) >= 0, inF = P.fin.indexOf(g) >= 0;
+  var where = inC ? 'กำลังตัด' + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '') : inT ? 'ตัดพรุ่งนี้' : inN ? 'คิวถัดไป' : inB ? 'ติดอยู่ — ' + (g.why || '') : inA ? 'หลังตัด — ' + bdAtTxt(g) : inF ? 'พร้อมส่ง' : g.st === 3 ? 'Finish' : '';
+  var kd = function (t, v) { return v === '' || v == null ? '' : '<div><dt>' + t + '</dt><dd>' + v + '</dd></div>'; };
+  var cutT = g.cut != null ? (g.cutEst ? '≈ ' : '') + esc(crxDur(g.cut) || bdH(g.cut)) + (g.cutSrc === 'cr' ? '<small>Cut Rite' + (g.cr && g.cr._x ? ' (ไฟล์ Export)' : '') + '</small>' : g.cutEst ? '<small>ประมาณ ' + B.set.cutPP + ' นาที/ชิ้น</small>' : '') : '';
+  var h = '<aside class="mqrm mqlot" aria-label="' + esc('รายละเอียด Lot ' + g.id) + '"><div class="mqsec">'
+    + '<div class="mqlh"><h3><b>' + esc(g.id) + '</b></h3><button class="tbtn" data-mqtolot="' + esc(g.id) + '" title="เปิดใน Lot ผลิต">↗ Lot ผลิต</button><button class="tbtn mqlx" data-mqlx="1" title="กลับไปดูวัตถุดิบ Lot พรุ่งนี้ (Esc)" aria-label="ปิด">✕</button></div>'
+    + '<div class="mqlrm">' + esc(g.remark || '—') + '</div>'
+    + '<div class="mqlst">' + stgHtml(g) + (where ? '<b>' + esc(where) + '</b>' : '') + (g.mq ? '<span>' + esc(g.mq.n) + ' · คิวที่ ' + g.mq.pos + ' · เริ่ม ≈ ' + esc(bdMqDayTxt(P, g.mq.day)) + '</span>' : '') + '</div>'
+    + (pdr ? '<div class="mqlpd" title="หมายเหตุวางแผน (AX)">📝 ' + esc(pdr) + '</div>' : '')
+    + '<dl class="mqk mqlkv">' + kd('ส่ง', g.end != null ? esc(fD(g.end)) : '—') + kd('ต้องเริ่มตัด', g.startBy != null ? esc(fD(g.startBy)) : '—')
+    + kd('ชิ้น', g.partsU != null ? fmtN(g.partsU) : '—') + kd('ตัดแล้ว', s.s0 ? fmtN(s.done ? s.s0.tt : s.s0.v) + ' / ' + fmtN(s.s0.tt) : s.prog != null ? Math.round(s.prog * 100) + '%' : '—')
+    + kd('เวลาตัด', cutT || '—') + kd('แผ่น', g.sheets != null ? fmtN(g.sheets) + (g.cr && g.cr.patterns ? '<small>' + fmtN(g.cr.patterns) + ' แพทเทิร์น' + (g.cr.wbase ? ' · เศษ ' + (Math.round(g.cr.wsum / g.cr.wbase * 10) / 10) + '%' : '') + '</small>' : '') : '—') + '</dl>';
+  /* Cut Rite (.saw) */
+  h += '<h4 class="mqlh4">Cut Rite (.saw)<small>' + (a.length ? a.length + ' Run' + (a[0].saw ? ' · Saw ' + esc(a[0].saw) : '') : '') + '</small></h4>';
+  if (a.length) h += '<div class="mqlruns">' + a.map(function (r) {
+      return '<div class="mqlrun"><b>' + esc(r.run) + '</b><span>' + esc(crxWhen(r)) + '</span><span>' + (r.boards != null ? fmtN(r.boards) + ' แผ่น' : '') + (r.parts != null ? ' · ' + fmtN(r.parts) + ' ชิ้น' : '') + (r.ptn != null ? ' · ' + fmtN(r.ptn) + ' แพทเทิร์น' : '') + '</span>'
+        + '<em>' + esc(crxDur(r.sec / 60) || '—') + '</em><span class="muted">' + (r.waste != null ? 'เศษ ' + (Math.round(r.waste * 1000) / 10) + '%' : '') + '</span></div>'; }).join('') + '</div>';
+  else h += '<p class="mqnone">' + esc(crxNoneTxt()) + '</p>';
+  /* วัตถุดิบในการตัด: ① แผ่นตัดตาม Cut Rite ② วัตถุดิบจาก AX (ค้าง + เบิกแล้ว) */
+  h += '<h4 class="mqlh4">วัตถุดิบในการตัด</h4>';
+  var cx = bdMqCrSheets([g]);
+  if (cx.rows.length) h += '<p class="mqrmsum">แผ่นตัดตาม Cut Rite <b>' + fmtN(cx.n, 3) + '</b> แผ่น · ' + cx.rows.length + ' รหัส' + (B.stock ? ' · เทียบยอด' + (rmBasis() === 'avail' ? 'ใช้ได้' : 'ในคลัง') + 'รวมทุกคลัง' : '') + '</p>' + bdMqCrTable(cx, false);
+  var all = (g.rmAll || []).filter(function (r) { return r.code; });
+  if (all.length) {
+    var bd = all.filter(function (r) { return isBoardCode(r.code); }), ot = all.filter(function (r) { return !isBoardCode(r.code); });
+    var tr = function (r) { var left = Math.max(0, Number(r.qty) || 0);
+      return '<tr class="' + (left > 1e-9 ? 'short' : '') + '"><td>' + rmCodeLink(r.code) + (r.name ? '<small>' + esc(r.name) + '</small>' : '') + '</td><td>' + (r.bom != null ? fmtN(r.bom, 3) : '—') + (r.unit ? '<small>' + esc(r.unit) + '</small>' : '') + '</td><td>' + (r.issued != null ? fmtN(r.issued, 3) : '—') + '</td><td class="' + (left > 1e-9 ? 'neg' : 'ok') + '">' + (left > 1e-9 ? fmtN(left, 3) : '✓') + '</td></tr>'; };
+    var hd = '<thead><tr><th>รหัส · ชื่อ</th><th>BOM</th><th>เบิกแล้ว</th><th>ค้าง</th></tr></thead>';
+    h += '<p class="mqrmsum">จาก AX: แผ่น <b>' + bd.length + '</b> รายการ · อุปกรณ์/อื่น ๆ <b>' + ot.length + '</b>' + (all.some(function (r) { return r.qty > 0; }) ? ' · <span class="neg">ยังค้างเบิก ' + all.filter(function (r) { return r.qty > 0; }).length + '</span>' : ' · <span class="ok">เบิกครบแล้ว</span>') + '</p>'
+      + (bd.length ? '<table class="mqrmt">' + hd + '<tbody>' + bd.map(tr).join('') + '</tbody></table>' : '')
+      + (ot.length ? '<details class="mqacc"' + (BQ.accOpen || !bd.length ? ' open' : '') + '><summary>อุปกรณ์ / อื่น ๆ · ' + ot.length + ' รายการ</summary><table class="mqrmt">' + hd + '<tbody>' + ot.map(tr).join('') + '</tbody></table></details>' : '');
+  } else h += '<div class="mqlrx"><p class="mqrmsum">จาก AX' + (g.rmSrc === 'ax' && g.mat === 'ok' ? ' (ไม่มีรายการค้างเบิก = เบิกครบแล้ว)' : '') + ':</p>' + rxBox(g.id) + '</div>';
+  return h + '</div></aside>';
+}
+document.addEventListener('click', function (e) {
+  var t = e.target.closest && e.target.closest('[data-mqlx],[data-mqtolot]'); if (!t) return;
+  e.preventDefault();
+  if (t.dataset.mqlx) { bdMqUnpick(); return; }
+  var id = t.dataset.mqtolot, g = B.plan && B.plan.G.get(id); go('lots');
+  if (g) setTimeout(function () { L.f.q = ''; var q = $('lq'); if (q) q.value = ''; lotRefresh(false); lotShowDetail(g.key); }, 60);   // แบบปุ่ม ↗ ของแผงรายละเอียด
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' || e.defaultPrevented || !BQ.lot || view() !== 'board' || B.tab !== 'mc') return;
+  if (!$('ov').classList.contains('hide')) return;
+  e.preventDefault(); e.stopPropagation(); bdMqUnpick();
+}, true);
+
+window.StarStock = { bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
