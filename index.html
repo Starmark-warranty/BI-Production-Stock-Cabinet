@@ -1425,6 +1425,20 @@
   .dbtpsum .bar{display:flex} .dbtpsum .bar i{display:block;height:100%} .dbtpsum .bar i.r{background:color-mix(in srgb,var(--db-a) 45%,transparent);border-radius:0}
   .dbtpsum.full small{color:#1f9d55}
   @media (max-width: 760px){ .dbd7.has0{grid-template-columns:repeat(8,minmax(44px,1fr))} .dbtp td.st small{display:none} }
+  /* ───────── v1.36: วงแหวนซ้าย — แผนวันนี้ต่อจาก Lot ที่ตัดอยู่ (ตัวชี้ ▶ เลื่อนไป Lot ถัดไปเมื่อ Lot เดิมครบ) ───────── */
+  .dbonering .dbtlw{position:relative;max-height:470px;overflow:auto;margin-top:6px}
+  .dbonering .dbtlw ol.dbtl{max-height:none;overflow:visible;margin:0}
+  .dbonering .dbtlw .l.dbtpl{display:block;margin:12px 0 4px;padding-top:10px;border-top:2px dashed color-mix(in srgb,var(--db-track) 90%,transparent)}
+  .dbonering .dbtlw .l.dbtpl em{display:block;font-style:normal;font-weight:500;font-size:11px;color:var(--db-faint);margin-top:2px}
+  .dbtl li.pl>i{font:700 11.5px var(--mono)}
+  .dbtl li.pl.nx{background:color-mix(in srgb,var(--db-a) 6%,transparent)}
+  .dbtl li.pl.cur{background:color-mix(in srgb,var(--db-a) 12%,transparent);box-shadow:inset 3px 0 0 var(--db-a)}
+  .dbtl li.pl.cur>i{color:var(--db-a);font-size:12px}
+  .dbtl li .tg.nx{color:var(--db-a);background:transparent;box-shadow:inset 0 0 0 1.5px var(--db-a)}
+  .dbtl li .tg.oth{color:var(--db-dim);background:color-mix(in srgb,var(--db-track) 80%,transparent)}
+  .dbtl li.pl.cy small{color:#b7791f}
+  .dbtl li.more{cursor:default} .dbtl li.more:hover{background:none}
+  body.tv .dbonering .dbtlw{max-height:none;overflow:visible}
 </style>
 </head>
 <body>
@@ -1435,7 +1449,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.35</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.36</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2345,10 +2359,13 @@ var GasFS = (function () {
 
    v1.35 (2026-10-19 09:26 ผู้ใช้: “แผนของวันนี้ล่ะครับ ไม่มีหรอ” → เลือกทั้งสองแบบ)
      · แท็บ “วันนี้”: แผนที่บันทึกไว้ก่อนเริ่มวัน (lots/plan/<วันที่>.json) เทียบยอดยิงจริง · ไม่มีบันทึก = คำนวณสด — ดูหัวบล็อก v1.35 ข้างล่าง
+
+   v1.36 (2026-10-19 09:51 ผู้ใช้: “ทำไมไม่เอาวันนี้มาแสดงข้างซ้าย ต่อจากที่ตัดอยู่ … พอ Lot นั้นตัดจบ ก็เลื่อนตัวบอกว่ากำลังตัดไปหา Lot ต่อไป”)
+     · ใต้วงแหวน “วันนี้ตัดได้”: ตัดแล้ววันนี้ (เก่า → ใหม่) + แผนวันนี้ต่อจากนี้ · ▶ เลื่อนไป Lot ถัดไปในแผนเมื่อ Lot ที่ตัดอยู่ครบ — ดูหัวบล็อก v1.36 ข้างล่าง
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.35';
+var VER = '1.36';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -7476,8 +7493,9 @@ function bdDashMcView(S, x, P) {
     + '<p class="cap">วันนี้ตัดได้</p>'
     + dbRing(ppd ? tp1 / ppd : null, 230, 22, '<b>' + (ppd ? dbPct(tp1 / ppd) : '—') + '</b><small>' + fmtN(tp1) + (ppd ? ' / ' + fmtN(ppd) : '') + ' ชิ้น</small>', bdDashTip([x.m.n + ' วันนี้ ' + tp1.toLocaleString('th-TH') + ' ชิ้น', ppd ? 'ชิ้น/วันของเครื่อง (⚙) ' + ppd.toLocaleString('th-TH') : 'ยังไม่ได้ตั้งชิ้น/วัน']))
     + '<div class="dbpl"><span>0%</span><span class="avg">เฉลี่ย ' + hN + ' วันทำงาน <b>' + dbPct(avgU) + '</b> · ' + bdDashN(x.avgL, 1) + ' Lot/วัน</span><span>100%</span></div>'
-    + '<div class="now">' + (cur ? dbTodayLots(c, cur, run, idle, S.GU, P)   // v1.29 ชื่อ Lot ที่ตัดวันนี้ทุก Lot (เดิมโชว์แค่ Lot ล่าสุด)
-      : '<span class="l">วันนี้</span><b class="muted">ยังไม่มีการยิงตัด</b>') + '</div></section>';
+    /* v1.36 ใต้วงแหวน = ตัดแล้ววันนี้ + แผนวันนี้ต่อจากนี้ (ตัวชี้ ▶ เลื่อนไป Lot ถัดไปเมื่อ Lot ที่ตัดอยู่ครบ) — ผู้ใช้ 19/10 09:51 “เอาวันนี้มาแสดงข้างซ้าย ต่อจากที่ตัดอยู่”
+       เดิม v1.29: (cur ? dbTodayLots(c, cur, run, idle, S.GU, P) : 'ยังไม่มีการยิงตัด') — แสดงแค่ Lot ที่ยิงแล้ว (dbTodayLots ยังเก็บไว้ ไม่ได้ใช้แล้ว) */
+    + '<div class="now">' + dbTodayPlan(x, P, S.GU, cur, run, idle) + '</div></section>';
   h += DB.day === -1 ? dbTodaySec(x, P) /* v1.35 วันนี้ */ : dbDaySec(x, P, DB.day);   // v1.31 วันทำงานถัดไป + ล่วงหน้า 6 วัน
   h += '</div>';
   var rows = x.ser.map(function (s) { return { v: s.p, today: s.d.today, lbl: bdDashDayLbl(s.d), tip: bdDashTip([bdDayTxt(s.d.ms) + (s.d.today ? ' (ถึงตอนนี้)' : ''), s.p.toLocaleString('th-TH') + ' ชิ้น · ' + s.l + ' Lot'].concat(s.lots.slice(0, 8).map(function (l) { return '  ' + l; }))) }; });
@@ -7708,6 +7726,20 @@ function tpStatus(g, P, nT, pc) {
   if (P.cutting.indexOf(g) >= 0) return '<span class="run">กำลังตัด (วันนี้ยังไม่ยิง)</span>' + (pr ? '<small>' + esc(pr) + '</small>' : '');
   return '<span class="wait">ยังไม่เริ่ม</span>';
 }
+/* ───────── v1.36: คำนวณสดแผนวันนี้ (เดิมอยู่ใน dbTodaySec — แยกออกมาให้วงแหวนซ้าย dbTodayPlan ใช้ด้วย) ─────────
+   ค้างตัดของเครื่องนี้ก่อนเสมอ แล้วต่อด้วย Lot ในคิว (dbPackOf) ที่ยังใส่เวลา/ชิ้นที่เหลือของวันนี้ได้ (bdPackFits)
+   เวลาที่ใช้ไปแล้ว = เวลาของชิ้นที่ยิงวันนี้ราย Lot (bdLotMin) · ไม่ได้วางแผนเครื่องนี้ (pm ว่าง) = live ว่าง */
+function tpLive(x, P) {
+  var pm = x.o.pm, c = x.o.c, ppd = x.m.ppd || 0, mn = pm && pm.min || bdMcMin(x.m);
+  var cutP = c ? c.codes.size : 0, usedT = 0, live = [];
+  if (c && c.lotCodes) Object.keys(c.lotCodes).forEach(function (l) { var g = P.G.get(l) || null; usedT += g ? bdLotMin(g, c.lotCodes[l].size) : c.lotCodes[l].size * (B.set.cutPP || 0); });
+  if (!pm) return { cutP: cutP, usedT: usedT, mn: mn, live: live };
+  var m = { ppd: ppd, min: mn, days: [{ p: cutP, t: usedT, n: cutP ? 1 : 0 }] };
+  var S0 = m.days[0];
+  pm.q.filter(function (e) { return e.carry; }).forEach(function (e) { var t = e.t != null ? e.t : bdLotMin(e.g, e.p || 0); S0.p += e.p || 0; S0.t += t; S0.n++; live.push({ e: e, t: t, carry: true }); });   // ค้างตัด = ตัดต่อวันนี้ก่อนเสมอ
+  dbPackOf(pm).forEach(function (e) { if (!bdPackFits(m, 0, e.p || 0, e.t || 0)) return; S0.p += e.p || 0; S0.t += e.t || 0; S0.n++; live.push({ e: e, t: e.t || 0 }); });   // วันว่างทั้งวัน (ยังไม่ยิงและไม่มีค้าง) = รับ Lot แรกได้แม้ใหญ่เกินวัน — กติกาเดียวกับแผน
+  return { cutP: cutP, usedT: usedT, mn: mn, live: live };
+}
 function dbTodaySec(x, P) {
   var pm = x.o.pm, c = x.o.c, snap = tpToday(P), ms = snap && snap.mcs[x.m.n], ppd = x.m.ppd || 0, mn = pm && pm.min || bdMcMin(x.m), W = 'วันนี้';
   var h = '<section class="dbc dbonetmr dbtoday"><header><h3>วันนี้ต้องตัด<small>' + esc(bdDayTxt(P.today)) + ' · '
@@ -7731,12 +7763,8 @@ function dbTodaySec(x, P) {
   }
   /* คำนวณสด: ค้างตัด (เหลือ) + Lot ถัดไปในคิวที่ยังใส่เวลาที่เหลือของวันนี้ได้ */
   if (!pm) return h + '<p class="mqnone">' + (x.m.on ? 'ไม่ได้ตั้งชิ้น/วัน' : 'เครื่องนี้ปิดไว้ — ไม่ได้วางแผน') + '</p></section>';
-  var cutP = c ? c.codes.size : 0, usedT = 0;
-  if (c && c.lotCodes) Object.keys(c.lotCodes).forEach(function (l) { var g = P.G.get(l) || null; usedT += g ? bdLotMin(g, c.lotCodes[l].size) : c.lotCodes[l].size * (B.set.cutPP || 0); });
-  var m = { ppd: ppd, min: mn, days: [{ p: cutP, t: usedT, n: cutP ? 1 : 0 }] }, live = [];
-  var S0 = m.days[0];
-  pm.q.filter(function (e) { return e.carry; }).forEach(function (e) { var t = e.t != null ? e.t : bdLotMin(e.g, e.p || 0); S0.p += e.p || 0; S0.t += t; S0.n++; live.push({ e: e, t: t, carry: true }); });   // ค้างตัด = ตัดต่อวันนี้ก่อนเสมอ
-  dbPackOf(pm).forEach(function (e) { if (!bdPackFits(m, 0, e.p || 0, e.t || 0)) return; S0.p += e.p || 0; S0.t += e.t || 0; S0.n++; live.push({ e: e, t: e.t || 0 }); });   // วันว่างทั้งวัน (ยังไม่ยิงและไม่มีค้าง) = รับ Lot แรกได้แม้ใหญ่เกินวัน — กติกาเดียวกับแผน
+  /* v1.36: ย้ายตัวคำนวณสดไป tpLive (วงแหวนซ้ายใช้ตัวเดียวกัน — แผนวันนี้ต่อจาก Lot ที่ตัดอยู่) · ผลเหมือนเดิมทุกอย่าง */
+  var LV = tpLive(x, P), cutP = LV.cutP, usedT = LV.usedT, live = LV.live;
   var leftT = Math.max(0, mn - usedT);
   h += '<div class="dbcap dbtpsum"><div class="t"><span>ยิงไปแล้ววันนี้ <b>' + fmtN(cutP) + '</b> ชิ้น ≈ ' + esc(crxDur(usedT) || '0 นาที') + (mn ? ' · เหลือเวลา ≈ ' + esc(crxDur(leftT) || '0 นาที') + ' / ' + (mn / 60) + ' ชม.' : '') + '</span><b>' + dbPct(mn ? Math.min(1, usedT / mn) : 0) + '</b></div>'
     + '<div class="bar"><i style="width:' + (mn ? Math.min(100, usedT / mn * 100).toFixed(1) : 0) + '%"></i></div>'
@@ -7747,7 +7775,88 @@ function dbTodaySec(x, P) {
   return h + '</section>';
 }
 
-window.StarStock = { tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.36: Dashboard หน้าเครื่องเดียว — วงแหวนซ้าย “แผนวันนี้ต่อจาก Lot ที่ตัดอยู่”
+   ผู้ใช้ 19/10/2026 09:51 (รูป HPP 300/1 แท็บ “วันนี้”): “ทำไมไม่เอาวันนี้มาแสดงข้างซ้าย ต่อจากที่ตัดอยู่ละครับ
+     พอ Lot นั้นตัดจบ ก็เลื่อนตัวบอกว่ากำลังตัดไปหา Lot ต่อไป”
+   เดิม (v1.29–1.35): ใต้วงแหวน “วันนี้ตัดได้” มีแค่ “ตัดแล้ววันนี้” (Lot ที่ยิงล่าสุดขึ้นก่อน แล้วเรียงตามชิ้น)
+     · แผนของวันนี้ดูได้ที่แท็บ “วันนี้” ทางขวาอย่างเดียว — ต้องกดสลับไปมา
+   ตอนนี้: ใต้วงแหวนเป็นไทม์ไลน์เดียว อ่านจากบนลงล่าง
+     ① ตัดแล้ววันนี้ — Lot ที่ยิงวันนี้ที่เครื่องนี้ เรียงตามเวลายิงล่าสุด (เก่า → ใหม่) · Lot ที่ยิงล่าสุดอยู่ล่างสุดของกลุ่ม
+     ② แผนวันนี้ต่อจากนี้ — Lot ในแผนวันนี้ที่ยังไม่ได้ยิงที่เครื่องนี้ ตามลำดับแผน
+        · มีแผนที่บันทึกไว้ (lots/plan/<วันนี้>.json — v1.35): Lot ค้างตัดตอนวางแผนที่ยังไม่ครบ + Lot ตามแผน
+        · ไม่มีบันทึก: คำนวณสด (tpLive — ตัวเดียวกับแท็บ “วันนี้”): ค้างตัดของเครื่องนี้ + Lot ในคิวที่ยังใส่เวลาที่เหลือได้
+        · Lot ที่ยิงไปแล้ววันนี้ไม่ซ้ำในกลุ่มนี้ (ย้ายขึ้นกลุ่ม ① เองเมื่อเริ่มยิง)
+     ③ ตัวชี้ ▶
+        · Lot ที่ยิงล่าสุดยังไม่ครบ = ▶ กำลังยิง / ❚❚ หยุด อยู่ที่ Lot นั้น (เหมือนเดิม) · Lot แรกในแผนที่ยังไม่ครบ = ป้าย “ต่อไป”
+        · พอ Lot ที่ยิงล่าสุดตัดครบ (✓ — Smart Production ครบ / ปิดว่าจบแล้ว) → ▶ “กำลังตัด” เลื่อนไป Lot ถัดไปในแผนเอง
+          (ยังไม่ยิงชิ้นแรก — บอกว่า “ต่อจาก <Lot เดิม>”) · ยิงชิ้นแรกของ Lot นั้นเมื่อไร มันย้ายขึ้นกลุ่ม ① และกลายเป็น ▶ กำลังยิง
+        · ข้าม Lot ที่ครบแล้ว / กำลังตัดอยู่ที่เครื่องอื่น · วันนี้ยังไม่ยิงเลย = ▶ ที่ Lot แรกของแผน “เริ่มที่ Lot นี้”
+     · รายการยาวเกินกล่อง = เลื่อนในกล่อง และเปิดมาให้เห็นแถว ▶ เอง
+   ═══════════════════════════════════════════════════════════════════════ */
+var DBTP_MAX = 15;   // Lot ในแผนต่อจากนี้ที่แสดง (เกิน = “+ อีก N Lot — ดูแท็บ วันนี้”)
+function dbTpFin(g, P) { return !!g && (g.closed || tpDone(g, P)); }
+function dbTodayPlan(x, P, GU, cur, run, idle) {
+  var c = x.o.c, PC = String(x.m.pc || '').toUpperCase(), LM = B.cp && B.cp.lotMc;
+  var U = function (s) { return String(s || '').toUpperCase(); };
+  var gOf = function (id) { return GU.get(U(id)) || P.G.get(id) || null; };
+  /* ① ตัดแล้ววันนี้ — เรียงตามเวลายิงล่าสุด (เก่า → ใหม่) · Lot ที่ยิงล่าสุด (c.lot) ท้ายกลุ่มเสมอ */
+  var ks = c ? Object.keys(c.lots || {}) : [], nOf = function (k) { return c.lotCodes && c.lotCodes[k] ? c.lotCodes[k].size : c.lots[k] || 0; };
+  var tOf = function (k) { var M = LM && LM.get(U(k)); return M && M.get(PC) || ''; };
+  ks.sort(function (a, b) { if (a === cur) return 1; if (b === cur) return -1; var ta = tOf(a), tb = tOf(b); return ta < tb ? -1 : ta > tb ? 1 : 0; });
+  var shot = new Set(ks.map(U));
+  /* ② แผนวันนี้ (บันทึกไว้ / คำนวณสด) */
+  var snap = tpToday(P), ms = snap && snap.mcs ? snap.mcs[x.m.n] : null, plan = [], seen = new Set();
+  if (ms) {
+    (ms.carry || []).forEach(function (o) { var g = gOf(o.id); if (dbTpFin(g, P)) return; plan.push({ id: o.id, g: g, p: o.p || 0, t: null, carry: true }); });   // ค้างตัดตอนวางแผนที่จบไปแล้ว = ไม่ใช่ “ต่อจากนี้”
+    (ms.lots || []).forEach(function (o) { plan.push({ id: o.id, g: gOf(o.id), p: o.p || 0, t: o.t || null, all: o.all || 0 }); });
+  } else if (x.o.pm) tpLive(x, P).live.forEach(function (z) { plan.push({ id: z.e.g.id, g: z.e.g, p: Math.round(z.e.p || 0), t: z.t || null, carry: !!z.carry }); });
+  plan = plan.filter(function (o) { var K = U(o.id); if (shot.has(K) || seen.has(K)) return false; seen.add(K); return true; });
+  plan.forEach(function (o) { o.fin = dbTpFin(o.g, P); o.el = o.g && !o.fin ? tpCutElse(x.m.pc, o.g.id) : []; if (o.t == null && o.g) o.t = bdLotMin(o.g, o.p); });
+  /* ③ ตัวชี้: Lot ที่ยิงล่าสุดยังไม่ครบ = อยู่ที่ Lot นั้น · ครบแล้ว (หรือวันนี้ยังไม่ยิง) = Lot ถัดไปในแผน */
+  var gc = cur ? gOf(cur) : null, curOn = !!cur && !dbTpFin(gc, P), nx = -1;
+  plan.some(function (o, i) { if (!o.g || o.fin || o.el.length) return false; nx = i; return true; });
+  var h = '';
+  if (ks.length) {
+    h += '<span class="l">ตัดแล้ววันนี้ · ' + ks.length + ' Lot · ' + fmtN(c.codes ? c.codes.size : 0) + ' ชิ้น</span>';
+  } else h += '<span class="l">วันนี้</span><b class="muted">ยังไม่มีการยิงตัด</b>';
+  h += '<div class="dbtlw">';
+  if (ks.length) h += '<ol class="dbtl">' + ks.map(function (lot) {
+    var g = GU.get(lot.toUpperCase()), on = lot === cur && curOn, s0 = g ? bdMqLotNow(g, P) : null, done = !!(s0 && s0.done);
+    var pr = s0 && s0.s0 ? 'ตัดแล้ว ' + fmtN(done ? s0.s0.tt : s0.s0.v) + ' / ' + fmtN(s0.s0.tt) + (done ? ' · ครบแล้ว ✓' : g.remP ? ' · เหลือ ' + fmtN(g.remP) : '') : !g ? 'ไม่พบใน data 6' : g.closed ? 'ปิดว่าจบแล้ว' : done ? 'ครบแล้ว ✓' : '';
+    return '<li class="' + (on ? 'cur mk' : '') + (done ? ' done' : '') + '"' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (g && !done && ptTip(g.id) ? ' title="' + esc(ptTip(g.id)) + '"' : '') + '><i>' + (on ? (run ? '▶' : '❚❚') : done ? '✓' : '·') + '</i>'
+      + '<div><b data-cp="' + esc(lot) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(lot) + '</b>' + crxChip(lot) + (on ? '<span class="tg">' + (run ? 'กำลังยิง' : 'หยุด ' + esc(bdH(idle))) + '</span>' : '')
+      + '<small>วันนี้ <b>' + fmtN(nOf(lot)) + '</b> ชิ้น' + (pr ? ' · ' + esc(pr) : '') + '</small></div></li>'; }).join('') + '</ol>';
+  if (plan.length) {
+    var rest = plan.filter(function (o) { return !o.fin; }), rP = 0, rT = 0; rest.forEach(function (o) { rP += o.p || 0; rT += o.t || 0; });
+    h += '<span class="l dbtpl">แผนวันนี้ต่อจากนี้ · ' + rest.length + ' Lot · ' + fmtN(Math.round(rP)) + ' ชิ้น' + (rT > 0 ? ' ≈ ' + esc(crxDur(rT)) : '')
+      + '<em>' + (snap ? 'แผนที่บันทึกไว้ ' + esc(String(snap.at || '').slice(11, 16)) : 'คำนวณสดจากเวลาที่เหลือวันนี้') + '</em></span>';
+    h += '<ol class="dbtl dbtp2">' + plan.slice(0, DBTP_MAX).map(function (o, i) {
+      var g = o.g, mk = i === nx, run1 = mk && !curOn, s0 = g ? bdMqLotNow(g, P) : null;
+      var pr = s0 && s0.s0 && s0.s0.v ? 'ตัดแล้ว ' + fmtN(s0.s0.v) + ' / ' + fmtN(s0.s0.tt) : '';
+      var sub = [(o.carry ? 'ค้างตัด · เหลือ ' : 'แผน ') + fmtN(Math.round(o.p || 0)) + ' ชิ้น' + (o.t > 0 ? ' ≈ ' + crxDur(o.t) : '') + (o.all > o.p ? ' (ทั้ง Lot ' + fmtN(o.all) + ')' : '')];
+      if (!g) sub.push('ไม่พบใน data 6');
+      else if (o.fin) sub.push(g.closed ? 'ปิดว่าจบแล้ว' : 'ครบแล้ว ✓');
+      else { if (o.el.length) sub.push('ตัดที่ ' + o.el.join(' · ')); if (pr) sub.push(pr); }
+      if (run1 && cur) sub.push('ต่อจาก ' + cur + ' (ครบแล้ว) · ยังไม่ยิงชิ้นแรก');
+      var tg = mk ? (curOn ? '<span class="tg nx">ต่อไป</span>' : cur ? '<span class="tg">กำลังตัด</span>' : '<span class="tg">เริ่มที่ Lot นี้</span>') : o.el.length ? '<span class="tg oth">ตัดที่เครื่องอื่น</span>' : '';
+      return '<li class="pl' + (mk ? (run1 ? ' cur mk' : ' nx') : '') + (o.fin ? ' done' : '') + (o.carry ? ' cy' : '') + '"' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (g && !o.fin && ptTip(g.id) ? ' title="' + esc(ptTip(g.id)) + '"' : '')
+        + '><i>' + (o.fin ? '✓' : run1 ? '▶' : (i + 1)) + '</i><div><b data-cp="' + esc(o.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(o.id) + '</b>' + crxChip(o.id) + tg
+        + '<small>' + esc(sub.join(' · ')) + '</small></div></li>'; }).join('')
+      + (plan.length > DBTP_MAX ? '<li class="more"><i></i><div><small>+ อีก ' + (plan.length - DBTP_MAX) + ' Lot — ดูแท็บ “วันนี้”</small></div></li>' : '') + '</ol>';
+  } else if (ms || x.o.pm) h += '<span class="l dbtpl">แผนวันนี้ต่อจากนี้ · ไม่มี Lot เหลือในแผน<em>' + (snap ? 'แผนที่บันทึกไว้ ' + esc(String(snap.at || '').slice(11, 16)) : 'คำนวณสด') + '</em></span>';
+  h += '</div>';
+  setTimeout(dbTpScroll, 0);
+  return h;
+}
+/* เปิดมาให้เห็นแถว ▶ (รายการยาวเกินกล่อง) */
+function dbTpScroll() {
+  var W = document.querySelector('#bdDash .dbonering .dbtlw'), li = W && W.querySelector('li.mk');
+  if (!W || !li || W.scrollHeight <= W.clientHeight + 4) return;
+  W.scrollTop = Math.max(0, li.offsetTop - 48);
+}
+
+window.StarStock = { dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
