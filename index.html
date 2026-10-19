@@ -7853,6 +7853,7 @@ function dbTodayPlan(x, P, GU, cur, run, idle) {
 function dbTpScroll() {
   var W = document.querySelector('#bdDash .dbonering .dbtlw'), li = W && W.querySelector('li.mk');
   if (!W || !li || W.scrollHeight <= W.clientHeight + 4) return;
+  if (li.offsetTop + li.offsetHeight <= W.clientHeight) return;   // แถว ▶ เห็นอยู่แล้ว = ไม่เลื่อน (ให้เห็น Lot ที่ตัดครบแล้วข้างบนด้วย)
   W.scrollTop = Math.max(0, li.offsetTop - 48);
 }
 
