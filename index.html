@@ -1439,6 +1439,8 @@
   .dbtl li.pl.cy small{color:#b7791f}
   .dbtl li.more{cursor:default} .dbtl li.more:hover{background:none}
   body.tv .dbonering .dbtlw{max-height:none;overflow:visible}
+  /* ───────── v1.37: Run เก่าที่ไม่นับ (Lot มีหลายเลข .saw → ใช้เลขล่าสุดเลขเดียว) ───────── */
+  .crxold{margin-top:6px;font-size:12px} .crxold b{font-weight:700} .crxold small{color:var(--muted,#888)}
 </style>
 </head>
 <body>
@@ -1449,7 +1451,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.36</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.37</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2362,10 +2364,13 @@ var GasFS = (function () {
 
    v1.36 (2026-10-19 09:51 ผู้ใช้: “ทำไมไม่เอาวันนี้มาแสดงข้างซ้าย ต่อจากที่ตัดอยู่ … พอ Lot นั้นตัดจบ ก็เลื่อนตัวบอกว่ากำลังตัดไปหา Lot ต่อไป”)
      · ใต้วงแหวน “วันนี้ตัดได้”: ตัดแล้ววันนี้ (เก่า → ใหม่) + แผนวันนี้ต่อจากนี้ · ▶ เลื่อนไป Lot ถัดไปในแผนเมื่อ Lot ที่ตัดอยู่ครบ — ดูหัวบล็อก v1.36 ข้างล่าง
+
+   v1.37 (2026-10-19 15:26 ผู้ใช้: “ถ้าเจอ Lot นึงมี 2 เลข .saw ให้ดึงมาแค่ 1 เลข เอาเลขล่าสุดนะ”)
+     · Lot ที่มีหลาย Run (.saw) ใช้ Run ล่าสุดเลขเดียวทุกที่ (ป้าย · คอลัมน์ · เวลาตัด · แผ่น) — Run เก่าบอกไว้ในรายละเอียด Lot — ดูบล็อก v1.37 ใน crxParse
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.36';
+var VER = '1.37';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -6622,6 +6627,16 @@ function crxParse(t) {
   });
   m.forEach(function (a) { a.sort(function (p, q) { return ((q.fat || q.at || 0) - (p.fat || p.at || 0)) || (q.run < p.run ? -1 : q.run > p.run ? 1 : 0); }); });
   B.crx.runs = n;
+  /* ───────── v1.37: Lot ที่มีหลายเลข .saw → ใช้เลขล่าสุดเลขเดียว ─────────
+     ผู้ใช้ 19/10/2026 15:26 (รูป BO69-0830_Mc ขึ้น 6941116 · 6941111 / ป้าย “SAW 6920880 +1”): “ถ้าเจอ Lot นึงมี 2 เลข .saw ให้ดึงมาแค่ 1 เลข เอาเลขล่าสุดนะ”
+     เดิม (v1.23–1.36): ทุก Run ของ Lot อยู่ใน B.crx.map → ป้าย “SAW เลขใหม่ +1” · คอลัมน์เลข .saw โชว์ทุกเลข
+       · เวลาตัด/แผ่นของ Lot = รวมทุก Run (Run ที่ Optimize ใหม่แทน Run เก่า → เวลานับซ้ำ แผนหนักเกินจริง)
+     ตอนนี้: B.crx.map เก็บแค่ Run ล่าสุด (เรียงแบบเดิม: เวลาไฟล์/เวลา Run ใหม่สุด → เลข Run มากสุด) — ทุกที่ที่อ่านผ่าน crxOf ได้เลขเดียวเอง
+       (ป้าย SAW · คอลัมน์เลข .saw · เวลาตัด .saw · แผ่นที่ใช้ · เวลาในแผนเมื่อไม่มี cut_lot_latest)
+       · Run เก่าเก็บไว้ที่ B.crx.all (ทุก Run) — รายละเอียด Lot บอก “Run เก่าที่ไม่นับ” ไว้ตามรอย */
+  var all = new Map();
+  m.forEach(function (a, K) { all.set(K, a); if (a.length > 1) m.set(K, a.slice(0, 1)); });
+  B.crx.all = all;
   return m;
 }
 async function crxLoad() {
@@ -6659,6 +6674,12 @@ function crxAgg(a) {
     if (r.waste != null && r.boards) { e.wsum += r.waste * 100 * r.boards; e.wbase += r.boards; }
   });
   return e;
+}
+/* v1.37: Run เก่าของ Lot (ไม่นับแล้ว — ใช้เลขล่าสุดเลขเดียว) */
+function crxOldTxt(g) {
+  var A = B.crx.all && B.crx.all.get(String(g.id).toUpperCase()), old = A ? A.slice(1) : [];
+  if (!old.length) return '';
+  return '<div class="muted crxold" title="' + esc(crxTip(old)) + '">Run เก่าที่ไม่นับ (ใช้เลขล่าสุด ' + esc(A[0].run) + ' เลขเดียว): ' + old.map(function (r) { return '<b class="mono">' + esc(r.run) + '</b>' + (crxWhen(r) ? ' <small>' + esc(crxWhen(r)) + (r.sec ? ' · ' + esc(durTh(r.sec / 60)) : '') + '</small>' : ''); }).join(' · ') + '</div>';
 }
 function crxWhen(r) { var t = r.fat || r.at; return t ? fD(t) + ' ' + bdHM(t) : ''; }
 function crxTip(a) {
@@ -6733,7 +6754,8 @@ function crxSec(g) {
         + '<td>' + (r.waste != null ? (Math.round(r.waste * 1000) / 10) + '%' : '—') + '</td></tr>';
     }).join('') + '</table>'
     + '<div class="muted crxf">' + (saws.length ? 'Saw ที่ตั้งใน Cut Rite: <b>' + saws.map(esc).join(' · ') + '</b>' : '') + (params.length ? (saws.length ? ' · ' : '') + 'ชุดค่าตัด: ' + params.map(esc).join(' · ') : '')
-    + (g.cr && !g.cr._x ? '<br>เวลาตัดในแผนใช้ของ Cut Rite (cut_lot_latest) — ตารางนี้เป็นข้อมูลจากไฟล์ Export' : g.cr && g.cr._x ? '<br>เวลาตัด/แผ่นในแผนใช้จากไฟล์ Export (cut_lot_latest ไม่มี Lot นี้)' : '') + '</div></div>';
+    + (g.cr && !g.cr._x ? '<br>เวลาตัดในแผนใช้ของ Cut Rite (cut_lot_latest) — ตารางนี้เป็นข้อมูลจากไฟล์ Export' : g.cr && g.cr._x ? '<br>เวลาตัด/แผ่นในแผนใช้จากไฟล์ Export (cut_lot_latest ไม่มี Lot นี้)' : '') + '</div>'
+    + crxOldTxt(g) /* v1.37 Run เก่าที่ไม่นับ */ + '</div>';
   return h;
 }
 
@@ -6939,7 +6961,8 @@ function bdMqLot(g, P) {
   h += '<h4 class="mqlh4">Cut Rite (.saw)<small>' + (a.length ? a.length + ' Run' + (a[0].saw ? ' · Saw ' + esc(a[0].saw) : '') : '') + '</small></h4>';
   if (a.length) h += '<div class="mqlruns">' + a.map(function (r) {
       return '<div class="mqlrun"><b>' + esc(r.run) + '</b><span>' + esc(crxWhen(r)) + '</span><span>' + (r.boards != null ? fmtN(r.boards) + ' แผ่น' : '') + (r.parts != null ? ' · ' + fmtN(r.parts) + ' ชิ้น' : '') + (r.ptn != null ? ' · ' + fmtN(r.ptn) + ' แพทเทิร์น' : '') + '</span>'
-        + '<em>' + esc(crxDur(r.sec / 60) || '—') + '</em><span class="muted">' + (r.waste != null ? 'เศษ ' + (Math.round(r.waste * 1000) / 10) + '%' : '') + '</span></div>'; }).join('') + '</div>';
+        + '<em>' + esc(crxDur(r.sec / 60) || '—') + '</em><span class="muted">' + (r.waste != null ? 'เศษ ' + (Math.round(r.waste * 1000) / 10) + '%' : '') + '</span></div>'; }).join('') + '</div>'
+      + crxOldTxt(g);   // v1.37 Lot มีหลายเลข .saw → ใช้เลขล่าสุด · Run เก่าบอกไว้ (ไม่นับ)
   else h += '<p class="mqnone">' + esc(crxNoneTxt()) + '</p>';
   /* วัตถุดิบในการตัด: ① แผ่นตัดตาม Cut Rite ② วัตถุดิบจาก AX (ค้าง + เบิกแล้ว) */
   /* ───────── v1.27: วัตถุดิบในการตัด = จาก AX อย่างเดียว (ไม่แสดงแผ่นตัดตาม Cut Rite ซ้ำ) ─────────
