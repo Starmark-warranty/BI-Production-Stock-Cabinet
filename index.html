@@ -1402,6 +1402,16 @@
   .pttab td:nth-child(2),.pttab td:nth-child(3),.pttab th:nth-child(2),.pttab th:nth-child(3){text-align:right;white-space:nowrap}
   .pttab td.neg{font-weight:800}
   .mqnone.ok{color:var(--ok,#1f9d55)}
+  /* ───────── v1.34: ชื่อ Lot คลิกแล้วคัดลอก ───────── */
+  [data-cp]{cursor:copy}
+  [data-cp]:hover{text-decoration:underline dotted;text-underline-offset:3px}
+  /* v1.34 คอลัมน์ส่ง (enddate) บน Dashboard หน้าเครื่องเดียว */
+  .dbsaw th.ed,.dbsaw td.ed{white-space:nowrap}
+  .dbsaw td.ed{font:700 13.5px var(--mono);color:var(--db-ink)}
+  .dbsaw td.ed small{display:block;font-family:system-ui,sans-serif;font-weight:600;font-size:11px;color:var(--db-faint);margin-top:2px}
+  .dbsaw td.ed.late small{color:var(--db-bad)}
+  @media (max-width: 760px){ .dbsaw td.ed{font-size:12px} .dbsaw td.ed small{display:none} }
+  body.tv .dbsaw td.ed{font-size:17px}
 </style>
 </head>
 <body>
@@ -1412,7 +1422,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.33</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.34</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2313,10 +2323,16 @@ var GasFS = (function () {
    v1.33 (2026-10-17 17:14 ผู้ใช้: “ถ้าผมอยากรู้ว่า 20 ชิ้นนั้น คือไม้อะไรที่ขาด ทำได้หรือไม่”)
      · lots/parts.csv (StarSync v1.8 · AX STMSMARTPDPARTSTM) = ชิ้นที่มีขนาด ทั้งหมด / ยังไม่ได้ยิงตัด แยกตามรหัสวัสดุ — ดูหัวบล็อก v1.33 ข้างล่าง
      · รายละเอียด Lot: “ชิ้นที่ยังไม่ได้ตัด” ตามไม้ · ชี้ “เหลือ N ชิ้น” = รายการไม้ · Dashboard “⚠ ไม่พบแผ่นใน AX” บอกไม้ของชิ้นตัด
+
+   v1.34 (2026-10-19 08:33 ผู้ใช้: “คลิกที่ Lot แล้วให้มัน Copy ขึ้นคลิปบอร์ด · Lot นั้นมีรายการแผ่นแล้วก็ยังขึ้น ผมงง”)
+     · คลิกชื่อ Lot = คัดลอก — ดูหัวบล็อก v1.34 ข้างล่าง
+     · คอลัมน์วัตถุดิบ: “⚠ ไม่พบแผ่นใน AX” → “⚠ ยังไม่มีรายการเบิก · แท็บ Raw material (AX) ว่าง · ตาม .saw: …” (มี BOM Cut Rite แล้วแต่ยังไม่ Transfer) — ดูบล็อก v1.34 ใน dbMatCell
+     · (08:40 “หน้านี้ต้องแสดง Enddate · Lot ที่ยังไม่ได้กด Transfer ไม้ยังไม่ได้เบิก ต้องไม่อยู่ในแผน จนกว่าจะทำ Transfer”)
+       Dashboard หน้าเครื่องเดียว + คอลัมน์ “ส่ง (enddate)” · Lot ที่แท็บ Raw material ว่าง = ติดอยู่ “ยังไม่ Transfer …” — ดูบล็อก v1.34 ใน bdAlloc
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.33';
+var VER = '1.34';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4106,14 +4122,23 @@ function bdRmOf(g) {
   /* “ไม่มีแถว = เบิกครบ” ใช้ได้เฉพาะเมื่อ StarSync จำกัดช่วงด้วย enddate ของ Lot (by:"enddate") — ถ้าจำกัดด้วยวันส่งรายแถว (delivery) Lot ในช่วงอาจมีของนอกช่วง (รีวิว)
      วันที่อาจมาเป็น พ.ศ. (Windows ภาษาไทยที่ไม่ได้ใส่ InvariantCulture) → bdDayMs ลบ 543 ให้ */
   var M = B.rmMeta, f = M ? bdDayMs(M.from) : null, t = M ? bdDayMs(M.to) : null;
-  if (M && (M.by || 'enddate') === 'enddate' && f != null && t != null && g.end != null && g.end >= f && g.end < t) return { src: 'ax', rows: [], all: [] };
+  if (M && (M.by || 'enddate') === 'enddate' && f != null && t != null && g.end != null && g.end >= f && g.end < t) return { src: 'ax', rows: [], all: [], inferred: true /* v1.34 ไม่มีแถว = อนุมานว่าเบิกครบ */ };
   return null;
 }
 /* กันของให้ Lot ตามลำดับที่เรียก · gate = Lot รอตัด: ไม่ครบ = ไม่กันเลย (Lot ถัดไปที่ครบใช้ได้) · Lot ในสายแล้ว: กันเท่าที่มี */
 function bdAlloc(g, left, gate) {
   var R = bdRmOf(g), basis = B.set.rmBasis === 'avail' ? 'avail' : 'onhand';
   g.rmRows = []; g.mat = 'unk'; g.rmSrc = R ? R.src : ''; g.rmShort = 0; g.rmCut = 0; g.matWhy = ''; g.rmAll = R && R.all ? R.all : null;   // v1.8
+  g.rmNoT = false;
   if (!R) return;
+  /* ───────── v1.34: ยังไม่ Transfer เข้า Raw material = ยังเบิกไม้ไม่ได้ = ไม่เข้าแผน ─────────
+     ผู้ใช้ 19/10/2026 08:40: “Lot ที่ยังไม่ได้กด Transfer แสดงว่าไม้ก็ยังไม่ได้เบิก ก็ต้องไม่อยู่ในแผน จนกว่าจะทำ Transfer ถึงจะเข้าแผนมาได้”
+     (08:33 รูป Smart Production M10_W4060_19-10-69: แท็บ BOM Cut Rite มีแผ่นแล้ว แต่แท็บ Raw material ว่าง)
+     เดิม: Lot ไม่อยู่ใน rm.csv + enddate อยู่ในช่วงที่ StarSync ดึง = อนุมานว่า “เบิกครบแล้ว” (ok) → Lot ที่แท็บ Raw material ว่างทั้งแท็บก็ผ่านเข้าแผน
+     ตอนนี้: อนุมานแบบนั้นแล้วเช็คซ้ำกับ lots/rmcut.csv (แผ่นทุก Lot ทั้งค้าง/เบิกแล้ว — StarSync v1.7) — ไม่มีรายการแผ่นเลย = ยังไม่ Transfer
+       → mat 'unk' + rmNoT → bdPlan ให้ “ติดอยู่ — ยังไม่ Transfer …” (ค่าตั้ง “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ” เปิดอยู่)
+       ยังไม่มี rmcut.csv (StarSync เก่า/อ่านไม่ได้) = แบบเดิม · Transfer แล้ว StarSync ดึงรอบถัดไป (rm 10 นาที · rmcut 30 นาที) = เข้าแผนเอง */
+  if (R.inferred && B.rc && B.rc.map && !(rcOf(g.id) || []).some(function (r) { return isBoardCode(r.code); })) { g.rmNoT = true; g.matWhy = 'ยังไม่ Transfer เข้า Raw material (AX) — ยังเบิกไม้ไม่ได้'; return; }
   if (!R.rows.length) { g.mat = 'ok'; return; }
   if (!B.stock) { g.rmRows = R.rows.map(function (r) { return Object.assign({ have: null, known: false, ok: false }, r); }); return; }
   var need = new Map();
@@ -4257,7 +4282,7 @@ function bdPlan() {
     if (x && x.ready === false) { g.why = x.note ? String(x.note) : 'โปรแกรมต้นทางแจ้งว่ายังไม่พร้อม'; g.mat = 'short'; g.rmRows = []; blocked.push(g); return; }
     bdAlloc(g, left, true);
     if (g.mat === 'short') { g.why = g.matWhy; blocked.push(g); return; }
-    if (g.mat === 'unk' && st.needRm) { g.why = 'ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้'; blocked.push(g); return; }
+    if (g.mat === 'unk' && st.needRm) { g.why = g.rmNoT ? g.matWhy : 'ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้'; blocked.push(g); return; }   // v1.34 ยังไม่ Transfer
     ready.push(g);
   });
   /* เลื่อยพรุ่งนี้: งานที่กำลังตัดค้างอยู่กินก่อน แล้วไล่ Lot ใหม่ตามลำดับ — Lot ไหน “ได้เริ่ม” ก่อนหมดวัน (เวลาเริ่ม < กำลังเลื่อย) = ตัดพรุ่งนี้
@@ -4404,7 +4429,7 @@ function bdCard(g, P, col) {
   else urg = g.end != null && g.end < P.today ? 'u-red' : g.end != null && g.end - P.today <= 3 * DAY ? 'u-amb' : '';
   var pdr = g.pr && g.pr.pd_remark ? String(g.pr.pd_remark).trim() : '';
   var h = '<div class="bcard ' + urg + (B.sel === g.id ? ' sel' : '') + '" data-bd="' + esc(g.id) + '">'
-    + '<div class="bh">' + (g.q && (col === 'tmr' || col === 'next') ? '<span class="bq">' + g.q + '.</span>' : '') + '<span class="bid">' + esc(g.id) + '</span>' + bdDTxt(g, P)
+    + '<div class="bh">' + (g.q && (col === 'tmr' || col === 'next') ? '<span class="bq">' + g.q + '.</span>' : '') + '<span class="bid" data-cp="' + esc(g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(g.id) + '</span>' + bdDTxt(g, P)
     /* v1.10 ช่องติ๊ก “จบแล้ว” ทุกช่องยกเว้นพร้อมส่ง (ไม่มี BOM · แจ้งซ่อมที่ทำแล้ว ฯลฯ) — กดแล้วถามเหตุผล/ผู้อนุมัติ */
     /* v1.12 ช่องติ๊ก = เลือก (หลายใบได้) แล้วกด “ปิดว่าจบแล้ว” ที่แถบล่างทีเดียว — เดิม v1.10 กดแล้วถามปิดทันทีทีละใบ */
     + (col !== 'fin' ? '<button class="bdone' + (BF.sel.has(g.id) ? ' on' : '') + '" data-bsel="' + esc(g.id) + '" title="ติ๊กเลือก Lot นี้ — แล้วกด “✓ ปิดว่าจบแล้ว” ที่แถบด้านล่าง (ไม่มี BOM · แจ้งซ่อมที่ทำแล้ว ฯลฯ)" aria-label="เลือก Lot นี้" aria-pressed="' + BF.sel.has(g.id) + '"></button>' : '') + '</div>'
@@ -4586,7 +4611,7 @@ function bdDetail(id) {
   var where = inT ? 'ตัด' + bdTmrW(P) + ' (' + bdDayTxt(P.tmr) + ') ลำดับ ' + g.q : inN ? 'คิวถัดไป ลำดับ ' + g.q : inB ? 'ติดอยู่ — ' + g.why : inC ? 'กำลังตัด' : inA ? 'หลังตัด — ' + bdAtTxt(g) : inF ? 'พร้อมส่ง' : g.st === 3 ? 'Finish' : g.sg && g.sg.fin ? 'เข้าคลังครบแล้ว' : '—';
   var kv = function (k, v) { return '<span class="k">' + esc(k) + '</span><span class="v">' + (v === '' || v == null ? '<span class="muted">—</span>' : v) + '</span>'; };
   var srcT = function (s) { return s === 'x' ? ' <span class="muted">(ข้อมูลเพิ่ม)</span>' : s === 'cr' ? ' <span class="muted">(Cut Rite' + (g.cr && g.cr._x ? ' · ไฟล์ Export' : '') + ')</span>' : ''; };   // v1.23 บอกว่ามาจากไฟล์ Export
-  var h = '<h2>' + esc(g.id) + '<button class="tbtn" data-bact="tolot" title="เปิดใน Lot ผลิต">↗</button><button class="tbtn" data-bact="x" title="ปิด (Esc)">✕</button></h2>'
+  var h = '<h2><span data-cp="' + esc(g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(g.id) + '</span><button class="tbtn" data-bact="tolot" title="เปิดใน Lot ผลิต">↗</button><button class="tbtn" data-bact="x" title="ปิด (Esc)">✕</button></h2>'
     + '<div class="nm1">' + esc(g.remark || '—') + '</div>'
     + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' + stgHtml(g) + bdDTxt(g, P) + '</div>'
     + '<div class="dem" style="margin-top:10px"><b>' + esc(where) + '</b></div>'
@@ -6309,6 +6334,7 @@ function bdMqDue(g, P) {
   return '<span class="due' + (d < 0 ? ' red' : d <= 3 ? ' amb' : '') + '"><small>ส่ง ' + esc(fD(g.end)) + '</small>' + (d < 0 ? 'เลย ' + (-d) + ' วัน' : d === 0 ? 'วันนี้' : 'อีก ' + d + ' วัน') + '</span>';
 }
 function bdMqMat(g) {
+  if (g.rmNoT) return '<span class="mqmat unk" title="AX แท็บ Raw material ยังไม่มีรายการของ Lot นี้ (ยังไม่ Transfer จาก BOM Cut Rite) — เบิกไม้ยังไม่ได้">⚠ ยังไม่ Transfer</span>';   // v1.34
   if (g.mat === 'ok') return '<span class="mqmat ok" title="' + esc(g.rmCut ? 'วัตถุดิบที่ต้องใช้ก่อนตัดมีพอ ' + g.rmCut + ' รายการ (กันให้ Lot ก่อนหน้าแล้ว)' : 'ไม่มีรายการค้างเบิกใน AX') + '">✓ วัตถุดิบครบ</span>';
   if (g.mat === 'short') return '<span class="mqmat bad" title="' + esc(g.matWhy) + '">' + esc(g.matWhy || 'วัตถุดิบไม่พอ') + '</span>';
   return '<span class="mqmat unk" title="ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้ (นอกช่วงที่ StarSync ดึง) — ⚙ “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ” ปิดอยู่จึงเข้าคิวได้">? ยังไม่เช็ควัตถุดิบ</span>';
@@ -6321,7 +6347,7 @@ function bdMqRow(o, P) {
   var tot = g.remP, part = o.carry && g.mc && g.mc.indexOf(' + ') > 0;   // Lot กำลังตัดที่ยิงหลายเครื่อง = แบ่งชิ้นที่เหลือเท่า ๆ กัน
   return '<div class="mqrow' + (o.carry ? ' carry' : '') + (bdMqSelId() === g.id ? ' sel' : '') /* v1.24 Lot ที่เลือก (คอลัมน์ขวา) */ + '" data-bd="' + esc(g.id) + '" tabindex="0">'
     + '<span class="ix" title="คิวที่ ' + o.pos + ' ของเครื่องนี้">' + o.pos + '</span>'
-    + '<span class="lot"><b>' + esc(g.id) + '</b>' + tag + /* v1.23 ป้าย .saw (Cut Rite Run) */ crxChip(g.id) + '<small title="' + esc(g.remark) + '">' + esc(g.remark || '—') + '</small>' + (pdr ? '<small class="pdr" title="หมายเหตุวางแผน (AX)">📝 ' + esc(pdr) + '</small>' : '')
+    + '<span class="lot"><b data-cp="' + esc(g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(g.id) + '</b>' + tag + /* v1.34 คลิกชื่อ = คัดลอก · v1.23 ป้าย .saw (Cut Rite Run) */ crxChip(g.id) + '<small title="' + esc(g.remark) + '">' + esc(g.remark || '—') + '</small>' + (pdr ? '<small class="pdr" title="หมายเหตุวางแผน (AX)">📝 ' + esc(pdr) + '</small>' : '')
     + (o.d1 > o.d0 ? '<small class="spn">ใช้เครื่อง ' + (o.d1 - o.d0 + 1) + ' วัน · ต่อถึง ' + esc(bdDayTxt(bdMqDayMs(P, o.d1))) + '</small>' : '') + '</span>'
     + '<span class="pcs">' + (o.p > 0 ? fmtN(Math.round(o.p)) : '—') + '<small>ชิ้น' + (part ? ' (แบ่ง ' + fmtN(Math.round(tot)) + ')' : '') + '</small></span>'
     + bdMqMat(g)
@@ -6358,7 +6384,7 @@ function bdMqPanel(o, P, now) {
       var st = !g ? 'ไม่พบใน data 6' : g.closed ? 'ปิดว่าจบแล้ว' : done ? 'ตัดครบแล้ว ✓' : P.cutting.indexOf(g) >= 0 ? 'เหลือ ' + fmtN(g.remP || 0) + ' ชิ้น' : '';
       return '<div class="mqrow mqt' + (cur ? ' cur' : '') + (done ? ' done' : '') + (g && bdMqSelId() === g.id ? ' sel' : '') + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
         + '<span class="ix">' + (cur ? (run ? '▶' : '❚❚') : '') + '</span>'
-        + '<span class="lot"><b>' + esc(lot) + '</b>' + /* v1.23 */ crxChip(lot) + (cur ? '<span class="mqtag now">' + (run ? 'กำลังยิง' : 'ยิงล่าสุด · หยุด ' + bdH(idle)) + '</span>' : '') + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
+        + '<span class="lot"><b data-cp="' + esc(lot) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(lot) + '</b>' + /* v1.23 */ crxChip(lot) + (cur ? '<span class="mqtag now">' + (run ? 'กำลังยิง' : 'ยิงล่าสุด · หยุด ' + bdH(idle)) + '</span>' : '') + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
         + '<span class="pcs">' + fmtN(nT) + '<small>ชิ้นวันนี้</small></span>'
         + '<span class="mqprog">' + (prog != null ? '<span class="pb"><i style="width:' + Math.round(prog * 100) + '%"></i></span><small>' + (s0 ? 'ตัดแล้ว ' + fmtN(done ? s0.tt : Math.min(s0.tt, Math.max(s0.v, g.scanLead || 0))) + ' / ' + fmtN(s0.tt) : Math.round(prog * 100) + '%') + '</small>' : '') + '</span>'
         + '<span class="mqst' + (done ? ' ok' : '') + '"' + (g && !done && ptTip(g.id) ? ' title="' + esc(ptTip(g.id)) + '"' : '') /* v1.33 ชี้ = ไม้ที่ยังไม่ได้ตัด */ + '>' + esc(st) + '</span></div>';
@@ -6766,7 +6792,7 @@ function bdMqHist(o, P, GU) {
       var v = c.l[lot], g = GU.get(lot.toUpperCase()), s = bdMqLotNow(g, P);
       return '<div class="mqrow mqt mqh' + (s.done ? ' done' : '') + (g && bdMqSelId() === g.id ? ' sel' : '') /* v1.24 */ + '"' + (g && !g.closed ? ' data-bd="' + esc(g.id) + '" tabindex="0"' : '') + '>'
         + '<span class="ix"></span>'
-        + '<span class="lot"><b>' + esc(lot) + '</b>' + crxChip(lot) + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
+        + '<span class="lot"><b data-cp="' + esc(lot) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(lot) + '</b>' + crxChip(lot) + '<small>' + esc(g ? g.remark || '—' : '') + '</small></span>'
         + '<span class="pcs">' + fmtN(v[0]) + '<small>' + esc(v[1] + (v[2] && v[2] !== v[1] ? '–' + v[2] : '')) + '</small></span>'
         + '<span class="mqprog">' + (s.prog != null ? '<span class="pb"><i style="width:' + Math.round(s.prog * 100) + '%"></i></span><small>' + (s.s0 ? 'ตัดแล้ว ' + fmtN(s.done ? s.s0.tt : s.s0.v) + ' / ' + fmtN(s.s0.tt) : Math.round(s.prog * 100) + '%') + '</small>' : '') + '</span>'
         + '<span class="mqst' + (s.done ? ' ok' : '') + '">' + esc(s.st) + '</span></div>';
@@ -6866,7 +6892,7 @@ function bdMqLot(g, P) {
   var kd = function (t, v) { return v === '' || v == null ? '' : '<div><dt>' + t + '</dt><dd>' + v + '</dd></div>'; };
   var cutT = g.cut != null ? (g.cutEst ? '≈ ' : '') + esc(crxDur(g.cut) || bdH(g.cut)) + (g.cutSrc === 'cr' ? '<small>Cut Rite' + (g.cr && g.cr._x ? ' (ไฟล์ Export)' : '') + '</small>' : g.cutEst ? '<small>ประมาณ ' + B.set.cutPP + ' นาที/ชิ้น</small>' : '') : '';
   var h = '<aside class="mqrm mqlot" aria-label="' + esc('รายละเอียด Lot ' + g.id) + '"><div class="mqsec">'
-    + '<div class="mqlh"><h3><b>' + esc(g.id) + '</b></h3><button class="tbtn" data-mqtolot="' + esc(g.id) + '" title="เปิดใน Lot ผลิต">↗ Lot ผลิต</button><button class="tbtn mqlx" data-mqlx="1" title="กลับไปดูวัตถุดิบ Lot ' + bdTmrW(P) + ' (Esc)" aria-label="ปิด">✕</button></div>'
+    + '<div class="mqlh"><h3><b data-cp="' + esc(g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(g.id) + '</b></h3><button class="tbtn" data-mqtolot="' + esc(g.id) + '" title="เปิดใน Lot ผลิต">↗ Lot ผลิต</button><button class="tbtn mqlx" data-mqlx="1" title="กลับไปดูวัตถุดิบ Lot ' + bdTmrW(P) + ' (Esc)" aria-label="ปิด">✕</button></div>'
     + '<div class="mqlrm">' + esc(g.remark || '—') + '</div>'
     + '<div class="mqlst">' + stgHtml(g) + (where ? '<b>' + esc(where) + '</b>' : '') + (g.mq ? '<span>' + esc(g.mq.n) + ' · คิวที่ ' + g.mq.pos + ' · เริ่ม ≈ ' + esc(bdMqDayTxt(P, g.mq.day)) + '</span>' : '') + '</div>'
     + (pdr ? '<div class="mqlpd" title="หมายเหตุวางแผน (AX)">📝 ' + esc(pdr) + '</div>' : '')
@@ -7189,17 +7215,17 @@ function bdDashRender(P) {
         : '<span class="l">วันนี้</span><b class="muted">ยังไม่มีการยิงตัด</b>') + '</div>'
       + '<div class="mini">' + mini + '</div>'
       + '<div class="tmr"><h4>' + bdTmrW(P) + 'ต้องขึ้น <b>' + x.tmr.length + '</b> Lot<small>' + fmtN(Math.round(x.tmrP)) + (ppd ? ' / ' + fmtN(ppd) : '') + ' ชิ้น' + (x.tmrT ? ' · ' + esc(bdH(x.tmrT)) + (x.o.pm && x.o.pm.min ? ' / ' + (x.o.pm.min / 60) + ' ชม.' : '') : '') + '</small></h4>'   // v1.32 + เวลา
-        + (tl.length ? '<ul>' + tl.map(function (t) { var L0 = bdDashLate(t.g, P); return '<li data-dbl="' + esc(t.g.id) + '"><span class="id">' + esc(t.g.id) + '</span>' + (L0 != null && L0 >= 1 ? '<em class="late">เลย ' + L0 + ' วัน</em>' : L0 != null && L0 >= -1 ? '<em class="due">ครบกำหนด</em>' : '') + '<small>' + fmtN(Math.round(t.p)) + '</small></li>'; }).join('') + '</ul>'
+        + (tl.length ? '<ul>' + tl.map(function (t) { var L0 = bdDashLate(t.g, P); return '<li data-dbl="' + esc(t.g.id) + '"><span class="id" data-cp="' + esc(t.g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(t.g.id) + '</span>' + (L0 != null && L0 >= 1 ? '<em class="late">เลย ' + L0 + ' วัน</em>' : L0 != null && L0 >= -1 ? '<em class="due">ครบกำหนด</em>' : '') + '<small>' + fmtN(Math.round(t.p)) + '</small></li>'; }).join('') + '</ul>'
           + (x.tmr.length > tl.length ? '<p class="more">… อีก ' + (x.tmr.length - tl.length) + ' Lot</p>' : '')
           : '<p class="mqnone">' + (x.o.pm ? 'ไม่มี Lot ใหม่ลงเครื่องนี้' : x.m.on ? 'ไม่ได้ตั้งชิ้น/วัน' : 'ปิดไว้ — ไม่ได้วางแผน') + '</p>')
         + (x.carry.length ? '<p class="cy">+ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ไม่นับในแผน)</p>' : '') + '</div>'
       + '</article>';
   }).join('') + '</section>';
   /* ⑥ ตาราง: ค้างตัดไม่จบ · เลยกำหนดตัด */
-  var lateRow = function (g, late) { var mc = bdDashMcOf(g); return '<tr data-dbl="' + esc(g.id) + '"><td><b>' + esc(g.id) + '</b>' + crxChip(g.id) + '<small>' + esc(g.remark || '') + '</small></td><td>' + esc(fD(g.end)) + '</td><td>' + esc(fD(bdDashDue(g))) + '</td>'
+  var lateRow = function (g, late) { var mc = bdDashMcOf(g); return '<tr data-dbl="' + esc(g.id) + '"><td><b data-cp="' + esc(g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(g.id) + '</b>' + crxChip(g.id) + '<small>' + esc(g.remark || '') + '</small></td><td>' + esc(fD(g.end)) + '</td><td>' + esc(fD(bdDashDue(g))) + '</td>'
     + '<td class="' + (late >= 1 ? 'neg' : '') + '">' + (late >= 1 ? 'เลย ' + late + ' วัน' : late === 0 ? 'วันนี้' : late === -1 ? 'พรุ่งนี้' : 'อีก ' + (-late) + ' วัน') + '</td><td>' + esc(bdDashState(g, P)) + '</td><td>' + esc(mc || '—') + '</td></tr>'; };
   var carryRows = S.carry.map(function (g) { var s = bdMqLotNow(g, P), L0 = bdDashLate(g, P), mc = g.mcs && g.mcs.length ? g.mcs[0] : null;
-    return '<tr data-dbl="' + esc(g.id) + '"><td><b>' + esc(g.id) + '</b>' + crxChip(g.id) + '<small>' + esc(g.remark || '') + '</small></td><td>' + esc(mc ? mc.n : bdDashMcOf(g) || '—') + (mc ? '<small>' + (mc.prev ? 'ยิงล่าสุด ' + esc(fD(bdLocalMs(mc.last))) : 'วันนี้ ' + esc(String(mc.last).slice(11, 16))) + '</small>' : '') + '</td>'
+    return '<tr data-dbl="' + esc(g.id) + '"><td><b data-cp="' + esc(g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(g.id) + '</b>' + crxChip(g.id) + '<small>' + esc(g.remark || '') + '</small></td><td>' + esc(mc ? mc.n : bdDashMcOf(g) || '—') + (mc ? '<small>' + (mc.prev ? 'ยิงล่าสุด ' + esc(fD(bdLocalMs(mc.last))) : 'วันนี้ ' + esc(String(mc.last).slice(11, 16))) + '</small>' : '') + '</td>'
       + '<td><span class="pb"><i style="width:' + Math.round((s.prog || 0) * 100) + '%"></i></span><small>' + (s.s0 ? fmtN(s.s0.v) + ' / ' + fmtN(s.s0.tt) : Math.round((s.prog || 0) * 100) + '%') + '</small></td><td>' + fmtN(g.remP || 0) + '</td>'
       + '<td>' + esc(fD(g.end)) + '</td><td class="' + (L0 != null && L0 >= 1 ? 'neg' : '') + '">' + (L0 == null ? '—' : L0 >= 1 ? 'เลย ' + L0 + ' วัน' : L0 === 0 ? 'วันนี้' : 'อีก ' + (-L0) + ' วัน') + '</td></tr>'; });
   var CMAX = 12, LMAX = 15;
@@ -7302,14 +7328,27 @@ function dbSawNos(id) { var a = crxOf(id); return a && a.length ? a.map(function
    → เช็คซ้ำกับ lots/rmcut.csv (แผ่นทุก Lot ทั้งค้างและเบิกแล้ว · StarSync v1.7): มีรายการแผ่น = ยืนยัน “เบิกแผ่นครบแล้ว N รายการ”
      ไม่มีรายการแผ่นของ Lot นี้ใน AX เลย = “⚠ ไม่พบแผ่นใน AX” (ไม่ใช่เบิกครบจริง — อาจไม่มี BOM แผ่น) · ยังไม่มี rmcut.csv = แบบเดิม */
 function dbMatCell(g) {
+  if (g.rmNoT) return dbNoTCell(g);   // v1.34 ยังไม่ Transfer (เข้าแผนได้เฉพาะเมื่อปิด ⚙ “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ”)
   if (g.mat === 'ok' && !g.rmCut && g.rmSrc === 'ax' && !(g.rmAll && g.rmAll.length) && B.rc && B.rc.map) {
     var rb = (rcOf(g.id) || []).filter(function (r) { return isBoardCode(r.code); });
-    if (!rb.length) return '<td class="mt unk" title="ไม่มีรายการค้างเบิกใน AX แต่ AX ก็ไม่มีรายการแผ่นของ Lot นี้เลย (lots/rmcut.csv) — ยืนยันไม่ได้ว่าเบิกไม้แล้ว">⚠ ไม่พบแผ่นใน AX<small>ไม่มีค้างเบิก · ไม่มีรายการแผ่น' + (ptMatTxt(g.id) ? ' · ชิ้นตัดใช้ ' + esc(ptMatTxt(g.id)) : '') /* v1.33 มีขนาด = มีงานตัด (Smart Production) */ + '</small></td>';
+    /* ───────── v1.34: ป้าย “⚠ ไม่พบแผ่นใน AX” อ่านแล้วงง ─────────
+       ผู้ใช้ 19/10/2026 08:33 (รูป Smart Production M10_W4060_19-10-69 แท็บ “BOM Cut Rite” มี MD16N01M0029NN03P0053N): “Lot นั้นมีรายการแผ่นแล้วก็ยังขึ้น หรือยังไง ผมงง”
+       เหตุ: StarSync อ่านแท็บ “Raw material” (STMSMARTPDRMSTM = รายการเบิก BOM/เบิกแล้ว) — Lot ใหม่มีรายการในแท็บ “BOM Cut Rite” แล้ว แต่แท็บ Raw material ยังว่าง
+             (ยังไม่ Transfer) → เบิกไม้ใน AX ยังไม่ได้ · เดิมเขียน “ไม่พบแผ่นใน AX” เหมือนไม่มีแผ่นเลย
+       ตอนนี้: “⚠ ยังไม่มีรายการเบิก” + “แท็บ Raw material ว่าง” + แผ่นที่ต้องใช้ตาม Cut Rite (.saw) ถ้ามี */
+    if (!rb.length) return dbNoTCell(g);
+    if (false) { var cs = bdMqCrSheets([g]).rows.slice().sort(function (a, b) { return b.q - a.q; }), csT = cs.length ? cs[0].c + ' ×' + fmtN(cs[0].q, 3) + (cs.length > 1 ? ' +' + (cs.length - 1) + ' รหัส' : '') : '';
+      return '<td class="mt unk" title="' + esc('AX แท็บ Raw material (รายการเบิก) ยังไม่มีรายการของ Lot นี้ — แท็บ BOM Cut Rite อาจมีแล้วแต่ยังไม่ Transfer เข้า Raw material · เบิกไม้ใน AX ยังไม่ได้' + (cs.length ? '\nแผ่นตาม Cut Rite (.saw):\n' + cs.map(function (r) { return r.c + ' × ' + fmtN(r.q, 3); }).join('\n') : '')) + '">⚠ ยังไม่มีรายการเบิก<small>แท็บ Raw material (AX) ว่าง' + (csT ? ' · ตาม .saw: ' + esc(csT) : ptMatTxt(g.id) ? ' · ชิ้นตัดใช้ ' + esc(ptMatTxt(g.id)) : '') + '</small></td>'; }
     return '<td class="mt ok" title="' + esc('AX: แผ่น ' + rb.length + ' รายการ BOM = เบิกแล้ว (lots/rmcut.csv)\n' + rb.slice(0, 6).map(function (r) { return r.code + ' BOM ' + fmtN(r.bom, 3) + ' เบิก ' + fmtN(r.issued, 3); }).join('\n')) + '">✓ เบิกครบแล้ว<small>แผ่น ' + rb.length + ' รายการ เบิกครบ (AX)</small></td>';
   }
   if (g.mat === 'ok') return '<td class="mt ok" title="' + esc(g.rmCut ? 'วัตถุดิบที่ยังต้องเบิก ' + g.rmCut + ' รายการ มีพอในคลัง (กันให้ Lot ก่อนหน้าแล้ว)' : 'AX ไม่มีรายการค้างเบิกของ Lot นี้') + '">✓ ' + (g.rmCut ? 'ครบ<small>พอในคลัง · รอเบิก ' + g.rmCut + ' รายการ</small>' : 'เบิกครบแล้ว<small>ไม่มีค้างเบิกใน AX</small>') + '</td>';
   if (g.mat === 'short') return '<td class="mt bad" title="' + esc(g.matWhy || '') + '">✗ ไม่ครบ<small>' + esc(g.matWhy || 'วัตถุดิบไม่พอ') + '</small></td>';
   return '<td class="mt unk" title="ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้ — ⚙ “เข้าแผนตัดเฉพาะ Lot ที่วัตถุดิบครบ” ปิดอยู่จึงเข้าแผนได้">? ยังไม่เช็ค</td>';
+}
+/* v1.34 แท็บ Raw material (AX) ยังว่าง = ยังไม่ Transfer — ป้าย + แผ่นตาม .saw */
+function dbNoTCell(g) {
+  var cs = bdMqCrSheets([g]).rows.slice().sort(function (a, b) { return b.q - a.q; }), csT = cs.length ? cs[0].c + ' ×' + fmtN(cs[0].q, 3) + (cs.length > 1 ? ' +' + (cs.length - 1) + ' รหัส' : '') : '';
+  return '<td class="mt unk" title="' + esc('AX แท็บ Raw material (รายการเบิก) ยังไม่มีรายการของ Lot นี้ — แท็บ BOM Cut Rite อาจมีแล้วแต่ยังไม่ Transfer เข้า Raw material · เบิกไม้ใน AX ยังไม่ได้' + (cs.length ? '\nแผ่นตาม Cut Rite (.saw):\n' + cs.map(function (r) { return r.c + ' × ' + fmtN(r.q, 3); }).join('\n') : '')) + '">⚠ ยังไม่มีรายการเบิก<small>แท็บ Raw material (AX) ว่าง' + (csT ? ' · ตาม .saw: ' + esc(csT) : ptMatTxt(g.id) ? ' · ชิ้นตัดใช้ ' + esc(ptMatTxt(g.id)) : '') + '</small></td>';
 }
 function dbSawSec(id) { var a = crxOf(id); return a && a.length ? crxAgg(a).total_sec || 0 : null; }
 /* ───────── v1.29: หน้าเครื่องเดียว — ชื่อ Lot ที่ตัดไปแล้ววันนี้ (ใต้วงแหวน “วันนี้ตัดได้”) ─────────
@@ -7326,7 +7365,7 @@ function dbTodayLots(c, cur, run, idle, GU, P) {
     var g = GU.get(lot.toUpperCase()), on = lot === cur, s0 = g ? bdMqLotNow(g, P) : null, done = !!(s0 && s0.done);
     var pr = s0 && s0.s0 ? 'ตัดแล้ว ' + fmtN(done ? s0.s0.tt : s0.s0.v) + ' / ' + fmtN(s0.s0.tt) + (done ? ' · ครบแล้ว ✓' : g.remP ? ' · เหลือ ' + fmtN(g.remP) : '') : !g ? 'ไม่พบใน data 6' : g.closed ? 'ปิดว่าจบแล้ว' : done ? 'ครบแล้ว ✓' : '';
     return '<li class="' + (on ? 'cur' : '') + (done ? ' done' : '') + '"' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (g && !done && ptTip(g.id) ? ' title="' + esc(ptTip(g.id)) + '"' : '') /* v1.33 */ + '><i>' + (on ? (run ? '▶' : '❚❚') : done ? '✓' : '·') + '</i>'
-      + '<div><b>' + esc(lot) + '</b>' + crxChip(lot) + (on ? '<span class="tg">' + (run ? 'กำลังยิง' : 'หยุด ' + esc(bdH(idle))) + '</span>' : '')
+      + '<div><b data-cp="' + esc(lot) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(lot) + '</b>' + crxChip(lot) + (on ? '<span class="tg">' + (run ? 'กำลังยิง' : 'หยุด ' + esc(bdH(idle))) + '</span>' : '')
       + '<small>วันนี้ <b>' + fmtN(nOf(lot)) + '</b> ชิ้น' + (pr ? ' · ' + esc(pr) : '') + '</small></div></li>'; }).join('') + '</ol>';
 }
 /* ───────── v1.31: หน้าเครื่องเดียว — ดูล่วงหน้า 6 วัน ─────────
@@ -7376,7 +7415,7 @@ function dbDaySec(x, P, k) {
     /* v1.32 เวลาตัด: มี .saw = เวลาจากไฟล์ · ไม่มี = เวลาที่แผนใช้ (≈ ประมาณ) · Lot คร่อมวัน = บอกเวลาในวันนี้ */
     var tmTxt = sec ? esc(crxDur(sec / 60)) : t.t > 0 ? '≈ ' + esc(crxDur(t.t)) : '', tmSub = !sec && t.t > 0 ? (t.g.cutSrc === 'pt' ? 'ประมาณจากขนาดชิ้นงาน' : 'ประมาณ ' + B.set.cutPP + ' นาที/ชิ้น') : ra.length > 1 ? ra.length + ' Run' : '';
     if (pre || post) tmSub = (tmSub ? tmSub + ' · ' : '') + W + ' ' + crxDur(t.tIn);
-    return '<tr data-dbl="' + esc(t.g.id) + '"' + (pre ? ' class="cont"' : '') + '><td class="no">' + (i + 1) + '</td><td class="lot">' + esc(t.g.id) + '</td><td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
+    return '<tr data-dbl="' + esc(t.g.id) + '"' + (pre ? ' class="cont"' : '') + '><td class="no">' + (i + 1) + '</td><td class="lot"><span data-cp="' + esc(t.g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(t.g.id) + '</span></td>' + dbEndCell(t.g, P) + '<td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
       + dbMatCell(t.g)
       + '<td class="pc">' + fmtN(pp) + (sp ? '<small>' + esc(sp) + '</small>' : '') + '</td>'
       + '<td class="tm' + (!sec && t.t > 0 ? ' est' : '') + '"' + (ra.length > 1 ? ' title="' + esc(crxTip(ra)) + '"' : '') + '>' + (tmTxt || '<em>—</em>') + (tmSub ? '<small>' + esc(tmSub) + '</small>' : '') + '</td></tr>'; });
@@ -7387,12 +7426,20 @@ function dbDaySec(x, P, k) {
         + (mn ? dbCapBar('เวลาตัด', dT, mn, function (v) { return crxDur(v) || '0 นาที'; }, '') : '')
         + '<small>' + (full ? '✓ เต็มวัน' + (fullT && !fullP ? ' (เวลาครบ ' + (mn / 60) + ' ชม.)' : fullP && !fullT ? ' (ชิ้นครบ)' : '') + (spill ? ' · Lot สุดท้ายตัดต่อวันถัดไป ' + fmtN(spill) + ' ชิ้น' : '')
           : '⚠ ยังว่าง ' + (mn ? esc(crxDur(Math.max(0, mn - dT)) || '0 นาที') + ' / ' : '') + fmtN(Math.max(0, ppd - dP)) + ' ชิ้น — ' + (after ? 'Lot ถัดไปใช้เวลา/ชิ้นเกินที่เหลือ เลยขยับไปวันถัดไป' : 'Lot ที่วัตถุดิบครบหมดคิวแล้ว')) + '</small></div>' : '')
-    + (tl.length ? '<table class="dbsaw"><thead><tr><th>#</th><th>Lot</th><th>เลข .saw</th><th class="mt">วัตถุดิบ</th><th class="pc">ชิ้น</th><th class="tm">เวลาตัด (.saw)</th></tr></thead><tbody>' + tl.join('') + '</tbody>'
-        + '<tfoot><tr><td></td><td colspan="3">รวม' + esc(W) + '<small>' + (ppd ? 'ไม่เกิน ' + fmtN(ppd) + ' ชิ้น' : '') + (mn ? ' · ' + (mn / 60) + ' ชม./วัน' : '') + '</small></td><td class="pc">' + fmtN(dP) + (ppd ? '<small class="' + (fullP ? 'ok' : 'neg') + '">' + (fullP ? 'ครบชิ้น/วัน ✓' : 'ขาด ' + fmtN(ppd - dP)) + '</small>' : '') + '</td>'
+    + (tl.length ? '<table class="dbsaw"><thead><tr><th>#</th><th>Lot</th><th class="ed">ส่ง (enddate)</th><th>เลข .saw</th><th class="mt">วัตถุดิบ</th><th class="pc">ชิ้น</th><th class="tm">เวลาตัด (.saw)</th></tr></thead><tbody>' + tl.join('') + '</tbody>'
+        + '<tfoot><tr><td></td><td colspan="4">รวม' + esc(W) + '<small>' + (ppd ? 'ไม่เกิน ' + fmtN(ppd) + ' ชิ้น' : '') + (mn ? ' · ' + (mn / 60) + ' ชม./วัน' : '') + '</small></td><td class="pc">' + fmtN(dP) + (ppd ? '<small class="' + (fullP ? 'ok' : 'neg') + '">' + (fullP ? 'ครบชิ้น/วัน ✓' : 'ขาด ' + fmtN(ppd - dP)) + '</small>' : '') + '</td>'
         + '<td class="tm">' + (dT > 0 ? esc(crxDur(dT)) + '<small>' + (mn ? 'จาก ' + (mn / 60) + ' ชม.' : 'เวลาในวันนี้') + (estN ? ' · ประมาณ ' + estN + ' Lot' : '') + '</small>' : '<em>—</em>') + '</td></tr></tfoot></table>'
       : '<p class="mqnone">' + (pm ? (k ? 'คิวเครื่องนี้ไปไม่ถึง' + esc(W) + ' — Lot ที่วัตถุดิบครบหมดคิวแล้ว' : 'ไม่มี Lot ใหม่ลงเครื่องนี้' + esc(W)) : x.m.on ? 'ไม่ได้ตั้งชิ้น/วัน' : 'เครื่องนี้ปิดไว้ — ไม่ได้วางแผน') + '</p>')
     + (k === 0 && x.carry.length ? '<p class="cy">+ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ไม่นับในแผน — หน้างานหาเวลาตัดเอง)</p>' : '') + '</section>';
   return h;
+}
+/* ───────── v1.34: คอลัมน์ “ส่ง (enddate)” ─────────
+   ผู้ใช้ 19/10/2026 08:40: “หน้านี้ต้องแสดง Enddate ด้วยครับ”
+   วันส่ง (enddate ของ Lot) + ใต้วัน: เลยกำหนดตัดแล้ว N วัน (สีแดง — enddate − วันต้องตัดเสร็จก่อนส่ง ⚙ ค่าตั้งต้น 15) / ตัดก่อน dd/mm/yy */
+function dbEndCell(g, P) {
+  if (g.end == null) return '<td class="ed"><em>—</em></td>';
+  var late = bdDashLate(g, P), due = bdDashDue(g);
+  return '<td class="ed' + (late != null && late >= 1 ? ' late' : '') + '">' + esc(fD(g.end)) + '<small>' + (late != null && late >= 1 ? 'เลยกำหนดตัด ' + late + ' วัน' : due != null ? 'ตัดก่อน ' + esc(fD(due)) : '') + '</small></td>';
 }
 function dbSelDay(k) { DB.day = Math.max(0, Math.min(DB_DAYS - 1, k | 0)); var E = $('bdDash'), keep = E ? E.scrollTop : 0; if (B.plan) bdDashRender(B.plan); if (E) E.scrollTop = keep; }
 function bdDashMcView(S, x, P) {
@@ -7528,7 +7575,33 @@ function ptBanner() {
   return ['ok', 'ชิ้นงานตัดราย Lot (ไม้ที่ยังไม่ได้ตัด) จาก Smart Production <b>' + fmtN(X.map.size) + '</b> Lot · ' + fmtN(X.n) + ' แถว' + (m.matCol ? ' · รหัสวัสดุจาก ' + esc(m.matCol) : '') + (w ? ' · ดึงเมื่อ ' + esc(w) : '') + (X.err ? ' · รอบล่าสุดอ่านไม่ได้: ' + esc(netMsg(X.err)) + ' (ใช้ข้อมูลเดิม)' : '')];
 }
 
-window.StarStock = { ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.34: คลิกชื่อ Lot = คัดลอกขึ้นคลิปบอร์ด
+   ผู้ใช้ 19/10/2026 08:33: “ทำให้เมื่อคลิกที่ Lot แล้วให้มัน Copy ขึ้นคลิปบอร์ดหน่อยครับ”
+   ชื่อ Lot ที่มี data-cp (Dashboard ทุกตาราง/รายการ · Machine Queue แถววันนี้/ย้อนหลัง/คิว · รายละเอียด Lot · การ์ด/แผงข้าง Master Plan)
+     คลิก = คัดลอกชื่อ Lot + แจ้ง “คัดลอก … แล้ว” · คลิกส่วนอื่นของแถว = เปิด Lot เหมือนเดิม
+   ฟัง click ที่ window (capture) — ก่อนตัวจัดการแถวที่ document → ไม่เปิด Lot/ไม่เปลี่ยนแท็บ ตอนคลิกชื่อ
+   ลากเลือกข้อความเองอยู่ = ไม่ทับ · Clipboard API ใช้ได้เฉพาะ https/localhost → ไม่ได้ใช้ textarea + execCommand('copy') แทน (เปิดจากไฟล์)
+   ═══════════════════════════════════════════════════════════════════════ */
+function lotCopy(id) {
+  id = String(id || ''); if (!id) return;
+  var done = function () { toast('คัดลอก ' + id + ' แล้ว'); };
+  var fb = function () {
+    try { var t = document.createElement('textarea'); t.value = id; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.appendChild(t); t.select(); var ok = document.execCommand('copy'); t.remove(); if (ok) done(); else toast('คัดลอกไม่ได้ — ' + id); }
+    catch (e) { toast('คัดลอกไม่ได้ — ' + id); }
+  };
+  try { if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(id).then(done, fb); else fb(); } catch (e) { fb(); }
+}
+window.addEventListener('click', function (e) {
+  if (e.button) return;
+  var a = e.target && e.target.closest && e.target.closest('[data-cp]'); if (!a) return;
+  try { if (window.getSelection && String(window.getSelection()).trim()) return; } catch (x) { }
+  e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+  lotCopy(a.dataset.cp);
+}, true);
+
+window.StarStock = { lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
