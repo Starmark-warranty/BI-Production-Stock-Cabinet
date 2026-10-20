@@ -1645,7 +1645,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.48</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.49</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2613,10 +2613,14 @@ var GasFS = (function () {
 
    v1.48 (2026-10-20 14:54 ผู้ใช้: “ทำไม ติ๊กถูกทั้ง 3 อันไม่ได้”)
      · SAW PLAN: ติ๊ก ✓ เบิกไม้แล้ว / ⏳ ยังไม่เบิกไม้ / ✂ ค้างตัด พร้อมกันได้ — เบิกไม้ติ๊ก 1 อัน = กลุ่มนั้น · ทั้งคู่/ไม่ติ๊ก = ทุก Lot · ค้างตัด = เฉพาะค้างตัด — ดู spRmToggle
+
+   v1.49 (2026-10-20 15:41 ผู้ใช้: “ทำไม Hpp380 กับ 350 กดแผนแนะนำแล้วไม่ลงแผนให้” → 15:44 “จัดมา”)
+     · ✨ ใส่แผนแนะนำ + ติ๊ก “รวมงานค้างตัด” (ค่าตั้งต้น): Lot ตามแผนก่อน แล้วค้างตัดเฉพาะส่วนที่เหลือในเวลาที่เหลือของเครื่อง — ดู spSugCarry
+     · (15:46) การ์ด Lot ค้างตัด: แถวชั้นไม้ที่ยังเหลือ = รหัสสีแดง + “✂ ค้าง n/m ชิ้น” · ตัดครบแล้ว = “✓ ตัดแล้ว” (lots/parts.csv) — ดู spCutBoard
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.48';
+var VER = '1.49';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -9000,12 +9004,16 @@ function spClose() {
   });
   SPX.closing = p; return p;
 }
+var SP_SCK = 'sxlocaltrial:furnitech:spSugCarry', SPSC = null;   // v1.49 ✨ รวมงานค้างตัด (จำในเครื่องนี้ · ค่าตั้งต้น = รวม)
+function spSugCarry() { if (SPSC == null) SPSC = lsGetJ(SP_SCK, true) !== false; return SPSC; }
+document.addEventListener('change', function (e) { var t = e.target; if (!t || !t.matches || !t.matches('#bdSaw [data-spcy]')) return; SPSC = !!t.checked; lsSetJ(SP_SCK, SPSC); toast(SPSC ? '✨ ใส่แผนแนะนำ = รวมงานค้างตัด (เฉพาะส่วนที่เหลือ · ไม่เกินเวลาเครื่อง)' : '✨ ใส่แผนแนะนำ = ไม่ใส่งานค้างตัด'); });
 function spBarHtml(stale) {
   var nd = SPX.nd, n = SPX.n, crx = B.crx.meta || {}, at = crx.at ? String(crx.at).replace('T', ' ').slice(5, 16) : '';
   return '<div class="spbar"><b>SAW PLAN</b><span class="spmeta">จัดแผนหน้างาน · ' + fmtN(n) + ' Lot' + (nd ? ' (ไม่มีข้อมูล SAW ' + fmtN(nd) + ')' : '') + ' · ข้อมูลอัตโนมัติจาก StarSync' + (at ? ' · Cut Rite ล่าสุด ' + esc(at) : '')
     + (SPX.bad ? ' · <b class="spbad">⚠ ' + esc(SPX.bad) + ' — กด 🔄 โหลดข้อมูลใหม่ เพื่อลองอีกครั้ง</b>' : '')
     + (B.crd.none ? ' · <span class="spwarn" title="StarSync v1.10 ส่ง lots/crdetail.csv (รายการ Part ต่อชั้นไม้ + ผังตัด) — ยังไม่มี = ปุ่ม 🧩 ไม่มีรายการ Part · เวลาตามชุดค่าเครื่องอื่นเป็นค่าประมาณ">ยังไม่มีรายการ Part/ผัง (StarSync v1.10)</span>' : '') + '</span>'
     /* v1.46: ติ๊ก ☐ เบิกไม้แล้ว / ☐ ยังไม่เบิกไม้ ย้ายไปแถบตัวกรองในหน้า SAW PLAN (ข้าง “⚠ ไม่มีข้อมูล”) — ผู้ใช้ 13:58 “ปุ่มติ๊กที่แถบบนอยู่ไหน หาไม่เจอ” (v1.45 อยู่ที่แถบนี้) */
+    + '<label class="spchk" title="✨ ใส่แผนแนะนำ: ใส่งานค้างตัด (Lot ที่ตัดไปบางส่วนแล้ว) ด้วย — เฉพาะส่วนที่ยังเหลือ · ใส่หลัง Lot ตามแผน · ไม่เกินเวลาเครื่อง (v1.49)"><input type="checkbox" data-spcy' + (spSugCarry() ? ' checked' : '') + '> รวมงานค้างตัด</label>'
     + '<button type="button" class="tbtn" data-spact="suggest" title="เลือก Lot/ชั้นไม้ตามแผนอัตโนมัติ (ตัวเดียวกับ Daily Plan) ของวันที่ที่ดูอยู่ใน SAW PLAN ลงเครื่องชื่อเดียวกัน — เฉพาะ Lot ที่เบิกไม้แล้ว · ไม่ใส่งานค้างตัด · ไม่เกินเวลาเครื่อง · ปรับ/เอาออกเองได้ · ↩ ย้อนกลับได้ (ส่วน 🤖 จัดอัตโนมัติเกลี่ยลงเครื่อง ในหน้า = เกลี่ยชั้นไม้ที่ติ๊กไว้ลงเครื่อง)">✨ ใส่แผนแนะนำ</button>'
     + '<button type="button" class="tbtn' + (stale ? ' pri' : '') + '" data-spact="reload" title="' + (stale ? 'มีข้อมูลใหม่จาก StarSync — โหลดหน้า SAW PLAN ใหม่ (แผนที่จัดไว้อยู่ครบ)' : 'โหลดหน้า SAW PLAN ใหม่ (แผนที่จัดไว้อยู่ครบ)') + '">🔄 ' + (stale ? 'มีข้อมูลใหม่ — โหลด' : 'โหลดข้อมูลใหม่') + '</button></div>';
 }
@@ -9068,17 +9076,35 @@ function spSuggest() {
        → ใส่ทุกแถวลง SAW PLAN · แถวค้างตัด/Lot ที่ตัดไปบางส่วนได้สัดส่วน 1 (ทั้ง Lot · r.all = ชิ้นที่เหลือ ไม่ใช่ชิ้นทั้ง Lot) = ทุกแผ่นของ Lot
      ตอนนี้: ① ไม่ใส่แถวค้างตัด (บอกจำนวนในข้อความ — ลงเองได้) ② สัดส่วน = ชิ้นในวันนั้น ÷ ชิ้นทั้ง Lot (AX · ไม่มี = Cut Rite)
        ③ หน้า SAW PLAN ไม่ลงเครื่องเกินเวลาเครื่อง (ชั้นไม้ที่เกิน = ไม่ใส่ · บอกจำนวน) — mksaw.py SP.suggest */
-  var fr = function (a, b) { return b > 0 && a >= 0 ? Math.min(1, a / b) : 1; }, carry = {}, nCarry = 0;
+  /* ───────── v1.49: ✨ รวมงานค้างตัด (ติ๊กข้างปุ่ม · เปิดเป็นค่าตั้งต้น) ─────────
+     ผู้ใช้ 20/10/2026 15:41 (รูป SAW PLAN: HPP380 “ยังไม่จัดแผน” หลังกด ✨): “ทำไม Hpp380 กับ 350 กดแผนแนะนำแล้วไม่ลงแผนให้” → 15:44 “จัดมา” (ใส่งานค้างตัดด้วย)
+     เหตุ: แผนวันนี้ของ 2 เครื่องนี้มีแต่งานค้างตัด (เวลาที่เหลือวันนี้ = ค้างตัดทั้งหมด) · v1.43 ไม่ใส่งานค้างตัดเลย (เดิมใส่ทั้ง Lot → HPP300/1 90 ชม.)
+     ตอนนี้ (ติ๊ก “รวมงานค้างตัด”): ① ใส่ Lot ตามแผนก่อน แล้วค่อยใส่ค้างตัดในเวลาที่เหลือของเครื่อง (ไม่เกินเวลาเครื่อง — ตัวกันใน SP.suggest)
+       ② ค้างตัด = เฉพาะส่วนที่ยังเหลือตัด: แผ่นของชั้นไม้ × (ชิ้นที่เหลือตอนนี้ ÷ ชิ้นทั้ง Lot) · ชั้นไม้ที่ได้ไม่ถึงครึ่งแผ่น = ไม่ใส่ (เหลือนิดเดียว หน้างานตัดเก็บเอง)
+       · ไม่ติ๊ก = แบบ v1.43 (ไม่ใส่งานค้างตัด) */
+  var fr = function (a, b) { return b > 0 && a >= 0 ? Math.min(1, a / b) : 1; }, carry = {}, nCarry = 0, inclC = spSugCarry(), cRows = [];
   dpMachines(P).forEach(function (x) { dpRows(x, P, k).rows.forEach(function (r) { if (r.extra || r.moved) return;
-    if (r.carry) { if (!carry[r.id]) { carry[r.id] = 1; nCarry++; } return; }   // นับ Lot ไม่ซ้ำ (ทีละชั้นไม้ = หลายแถว)
+    if (r.carry) {
+      if (!carry[r.id]) { carry[r.id] = 1; nCarry++; }   // นับ Lot ไม่ซ้ำ (ทีละชั้นไม้ = หลายแถว)
+      if (inclC && !cRows.some(function (o) { return o.lot === String(r.id) && o.mc === x.m.n; })) {
+        var cg = r.g, cT = cg && cg.partsU > 0 ? +cg.partsU : 0, cRem = cg && cg.remP != null ? Math.min(+r.p || 0, +cg.remP || 0) : (+r.p || 0);
+        var pa = B.pt && B.pt.map ? B.pt.map.get(String(r.id).toUpperCase()) : null;
+        if (pa && pa.length) {   // v1.49 รู้ชิ้นที่เหลือรายชั้นไม้ (parts.csv) = ใส่เฉพาะชั้นไม้ที่ยังเหลือ · แผ่นตามสัดส่วนชิ้นที่เหลือของชั้นนั้น
+          var pc = pa.filter(function (p) { return (+p.left || 0) > 0 && (+p.n || 0) > 0; }).map(function (p) { return { c: p.mat, f: fr(+p.left, +p.n) }; });
+          if (pc.length) cRows.push({ lot: String(r.id), mc: x.m.n, f: 1, codes: pc, carry: 1, pt: 1 });
+        } else if (cT > 0 && cRem > 0) cRows.push({ lot: String(r.id), mc: x.m.n, f: fr(cRem, cT), codes: null, carry: 1 });
+      }
+      return;
+    }
     var cx = crxOf(r.id), T = r.g && r.g.partsU > 0 ? +r.g.partsU : (cx && cx[0] && +cx[0].parts > 0 ? +cx[0].parts : +r.all || 0);
     var codes = r.boards && r.boards.length ? r.boards.map(function (o) { return o.b && o.b.c ? { c: o.b.c, f: fr(+o.p || 0, +(o.b.p || 0)) } : null; }).filter(Boolean) : null;
     rows.push({ lot: String(r.id), mc: x.m.n, f: fr(+r.p || 0, T), codes: codes }); }); });
+  rows = rows.concat(cRows);   // v1.49 ค้างตัดต่อท้าย (Lot ตามแผนได้เวลาเครื่องก่อน)
   if (!rows.length) { toast('แผนอัตโนมัติของวันนั้นไม่มี Lot' + (nCarry ? ' (มีแต่งานค้างตัด ' + nCarry + ' Lot — ลงเครื่องเองที่ SAW PLAN)' : '')); return; }
-  var res = null; try { res = w.SAWPLAN.suggest(JSON.parse(JSON.stringify(rows)), 'ใส่แผนแนะนำ ' + dpDayW(P, k) + ' ' + new Date(dpDayMs(P, k)).getDate(), { carry: nCarry }); } catch (e) { console.error(e); toast('✗ ใส่แผนแนะนำไม่ได้: ' + (e && e.message || e)); return; }
+  var res = null; try { res = w.SAWPLAN.suggest(JSON.parse(JSON.stringify(rows)), 'ใส่แผนแนะนำ ' + dpDayW(P, k) + ' ' + new Date(dpDayMs(P, k)).getDate(), { carry: nCarry, inclC: inclC }); } catch (e) { console.error(e); toast('✗ ใส่แผนแนะนำไม่ได้: ' + (e && e.message || e)); return; }
   if (!res) return;
   if (res.past) { toast('วันที่ที่ดูอยู่ผ่านมาแล้ว — เลือกวันนี้หรือวันถัดไปที่แถบ 📅 ก่อน'); return; }
-  if (!res.n) { toast('ไม่มีชั้นไม้ให้ใส่เพิ่ม — Lot ในแผนแนะนำอยู่ในแผนแล้ว / อยู่ในแผนวันอื่นแล้ว (🔒)' + (res.rm ? ' / ยังไม่เบิกไม้ ' + (res.rmB ? res.rmB + ' ชั้นไม้ (' + res.rm + ' Lot)' : res.rm + ' Lot') : '') + (nCarry ? ' · ไม่ใส่งานค้างตัด ' + nCarry + ' Lot' : '') + (res.full ? ' / เครื่องเต็มเวลาแล้ว (' + res.full + ' ชั้นไม้)' : '') + (res.miss && res.miss.length ? ' · ไม่พบใน SAW PLAN ' + res.miss.length + ' Lot' : '')); return; }
+  if (!res.n) { toast('ไม่มีชั้นไม้ให้ใส่เพิ่ม — Lot ในแผนแนะนำอยู่ในแผนแล้ว / อยู่ในแผนวันอื่นแล้ว (🔒)' + (res.rm ? ' / ยังไม่เบิกไม้ ' + (res.rmB ? res.rmB + ' ชั้นไม้ (' + res.rm + ' Lot)' : res.rm + ' Lot') : '') + (nCarry && !inclC ? ' · ไม่ใส่งานค้างตัด ' + nCarry + ' Lot (ติ๊ก “รวมงานค้างตัด” เพื่อใส่)' : '') + (res.full ? ' / เครื่องเต็มเวลาแล้ว (' + res.full + ' ชั้นไม้)' : '') + (res.miss && res.miss.length ? ' · ไม่พบใน SAW PLAN ' + res.miss.length + ' Lot' : '')); return; }
 }
 document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('#bdSaw [data-spact]'); if (!a) return;
@@ -9273,6 +9299,16 @@ function spCut(id) {
   return { rem: rem, min: min, done: s0 ? s0.v : null, tot: s0 ? s0.tt : null,
     t: 'ค้างตัด · เหลือ ' + fmtN(rem) + ' ชิ้น' + (min > 0 ? ' ≈ ' + crxDur(min) : '') + (s0 && s0.v != null ? ' · ตัดแล้ว ' + fmtN(s0.v) + ' / ' + fmtN(s0.tt) : '') };
 }
+/* ───────── v1.49: ค้างตัดรายชั้นไม้ (ชิ้นที่ยังไม่ได้ยิงตัด ต่อรหัสวัสดุ — lots/parts.csv · StarSync v1.8) ─────────
+   ผู้ใช้ 20/10/2026 15:46 (รูปการ์ด BO69-0863_Mc “✂ ค้างตัด · เหลือ 8 ชิ้น” 10 ชั้นไม้): “ถ้ามีค้างตัด ให้ขึ้นตัวอักษรแดงตรง part ที่ค้างกับบอร์ดตัวนั้น ๆ ด้วยได้ไหม”
+   ข้อมูลจริง 15:50: รหัสวัสดุใน parts.csv = รหัสชั้นไม้ของ Cut Rite ทุกรายการ (189/189 · 58 Lot ค้างตัด · ไม่สนตัวพิมพ์) — 0863 เหลือ PB16DEADSTOC 4 · PB19G08H0966Y 3 · MV09N03P0001 1 = 8
+   คืน { left, n } ของชั้นไม้ code ใน Lot ค้างตัด · ไม่ใช่ค้างตัด / ไม่มีข้อมูล = null */
+function spCutBoard(id, code) {
+  if (!spCut(id) || !B.pt || !B.pt.map) return null;
+  var a = B.pt.map.get(String(id).toUpperCase()); if (!a) return null;
+  var C = String(code).toUpperCase(), x = null; a.forEach(function (r) { if (String(r.mat).toUpperCase() === C) x = x ? { left: x.left + (+r.left || 0), n: x.n + (+r.n || 0) } : { left: +r.left || 0, n: +r.n || 0 }; });
+  return x;
+}
 function spCutShow() { if (SPRMV.cut == null) SPRMV.cut = lsGetJ(SP_CUTK, false) === true; return SPRMV.cut; }
 function spCutShowSet(v) { SPRMV.cut = !!v; lsSetJ(SP_CUTK, SPRMV.cut); return SPRMV.cut; }
 /* ───────── v1.45: ติ๊กแสดง Lot ตามการเบิกไม้ (แถบบน SAW PLAN) ─────────
@@ -9287,7 +9323,7 @@ document.addEventListener('change', function (e) {
   var w = spWin(); if (w) { try { if (typeof w.render === 'function') w.render(); w.SAWPLAN.refresh(); } catch (er) { console.warn(er); } }
 });
 
-window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
