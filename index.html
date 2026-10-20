@@ -1645,7 +1645,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.47</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.48</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2610,10 +2610,13 @@ var GasFS = (function () {
      · ค้างเบิกจริง = ≥ 0.5 แผ่น (หรือ ≥ 0.05 ที่ยังไม่ได้เบิกเลย) — เศษ BOM 0.001–0.04 แผ่นไม่นับ (ข้อมูลจริง: 73 จาก 75 แถว) — ดู spRmOut
      · ค้างเบิกบางชั้นไม้ = กันเฉพาะชั้นไม้นั้น (✨ / 🤖 ใส่ชั้นอื่นได้ · ป้าย ⏳ รอเบิก n แผ่น บนแถวชั้นไม้) — ดู spRmBlock
      · งานค้างตัด: ป้าย ✂ ค้างตัด · เหลือ n ชิ้น บนการ์ด + ติ๊ก “✂ ค้างตัด (n)” ในแถบตัวกรอง (คู่กับ Week) — ดู spCut
+
+   v1.48 (2026-10-20 14:54 ผู้ใช้: “ทำไม ติ๊กถูกทั้ง 3 อันไม่ได้”)
+     · SAW PLAN: ติ๊ก ✓ เบิกไม้แล้ว / ⏳ ยังไม่เบิกไม้ / ✂ ค้างตัด พร้อมกันได้ — เบิกไม้ติ๊ก 1 อัน = กลุ่มนั้น · ทั้งคู่/ไม่ติ๊ก = ทุก Lot · ค้างตัด = เฉพาะค้างตัด — ดู spRmToggle
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.47';
+var VER = '1.48';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -9176,12 +9179,21 @@ var SP_RMK = 'sxlocaltrial:furnitech:spRmGate';
 function spRmGate() { return true; }
 var SP_RMSK = 'sxlocaltrial:furnitech:spRmShow';   // '' = ทุก Lot · 'iss' = เบิกไม้แล้ว · 'no' = ยังไม่เบิกไม้ (จำในเครื่องนี้)
 var SPRMV = { rm: null, cut: null };   // v1.47 (ตรวจบัค): อ่าน localStorage ครั้งเดียว — เดิมอ่าน + JSON.parse ทุก Lot ทุกครั้งที่วาด · เขียนไม่ได้ (โหมดส่วนตัว) ก็ยังกรองได้
-function spRmShow() { if (SPRMV.rm == null) { var v = lsGetJ(SP_RMSK, ''); SPRMV.rm = v === 'iss' || v === 'no' ? v : ''; } return SPRMV.rm; }
+/* ───────── v1.48: ติ๊กพร้อมกันได้ทั้ง 3 อัน ─────────
+   ผู้ใช้ 20/10/2026 14:54 (รูปแถบตัวกรอง ☐ เบิกไม้แล้ว · ☑ ยังไม่เบิกไม้ · ☑ ค้างตัด): “ทำไม ติ๊กถูกทั้ง 3 อันไม่ได้”
+   เดิม (v1.45–1.47): เบิกไม้แล้ว / ยังไม่เบิกไม้ ติ๊กได้ทีละอัน (ติ๊กอีกอัน = อันเดิมออกเอง)
+   ตอนนี้: ติ๊กอิสระ — กลุ่มการเบิกไม้: ติ๊ก 1 อัน = กลุ่มนั้น · ติ๊กทั้งคู่ / ไม่ติ๊ก = ทุก Lot · ✂ ค้างตัด = เฉพาะ Lot ค้างตัด (และตรงกับกลุ่มเบิกไม้ที่ติ๊ก)
+   ค่าที่จำ: '' · 'iss' · 'no' · 'iss,no' (ค่าเดิม 'iss' / 'no' ใช้ต่อได้) */
+function spRmNorm(v) { var a = String(v || '').split(','); return ['iss', 'no'].filter(function (k) { return a.indexOf(k) >= 0; }).join(','); }
+function spRmShow() { if (SPRMV.rm == null) SPRMV.rm = spRmNorm(lsGetJ(SP_RMSK, '')); return SPRMV.rm; }
+function spRmHas(v) { return spRmShow().split(',').indexOf(v) >= 0; }
+function spRmToggle(v, on) { var a = spRmShow().split(',').filter(function (k) { return k && k !== v; }); if (on) a.push(v); return spRmShowSet(a.join(',')); }
 function spRmPass(id) {
   if (spCutShow() && !spCut(id)) return false;   // v1.47 ✂ ค้างตัด
-  var f = spRmShow(); if (!f || !B.rm) return true; var st = spRm(id).st; return f === 'iss' ? st === 'iss' : st !== 'iss';
+  var f = spRmShow(); if (!(f === 'iss' || f === 'no') || !B.rm) return true;   // v1.48 ติ๊กทั้งคู่ / ไม่ติ๊ก = ไม่กรองการเบิกไม้
+  var st = spRm(id).st; return f === 'iss' ? st === 'iss' : st !== 'iss';
 }
-function spRmShowSet(v) { SPRMV.rm = v === 'iss' || v === 'no' ? v : ''; lsSetJ(SP_RMSK, SPRMV.rm); return SPRMV.rm; }   // v1.46 เรียกจากหน้า SAW PLAN (ติ๊กในแถบตัวกรอง)
+function spRmShowSet(v) { SPRMV.rm = spRmNorm(v); lsSetJ(SP_RMSK, SPRMV.rm); return SPRMV.rm; }   // v1.46 เรียกจากหน้า SAW PLAN (ติ๊กในแถบตัวกรอง)
 /* v1.47 (ตรวจบัค): นับจาก Lot ที่อยู่ในรายการตอนนี้ (หลังตัวกรอง Pool · Week · ค้นหา · 🏁 งานจบ) — เดิมนับทุก Lot (ตัวเลขไม่ตรงกับการ์ดที่เห็น) */
 function spRmCountIds(ids) {
   if (!B.plan) return null;
@@ -9275,7 +9287,7 @@ document.addEventListener('change', function (e) {
   var w = spWin(); if (w) { try { if (typeof w.render === 'function') w.render(); w.SAWPLAN.refresh(); } catch (er) { console.warn(er); } }
 });
 
-window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
