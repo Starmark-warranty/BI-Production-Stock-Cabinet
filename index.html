@@ -1632,6 +1632,9 @@
   /* v1.44 แถบ SAW PLAN: ติ๊ก “เฉพาะ Lot ที่เบิกไม้แล้ว” */
   #bdSaw .spchk{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-dim);cursor:pointer;white-space:nowrap}
   #bdSaw .spchk input{margin:0}
+  /* v1.45 แถบ SAW PLAN: ติ๊กแสดง Lot ตามการเบิกไม้ (เบิกไม้แล้ว / ยังไม่เบิกไม้) */
+  #bdSaw .sprms{flex:none;display:inline-flex;align-items:center;gap:10px}
+  #bdSaw .spchk small{font:600 11px var(--mono);color:var(--ink-dim)}
 </style>
 </head>
 <body>
@@ -1642,7 +1645,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.44</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.45</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2594,10 +2597,14 @@ var GasFS = (function () {
    v1.44 (2026-10-20 13:14 ผู้ใช้: “ถ้ากด ใส่แผนแนะนำ หรือ จัดอัตโนมัติ มันจะเช็ควัตถุดิบที่เบิกแล้วให้ไหม ถ้าไม่ ช่วยทำให้มันเช็คด้วยนะ”)
      · SAW PLAN: ✨ ใส่แผนแนะนำ / 🤖 จัดอัตโนมัติ ข้าม Lot ที่ AX ยังมีแผ่นไม้ค้างเบิก (ติ๊ก “เฉพาะ Lot ที่เบิกไม้แล้ว” ที่แถบบน · ปิดได้)
      · การ์ด Lot มีป้าย ✓ เบิกไม้แล้ว / ⏳ รอเบิกไม้ / ✗ ไม้ไม่พอ / ⚠ ยังไม่ Transfer — ดู spRm (v142.js)
+
+   v1.45 (2026-10-20 13:41 ผู้ใช้: “เอาเป็น จัดอัตโนมัติเกลี่ยลงเครื่อง เลย … ทำให้มีติ๊กเปิดปิดได้ ถ้าติ๊กจะโชว์ Lot ที่เบิกไม้แล้ว ถ้าติ๊กออกก็โชว์ทั้งหมด กับติ๊กคือ Lot ที่ยังไม่เบิกได้ด้วย”)
+     · SAW PLAN แถบบน: ☐ เบิกไม้แล้ว (n) · ☐ ยังไม่เบิกไม้ (n) = กรองรายการ Lot (ไม่ติ๊ก = ทุก Lot) · ✨ / 🤖 เช็คเบิกไม้เสมอ — ดู spRmShow
+     · ปุ่ม 🤖 ในหน้า SAW PLAN ชื่อ “🤖 จัดอัตโนมัติเกลี่ยลงเครื่อง” (เกลี่ยชั้นไม้ที่ติ๊กไว้ลงเครื่อง — ต่างจาก ✨ ใส่แผนแนะนำ ที่เลือก Lot)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.44';
+var VER = '1.45';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -8981,8 +8988,13 @@ function spBarHtml(stale) {
   return '<div class="spbar"><b>SAW PLAN</b><span class="spmeta">จัดแผนหน้างาน · ' + fmtN(n) + ' Lot' + (nd ? ' (ไม่มีข้อมูล SAW ' + fmtN(nd) + ')' : '') + ' · ข้อมูลอัตโนมัติจาก StarSync' + (at ? ' · Cut Rite ล่าสุด ' + esc(at) : '')
     + (SPX.bad ? ' · <b class="spbad">⚠ ' + esc(SPX.bad) + ' — กด 🔄 โหลดข้อมูลใหม่ เพื่อลองอีกครั้ง</b>' : '')
     + (B.crd.none ? ' · <span class="spwarn" title="StarSync v1.10 ส่ง lots/crdetail.csv (รายการ Part ต่อชั้นไม้ + ผังตัด) — ยังไม่มี = ปุ่ม 🧩 ไม่มีรายการ Part · เวลาตามชุดค่าเครื่องอื่นเป็นค่าประมาณ">ยังไม่มีรายการ Part/ผัง (StarSync v1.10)</span>' : '') + '</span>'
-    + '<label class="spchk" title="✨ ใส่แผนแนะนำ / 🤖 จัดอัตโนมัติ (ใน SAW PLAN) ข้าม Lot ที่ AX ยังมีแผ่นไม้ค้างเบิก (ยังไม่ Transfer / ไม้ไม่พอ / ไม่มีข้อมูล) — ติ๊ก/ลงเครื่องเองได้เสมอ · v1.44"><input type="checkbox" data-sprm' + (spRmGate() ? ' checked' : '') + '> เฉพาะ Lot ที่เบิกไม้แล้ว</label>'
-    + '<button type="button" class="tbtn" data-spact="suggest" title="ใส่ Lot/ชั้นไม้ของแผนอัตโนมัติ (ตัวเดียวกับ Daily Plan) ของวันที่ที่ดูอยู่ใน SAW PLAN ลงเครื่องชื่อเดียวกัน — ปรับ/เอาออกเองได้ · ↩ ย้อนกลับได้">✨ ใส่แผนแนะนำ</button>'
+    + (function () {   /* v1.45 ติ๊กแสดง Lot ตามการเบิกไม้ */
+        var c = spRmCount(); if (!c) return '';
+        var f = spRmShow(), one = function (v, lbl, n, tip) { return '<label class="spchk" title="' + esc(tip) + '"><input type="checkbox" data-sprms="' + v + '"' + (f === v ? ' checked' : '') + '> ' + lbl + ' <small>' + fmtN(n) + '</small></label>'; };
+        return '<span class="sprms" role="group" aria-label="แสดง Lot ตามการเบิกไม้">' + one('iss', 'เบิกไม้แล้ว', c.iss, 'แสดงเฉพาะ Lot ที่ AX ไม่มีแผ่นไม้ค้างเบิก · ติ๊กออก = ทุก Lot')
+          + one('no', 'ยังไม่เบิกไม้', c.no, 'แสดงเฉพาะ Lot ที่ยังไม่เบิกไม้ (รอเบิก · ไม้ไม่พอ · ยังไม่ Transfer · ไม่มีข้อมูล) · ติ๊กออก = ทุก Lot') + '</span>';
+      })()
+    + '<button type="button" class="tbtn" data-spact="suggest" title="เลือก Lot/ชั้นไม้ตามแผนอัตโนมัติ (ตัวเดียวกับ Daily Plan) ของวันที่ที่ดูอยู่ใน SAW PLAN ลงเครื่องชื่อเดียวกัน — เฉพาะ Lot ที่เบิกไม้แล้ว · ไม่ใส่งานค้างตัด · ไม่เกินเวลาเครื่อง · ปรับ/เอาออกเองได้ · ↩ ย้อนกลับได้ (ส่วน 🤖 จัดอัตโนมัติเกลี่ยลงเครื่อง ในหน้า = เกลี่ยชั้นไม้ที่ติ๊กไว้ลงเครื่อง)">✨ ใส่แผนแนะนำ</button>'
     + '<button type="button" class="tbtn' + (stale ? ' pri' : '') + '" data-spact="reload" title="' + (stale ? 'มีข้อมูลใหม่จาก StarSync — โหลดหน้า SAW PLAN ใหม่ (แผนที่จัดไว้อยู่ครบ)' : 'โหลดหน้า SAW PLAN ใหม่ (แผนที่จัดไว้อยู่ครบ)') + '">🔄 ' + (stale ? 'มีข้อมูลใหม่ — โหลด' : 'โหลดข้อมูลใหม่') + '</button></div>';
 }
 /* วาดแท็บ SAW PLAN — สร้าง iframe ครั้งแรก · ข้อมูลเปลี่ยนระหว่างเปิดอยู่ = บอกที่แถบ (ไม่โหลดเองขณะกำลังจัด) */
@@ -9151,7 +9163,12 @@ document.addEventListener('click', function (e) {
      · การ์ด Lot ใน SAW PLAN มีป้าย ✓ เบิกไม้แล้ว / ⏳ รอเบิกไม้ / ✗ ไม้ไม่พอ / ⚠ ยังไม่ Transfer / ? ไม่มีข้อมูลวัตถุดิบ (ดูสด ณ ตอนวาด)
      · ยังไม่มีข้อมูลวัตถุดิบเลย (StarSync ไม่ได้ส่ง rm.csv) = ไม่เช็ค (ไม่ให้จัดอะไรไม่ได้เลย) */
 var SP_RMK = 'sxlocaltrial:furnitech:spRmGate';
-function spRmGate() { return lsGetJ(SP_RMK, true) !== false; }
+/* v1.45 (ผู้ใช้ 13:41): ติ๊กที่แถบบนเปลี่ยนเป็น “ตัวกรองแสดง Lot” (เบิกไม้แล้ว / ยังไม่เบิกไม้) — ✨ / 🤖 เช็คเบิกไม้เสมอ (เดิม v1.44 ติ๊กนี้ = เปิด/ปิดการเช็ค · ค่าเก่าใน SP_RMK ไม่ใช้แล้ว) */
+function spRmGate() { return true; }
+var SP_RMSK = 'sxlocaltrial:furnitech:spRmShow';   // '' = ทุก Lot · 'iss' = เบิกไม้แล้ว · 'no' = ยังไม่เบิกไม้ (จำในเครื่องนี้)
+function spRmShow() { var v = lsGetJ(SP_RMSK, ''); return v === 'iss' || v === 'no' ? v : ''; }
+function spRmPass(id) { var f = spRmShow(); if (!f || !B.rm) return true; var st = spRm(id).st; return f === 'iss' ? st === 'iss' : st !== 'iss'; }
+function spRmCount() { var o = { iss: 0, no: 0 }; if (!B.rm || !B.plan) return null; spLotsOf(B.plan).forEach(function (g) { if (spRm(g.id).st === 'iss') o.iss++; else o.no++; }); return o; }
 function spRm(id) {
   if (!B.rm) return { st: 'off', t: '' };
   var P = B.plan, U = String(id).toUpperCase(), g = P && P.G ? P.G.get(String(id)) || null : null;
@@ -9167,13 +9184,19 @@ function spRm(id) {
   return { st: 'wait', n: os.length, t: 'ยังไม่เบิกไม้: ค้างเบิกใน AX ' + os.length + ' รายการ (' + cs(os) + ')' };
 }
 function spRmBlock(id) { if (!spRmGate()) return ''; var r = spRm(id); return r.st === 'iss' || r.st === 'off' ? '' : r.t; }
+/* ───────── v1.45: ติ๊กแสดง Lot ตามการเบิกไม้ (แถบบน SAW PLAN) ─────────
+   ผู้ใช้ 20/10/2026 13:41: “แถบบนของ SAW PLAN มีติ๊ก ‘เฉพาะ Lot ที่เบิกไม้แล้ว’ ทำให้มีติ๊กเปิดปิดได้ให้ทีนะ ถ้าติ๊กจะโชว์ Lot ที่เบิกไม้แล้ว
+     ถ้าติ๊กออกก็โชว์ทั้งหมด กับติ๊กคือ Lot ที่ยังไม่เบิกได้ด้วย”
+   ☐ เบิกไม้แล้ว (n) · ☐ ยังไม่เบิกไม้ (n) — ติ๊กได้ทีละอัน (ติ๊กอีกอัน = อันเดิมออกเอง) · ไม่ติ๊ก = ทุก Lot · กรองรายการ Lot ในหน้า SAW PLAN (getVis — mksaw.py)
+   ยังไม่เบิกไม้ = รอเบิก · ไม้ไม่พอ · ยังไม่ Transfer · ไม่มีข้อมูลวัตถุดิบ · ยังไม่มีข้อมูลวัตถุดิบเลย (ไม่มี rm.csv) = ไม่มีติ๊ก */
 document.addEventListener('change', function (e) {
-  var t = e.target; if (!t || !t.matches || !t.matches('#bdSaw [data-sprm]')) return;
-  lsSetJ(SP_RMK, !!t.checked);
-  toast(t.checked ? '✨ / 🤖 = เฉพาะ Lot ที่เบิกไม้แล้ว' : '✨ / 🤖 = ไม่เช็คการเบิกไม้ (ทุก Lot)');
+  var t = e.target; if (!t || !t.matches || !t.matches('#bdSaw [data-sprms]')) return;
+  lsSetJ(SP_RMSK, t.checked ? t.dataset.sprms : '');
+  var bar = document.querySelector('#bdSaw .spbar'); if (bar) bar.outerHTML = spBarHtml(SPX.wantSig && SPX.wantSig !== SPX.sig);
+  var w = spWin(); if (w) { try { if (typeof w.render === 'function') w.render(); w.SAWPLAN.refresh(); } catch (er) { console.warn(er); } }
 });
 
-window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
