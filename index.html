@@ -1629,6 +1629,9 @@
   .dbonering a.dbext:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
   .dbonering a.dbext .dbexth{font-size:12px;color:#38bdf8;opacity:.75}
   .dbonering a.dbext:hover .dbexth{opacity:1;text-decoration:underline}
+  /* v1.44 แถบ SAW PLAN: ติ๊ก “เฉพาะ Lot ที่เบิกไม้แล้ว” */
+  #bdSaw .spchk{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-dim);cursor:pointer;white-space:nowrap}
+  #bdSaw .spchk input{margin:0}
 </style>
 </head>
 <body>
@@ -1639,7 +1642,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.43</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.44</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2587,10 +2590,14 @@ var GasFS = (function () {
      · ✨ ใส่แผนแนะนำ: ไม่ใส่งานค้างตัด (เดิม HPP 300/1 ได้ค้างตัด 40 Lot ทั้ง Lot) · สัดส่วนแผ่นเทียบชิ้นทั้ง Lot · ไม่ลงเครื่องเกินเวลาเครื่อง — ดูบล็อก v1.43 ใน spSuggest
      · HPP 350 / HPP 380 ไม่ได้งาน = ปิดไว้ใน ⚙ ของ StarStock (แผนอัตโนมัติไม่จัดให้) — เปิดใน ⚙ ตั้ง 1,200 ชิ้น/วัน (ค่าตั้ง ไม่ใช่โค้ด)
      · (13:01) หน้า Dashboard เครื่องเดียว: คลิกวงแหวน “วันนี้ตัดได้” = เปิดหน้า Cutting Center (Dashboard/cutting.html · แท็บใหม่) — ดู DB_EXT_URL
+
+   v1.44 (2026-10-20 13:14 ผู้ใช้: “ถ้ากด ใส่แผนแนะนำ หรือ จัดอัตโนมัติ มันจะเช็ควัตถุดิบที่เบิกแล้วให้ไหม ถ้าไม่ ช่วยทำให้มันเช็คด้วยนะ”)
+     · SAW PLAN: ✨ ใส่แผนแนะนำ / 🤖 จัดอัตโนมัติ ข้าม Lot ที่ AX ยังมีแผ่นไม้ค้างเบิก (ติ๊ก “เฉพาะ Lot ที่เบิกไม้แล้ว” ที่แถบบน · ปิดได้)
+     · การ์ด Lot มีป้าย ✓ เบิกไม้แล้ว / ⏳ รอเบิกไม้ / ✗ ไม้ไม่พอ / ⚠ ยังไม่ Transfer — ดู spRm (v142.js)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.43';
+var VER = '1.44';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -8974,6 +8981,7 @@ function spBarHtml(stale) {
   return '<div class="spbar"><b>SAW PLAN</b><span class="spmeta">จัดแผนหน้างาน · ' + fmtN(n) + ' Lot' + (nd ? ' (ไม่มีข้อมูล SAW ' + fmtN(nd) + ')' : '') + ' · ข้อมูลอัตโนมัติจาก StarSync' + (at ? ' · Cut Rite ล่าสุด ' + esc(at) : '')
     + (SPX.bad ? ' · <b class="spbad">⚠ ' + esc(SPX.bad) + ' — กด 🔄 โหลดข้อมูลใหม่ เพื่อลองอีกครั้ง</b>' : '')
     + (B.crd.none ? ' · <span class="spwarn" title="StarSync v1.10 ส่ง lots/crdetail.csv (รายการ Part ต่อชั้นไม้ + ผังตัด) — ยังไม่มี = ปุ่ม 🧩 ไม่มีรายการ Part · เวลาตามชุดค่าเครื่องอื่นเป็นค่าประมาณ">ยังไม่มีรายการ Part/ผัง (StarSync v1.10)</span>' : '') + '</span>'
+    + '<label class="spchk" title="✨ ใส่แผนแนะนำ / 🤖 จัดอัตโนมัติ (ใน SAW PLAN) ข้าม Lot ที่ AX ยังมีแผ่นไม้ค้างเบิก (ยังไม่ Transfer / ไม้ไม่พอ / ไม่มีข้อมูล) — ติ๊ก/ลงเครื่องเองได้เสมอ · v1.44"><input type="checkbox" data-sprm' + (spRmGate() ? ' checked' : '') + '> เฉพาะ Lot ที่เบิกไม้แล้ว</label>'
     + '<button type="button" class="tbtn" data-spact="suggest" title="ใส่ Lot/ชั้นไม้ของแผนอัตโนมัติ (ตัวเดียวกับ Daily Plan) ของวันที่ที่ดูอยู่ใน SAW PLAN ลงเครื่องชื่อเดียวกัน — ปรับ/เอาออกเองได้ · ↩ ย้อนกลับได้">✨ ใส่แผนแนะนำ</button>'
     + '<button type="button" class="tbtn' + (stale ? ' pri' : '') + '" data-spact="reload" title="' + (stale ? 'มีข้อมูลใหม่จาก StarSync — โหลดหน้า SAW PLAN ใหม่ (แผนที่จัดไว้อยู่ครบ)' : 'โหลดหน้า SAW PLAN ใหม่ (แผนที่จัดไว้อยู่ครบ)') + '">🔄 ' + (stale ? 'มีข้อมูลใหม่ — โหลด' : 'โหลดข้อมูลใหม่') + '</button></div>';
 }
@@ -9046,7 +9054,7 @@ function spSuggest() {
   var res = null; try { res = w.SAWPLAN.suggest(JSON.parse(JSON.stringify(rows)), 'ใส่แผนแนะนำ ' + dpDayW(P, k) + ' ' + new Date(dpDayMs(P, k)).getDate(), { carry: nCarry }); } catch (e) { console.error(e); toast('✗ ใส่แผนแนะนำไม่ได้: ' + (e && e.message || e)); return; }
   if (!res) return;
   if (res.past) { toast('วันที่ที่ดูอยู่ผ่านมาแล้ว — เลือกวันนี้หรือวันถัดไปที่แถบ 📅 ก่อน'); return; }
-  if (!res.n) { toast('ไม่มีชั้นไม้ให้ใส่เพิ่ม — Lot ในแผนแนะนำอยู่ในแผนแล้ว / อยู่ในแผนวันอื่นแล้ว (🔒)' + (res.full ? ' / เครื่องเต็มเวลาแล้ว (' + res.full + ' ชั้นไม้)' : '') + (res.miss && res.miss.length ? ' · ไม่พบใน SAW PLAN ' + res.miss.length + ' Lot' : '')); return; }
+  if (!res.n) { toast('ไม่มีชั้นไม้ให้ใส่เพิ่ม — Lot ในแผนแนะนำอยู่ในแผนแล้ว / อยู่ในแผนวันอื่นแล้ว (🔒)' + (res.rm ? ' / ยังไม่เบิกไม้ ' + res.rm + ' Lot' : '') + (res.full ? ' / เครื่องเต็มเวลาแล้ว (' + res.full + ' ชั้นไม้)' : '') + (res.miss && res.miss.length ? ' · ไม่พบใน SAW PLAN ' + res.miss.length + ' Lot' : '')); return; }
 }
 document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('#bdSaw [data-spact]'); if (!a) return;
@@ -9133,7 +9141,39 @@ document.addEventListener('click', function (e) {
   dpSave(); if (B.plan) dpRender(B.plan);
 });
 
-window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ───────── v1.44: SAW PLAN เช็คไม้ที่เบิกแล้ว ก่อน ✨ ใส่แผนแนะนำ / 🤖 จัดอัตโนมัติ ─────────
+   ผู้ใช้ 20/10/2026 13:14 (รูป Dashboard “✓ เบิกครบแล้ว” + รูป SAW PLAN): “ถ้ากด ใส่แผนแนะนำ หรือ จัดอัตโนมัติ มันจะเช็ควัตถุดิบที่เบิกแล้วให้ไหม ถ้าไม่ ช่วยทำให้มันเช็คด้วยนะ”
+   เดิม: ✨ = Lot จากแผนอัตโนมัติของ StarStock (วัตถุดิบ “ครบ” = เบิกแล้ว หรือมีพอในคลังรอเบิก — ไม่ได้ดูว่าเบิกไม้แล้วจริง)
+         🤖 จัดอัตโนมัติ (ของ SAW W43) = ลงเครื่องให้ชั้นไม้ที่ติ๊กไว้ ไม่รู้เรื่องวัตถุดิบเลย
+   ตอนนี้ (ติ๊ก “เฉพาะ Lot ที่เบิกไม้แล้ว” ที่แถบบน — เปิดเป็นค่าตั้งต้น · จำในเครื่องนี้):
+     · ✨ ไม่ใส่ Lot ที่ยังไม่เบิกไม้ · 🤖 ไม่ลงเครื่องให้ชั้นไม้ของ Lot นั้น (ค้าง “ยังไม่ได้ลงเครื่อง” พร้อมเหตุผล) — ติ๊ก/ลงเครื่องเองได้เหมือนเดิม
+     · เบิกไม้แล้ว = AX ไม่มีแผ่นไม้ (รหัสแผ่น) ค้างเบิกของ Lot นั้น (lots/rm.csv · ตัวเดียวกับคอลัมน์ “วัตถุดิบ” ของ Dashboard) — วัตถุดิบอื่น (อุปกรณ์ ขอบ) ไม่นับ เพราะไม่เกี่ยวกับการตัด
+     · การ์ด Lot ใน SAW PLAN มีป้าย ✓ เบิกไม้แล้ว / ⏳ รอเบิกไม้ / ✗ ไม้ไม่พอ / ⚠ ยังไม่ Transfer / ? ไม่มีข้อมูลวัตถุดิบ (ดูสด ณ ตอนวาด)
+     · ยังไม่มีข้อมูลวัตถุดิบเลย (StarSync ไม่ได้ส่ง rm.csv) = ไม่เช็ค (ไม่ให้จัดอะไรไม่ได้เลย) */
+var SP_RMK = 'sxlocaltrial:furnitech:spRmGate';
+function spRmGate() { return lsGetJ(SP_RMK, true) !== false; }
+function spRm(id) {
+  if (!B.rm) return { st: 'off', t: '' };
+  var P = B.plan, U = String(id).toUpperCase(), g = P && P.G ? P.G.get(String(id)) || null : null;
+  if (!g && P && P.G) P.G.forEach(function (x) { if (!g && String(x.id).toUpperCase() === U) g = x; });
+  if (!g) return { st: 'unk', t: 'ไม่มีข้อมูลวัตถุดิบ: ไม่พบ Lot นี้ในข้อมูล AX' };
+  if (g.rmNoT) return { st: 'not', t: 'ยังไม่ Transfer เข้า Raw material: ยังเบิกไม้ใน AX ไม่ได้' };
+  var R = bdRmOf(g); if (!R) return { st: 'unk', t: 'ไม่มีข้อมูลวัตถุดิบ: StarSync ยังไม่ได้ดึงของ Lot นี้' };
+  var os = R.rows.filter(function (r) { return r.qty > 0 && !r.pack && isBoardCode(r.code); });
+  if (!os.length) return { st: 'iss', t: 'เบิกไม้ครบแล้ว (AX ไม่มีแผ่นไม้ค้างเบิก)' };
+  var sh = B.stock ? os.filter(function (r) { var k = String(r.code).toUpperCase(); return (g.rmRows || []).some(function (x) { return String(x.code).toUpperCase() === k && x.known && x.ok === false; }); }) : [];
+  var cs = function (a) { return a.slice(0, 3).map(function (r) { return r.code; }).join(', ') + (a.length > 3 ? ' …' : ''); };
+  if (sh.length) return { st: 'short', n: os.length, t: 'แผ่นไม้ไม่พอในคลัง: ' + sh.length + ' รายการ (' + cs(sh) + ')' };
+  return { st: 'wait', n: os.length, t: 'ยังไม่เบิกไม้: ค้างเบิกใน AX ' + os.length + ' รายการ (' + cs(os) + ')' };
+}
+function spRmBlock(id) { if (!spRmGate()) return ''; var r = spRm(id); return r.st === 'iss' || r.st === 'off' ? '' : r.t; }
+document.addEventListener('change', function (e) {
+  var t = e.target; if (!t || !t.matches || !t.matches('#bdSaw [data-sprm]')) return;
+  lsSetJ(SP_RMK, !!t.checked);
+  toast(t.checked ? '✨ / 🤖 = เฉพาะ Lot ที่เบิกไม้แล้ว' : '✨ / 🤖 = ไม่เช็คการเบิกไม้ (ทุก Lot)');
+});
+
+window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
