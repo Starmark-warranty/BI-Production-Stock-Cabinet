@@ -1623,6 +1623,12 @@
   @media (max-width: 1700px){ body[data-view="board"] #top .tbtn .lbl{display:none} body[data-view="board"] .bddept button i{display:none} }
   body[data-view="board"] #bdTabsTop{min-width:0;flex:0 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
   body[data-view="board"] #bdTabsTop::-webkit-scrollbar{display:none}
+  /* ───────── v1.43: วงแหวน “วันนี้ตัดได้” (หน้าเครื่องเดียว) = ลิงก์เปิดหน้า Cutting Center ───────── */
+  .dbonering a.dbext{display:flex;flex-direction:column;align-items:center;gap:4px;width:fit-content;margin:0 auto;color:inherit;text-decoration:none;cursor:pointer;border-radius:24px;padding:4px 6px;transition:transform .15s ease,background-color .15s ease}
+  .dbonering a.dbext:hover{transform:translateY(-2px);background:color-mix(in srgb,var(--db-ink, #fff) 5%,transparent)}
+  .dbonering a.dbext:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
+  .dbonering a.dbext .dbexth{font-size:12px;color:#38bdf8;opacity:.75}
+  .dbonering a.dbext:hover .dbexth{opacity:1;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -1633,7 +1639,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.42</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.43</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2576,10 +2582,15 @@ var GasFS = (function () {
      · ใช้คู่กับ StarSync v1.10 (lots/crdetail.csv = รายการ Part ต่อชั้นไม้ + ผังตัด สำหรับ SAW PLAN)
      · ตรวจบัคก่อนส่ง: ออกจากแท็บ/🔄 = ส่งแผนที่ค้างขึ้น Drive ก่อนปิดหน้า (เดิมไฟล์แผนบน Drive ว่างได้) · แผนแนะนำแบ่งแผ่นตามสัดส่วน/ไม่ลงเครื่องที่ปิด
        · ช่องค้นหาไม่หลุดตอนข้อมูลอัปเดต · เครื่องที่ถูกลบไม่ทำหน้าว่าง · สถานะที่กรองจำแค่วันเดียว — ดูบล็อก “v1.42 (ตรวจบัค)”
+
+   v1.43 (2026-10-20 12:56 ผู้ใช้: “งง ทำไม กดจัดแผนแนะนำ เวลามันเกินหมดเลย แล้วทำไมเครื่อง HPP380 350 ไม่ลงข้อมูล” — รูป SAW PLAN HPP300/1 90:45:08 / 480 นาที)
+     · ✨ ใส่แผนแนะนำ: ไม่ใส่งานค้างตัด (เดิม HPP 300/1 ได้ค้างตัด 40 Lot ทั้ง Lot) · สัดส่วนแผ่นเทียบชิ้นทั้ง Lot · ไม่ลงเครื่องเกินเวลาเครื่อง — ดูบล็อก v1.43 ใน spSuggest
+     · HPP 350 / HPP 380 ไม่ได้งาน = ปิดไว้ใน ⚙ ของ StarStock (แผนอัตโนมัติไม่จัดให้) — เปิดใน ⚙ ตั้ง 1,200 ชิ้น/วัน (ค่าตั้ง ไม่ใช่โค้ด)
+     · (13:01) หน้า Dashboard เครื่องเดียว: คลิกวงแหวน “วันนี้ตัดได้” = เปิดหน้า Cutting Center (Dashboard/cutting.html · แท็บใหม่) — ดู DB_EXT_URL
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.42';
+var VER = '1.43';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -7841,6 +7852,7 @@ function dbEndCell(g, P) {
   return '<td class="ed' + (late != null && late >= 1 ? ' late' : '') + '">' + esc(fD(g.end)) + '<small>' + (late != null && late >= 1 ? 'เลยกำหนดตัด ' + late + ' วัน' : due != null ? 'ตัดก่อน ' + esc(fD(due)) : '') + '</small></td>';
 }
 function dbSelDay(k) { DB.day = Math.max(-1 /* v1.35 วันนี้ */, Math.min(DB_DAYS - 1, k | 0)); var E = $('bdDash'), keep = E ? E.scrollTop : 0; if (B.plan) bdDashRender(B.plan); if (E) E.scrollTop = keep; }
+var DB_EXT_URL = 'https://starmark-warranty.github.io/Dashboard/cutting.html';   // v1.43 ปลายทางเมื่อคลิกวงแหวน “วันนี้ตัดได้” (หน้าเครื่องเดียว) = Cutting Center (ผู้ใช้ 13:05 “กดลิงค์แล้วให้เด้งเข้าหน้า cutting center นะ”)
 function bdDashMcView(S, x, P) {
   var c = x.o.c, now = Date.now(), idle = bdMqIdle(c, now), run = idle != null && idle <= 20, ppd = x.m.ppd || 0, tp1 = c ? c.codes.size : 0;
   var cur = c && c.lot ? c.lot : '', g = cur ? S.GU.get(cur.toUpperCase()) : null, s0 = g ? bdMqLotNow(g, P) : null, tdy = x.ser[x.ser.length - 1];
@@ -7851,7 +7863,13 @@ function bdDashMcView(S, x, P) {
   h += '<div class="dbone">';
   h += '<section class="dbc dbonering' + (run ? ' run' : '') + '"><header><h3>' + esc(x.m.n) + '<small><i></i>' + esc(stT) + (x.m.pc ? ' · ' + esc(x.m.pc) : '') + '</small></h3></header>'
     + '<p class="cap">วันนี้ตัดได้</p>'
-    + dbRing(ppd ? tp1 / ppd : null, 230, 22, '<b>' + (ppd ? dbPct(tp1 / ppd) : '—') + '</b><small>' + fmtN(tp1) + (ppd ? ' / ' + fmtN(ppd) : '') + ' ชิ้น</small>', bdDashTip([x.m.n + ' วันนี้ ' + tp1.toLocaleString('th-TH') + ' ชิ้น', ppd ? 'ชิ้น/วันของเครื่อง (⚙) ' + ppd.toLocaleString('th-TH') : 'ยังไม่ได้ตั้งชิ้น/วัน']))
+    /* ───────── v1.43: คลิกวงแหวน “วันนี้ตัดได้” = เปิด Cutting Center (Dashboard/cutting.html · แท็บใหม่) ─────────
+       ผู้ใช้ 20/10/2026 13:01 (รูปหน้าเครื่อง HPP 300/1 วงแหวน 13%): “ตรงหน้า dashboard นี้ ถ้าผมอยากคลิกเข้าไปแล้ว เข้าไปที่ลิงค์นี้จะได้ไหม https://starmark-warranty.github.io/Dashboard/”
+       13:05 “กดลิงค์แล้วให้เด้งเข้าหน้า cutting center นะ” (รูปหน้า CUTTING CENTER) → ไปหน้า cutting.html ตรง ไม่ผ่านหน้าเลือกระบบ
+       เดิม: วงแหวนกดไม่ได้ · ตอนนี้: ห่อด้วยลิงก์ (DB_EXT_URL) เปิดแท็บใหม่ — หน้าคิวตัดงานเดิมไม่หาย */
+    + '<a class="dbext" href="' + esc(DB_EXT_URL) + '" target="_blank" rel="noopener" title="เปิดหน้า Cutting Center (แท็บใหม่)">'
+    + dbRing(ppd ? tp1 / ppd : null, 230, 22, '<b>' + (ppd ? dbPct(tp1 / ppd) : '—') + '</b><small>' + fmtN(tp1) + (ppd ? ' / ' + fmtN(ppd) : '') + ' ชิ้น</small>', bdDashTip([x.m.n + ' วันนี้ ' + tp1.toLocaleString('th-TH') + ' ชิ้น', ppd ? 'ชิ้น/วันของเครื่อง (⚙) ' + ppd.toLocaleString('th-TH') : 'ยังไม่ได้ตั้งชิ้น/วัน', 'คลิก = เปิดหน้า Cutting Center ↗']))
+    + '<span class="dbexth">เปิด Cutting Center ↗</span></a>'
     + '<div class="dbpl"><span>0%</span><span class="avg">เฉลี่ย ' + hN + ' วันทำงาน <b>' + dbPct(avgU) + '</b> · ' + bdDashN(x.avgL, 1) + ' Lot/วัน</span><span>100%</span></div>'
     /* v1.36 ใต้วงแหวน = ตัดแล้ววันนี้ + แผนวันนี้ต่อจากนี้ (ตัวชี้ ▶ เลื่อนไป Lot ถัดไปเมื่อ Lot ที่ตัดอยู่ครบ) — ผู้ใช้ 19/10 09:51 “เอาวันนี้มาแสดงข้างซ้าย ต่อจากที่ตัดอยู่”
        เดิม v1.29: (cur ? dbTodayLots(c, cur, run, idle, S.GU, P) : 'ยังไม่มีการยิงตัด') — แสดงแค่ Lot ที่ยิงแล้ว (dbTodayLots ยังเก็บไว้ ไม่ได้ใช้แล้ว) */
@@ -9012,15 +9030,23 @@ function spSuggest() {
   var rows = [];
   /* v1.42 (ตรวจบัค): Lot / ชั้นไม้ที่แผนอัตโนมัติแบ่งตัดหลายวัน = ส่งสัดส่วนของวันนั้นไปด้วย (f = ชิ้นในวันนั้น ÷ ชิ้นทั้งหมด)
      → SAW PLAN ใส่แผ่นตามสัดส่วน (✂) · เดิมใส่ทั้งชั้นไม้ทุกวัน = วันแรกกินแผ่นหมด วันถัดไป 🔒 */
-  var fr = function (a, b) { return b > 0 && a >= 0 ? Math.min(1, a / b) : 1; };
+  /* ───────── v1.43: แผนแนะนำไม่ใส่งานค้างตัด · สัดส่วนเทียบชิ้นทั้ง Lot · ไม่เกินเวลาเครื่อง ─────────
+     ผู้ใช้ 20/10/2026 12:56 (รูป SAW PLAN: HPP300/1 ใช้ 90:45:08 / 480 นาที · 1134% · 47 Lot): “งง ทำไมกดจัดแผนแนะนำ เวลามันเกินหมดเลย”
+     เดิม: แผนวันนี้ของ Daily Plan = Lot ของวันนี้ + “ค้างตัด” (Lot ที่ลงเครื่องนี้ไว้ตั้งแต่วันก่อนแต่ยังตัดไม่จบ — ข้อมูลจริง HPP 300/1 ค้าง 40 Lot)
+       → ใส่ทุกแถวลง SAW PLAN · แถวค้างตัด/Lot ที่ตัดไปบางส่วนได้สัดส่วน 1 (ทั้ง Lot · r.all = ชิ้นที่เหลือ ไม่ใช่ชิ้นทั้ง Lot) = ทุกแผ่นของ Lot
+     ตอนนี้: ① ไม่ใส่แถวค้างตัด (บอกจำนวนในข้อความ — ลงเองได้) ② สัดส่วน = ชิ้นในวันนั้น ÷ ชิ้นทั้ง Lot (AX · ไม่มี = Cut Rite)
+       ③ หน้า SAW PLAN ไม่ลงเครื่องเกินเวลาเครื่อง (ชั้นไม้ที่เกิน = ไม่ใส่ · บอกจำนวน) — mksaw.py SP.suggest */
+  var fr = function (a, b) { return b > 0 && a >= 0 ? Math.min(1, a / b) : 1; }, nCarry = 0;
   dpMachines(P).forEach(function (x) { dpRows(x, P, k).rows.forEach(function (r) { if (r.extra || r.moved) return;
+    if (r.carry) { nCarry++; return; }
+    var cx = crxOf(r.id), T = r.g && r.g.partsU > 0 ? +r.g.partsU : (cx && cx[0] && +cx[0].parts > 0 ? +cx[0].parts : +r.all || 0);
     var codes = r.boards && r.boards.length ? r.boards.map(function (o) { return o.b && o.b.c ? { c: o.b.c, f: fr(+o.p || 0, +(o.b.p || 0)) } : null; }).filter(Boolean) : null;
-    rows.push({ lot: String(r.id), mc: x.m.n, f: r.all > 0 ? fr(+r.p || 0, +r.all) : 1, codes: codes }); }); });
-  if (!rows.length) { toast('แผนอัตโนมัติของวันนั้นไม่มี Lot'); return; }
-  var res = null; try { res = w.SAWPLAN.suggest(JSON.parse(JSON.stringify(rows)), 'ใส่แผนแนะนำ ' + dpDayW(P, k) + ' ' + new Date(dpDayMs(P, k)).getDate()); } catch (e) { console.error(e); toast('✗ ใส่แผนแนะนำไม่ได้: ' + (e && e.message || e)); return; }
+    rows.push({ lot: String(r.id), mc: x.m.n, f: fr(+r.p || 0, T), codes: codes }); }); });
+  if (!rows.length) { toast('แผนอัตโนมัติของวันนั้นไม่มี Lot' + (nCarry ? ' (มีแต่งานค้างตัด ' + nCarry + ' Lot — ลงเครื่องเองที่ SAW PLAN)' : '')); return; }
+  var res = null; try { res = w.SAWPLAN.suggest(JSON.parse(JSON.stringify(rows)), 'ใส่แผนแนะนำ ' + dpDayW(P, k) + ' ' + new Date(dpDayMs(P, k)).getDate(), { carry: nCarry }); } catch (e) { console.error(e); toast('✗ ใส่แผนแนะนำไม่ได้: ' + (e && e.message || e)); return; }
   if (!res) return;
   if (res.past) { toast('วันที่ที่ดูอยู่ผ่านมาแล้ว — เลือกวันนี้หรือวันถัดไปที่แถบ 📅 ก่อน'); return; }
-  if (!res.n) { toast('ไม่มีชั้นไม้ให้ใส่เพิ่ม — Lot ในแผนแนะนำอยู่ในแผนแล้ว / อยู่ในแผนวันอื่นแล้ว (🔒)' + (res.miss && res.miss.length ? ' · ไม่พบใน SAW PLAN ' + res.miss.length + ' Lot' : '')); return; }
+  if (!res.n) { toast('ไม่มีชั้นไม้ให้ใส่เพิ่ม — Lot ในแผนแนะนำอยู่ในแผนแล้ว / อยู่ในแผนวันอื่นแล้ว (🔒)' + (res.full ? ' / เครื่องเต็มเวลาแล้ว (' + res.full + ' ชั้นไม้)' : '') + (res.miss && res.miss.length ? ' · ไม่พบใน SAW PLAN ' + res.miss.length + ' Lot' : '')); return; }
 }
 document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('#bdSaw [data-spact]'); if (!a) return;
