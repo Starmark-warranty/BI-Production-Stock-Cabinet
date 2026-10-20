@@ -1635,6 +1635,14 @@
   /* v1.45 แถบ SAW PLAN: ติ๊กแสดง Lot ตามการเบิกไม้ (เบิกไม้แล้ว / ยังไม่เบิกไม้) */
   #bdSaw .sprms{flex:none;display:inline-flex;align-items:center;gap:10px}
   #bdSaw .spchk small{font:600 11px var(--mono);color:var(--ink-dim)}
+  /* v1.50 ป้ายงานสี (🎨 สี · เดาจากชื่อ = 🎨 สี? เส้นประ) + โน้ตหลังช่องใน ⚙ */
+  .pntc{display:inline-block;margin-left:6px;padding:0 6px;border-radius:5px;font:700 10.5px/17px var(--mono);vertical-align:1px;white-space:nowrap;cursor:help;
+    color:#b45309;background:rgba(217,119,6,.12);border:.5px solid rgba(217,119,6,.45)}
+  .pntc.guess{border-style:dashed;background:transparent;opacity:.9}
+  body[data-theme="dark"] .pntc{color:#fbbf24;background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.4)}
+  body.tv .pntc{font-size:12.5px;line-height:20px}
+  .bset label small.bsnote{flex:none;width:150px;font-size:10.5px;line-height:1.3;color:var(--ink-faint)}
+  @media (max-width:640px){ .bset label small.bsnote{width:100%;order:9} .bset label{flex-wrap:wrap} }
 </style>
 </head>
 <body>
@@ -1645,7 +1653,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.49</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.50</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2617,10 +2625,16 @@ var GasFS = (function () {
    v1.49 (2026-10-20 15:41 ผู้ใช้: “ทำไม Hpp380 กับ 350 กดแผนแนะนำแล้วไม่ลงแผนให้” → 15:44 “จัดมา”)
      · ✨ ใส่แผนแนะนำ + ติ๊ก “รวมงานค้างตัด” (ค่าตั้งต้น): Lot ตามแผนก่อน แล้วค้างตัดเฉพาะส่วนที่เหลือในเวลาที่เหลือของเครื่อง — ดู spSugCarry
      · (15:46) การ์ด Lot ค้างตัด: แถวชั้นไม้ที่ยังเหลือ = รหัสสีแดง + “✂ ค้าง n/m ชิ้น” · ตัดครบแล้ว = “✓ ตัดแล้ว” (lots/parts.csv) — ดู spCutBoard
+
+   v1.50 (2026-10-20 16:01 ผู้ใช้: “ถ้าผมอยากเพิ่มแถวที่เป็นงานสีด้วยจะได้ไหม … มาตรฐานอยู่ที่ 21 วัน · 15 วัน รวมอาทิตย์ด้วยไหม · โน้ตเล็ก ๆ ไว้ด้านหลัง · เช็คไส้ BOM ที่มี N00S”)
+     · ⚙ “Dashboard: งานสี ต้องตัดเสร็จก่อน enddate” 21 วัน (cutDuePaint) · โน้ตหลังช่อง “วันปฏิทิน — นับวันอาทิตย์/วันหยุดด้วย” (ตรวจแล้ว: 15 วันเดิมก็เป็นวันปฏิทิน)
+     · งานสี = BOM มีรหัส N00S (lots/paint.csv · StarSync v1.11 / rm.csv) · ยังไม่มี BOM = เดาจากชื่อ Lot HG / MU (ปิดได้ใน ⚙) · ป้าย 🎨 สี ข้างชื่อ Lot — ดู paintOf
+     · SAW PLAN: Lot งานสี = 🎨 งานสี + ตัวกรอง/เรียง N00S ของ SAW W43 ใช้ได้ · (15:58 “ถ้าตัวแดง เราลงถึงเลเวล Part ได้ไหม”) คลิกแถวชั้นไม้ตัวแดง
+       = Part ที่ยังไม่ได้ยิงตัด (ชื่อ · ขนาด · ชิ้น — lots/partsleft.csv · StarSync v1.11) + แถว Part ของ Cut Rite ที่ตรงเป็นตัวแดง — ดู spCutParts
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.49';
+var VER = '1.50';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4058,6 +4072,8 @@ var BD_DEF = { v: 1, lead: 5, work: [1, 2, 3, 4, 5, 6], capSaw: 480, capCnc: 420
   showCap: false,
   /* v1.26 Dashboard: ต้องตัดเสร็จก่อน enddate กี่วัน (ผู้ใช้ 17/10/2026 14:23 “คำนวณจาก Enddate ย้อนหลังมา 15 วัน ต้องตัดแล้ว”) */
   cutDue: 15,
+  /* v1.50 งานสี: ต้องตัดเสร็จก่อน enddate กี่วัน (วันปฏิทิน · ผู้ใช้ 20/10/2026 16:01 “มาตรฐานอยู่ที่ 21 วัน”) · paintName = Lot ที่ยังไม่มี BOM เดาจากชื่อ (HG / MU) */
+  cutDuePaint: 21, paintName: true,
   /* v1.38 เวลาเป้าหมาย (สูตร SAW PLAN — ผู้ใช้ 19/10/2026 15:2x เลือก “สูตร SAW PLAN”) + เวลาทำงานของแผนรายวัน — ดูหัวบล็อก v1.38
      tgLoad วินาที/กอง · tgBunN แผ่น/กอง · tgBunH มม./กอง · tgLabel วินาที/ชิ้น · tgSetup วินาที/ผัง · tgLoss % · tgInc = ชุดค่า Cut Rite ที่คิดโหลดกองไม้ไว้ใน Total Time แล้ว */
   tgOn: true, tgLoad: 120, tgBunN: 60, tgBunH: 1000, tgLabel: 3, tgSetup: 0, tgLoss: 0, tgInc: '140404', dpStart: '08:00', dpBrk: '12:00', dpBrkMin: 60,
@@ -4380,6 +4396,8 @@ async function bdLoadAux() {
   if (await tpLoad()) ch = true;   // v1.35 แผนของวันนี้ที่บันทึกไว้ (lots/plan/<วันนี้>.json)
   if (await adjLoad()) ch = true;  // v1.39 การปรับแผนเอง (lots/plan/adjust.json)
   if (await ptLoad()) ch = true;   // v1.33 ชิ้นที่ยังไม่ได้ตัดราย Lot × ไม้ (StarSync v1.8 · lots/parts.csv)
+  if (await plLoad()) ch = true;   // v1.50 Part ที่ยังไม่ได้ตัด ของ Lot ค้างตัด (StarSync v1.11 · lots/partsleft.csv)
+  if (await paintLoad()) ch = true;   // v1.50 สีของ Lot (BOM N00S · StarSync v1.11 · lots/paint.csv)
   if (await rcLoad()) ch = true;   // v1.25 วัตถุดิบในการตัด (แผ่น) ทุก Lot (StarSync v1.7 · lots/rmcut.csv)
   if (await ext) ch = true;
   B.lastCheck = Date.now();
@@ -4387,10 +4405,10 @@ async function bdLoadAux() {
 }
 function bdNormSet(o) {
   var s = JSON.parse(JSON.stringify(BD_DEF)); o = o || {};
-  ['lead', 'capSaw', 'capCnc', 'cutPP', 'drillPP', 'finDays', 'staleDays', 'capEdge', 'edgeHand', 'ncHole', 'ncHand', 'ncPkr', 'ncPkf', 'cutDue'].forEach(function (k) { var n = bdNum(o[k]); if (n != null && n >= 0) s[k] = n; });
+  ['lead', 'capSaw', 'capCnc', 'cutPP', 'drillPP', 'finDays', 'staleDays', 'capEdge', 'edgeHand', 'ncHole', 'ncHand', 'ncPkr', 'ncPkf', 'cutDue', 'cutDuePaint' /* v1.50 */].forEach(function (k) { var n = bdNum(o[k]); if (n != null && n >= 0) s[k] = n; });
   var f = bdNum(o.edgeFeed); if (f != null && f > 0) s.edgeFeed = f;            // หารด้วยค่านี้ — ห้ามเป็น 0
   if (Array.isArray(o.work)) s.work = o.work.map(Number).filter(function (d) { return d >= 0 && d <= 6; });
-  ['pdIsProd', 'needRm', 'spOn', 'cutOn', 'edgeTwo', 'showCap'].forEach(function (k) { if (typeof o[k] === 'boolean') s[k] = o[k]; });
+  ['pdIsProd', 'needRm', 'spOn', 'cutOn', 'edgeTwo', 'showCap', 'paintName' /* v1.50 */].forEach(function (k) { if (typeof o[k] === 'boolean') s[k] = o[k]; });
   /* ───────── v1.30: แผนตัดรับเฉพาะ Lot ที่วัตถุดิบครบ ─────────
      ผู้ใช้ 17/10/2026 15:48 (รูปตาราง “…ต้องตัด” บน Dashboard): “ตรงนี้เพิ่มอีกคอลัมน์ว่าวัตถุดิบครบแล้ว สถานะ ถ้าไม่ครบ ยังไม่ต้องขึ้นมาที่แผนตัด”
      เดิม: Lot ที่วัตถุดิบขาด (เทียบยอดคลัง) ติดอยู่แล้ว แต่ Lot ที่ “ไม่มีข้อมูลวัตถุดิบ” (นอกช่วงที่ StarSync ดึง / ยังไม่มี rm.csv / ไม่มียอด Stock)
@@ -4950,7 +4968,8 @@ function bdBanner(P) {
   /* v1.23 ไฟล์ Cut Rite (.saw) ของ StarSync — ไม่มี = บอกให้อัปเดต (ไม่นับเป็น ✗) · ไม่ได้ตรวจโฟลเดอร์นาน / อ่านไม่ได้ = ✗ */
   var cxi = crxBanner(); it.push(cxi[0] === 'ok' ? ok(cxi[1]) : cxi[0] === 'no' ? no(cxi[1]) : off(cxi[1])); if (cxi[0] === 'no') warn = true;
   var rci = rcBanner(); it.push(rci[0] === 'ok' ? ok(rci[1]) : rci[0] === 'no' ? no(rci[1]) : off(rci[1]));
-  var pti = ptBanner(); it.push(pti[0] === 'ok' ? ok(pti[1]) : pti[0] === 'no' ? no(pti[1]) : off(pti[1]));   // v1.33 lots/parts.csv   // v1.25 แผ่นทุก Lot (lots/rmcut.csv)
+  var pti = ptBanner(); it.push(pti[0] === 'ok' ? ok(pti[1]) : pti[0] === 'no' ? no(pti[1]) : off(pti[1]));
+  [plBanner(), paintBanner()].forEach(function (x) { it.push(x[0] === 'ok' ? ok(x[1]) : x[0] === 'no' ? no(x[1]) : off(x[1])); });   // v1.50 partsleft.csv · paint.csv   // v1.33 lots/parts.csv   // v1.25 แผ่นทุก Lot (lots/rmcut.csv)
   if (B.stockNone) { it.push(no('ยอด Stock (items/stock.csv) ไม่มี — เช็ควัตถุดิบไม่ได้')); warn = true; }
   else if (B.rm) it.push(ok('วัตถุดิบราย Lot (AX) ' + B.rm.size.toLocaleString('th-TH') + ' Lot ที่ยังต้องเบิก' + (B.rmMeta && B.rmMeta.at ? ' · ' + esc(String(B.rmMeta.at).replace('T', ' ').slice(5, 16)) : '') + ' · เทียบ' + (st.rmBasis === 'avail' ? 'ยอดใช้ได้' : 'ยอดในคลัง')));
   else it.push(off('วัตถุดิบราย Lot: ยังไม่มี lots/rm.csv — อัปเดต StarSync (sync-ax-lots.ps1 v1.1) แล้วจะเช็คให้เอง' + (B.extra.size ? ' · ตอนนี้เช็คได้เฉพาะ ' + B.extra.size + ' Lot ที่มีข้อมูลเพิ่ม' : '')));
@@ -5024,7 +5043,13 @@ function bdSettings() {
   var chk = function (id, on, lbl) { return '<label><input type="checkbox" id="' + id + '"' + (on ? ' checked' : '') + '><span>' + lbl + '</span></label>'; };
   openBox('<h2>⚙ ตั้งค่า</h2><p>คิวตัดงาน · ใช้ร่วมทุกเครื่อง (เก็บใน lots/board.json บน Google Drive)' + (B.setFrom ? ' · แก้ล่าสุด ' + esc(B.setFrom) : '') + '</p><div class="bset">'
     + '<h4>วันและระยะผลิต</h4>' + num('bsLead', 'ระยะผลิต: เริ่มตัด → enddate', s.lead, 1, 'วันทำงาน')
-    + num('bsCutDue', 'Dashboard: ต้องตัดเสร็จก่อน enddate (เลยแล้ว = เลยกำหนดตัด)', s.cutDue, 1, 'วัน')   /* v1.26 */
+    /* ───────── v1.50: งานสี + โน้ตหลังช่อง ─────────
+       ผู้ใช้ 20/10/2026 16:01: “ถ้าเป็นงานสี ให้ตั้งค่าได้ มาตรฐานอยู่ที่ 21 วัน · ไม่แน่ใจ 15 วัน รวมอาทิตย์ด้วยไหม · โน้ตเล็ก ๆ ไว้ด้านหลังให้ด้วย”
+       เดิม: แถวเดียว (cutDue 15 วัน · ไม่บอกว่าเป็นวันปฏิทินหรือวันทำงาน — โค้ดคิด enddate − 15 วันปฏิทิน)
+       ตอนนี้: + แถวงานสี (cutDuePaint 21) + ติ๊กเดาจากชื่อ Lot · โน้ตหลังหน่วย “วันปฏิทิน — นับวันอาทิตย์/วันหยุดด้วย” */
+    + num('bsCutDue', 'Dashboard: ต้องตัดเสร็จก่อน enddate (เลยแล้ว = เลยกำหนดตัด)', s.cutDue, 1, 'วัน').replace('</label>', '<small class="bsnote">วันปฏิทิน — นับวันอาทิตย์/วันหยุดด้วย</small></label>')   /* v1.26 · v1.50 โน้ต */
+    + num('bsCutDueP', 'Dashboard: <b>งานสี</b> ต้องตัดเสร็จก่อน enddate <small class="muted">(BOM มีสีรหัส N00S)</small>', s.cutDuePaint != null ? s.cutDuePaint : 21, 1, 'วัน').replace('</label>', '<small class="bsnote">วันปฏิทิน — นับวันอาทิตย์/วันหยุดด้วย</small></label>')   /* v1.50 */
+    + chk('bsPaintName', s.paintName !== false, 'งานสี: Lot ที่ยังไม่มีข้อมูล BOM — เดาจากชื่อ Lot ที่มี HG / MU (เช่น RE-0069-0884-MU50 · BO69-0890_HG)')   /* v1.50 */
     + '<label><span>วันทำงาน</span></label><div class="wd">' + wd.map(function (d) { return '<label><input type="checkbox" data-wd="' + d + '"' + (s.work.indexOf(d) >= 0 ? ' checked' : '') + '>' + TH_DAYS1[d] + '</label>'; }).join('') + '</div>'
     + '<h4>เลื่อย · วางแผนตามเครื่อง (ค่าตั้งต้น = ชิ้นที่ตัดได้จริงต่อวันใน Cutting Center พ.ค. 2026)</h4>' + chk('bsMcOn', s.mcOn, 'วางแผนตามเครื่อง (นับเป็นชิ้น/วัน) — ปิด = ใช้นาทีเลื่อยก้อนเดียวด้านล่าง')
     /* ───────── v1.41: ตารางเครื่องจัดเป็นคอลัมน์ ─────────
@@ -5063,9 +5088,9 @@ function bdSettings() {
     + '</div><div class="msg" id="bsM"></div><div class="btns"><button class="tbtn" id="bsDef">ค่าตั้งต้น</button><button class="tbtn" id="bsX">ยกเลิก</button><button class="tbtn pri" id="bsGo">บันทึก</button></div>', function (box, close) {
     var q = function (id) { return box.querySelector(id); };
     var NUMS = [['#bsLead', 'lead'], ['#bsSaw', 'capSaw'], ['#bsEdgeCap', 'capEdge'], ['#bsCnc', 'capCnc'], ['#bsCut', 'cutPP'], ['#bsDrill', 'drillPP'], ['#bsFin', 'finDays'], ['#bsStale', 'staleDays'],
-      ['#bsEdgeFeed', 'edgeFeed'], ['#bsEdgeHand', 'edgeHand'], ['#bsNcHole', 'ncHole'], ['#bsNcHand', 'ncHand'], ['#bsNcPkf', 'ncPkf'], ['#bsNcPkr', 'ncPkr'], ['#bsCutDue', 'cutDue'],   // v1.26
+      ['#bsEdgeFeed', 'edgeFeed'], ['#bsEdgeHand', 'edgeHand'], ['#bsNcHole', 'ncHole'], ['#bsNcHand', 'ncHand'], ['#bsNcPkf', 'ncPkf'], ['#bsNcPkr', 'ncPkr'], ['#bsCutDue', 'cutDue'], ['#bsCutDueP', 'cutDuePaint'] /* v1.50 */,   // v1.26
       ['#bsTgLoad', 'tgLoad'], ['#bsTgBunN', 'tgBunN'], ['#bsTgBunH', 'tgBunH'], ['#bsTgLabel', 'tgLabel'], ['#bsTgSetup', 'tgSetup'], ['#bsTgLoss', 'tgLoss'], ['#bsDpBrkMin', 'dpBrkMin']];   // v1.38
-    var CHKS = [['#bsPd', 'pdIsProd'], ['#bsRm', 'needRm'], ['#bsSp', 'spOn'], ['#bsCr', 'cutOn'], ['#bsEdgeTwo', 'edgeTwo'], ['#bsMcOn', 'mcOn'], ['#bsShowCap', 'showCap'], ['#bsTgOn', 'tgOn']];   // v1.22 + showCap · v1.38 + tgOn
+    var CHKS = [['#bsPd', 'pdIsProd'], ['#bsRm', 'needRm'], ['#bsSp', 'spOn'], ['#bsCr', 'cutOn'], ['#bsEdgeTwo', 'edgeTwo'], ['#bsMcOn', 'mcOn'], ['#bsShowCap', 'showCap'], ['#bsTgOn', 'tgOn'], ['#bsPaintName', 'paintName'] /* v1.50 */];   // v1.22 + showCap · v1.38 + tgOn
     var STRS = [['#bsTgInc', 'tgInc'], ['#bsDpStart', 'dpStart'], ['#bsDpBrk', 'dpBrk']];   // v1.38 ช่องข้อความ
     var durH = function () { box.querySelectorAll('[data-dur]').forEach(function (h) { var e = q('#' + h.dataset.dur); if (e) h.textContent = e.value === '' ? '' : '= ' + bdH(+e.value); }); };   // v1.7.1
     box.querySelectorAll('[data-dur]').forEach(function (h) { var e = q('#' + h.dataset.dur); if (e) e.addEventListener('input', durH); });
@@ -7058,7 +7083,9 @@ function crxTip(a) {
 /* ป้ายเล็กหลังชื่อ Lot: “SAW 6930237 +1” (ใหม่สุดก่อน · ชี้ดูทุก Run)
    v1.24 (ผู้ใช้ 13:17 “ตัวเลข .SAW เวลาตัด ต้องเห็นทุก Lot”) + เวลาตัดรวมของทุก Run ในป้าย: “SAW 6930237 · 52 นาที” */
 function crxDur(min) { if (min == null || !(min > 0)) return ''; var m = Math.max(1, Math.round(min)); if (m < 60) return m + ' นาที'; var h = Math.floor(m / 60), r = m % 60; return h + ' ชม.' + (r ? ' ' + r + ' น.' : ''); }
-function crxChip(id) {
+/* v1.50 + ป้าย 🎨 สี (งานสี — paintChip) ต่อท้ายป้าย SAW ทุกที่ */
+function crxChip(id) { return crxChip0(id) + paintChip(id); }
+function crxChip0(id) {
   var a = crxOf(id); if (!a || !a.length) return '';
   var tm = crxDur(crxAgg(a).total_sec / 60);
   return '<span class="sawc" title="' + esc('Cut Rite ' + a.length + ' Run\n' + crxTip(a)) + '">SAW ' + esc(a[0].run) + (a.length > 1 ? '<i>+' + (a.length - 1) + '</i>' : '') + (tm ? '<em>' + esc(tm) + '</em>' : '') + '</span>';
@@ -7498,7 +7525,8 @@ var DB = { allLate: false, allCarry: false };
 var BQ_IC_DASH = '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="2.5" width="7" height="6" rx="1.4" fill="currentColor"/><rect x="11" y="2.5" width="7" height="9" rx="1.4" fill="currentColor" opacity=".6"/><rect x="2" y="10.5" width="7" height="7" rx="1.4" fill="currentColor" opacity=".75"/><rect x="11" y="13.5" width="7" height="4" rx="1.4" fill="currentColor" opacity=".45"/></svg>';
 function bdTabHash(k) { return k === 'dash' ? 'board-dash' : k === 'mc' ? 'board-mc' : k === 'day' ? 'board-day' : k === 'edge' ? 'board-edge' : k === 'drill' ? 'board-drill' /* v1.38 */ : k === 'saw' ? 'board-saw' /* v1.42 */ : 'board'; }
 /* กำหนดตัด = enddate − cutDue วัน (วันปฏิทิน) · late > 0 = เลยมากี่วัน · 0 = ครบกำหนดวันนี้ · −1 = ครบกำหนดพรุ่งนี้ */
-function bdDashDue(g) { var n = B.set.cutDue != null ? B.set.cutDue : 15; return g.end != null ? g.end - n * DAY : null; }
+/* v1.50 งานสี (BOM มี N00S) = enddate − cutDuePaint (21) วัน · อื่น ๆ = cutDue (15) — ดู bdCutDueDays (v150) */
+function bdDashDue(g) { var n = bdCutDueDays(g); return g.end != null ? g.end - n * DAY : null; }
 function bdDashLate(g, P) { var d = bdDashDue(g); return d == null ? null : Math.round((P.today - d) / DAY); }
 /* 7 วันทำงาน (เก่า → วันนี้): ย้อนหลังจาก check_part ที่จำไว้ (B.cph · ข้ามวันหยุด) + วันนี้จาก B.cp */
 function bdDashDays(P) {
@@ -7583,7 +7611,7 @@ function dbPct(v) { return v == null ? '—' : Math.round(v * 100) + '%'; }
 function bdDashRender(P) {
   var E = $('bdDash'); if (!E || !P) return;
   cphEnsure();
-  var S = bdDashStat(P), st = B.set, now = Date.now(), cutN = st.cutDue != null ? st.cutDue : 15, keep = E.scrollTop;
+  var S = bdDashStat(P), st = B.set, now = Date.now(), cutN = st.cutDue != null ? st.cutDue : 15, cutP = st.cutDuePaint != null ? st.cutDuePaint : 21, cutNP = cutP !== cutN ? ' · สี ' + cutP : '' /* v1.50 งานสี */, keep = E.scrollTop;
   /* v1.27 เลือกเครื่องไว้ = Dashboard ของเครื่องนั้นอย่างเดียว (วันนี้ตัดได้กี่ % · พรุ่งนี้ต้องตัด: ชื่อ Lot + เลข .saw) — ดูหัวบล็อก v1.27 */
   var xsel = DB.mc ? S.mcs.find(function (x) { return x.m.n === DB.mc; }) : null;
   if (xsel) { E.innerHTML = bdDashMcView(S, xsel, P); E.scrollTop = keep; return; }
@@ -7621,7 +7649,7 @@ function bdDashRender(P) {
       + '<b>' + fmtN(tmrN) + ' <i>Lot</i></b><small>' + fmtN(Math.round(tmrP)) + ' ชิ้น' + (tmrCap ? ' · ใช้เครื่อง ' + Math.round(Math.min(tmrP, tmrCap) / tmrCap * 100) + '%' : '') + '</small></div></section>'
     + '<section class="dbc dbmini" title="นับ Lot ที่ยิงตัดในวันนั้น (ไม่ซ้ำ) เฉลี่ยวันทำงานก่อนหน้า (ข้ามวันหยุด) — ไม่นับวันนี้ที่ยังไม่จบวัน"><div><span class="l">1 วันตัดได้</span><b>' + (S.avgL != null ? bdDashN(S.avgL, 1) : '—') + ' <i>Lot</i></b><small>' + (S.avgP != null ? fmtN(Math.round(S.avgP)) + ' ชิ้น/วัน · ' + hN + ' วัน' : 'ยังไม่มีข้อมูลย้อนหลัง') + '</small></div>'
       + dbSpark(lotsHist, bdDashTip(['Lot ต่อวัน: ' + lotsHist.join(' · '), 'ชิ้นต่อวัน: ' + pcsHist.map(function (v) { return v.toLocaleString('th-TH'); }).join(' · ')])) + '</section>'
-    + '<section class="dbc dbmini bad" data-dbjump="dbLate" title="Lot ที่ยังตัดไม่ครบ และวันนี้เลย enddate − ' + cutN + ' วันแล้ว (ตั้งได้ใน ⚙)"><div><span class="l">เลยกำหนดตัด <em>enddate − ' + cutN + ' วัน</em></span><b>' + fmtN(S.late.length) + ' <i>Lot</i></b>'
+    + '<section class="dbc dbmini bad" data-dbjump="dbLate" title="Lot ที่ยังตัดไม่ครบ และวันนี้เลย enddate − ' + cutN + ' วันแล้ว' + (cutNP ? ' (งานสี ' + cutP + ' วัน)' : '') + ' — วันปฏิทิน (ตั้งได้ใน ⚙)"><div><span class="l">เลยกำหนดตัด <em>enddate − ' + cutN + ' วัน' + cutNP + '</em></span><b>' + fmtN(S.late.length) + ' <i>Lot</i></b>'
       + '<small>ในคิว ' + fmtN(lateQ) + ' · กำลังตัด ' + fmtN(lateC) + ' · ติดอยู่ ' + fmtN(lateB) + '</small></div>'
       + (S.late.length ? '<div class="dbbk" data-tip="' + bdDashTip(['เลย 1–7 วัน: ' + bk[0] + ' Lot', 'เลย 8–30 วัน: ' + bk[1] + ' Lot', 'เลยเกิน 30 วัน: ' + bk[2] + ' Lot']) + '">' + bk.map(function (n, i) { return n ? '<i class="k' + i + '" style="flex:' + n + '"></i>' : ''; }).join('') + '</div><div class="dbbkl"><span>1–7 วัน ' + bk[0] + '</span><span>8–30 ' + bk[1] + '</span><span>&gt;30 ' + bk[2] + '</span></div>' : '<small class="ok">✓ ไม่มี</small>') + '</section>'
     + '<section class="dbc dbmini warn" data-dbjump="dbCarry" title="Lot ที่เริ่มตัดแล้วแต่ยังไม่ครบ — ไม่นับในแผน' + bdTmrW(P) + '"><div><span class="l">ค้างตัดไม่จบ</span><b>' + fmtN(S.carry.length) + ' <i>Lot</i></b><small>เหลือ ' + fmtN(Math.round(carryRem)) + ' ชิ้น · หน้างานจัดเวลาเอง</small></div></section>'
@@ -7660,7 +7688,7 @@ function bdDashRender(P) {
   h += '<section class="dbtabs2"><div class="dbc" id="dbCarry"><header><h3>Lot ค้างตัดไม่จบ<small>' + fmtN(S.carry.length) + ' Lot · เหลือ ' + fmtN(Math.round(carryRem)) + ' ชิ้น · หน้างานหาเวลาตัดเอง (ไม่นับในแผน' + bdTmrW(P) + ')</small></h3></header>'
     + (S.carry.length ? '<table class="dbt"><thead><tr><th>Lot</th><th>เครื่อง</th><th>ตัดแล้ว</th><th>เหลือ (ชิ้น)</th><th>ส่ง</th><th>กำหนดตัด</th></tr></thead><tbody>' + (DB.allCarry ? carryRows : carryRows.slice(0, CMAX)).join('') + '</tbody></table>'
       + (carryRows.length > CMAX ? '<button class="tbtn dbmore" data-dball="carry">' + (DB.allCarry ? 'ย่อ' : 'ดูทั้งหมด ' + fmtN(carryRows.length) + ' Lot') + '</button>' : '') : '<p class="dbok">✓ ไม่มี Lot ค้างตัด</p>') + '</div>';
-  h += '<div class="dbc" id="dbLate"><header><h3>Lot เลยกำหนดตัด<small>' + fmtN(S.late.length) + ' Lot · กำหนดตัด = enddate − ' + cutN + ' วัน · ยังตัดไม่ครบ</small></h3></header>'
+  h += '<div class="dbc" id="dbLate"><header><h3>Lot เลยกำหนดตัด<small>' + fmtN(S.late.length) + ' Lot · กำหนดตัด = enddate − ' + cutN + ' วัน' + (cutNP ? ' (🎨 งานสี ' + cutP + ' วัน · ' + fmtN(S.late.filter(function (z) { return !!paintOf(z.g.id); }).length) + ' Lot)' : '') + ' · ยังตัดไม่ครบ</small></h3></header>'
     + (S.late.length ? '<table class="dbt"><thead><tr><th>Lot</th><th>ส่ง (enddate)</th><th>กำหนดตัด</th><th>เลย</th><th>สถานะ</th><th>เครื่อง</th></tr></thead><tbody>' + (DB.allLate ? S.late : S.late.slice(0, LMAX)).map(function (z) { return lateRow(z.g, z.late); }).join('') + '</tbody></table>'
       + (S.late.length > LMAX ? '<button class="tbtn dbmore" data-dball="late">' + (DB.allLate ? 'ย่อ' : 'ดูทั้งหมด ' + fmtN(S.late.length) + ' Lot') + '</button>' : '') : '<p class="dbok">✓ ไม่มี Lot ที่เลยกำหนดตัด</p>') + '</div></section>';
   h += '<p class="dbfoot muted">ข้อมูล: data 6 + ความคืบหน้าจาก AX (StarSync) · การยิงตัด check_part (วันนี้ทุก 1 นาที · ย้อนหลังจำไว้ในเครื่องนี้) · Cut Rite (.saw) · แผนเครื่องเดียวกับ Machine Queue · ตั้งค่าได้ที่ ⚙</p></div>';
@@ -8917,7 +8945,7 @@ function spLotA(g) {
   var r = g.crx && g.crx[0] ? g.crx[0] : null, x0 = g.rows && g.rows[0] ? g.rows[0] : {};
   var d = { id: String(g.id), pn: String(g.pool || x0.pool || '').replace(/\D+/g, ''), wn: x0.week != null ? +x0.week || 0 : (g.end != null ? sqlWeek(new Date(g.end)) : 0), ed: spDmy(g.end),
     qty: 0, sec: 0, xf: '', ct: '', tp: g.partsU || 0, nColor: 0, colorSec: 0, nb: 0, boards: [] };
-  if (!r) { d.nd = 'saw'; d.np = g.partsU || 0; return d; }   // ยังไม่มีไฟล์ Export ของ Cut Rite (ยังไม่ได้ Optimize)
+  if (!r) { d.nd = 'saw'; d.np = g.partsU || 0; return spPaintA(d); }   // ยังไม่มีไฟล์ Export ของ Cut Rite (ยังไม่ได้ Optimize) · v1.50 + งานสี
   var det = null, de = B.crd.map && B.crd.map.get(String(r.run));
   if (de && String(de.lot).toUpperCase() === String(g.id).toUpperCase()) { try { var j = JSON.parse(de.det); det = j && Array.isArray(j.b) ? j.b : null; } catch (e) { det = null; } }
   var mats = r.mats && r.mats.length ? r.mats : null, used = {};
@@ -8943,7 +8971,7 @@ function spLotA(g) {
   if (r.load != null) d.ls = +r.load || 0; d.ss = '';
   if (r.boards > 0) d.qty = +r.boards;
   if (!d.nb) { d.nd = 'saw'; d.np = d.tp; }
-  return d;
+  return spPaintA(d);   // v1.50 งานสี (BOM N00S) = ป้าย/ตัวกรอง N00S ของ SAW W43
 }
 /* ข้อมูลทั้งชุดสำหรับหน้า SAW PLAN (เรียกจาก iframe ตอนเริ่ม — sawplan.html อ่านแบบ synchronous) */
 /* ───────── v1.42 (ตรวจบัค): ลายนิ้วมือ = ข้อมูล A อย่างเดียว ─────────
@@ -9323,7 +9351,170 @@ document.addEventListener('change', function (e) {
   var w = spWin(); if (w) { try { if (typeof w.render === 'function') w.render(); w.SAWPLAN.refresh(); } catch (er) { console.warn(er); } }
 });
 
-window.StarStock = { tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v1.50: งานสี (กำหนดตัดแยก · ค่าตั้งต้น 21 วัน) + Part ที่ยังไม่ได้ตัดของ Lot ค้างตัด (SAW PLAN)
+   ① ผู้ใช้ 20/10/2026 16:01 (รูป ⚙ “วันและระยะผลิต”): “ถ้าผมอยากเพิ่มแถวที่เป็นงานสีด้วยจะได้ไหม คือถ้าเป็นงานสี ให้ตั้งค่าได้
+        มาตรฐานอยู่ที่ 21 วัน · ไม่แน่ใจ 15 วัน รวมอาทิตย์ด้วยไหม ตรวจสอบให้ที · กับโน้ตเล็ก ๆ ไว้ด้านหลังให้ด้วย
+        · เช็คไส้ BOM ที่มี N00S ได้ไหม หรือมีเทคนิคอะไร บอกมาให้ที”
+      ตรวจแล้ว: กำหนดตัด = enddate − cutDue วัน “วันปฏิทิน” (bdDashDue — นับวันอาทิตย์/วันหยุดด้วย) ต่างจาก “ระยะผลิต” ที่เป็นวันทำงาน
+      ข้อมูลจริง 20/10: วัตถุดิบรหัสขึ้นต้น N00S = สี (หมวด SM-CHEMICAL · หน่วย M2) เช่น N00S0122N “MU108 วินโค๊ต” · N00S0197N “HG170 TOA D102”
+        แต่ rm.csv มีเฉพาะ Lot ที่ยังค้างเบิก → 293 Lot ของ Dashboard อยู่ใน rm.csv แค่ 23 Lot (เจองานสี 0)
+        ชื่อ Lot ที่มี HG / MU (…-MU50 · …_HG) เจอ 45 Lot · เทียบกับ SAW W43 (BI ดู Cut Rite SurfaceBeforeCutTopCode = N00S) ตรง 65/77
+        แต่บาง Lot ชื่อ _HG ที่ BOM ไม่มีสีเลย (นาราบรม_B1_1169_HG — ห้องน้ำ Sansiri · BI ก็ไม่ใช่ N00S)
+      ตอนนี้: งานสี = (ตามลำดับความน่าเชื่อ — ดู paintOf)
+        1. BOM มีรหัส N00S: lots/paint.csv (StarSync v1.11 — ทุก Lot ทั้งค้าง/เบิกแล้ว) หรือ rm.csv
+        2. มี paint.csv แล้ว + Lot มี BOM ใน AX (อยู่ใน rmcut.csv) แต่ไม่มี N00S = ไม่ใช่งานสี (เชื่อ BOM — ไม่เดาจากชื่อ)
+        3. ยังไม่มีข้อมูล BOM ของ Lot = เดาจากชื่อ Lot (HG / MU ตามด้วยเลขหรือไม่ใช่ตัวอักษรอังกฤษ) · ปิดได้ใน ⚙ (paintName)
+      ⚙ “Dashboard: งานสี ต้องตัดเสร็จก่อน enddate” 21 วัน (cutDuePaint) + โน้ต “วันปฏิทิน (นับวันอาทิตย์/วันหยุดด้วย)” ทั้ง 2 แถว
+        → กำหนดตัด/เลยกำหนดตัดของ Lot งานสี (Dashboard · แผนตัดรายวัน · คอลัมน์ส่ง) ใช้ 21 วัน · ป้าย 🎨 สี ข้างชื่อ Lot (crxChip)
+        → SAW PLAN: Lot งานสี = ป้าย 🎨 งานสี + ตัวกรอง/เรียง N00S เดิมของ SAW W43 ใช้ได้ (nColor · b.n — ดู spLotA)
+   ② ผู้ใช้ 20/10/2026 15:58 (รูปการ์ด ASTA9_P_MASS_F35_LOT1 แถวชั้นไม้ตัวแดง): “ถ้าตัวแดง เราลงถึงเลเวล Part ได้ไหม ตัวค้างตัด”
+      เดิม (v1.49): รู้แค่ชั้นไม้ไหนค้างกี่ชิ้น (parts.csv = ยอดต่อ Lot × รหัสวัสดุ)
+      ตอนนี้: lots/partsleft.csv (StarSync v1.11 — Part ที่ยังไม่ได้ยิงตัดของ Lot ที่ตัดไปบางส่วน: ชื่อ · ยาว × กว้าง · ชิ้น)
+        → SAW PLAN แถวชั้นไม้ตัวแดง: คลิกแถว = ตาราง “Part ที่ยังไม่ได้ยิงตัด” + แถว Part ของ Cut Rite ที่ตรง (ชื่อ/ขนาด) เป็นตัวแดง “✂ ค้าง n”
+          ชี้ “✂ ค้าง n/m ชิ้น” = รายชื่อ Part — ดู spCutParts / spCutPartMatch
+   ═══════════════════════════════════════════════════════════════════════ */
+var BD_PNF = 'paint.csv', BD_PNMF = 'paint.meta.json', BD_PLF = 'partsleft.csv';
+B.paint = { map: null, u: 0, meta: null, metaU: 0, err: null, at: 0, loading: null, n: 0 };
+B.pl = { map: null, u: 0, err: null, at: 0, loading: null, n: 0 };
+/* paint.csv: lot,item,need,bom,issued,… (แบบ rm.csv) → Lot (ตัวใหญ่) → [{ item, name, bom, issued, unit }] */
+function paintParse(t) {
+  var o = csvObjs(t), m = new Map(), n = 0;
+  o.rows.forEach(function (r) {
+    var lot = String(r.lot || '').trim(), it = String(r.item || '').trim(); if (!lot || !it) return;
+    var K = lot.toUpperCase(), a = m.get(K); if (!a) m.set(K, a = []);
+    a.push({ item: it, name: String(r.name || '').trim(), bom: num(r.bom) || 0, issued: num(r.issued) || 0, unit: String(r.unit || '').trim() }); n++;
+  });
+  B.paint.n = n;
+  return m;
+}
+/* partsleft.csv: lot,mat,l,w,nm,n → Lot (ตัวใหญ่) → [{ mat, l, w, nm, n }] */
+function plParse(t) {
+  var o = csvObjs(t), m = new Map(), n = 0;
+  o.rows.forEach(function (r) {
+    var lot = String(r.lot || '').trim(); if (!lot) return;
+    var K = lot.toUpperCase(), a = m.get(K); if (!a) m.set(K, a = []);
+    a.push({ mat: String(r.mat || '').trim(), l: num(r.l) || 0, w: num(r.w) || 0, nm: String(r.nm || '').trim(), n: num(r.n) || 0 }); n++;
+  });
+  B.pl.n = n;
+  return m;
+}
+/* อ่านไฟล์ใน lots/ แบบ ptLoad (รายการไฟล์ล่าสุดของโฟลเดอร์ · ไฟล์เปลี่ยน = อ่านใหม่ · ไฟล์หาย = ล้าง) */
+function bdLotCsvLoad(X, file, metaFile, parse, label) {
+  var fs = ensureFs(); if (!fs) return Promise.resolve(false);
+  if (X.loading) return X.loading;
+  X.loading = (async function () {
+    await null;
+    var ch = false;
+    try { if (L.loading) await L.loading; } catch (e) { }
+    try {
+      var Ld = fs.L[LOT_DIR];
+      if (!Ld || !Ld.ok || Date.now() - (Ld.at || 0) > 25000) Ld = await retryNet(async function () { try { return await fs.list(LOT_DIR, true); } catch (e) { if (e && e.name === 'NotFoundError') return null; throw e; } }, 'รายการไฟล์ lots');
+      var cf = Ld && Ld.ok && Ld.files[file], mf = metaFile && Ld && Ld.ok && Ld.files[metaFile];
+      if (cf && cf.u !== X.u) { X.map = parse(await readText(LOT_DIR, file)); X.u = cf.u; ch = true; }
+      if ((!Ld || Ld.ok) && !cf && X.map) { X.map = null; X.u = 0; X.n = 0; ch = true; }
+      if (mf && mf.u !== X.metaU) { try { X.meta = JSON.parse(await readText(LOT_DIR, metaFile)); } catch (e) { X.meta = null; } X.metaU = mf.u; ch = true; }
+      if (X.err) ch = true;
+      X.at = Date.now(); X.err = null;
+    } catch (e) { console.warn('StarStock: อ่าน lots/' + file + ' (' + label + ') ไม่ได้', e); if (!X.err) ch = true; X.err = e; }
+    finally { X.loading = null; }
+    return ch;
+  })();
+  return X.loading;
+}
+function paintLoad() { return bdLotCsvLoad(B.paint, BD_PNF, BD_PNMF, paintParse, 'สีของ Lot จาก StarSync'); }
+function plLoad() { return bdLotCsvLoad(B.pl, BD_PLF, '', plParse, 'Part ที่ยังไม่ได้ตัดจาก StarSync'); }
+/* ── ① งานสี ── */
+var BD_PAINT_RE = /(?:^|[_\-\s])(?:HG|MU)(?![A-Za-z])/i;   // ชื่อ Lot: …-MU50 · …_HG · …-HG08-HG56 · …-MUพ่นสีเทียบPT06 (ไม่นับ MUJI / HGX…)
+function paintIsCode(c) { return /^N00S/i.test(String(c || '')); }
+/* งานสีไหม: { src: 'bom' (paint.csv) | 'rm' (rm.csv) | 'name' (เดาจากชื่อ), items: [{ item, name, bom, issued, unit }] } · ไม่ใช่ = null */
+function paintOf(id) {
+  if (id == null) return null;
+  var K = String(id).toUpperCase(), items = null, src = '';
+  var pm = B.paint && B.paint.map, a = pm ? pm.get(K) : null;
+  if (a && a.length) { items = a; src = 'bom'; }
+  if (!items && B.rm) {
+    var r = B.rm.get(K);
+    if (r) { var hit = r.filter(function (x) { return paintIsCode(x.item); }); if (hit.length) { items = hit.map(function (x) { var nm = rmNameOf(x.item); return { item: x.item, name: nm.name || '', bom: x.bom, issued: x.issued, unit: nm.unit || '' }; }); src = 'rm'; } }
+  }
+  if (items) return { src: src, items: items };
+  if (pm && rcOf(id)) return null;                         // มี BOM ใน AX (rmcut.csv) + StarSync ส่งรายการสีแล้ว แต่ไม่มี N00S = ไม่ใช่งานสี
+  if (B.set.paintName !== false && BD_PAINT_RE.test(String(id))) return { src: 'name', items: [] };
+  return null;
+}
+function bdCutDueDays(g) {
+  var st = B.set, n = st.cutDue != null ? st.cutDue : 15;
+  if (g && paintOf(g.id)) n = st.cutDuePaint != null ? st.cutDuePaint : 21;
+  return n;
+}
+function paintTip(p) {
+  if (!p) return '';
+  var nd = B.set.cutDuePaint != null ? B.set.cutDuePaint : 21;
+  if (p.src === 'name') return 'งานสี (เดาจากชื่อ Lot ที่มี HG / MU — ยังไม่มีข้อมูล BOM ของ Lot นี้)\nกำหนดตัด = enddate − ' + nd + ' วัน (⚙ งานสี) · ปิดการเดาจากชื่อได้ใน ⚙';
+  return 'งานสี — BOM มีสี (รหัส N00S' + (p.src === 'rm' ? ' · จาก rm.csv' : '') + ')\n' + p.items.slice(0, 6).map(function (x) {
+    return x.item + (x.name ? ' ' + x.name : '') + ' · เบิกแล้ว ' + fmtN(x.issued, 2) + '/' + fmtN(x.bom, 2) + (x.unit ? ' ' + x.unit : ''); }).join('\n') + (p.items.length > 6 ? '\n… อีก ' + (p.items.length - 6) + ' รายการ' : '')
+    + '\nกำหนดตัด = enddate − ' + nd + ' วัน (⚙ งานสี)';
+}
+function paintChip(id) {
+  var p = paintOf(id); if (!p) return '';
+  return '<span class="pntc' + (p.src === 'name' ? ' guess' : '') + '" title="' + esc(paintTip(p)) + '">🎨 สี' + (p.src === 'name' ? '?' : '') + '</span>';
+}
+/* กระดิ่ง: สถานะ lots/paint.csv / partsleft.csv */
+function paintBanner() {
+  var X = B.paint;
+  if (!X.map) return X.err ? ['no', 'สีของ Lot (BOM N00S): อ่าน lots/paint.csv ไม่ได้ — ' + esc(netMsg(X.err))]
+    : ['off', 'สีของ Lot (BOM N00S): ยังไม่มี lots/paint.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.11 · ระหว่างนี้ดูจาก rm.csv' + (B.set.paintName !== false ? ' + ชื่อ Lot (HG / MU)' : '')];
+  var m = X.meta || {}, t = m && (bdLocalMs(m.at) || bdLocalMs(m.checked)), w = t ? (new Date(t).toDateString() === new Date().toDateString() ? '' : fD(t) + ' ') + bdHM(t) : '';
+  return ['ok', 'สีของ Lot (BOM N00S) <b>' + fmtN(X.map.size) + '</b> Lot งานสี · ' + fmtN(X.n) + ' รายการ' + (w ? ' · ' + esc(w) : '')];
+}
+function plBanner() {
+  var X = B.pl, lm = B.pt && B.pt.meta && B.pt.meta.left;
+  if (!X.map) return X.err ? ['no', 'Part ที่ยังไม่ได้ตัด (Lot ค้างตัด): อ่าน lots/partsleft.csv ไม่ได้ — ' + esc(netMsg(X.err))]
+    : ['off', 'Part ที่ยังไม่ได้ตัด (Lot ค้างตัด): ยังไม่มี lots/partsleft.csv — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.11'];
+  if (lm && lm.err) return ['no', 'Part ที่ยังไม่ได้ตัด: StarSync อ่านไม่ได้รอบล่าสุด (ใช้ข้อมูลเดิม) — ' + esc(String(lm.err).slice(0, 200))];
+  return ['ok', 'Part ที่ยังไม่ได้ตัด (Lot ค้างตัด) <b>' + fmtN(X.map.size) + '</b> Lot · ' + fmtN(X.n) + ' แถว' + (lm && lm.nameCol ? ' · ชื่อ Part จาก ' + esc(lm.nameCol) : lm && lm.nameCol === '' ? ' · ไม่มีชื่อ Part (ขนาดอย่างเดียว — ตั้ง "partsNameCol" ใน config.json ของ StarSync)' : '')];
+}
+/* ── ② Part ที่ยังไม่ได้ตัด ของชั้นไม้ code ใน Lot ค้างตัด (spCut) → { rows: [{ nm, l, w, n }], n, at } · ไม่มี = null ── */
+function spCutParts(id, code) {
+  if (!spCut(id) || !B.pl || !B.pl.map) return null;
+  var a = B.pl.map.get(String(id).toUpperCase()); if (!a) return null;
+  var C = String(code).toUpperCase(), rows = a.filter(function (r) { return String(r.mat).toUpperCase() === C && r.n > 0; });
+  if (!rows.length) return null;
+  rows = rows.slice().sort(function (x, y) { return y.n - x.n || y.l * y.w - x.l * x.w || String(x.nm).localeCompare(String(y.nm)); });
+  var lm = B.pt && B.pt.meta && B.pt.meta.left;
+  return { rows: rows, n: rows.reduce(function (s, r) { return s + r.n; }, 0), at: lm && lm.at ? String(lm.at) : '' };
+}
+/* จับคู่ Part ที่ยังไม่ได้ตัด (AX) กับรายการ Part ของ Cut Rite (cr = [{ n: ชื่อ, L, W, q }]) → { hit: [ชิ้นค้างต่อแถว Cut Rite], miss: [แถว AX ที่หาไม่เจอ] }
+   ชื่อเหมือนกัน (ไม่สนตัวพิมพ์/ช่องว่าง) ก่อน — หลายแถวชื่อซ้ำ = ขนาดใกล้สุด · ไม่มีชื่อ/ชื่อไม่ตรง = ขนาดตรง ±2 มม. (กลับด้านได้) · ไม่เกินจำนวนในแถว */
+function spCutPartMatch(id, code, cr) {
+  var x = spCutParts(id, code); if (!x || !Array.isArray(cr)) return null;
+  var nz = function (s) { return String(s == null ? '' : s).toLowerCase().replace(/\s+/g, ' ').trim(); };
+  var dz = function (r, g) { var a = Math.abs(r.L - g.l) + Math.abs(r.W - g.w), b = Math.abs(r.L - g.w) + Math.abs(r.W - g.l); return Math.min(a, b); };
+  var szOk = function (r, g) { return (Math.abs(r.L - g.l) <= 2 && Math.abs(r.W - g.w) <= 2) || (Math.abs(r.L - g.w) <= 2 && Math.abs(r.W - g.l) <= 2); };
+  var hit = cr.map(function () { return 0; }), miss = [];
+  x.rows.forEach(function (g) {
+    var need = g.n, gn = nz(g.nm);
+    var pick = function (ok) {
+      var c = []; cr.forEach(function (r, i) { if (ok(r) && (+r.q || 0) - hit[i] > 0) c.push(i); });
+      c.sort(function (i, j) { return dz(cr[i], g) - dz(cr[j], g) || i - j; });
+      c.forEach(function (i) { if (need <= 0) return; var k = Math.min(need, Math.round((+cr[i].q || 0) - hit[i])); if (k > 0) { hit[i] += k; need -= k; } });
+    };
+    if (gn) pick(function (r) { return nz(r.n) === gn && dz(r, g) <= 30; });
+    if (need > 0) pick(function (r) { return szOk(r, g); });
+    if (need > 0) miss.push({ nm: g.nm, l: g.l, w: g.w, n: need });
+  });
+  return { hit: hit, miss: miss, n: x.n };
+}
+/* ── ① SAW PLAN: Lot งานสี = ฟิลด์ N00S ของไฟล์ SAW (โปรแกรม BI: nColor = ชิ้นงานสี · colorSec · b.n ทุกชั้นไม้ของ Lot สี — SAW W43 ทุก Lot สีติดทุกชั้นไม้ 77/77)
+   ไม่รู้ว่าชิ้นไหนทาสี (BOM บอกระดับ Lot) → nColor = ชิ้นทั้ง Lot · pnt = ที่มา/รายละเอียด (หน้า SAW แสดง “🎨 งานสี” แทนจำนวนชิ้น N00S) */
+function spPaintA(d) {
+  var p = paintOf(d.id); if (!p) return d;
+  d.pnt = { s: p.src, t: paintTip(p) }; d.nColor = d.tp || d.np || 1; d.colorSec = d.sec || 0;
+  d.boards.forEach(function (b) { b.n = true; });
+  return d;
+}
+
+window.StarStock = { paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
