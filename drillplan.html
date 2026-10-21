@@ -1,0 +1,597 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Drill</title><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><style>*{box-sizing:border-box}body{margin:0;padding:0;background:#f0f2f7;font-family:Arial,sans-serif;color:#1e2540;font-size:13px}.wrap{max-width:1100px;margin:0 auto;padding:20px 14px}.hdr{background:linear-gradient(135deg,#5b3fd4,#3d7fff);border-radius:16px;padding:18px 22px;margin-bottom:14px;color:#fff;display:flex;align-items:center;gap:14px}.hdr-icon{width:42px;height:42px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.hdr-sub{font-size:10px;opacity:.7;font-family:monospace;margin-bottom:2px}.hdr-title{font-size:16px;font-weight:800;word-break:break-all}.hdr-meta{font-size:10px;opacity:.8;margin-top:3px;font-family:monospace}.info-bar{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px;color:#64748b}.kpi-row{display:grid;grid-template-columns:repeat(3,1fr) 12px repeat(4,1fr);gap:9px;margin-bottom:12px;align-items:stretch}.kpi-sep{align-self:center;width:2px;height:70%;background:linear-gradient(180deg,transparent,#e2e8f0 20%,#e2e8f0 80%,transparent);border-radius:2px}.kpi-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:11px;padding:9px 8px;min-width:0;text-align:center;transition:all .2s;display:flex;flex-direction:column;justify-content:center}.kpi-card.active{border-color:#5b3fd4;box-shadow:0 0 0 3px rgba(91,63,212,.08)}.kpi-ico{font-size:16px;margin-bottom:2px;line-height:1}.kpi-val{font-size:20px;font-weight:800;font-family:monospace;transition:all .25s;line-height:1.15}.kpi-unit{font-size:10px;color:#64748b}.kpi-lbl{font-size:10px;color:#94a3b8;margin-top:1px;line-height:1.3}.kpi-sub{font-size:9px;display:inline-block;margin-top:1px}@media(max-width:1150px){.kpi-row{grid-template-columns:repeat(4,1fr)}.kpi-sep{display:none}}@media(max-width:640px){.kpi-row{grid-template-columns:repeat(2,1fr)}}.time-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}@media(max-width:820px){.time-row{grid-template-columns:repeat(2,1fr)}}.time-card{border-radius:12px;padding:12px;text-align:center;transition:all .2s}.time-card.drill{background:rgba(91,63,212,.07);border:1.5px solid rgba(91,63,212,.25)}.time-card.cnc{background:rgba(212,82,26,.07);border:1.5px solid rgba(212,82,26,.25)}.time-card.led{background:rgba(16,185,129,.07);border:1.5px solid rgba(16,185,129,.28)}.time-card.total{background:rgba(212,160,16,.07);border:1.5px solid rgba(212,160,16,.25)}.time-lbl{font-size:10px;color:#64748b;margin-bottom:6px;font-weight:600}.time-val{font-size:18px;font-weight:800;font-family:monospace;transition:all .25s}.time-min{font-size:10px;color:#94a3b8;margin-top:3px}.param-bar{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}.param-bar.changed{border-color:#d97706;background:#fffbeb}.param-label{font-size:11px;font-weight:700;color:#475569}.param-input{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;color:#1e2540;width:80px;text-align:center;outline:none;font-family:monospace}.param-input:focus{border-color:#5b3fd4;background:#eff6ff}.param-input.changed{border-color:#d97706;background:#fef9c3;color:#92400e}.btn-recalc{background:#5b3fd4;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;color:#fff;cursor:pointer}.btn-reset{background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:11px;color:#64748b;cursor:pointer}.recalc-badge{background:#d97706;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;display:none}.recalc-badge.show{display:inline}.filter-bar{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px 12px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.filter-bar label{font-size:11px;color:#64748b;font-weight:600}.filter-bar input,.filter-bar select{background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;padding:5px 9px;font-size:11px;color:#1e2540;outline:none}.btn{border:1px solid #e2e8f0;border-radius:7px;padding:5px 12px;font-size:11px;cursor:pointer;background:#fff;color:#475569}.sel-bar{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:7px 12px;margin-bottom:10px;display:none;align-items:center;gap:10px;font-size:11px;color:#1d4ed8}.sel-bar.show{display:flex}input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:#5b3fd4}.cb-cell{width:30px;text-align:center;padding:2px 0!important}.table-wrap{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:14px}.table-head{padding:9px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#475569}table{width:100%;border-collapse:collapse;font-size:9.5px;table-layout:auto}thead tr{background:#f8fafc}th{padding:3px 5px;text-align:left;color:#64748b;font-size:9px;font-weight:600;border-bottom:2px solid #e2e8f0;cursor:pointer;user-select:none;white-space:nowrap;line-height:1.15}td{padding:3px 5px!important;font-size:9.5px!important}td:nth-child(2){max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}th:hover{color:#5b3fd4}tbody tr{border-bottom:1px solid #f1f5f9;cursor:pointer}tbody tr:hover{background:#f8fafc}tbody tr.selected{background:#f0edff!important}.tfoot-row td{padding:4px 5px!important;font-weight:700;font-size:9.5px!important;background:#f8fafc;border-top:2px solid #e2e8f0}.colbar{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:8px 12px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}.colbar .lbl{font-size:11px;color:#64748b;font-weight:600;margin-right:2px}.chip{display:inline-flex;align-items:center;gap:5px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#64748b;border-radius:20px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:all .15s;font-family:inherit}.chip:hover{border-color:#cbd5e1}.chip.on{background:#eef2ff;border-color:#5b3fd4;color:#4c35b8}.chip .dot{width:7px;height:7px;border-radius:50%;background:#cbd5e1}.chip.on .dot{background:currentColor}.chip.preset{border-style:dashed;background:#fff}.hD .kD,.hC .kC,.hL .kL,.hPiece .sPiece,.hRnd .sRnd,.hRaw .sRaw,.hTim .sTim{display:none}th.kD,td.kD{background:rgba(91,63,212,.05)}th.kC,td.kC{background:rgba(212,82,26,.05)}th.kL,td.kL{background:rgba(16,185,129,.06)}.tfoot-row td.kD{background:rgba(91,63,212,.09)}.tfoot-row td.kC{background:rgba(212,82,26,.09)}.tfoot-row td.kL{background:rgba(16,185,129,.10)}.tabbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.tab{flex:1;min-width:96px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;border-radius:10px;padding:9px 6px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center;line-height:1.45}.tab:hover{border-color:#cbd5e1;background:#f8fafc}.tab small{display:block;font-size:9.5px;font-weight:400;opacity:.7;margin-top:1px}.tab.on{background:#5b3fd4;border-color:#5b3fd4;color:#fff}.tab.on.tD{background:#5b3fd4;border-color:#5b3fd4}.tab.on.tC{background:#d4521a;border-color:#d4521a}.tab.on.tL{background:#0e9f6e;border-color:#0e9f6e}.tab.on.tT{background:#c08800;border-color:#c08800}tbody tr.lotrow:hover{background:#eef2ff}.dpanel{background:#fff;border:2px solid #5b3fd4;border-radius:12px;margin-bottom:12px;overflow:hidden}.dpanel-head{background:#f5f3ff;padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e2e8f0}.dpanel-body{padding:12px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.dcard{border:1px solid #e2e8f0;border-radius:10px;padding:10px 12px}.dcard h4{margin:0 0 6px;font-size:12px;font-weight:700}.drow{display:flex;justify-content:space-between;gap:8px;font-size:11px;padding:2px 0;color:#475569}.dnote{font-size:10px;line-height:1.5;color:#64748b;background:#f8fafc;border-left:3px solid #cbd5e1;padding:5px 7px;margin-top:6px}.drow b{font-family:monospace}@media(max-width:640px){.tab{min-width:72px;font-size:10.5px}}.no-result{text-align:center;padding:32px;color:#94a3b8;font-size:13px;display:none}.has-tip,[data-tip]{cursor:help}.kpi-card[data-tip] .kpi-lbl,.time-card[data-tip] .time-lbl,th[data-tip],.drow[data-tip] > span{text-decoration:underline dotted #94a3b8;text-underline-offset:3px}th.has-tip{cursor:pointer}.param-label.has-tip{text-decoration:underline dotted #94a3b8;text-underline-offset:3px}.tip-i{display:inline-block;margin-left:3px;font-size:10px;color:#94a3b8;cursor:pointer;text-decoration:none!important;font-weight:400}.tip-i:hover{color:#5b3fd4}.tip-note{font-size:10.5px;color:#64748b;background:#fff;border:1px dashed #cbd5e1;border-radius:9px;padding:6px 12px;margin-bottom:10px}.footer{margin-top:10px;text-align:center;font-size:10px;color:#94a3b8;font-family:monospace;padding-bottom:10px}@media print{.no-print{display:none!important}body{background:#fff}.filter-bar,.param-bar,.sel-bar{display:none!important}}</style><meta name="starstock-drillplan" content="v1.52 · จาก Drill CNC LED W43 (CountDrill v5.9.9) 19/10/2569"><style id="sxdEmbedStyle">/* StarStock v1.52 (แท็บ Drill) */html.sxs .wrap{padding-top:12px}</style></head><body><div class="wrap" id="wrapRoot"><div class="hdr"><div class="hdr-icon">&#128269;</div><div style="flex:1"><div class="hdr-sub">COUNTDRILL PRODUCTION REPORT</div><div class="hdr-title" id="sxdTitle">Drill</div><div class="hdr-meta" id="sxdMeta">—</div></div><div class="no-print" style="display:flex;gap:6px;flex-shrink:0"><button onclick="exportXL()" class="btn" style="border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.15)">&#128202; Excel</button><button onclick="window.print()" class="btn" style="border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.15)">&#128424; พิมพ์</button></div></div><div class="info-bar"><span id="sxdDay">&#128197;</span><span style="color:#cbd5e1">|</span><span id="sxdLots">0 Lot</span><span style="color:#cbd5e1">|</span><span id="sxdMpr">&#128193; 0 ไฟล์ .mpr</span><span style="color:#cbd5e1">|</span><span>วิ/รู=3 &middot; CNC 10 ม./นาที &times; 65% ดอก 4 มม. + 2 วิ/จุด</span><span style="margin-left:auto;font-size:10px;color:#3b82f6">KPI ด้านบนแสดงผลตาม Lot ที่เลือก</span></div><div class="tip-note no-print">&#8505;&#65039; ชี้เมาส์ หรือ <b>คลิก</b> ที่หัวข้อที่มีเส้นประใต้ (การ์ด · ช่องปรับค่า · รายละเอียด Lot · หัวตารางคลิก &#9432;) เพื่อดูว่าตัวเลขคิดมาอย่างไร</div><div class="kpi-row" id="kpiRow"><div class="kpi-card" id="kpi3" data-tip="drillP"><div class="kpi-ico">&#128296;</div><div class="kpi-val" id="kv3" style="color:#5b3fd4">36,194</div><div class="kpi-unit">ชิ้น</div><div class="kpi-lbl">ชิ้นที่เจาะ<br><span id="kv3s" class="kpi-sub" style="color:#5b3fd4">1รอบ 30,283 &middot; 2รอบ 5,911</span></div></div><div class="kpi-card" id="kpi4" data-tip="cncP"><div class="kpi-ico">&#128992;</div><div class="kpi-val" id="kv4" style="color:#d4521a">3,385</div><div class="kpi-unit">ชิ้น</div><div class="kpi-lbl">ชิ้นที่ทำ CNC<br><span id="kv4s" class="kpi-sub" style="color:#d4521a">1รอบ 3,368 &middot; 2รอบ 17</span></div></div><div class="kpi-card" id="kpi6" data-tip="ledP"><div class="kpi-ico">&#128161;</div><div class="kpi-val" id="kv6" style="color:#0e9f6e">1,338</div><div class="kpi-unit">ชิ้น</div><div class="kpi-lbl">ชิ้นที่ทำ LED<br><span id="kv6s" class="kpi-sub" style="color:#0e9f6e">1รอบ 1,072 &middot; 2รอบ 266</span></div></div><div class="kpi-sep"></div><div class="kpi-card" id="kpi0" data-tip="files"><div class="kpi-ico">&#128290;</div><div class="kpi-val" id="kv0" style="color:#3d7fff">1,247,059</div><div class="kpi-unit">ไฟล์</div><div class="kpi-lbl">ไฟล์ .mpr</div></div><div class="kpi-card" id="kpi1" data-tip="holes"><div class="kpi-ico">&#128309;</div><div class="kpi-val" id="kv1" style="color:#5b3fd4">13,334,793</div><div class="kpi-unit">รู</div><div class="kpi-lbl">รูเจาะรวม</div></div><div class="kpi-card" id="kpi2" data-tip="cncPts"><div class="kpi-ico">&#128992;</div><div class="kpi-val" id="kv2" style="color:#d4521a">192,441</div><div class="kpi-unit">จุด</div><div class="kpi-lbl">จุด CNC<br><span id="kv2s" class="kpi-sub" style="color:#d4521a">วิ่ง 167511.5 ม.</span></div></div><div class="kpi-card" id="kpi5" data-tip="ledLen"><div class="kpi-ico">&#128161;</div><div class="kpi-val" id="kv5" style="color:#0e9f6e">79,014</div><div class="kpi-unit">ร่อง</div><div class="kpi-lbl">ร่อง LED<br><span id="kv5s" class="kpi-sub" style="color:#0e9f6e">60205.45 ม. &rarr; วิ่ง 218815.2 ม.</span></div></div></div><div class="time-row"><div class="time-card drill" id="tc0" data-tip="tDrill"><div class="time-lbl">&#128309; เวลาเจาะรู</div><div class="time-val" id="tDr" style="color:#5b3fd4">11112 ชม. 19 นาที 39 วิ</div><div class="time-min" id="tDrM">666739.7 นาที</div></div><div class="time-card cnc" id="tc1" data-tip="tCnc"><div class="time-lbl">&#128992; เวลา CNC</div><div class="time-val" id="tCn" style="color:#d4521a">540 ชม. 43 นาที 18 วิ</div><div class="time-min" id="tCnM">32443.3 นาที</div></div><div class="time-card led" id="tc2" data-tip="tLed"><div class="time-lbl">&#128161; เวลา LED</div><div class="time-val" id="tLd" style="color:#0e9f6e">604 ชม. 57 นาที 41 วิ</div><div class="time-min" id="tLdM">36297.7 นาที</div></div><div class="time-card total" id="tc3" data-tip="tTotal"><div class="time-lbl">&#9201; เวลารวมทั้งหมด</div><div class="time-val" id="tTot" style="color:#d4a010">12258 ชม. 38 วิ</div><div class="time-min" id="tTotM">12258.01 ชม.</div></div></div><div class="param-bar no-print" id="pBar"><span style="font-size:13px">&#9881;&#65039;</span><span class="param-label">ปรับค่าคำนวณ:</span><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pH">วิ/รูเจาะ</span><input type="number" id="iH" class="param-input" value="3" step="0.1" min="0" oninput="onParamChange()"><span style="font-size:10px;color:#94a3b8">(เดิม: 3)</span></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pCfb">วิ/จุด CNC (ไม่รู้ขนาด)</span><input type="number" id="iC" class="param-input" value="5" step="0.1" min="0" oninput="onParamChange()"><span style="font-size:10px;color:#94a3b8" id="sxdCfb">(เดิม: 5)</span></div><div style="flex-basis:100%;height:0"></div><div style="display:flex;align-items:center;gap:6px;padding-left:10px;border-left:2px solid rgba(212,82,26,.35)"><span class="param-label" data-tip="pCF">&#128992; CNC ม./นาที</span><input type="number" id="iCF" class="param-input" value="10" step="0.5" min="0.1" oninput="onParamChange()"></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pCP">% หน้าเครื่อง</span><input type="number" id="iCP" class="param-input" value="65" step="5" min="1" max="200" oninput="onParamChange()"></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pCD">ดอก pocket มม.</span><input type="number" id="iCD" class="param-input" value="4" step="0.5" min="0.5" oninput="onParamChange()"></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pCO">ยก-ลงหัว วิ/จุด</span><input type="number" id="iCO" class="param-input" value="2" step="0.5" min="0" oninput="onParamChange()"></div><div style="flex-basis:100%;height:0"></div><div style="display:flex;align-items:center;gap:6px;padding-left:10px;border-left:2px solid rgba(16,185,129,.35)"><span class="param-label" data-tip="pLF">&#128161; เครื่อง ม./นาที</span><input type="number" id="iF" class="param-input" value="10" step="0.5" min="0.1" oninput="onParamChange()"></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pLP">% หน้าเครื่อง</span><input type="number" id="iP" class="param-input" value="65" step="5" min="1" max="200" oninput="onParamChange()"></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pLD">ดอกกัด มม.</span><input type="number" id="iD" class="param-input" value="4" step="0.5" min="0.5" oninput="onParamChange()"></div><div style="display:flex;align-items:center;gap:6px"><span class="param-label" data-tip="pLO">ยก-ลงหัว วิ/ร่อง</span><input type="number" id="iLO" class="param-input" value="2" step="0.5" min="0" oninput="onParamChange()"></div><div style="flex-basis:100%;height:0"></div><span style="font-size:10px;color:#0e9f6e;font-weight:700" id="passInfo" data-tip="pPass"></span><div style="flex-basis:100%;height:0"></div><div id="cncNote" style="font-size:10.5px;color:#64748b;background:#fff7ed;border:1px dashed rgba(212,82,26,.45);border-radius:8px;padding:7px 10px;line-height:1.7;width:100%"></div><div id="speedNote" style="font-size:10.5px;color:#64748b;background:#f0fdf9;border:1px dashed rgba(16,185,129,.45);border-radius:8px;padding:7px 10px;line-height:1.7;width:100%"></div><button class="btn-recalc" onclick="doRecalc()" title="คิดตารางและตัวเลขทั้งหมดใหม่ด้วยค่าที่แก้ในแถบนี้ (ไม่แก้ไฟล์เดิม)">&#9654; คำนวณใหม่</button><button class="btn-reset" onclick="resetParams()" title="กลับไปใช้ค่าตั้งตอนบันทึกรายงาน">&#8635; รีเซ็ต</button><span class="recalc-badge" id="rBdg">&#9888; ค่าเปลี่ยน</span></div><div class="sel-bar no-print" id="selBar"><span>&#9745; เลือก <strong id="selCount">0</strong> Lot</span><span style="color:#93c5fd">|</span><span>&#128309; <strong id="selHoles">0</strong> รู</span><span style="color:#93c5fd">|</span><span>&#128992; <strong id="selCNC">0</strong> CNC</span><span style="color:#93c5fd">|</span><span>&#9201; <strong id="selTime">0 วิ</strong></span><span style="margin-left:auto;font-size:10px;color:#3b82f6">KPI ด้านบนแสดงผลตาม Lot ที่เลือก</span></div><div class="filter-bar no-print"><label>&#128269; ค้นหา Lot:</label><input type="text" id="fSrch" placeholder="พิมพ์ชื่อ Lot..." oninput="applyFilter()" style="width:175px"><label>Lot:</label><select id="fLot" onchange="applyFilter()"><option value="">ทุก Lot</option></select><label>Pool:</label><select id="fPool" onchange="applyFilter()"><option value="">ทุก Pool</option></select><label>Week:</label><select id="fWeek" onchange="applyFilter()"><option value="">ทุก Week</option></select><button class="btn" onclick="clearFilter()">&#10005; ล้าง</button><button class="btn no-print" onclick="selectAll()">&#9745; เลือกทั้งหมด</button><button class="btn no-print" onclick="clearSel()">&#9744; ยกเลิก</button><span id="sCnt" style="font-size:11px;color:#64748b;margin-left:4px"></span></div><div class="tabbar no-print" id="tabbar"><button class="tab on" id="tvAll" title="คอลัมน์หลักของทุกหมวด (ชิ้นที่ทำ · เวลา)" onclick="setView('all')">&#128202; ภาพรวม<small>ดูรวมทุกหมวด</small></button><button class="tab tD" id="tvD" title="เฉพาะงานเจาะ: ชิ้น · รอบ (พลิกชิ้น) · จำนวนรู · เวลาเจาะ" onclick="setView('D')">&#128309; เจาะ<small>รู · รอบ · เวลา</small></button><button class="tab tC" id="tvC" title="เฉพาะงาน CNC: ชิ้น · รอบ · จุด CNC · เมตรที่ดอกวิ่ง · เวลา" onclick="setView('C')">&#128992; CNC<small>จุด · เมตร · เวลา</small></button><button class="tab tL" id="tvL" title="เฉพาะงาน LED: ชิ้น · รอบ · ร่อง · เมตรร่อง · เมตรวิ่งจริง · เวลา" onclick="setView('L')">&#128161; LED<small>ร่อง · เมตร · เวลา</small></button><button class="tab tT" id="tvT" title="เทียบเวลาเจาะ / CNC / LED ของแต่ละ Lot" onclick="setView('T')">&#9201; เวลา<small>เทียบเวลาแต่ละหมวด</small></button><button class="tab" id="tvFull" title="ทุกคอลัมน์" onclick="setView('full')">&#128203; ทุกคอลัมน์<small>ละเอียดสุด</small></button></div><div id="dpanel"></div><div class="table-wrap"><div class="table-head">&#128193; รายละเอียดตาม Lot (<span id="sCnt2">0</span> / <span id="sxdTot">0</span> Lot)</div><div style="overflow-x:auto"><table><thead><tr><th class="cb-cell no-print"><input type="checkbox" id="chkAll" onclick="toggleAll(this)"></th><th data-tip="lot" onclick="sortTable(0)">Lot</th><th data-tip="parts" onclick="sortTable(1)" style="text-align:right">Part<br>ทั้งหมด</th><th data-tip="files" onclick="sortTable(2)" style="text-align:right">ไฟล์<br>MPR</th><th data-tip="drillP" onclick="sortTable(10)" class="kD sPiece" style="text-align:right">&#128309;ชิ้น<br>เจาะ</th><th data-tip="drill1" class="kD sRnd" style="text-align:right">เจาะ<br>1รอบ</th><th data-tip="drill2" class="kD sRnd" style="text-align:right">เจาะ<br>2รอบ</th><th data-tip="cncP" onclick="sortTable(11)" class="kC sPiece" style="text-align:right">&#128992;ชิ้น<br>CNC</th><th data-tip="cnc1" class="kC sRnd" style="text-align:right">CNC<br>1รอบ</th><th data-tip="cnc2" class="kC sRnd" style="text-align:right">CNC<br>2รอบ</th><th data-tip="ledP" onclick="sortTable(12)" class="kL sPiece" style="text-align:right">&#128161;ชิ้น<br>LED</th><th data-tip="led1" class="kL sRnd" style="text-align:right">LED<br>1รอบ</th><th data-tip="led2" class="kL sRnd" style="text-align:right">LED<br>2รอบ</th><th data-tip="holes" onclick="sortTable(3)" class="kD sRaw" style="text-align:right">&#128309;รู<br>เจาะ</th><th data-tip="cncPts" onclick="sortTable(4)" class="kC sRaw" style="text-align:right">&#128992;จุด<br>CNC</th><th data-tip="cncTravel" onclick="sortTable(13)" class="kC sRaw" style="text-align:right">&#128992;เมตร<br>วิ่ง</th><th data-tip="ledCnt" onclick="sortTable(5)" class="kL sRaw" style="text-align:right">&#128161;ร่อง<br>LED</th><th data-tip="ledLen" onclick="sortTable(6)" class="kL sRaw" style="text-align:right">&#128161;เมตร<br>ร่อง</th><th data-tip="ledTravel" onclick="sortTable(9)" class="kL sRaw" style="text-align:right">&#128161;เมตร<br>วิ่งจริง</th><th data-tip="tDrill" class="kD sTim" style="text-align:right">&#128309;เวลา<br>เจาะ</th><th data-tip="tCnc" class="kC sTim" style="text-align:right">&#128992;เวลา<br>CNC</th><th data-tip="tLed" class="kL sTim" style="text-align:right">&#128161;เวลา<br>LED</th><th data-tip="tTotal" onclick="sortTable(7)" style="text-align:right">&#9201;เวลา<br>รวม</th><th class="no-print" style="width:26px"></th></tr></thead><tbody id="ltb"></tbody></table><div id="noR" class="no-result">ไม่พบ Lot</div></div><table><tfoot><tr class="tfoot-row"><td class="no-print"></td><td>รวม <span id="fCnt">374</span> Lot</td><td style="text-align:right;font-family:monospace" id="fPcs"></td><td style="text-align:right;font-family:monospace;color:#5b3fd4" id="fMpr">1,247,059</td><td class="kD sPiece" style="text-align:right;font-family:monospace;color:#5b3fd4;font-weight:700" id="fDrP">36,194</td><td class="kD sRnd" style="text-align:right;font-family:monospace;color:#5b3fd4" id="fDr1">30,283</td><td class="kD sRnd" style="text-align:right;font-family:monospace;color:#5b3fd4" id="fDr2">5,911</td><td class="kC sPiece" style="text-align:right;font-family:monospace;color:#d4521a;font-weight:700" id="fCnP">3,385</td><td class="kC sRnd" style="text-align:right;font-family:monospace;color:#d4521a" id="fCn1">3,368</td><td class="kC sRnd" style="text-align:right;font-family:monospace;color:#d4521a" id="fCn2">17</td><td class="kL sPiece" style="text-align:right;font-family:monospace;color:#0e9f6e;font-weight:700" id="fLdP">1,338</td><td class="kL sRnd" style="text-align:right;font-family:monospace;color:#0e9f6e" id="fLd1">1,072</td><td class="kL sRnd" style="text-align:right;font-family:monospace;color:#0e9f6e" id="fLd2">266</td><td style="text-align:right;font-family:monospace;color:#5b3fd4;font-weight:700" class="kD sRaw" id="fHol">13,334,793</td><td style="text-align:right;font-family:monospace;color:#d4521a;font-weight:700" class="kC sRaw" id="fCNC">192,441</td><td style="text-align:right;font-family:monospace;color:#d4521a" class="kC sRaw" id="fCNCt">167511.54</td><td style="text-align:right;font-family:monospace;color:#0e9f6e;font-weight:700" class="kL sRaw" id="fLED">79,014</td><td style="text-align:right;font-family:monospace;color:#0e9f6e" class="kL sRaw" id="fLEDm">60205.45</td><td style="text-align:right;font-family:monospace;color:#0e9f6e;font-weight:700" class="kL sRaw" id="fLEDt">218815.24</td><td style="text-align:right;font-family:monospace;color:#5b3fd4" class="kD sTim" id="fDrT">11112ช 19น 39ว</td><td style="text-align:right;font-family:monospace;color:#d4521a" class="kC sTim" id="fCnT">540ช 43น 18ว</td><td style="text-align:right;font-family:monospace;color:#0e9f6e" class="kL sTim" id="fLdT">604ช 57น 41ว</td><td style="text-align:right;font-family:monospace;color:#d4a010;font-weight:700" id="fTim">12258ช 38ว</td></tr></tfoot></table></div><div class="footer" id="sxdFoot">CountDrill Production System &middot; StarStock แท็บ Drill</div></div><script id="sxdBoot">
+/* ───────── StarStock v1.52: หน้านี้ = Drill CNC LED W43 (CountDrill v5.9.9) ที่ฝังในแท็บ Drill ของ StarStock ─────────
+   ข้อมูล ALL (ราย Lot) / PARTS (ราย Part) ไม่ได้ฝังในไฟล์แล้ว — สร้างที่ StarStock จาก StarSync v1.13 (CSV ราย Lot ของ Cut Rite\AX + ผลนับไฟล์ .mpr ของ Weeke BHX055)
+   OO / BD (ยอดรวม) = ผลรวมของ Lot ในหน้านี้ (ไฟล์เดิม: OO = ยอดของทุกโฟลเดอร์ที่เคยโหลดทั้งไดรฟ์ → แถวรวมใน Excel ไม่ตรงกับตาราง) */
+(function () {
+  var P = null; try { P = window.parent && window.parent !== window ? window.parent.StarStock : null; } catch (e) { P = null; }
+  var o = null; try { var j = P && P.edBootJson ? P.edBootJson('drill') : ''; o = j ? JSON.parse(j) : null; } catch (e) { o = null; if (window.console) console.error('[SXD] boot', e); }
+  var A = o && Array.isArray(o.ALL) ? o.ALL : [], PA = o && o.PARTS && typeof o.PARTS === 'object' ? o.PARTS : {};
+  var OO = { totalHoles: 0, totalCNC: 0, totalLED: 0, totalLEDmm: 0, ledW: {}, cncK: 0, cncW: {} }, BD = { parts: 0, drillParts: 0, drill1: 0, drill2: 0, cncParts: 0, cnc1: 0, cnc2: 0, ledParts: 0, led1: 0, led2: 0 }, pools = {}, weeks = {}, nMpr = 0, nUnk = 0;
+  var mg = function (d, s) { for (var k in (s || {})) d[k] = (d[k] || 0) + s[k]; };
+  A.forEach(function (ld) { var c = ld.calc || {};
+    OO.totalHoles += c.totalHoles || 0; OO.totalCNC += c.totalCNC || 0; OO.totalLED += c.totalLED || 0; OO.totalLEDmm += c.totalLEDmm || 0; mg(OO.ledW, c.ledW);
+    if (c.cncW && typeof c.cncW === 'object') { OO.cncK += Math.min(c.cncK || 0, c.totalCNC || 0); mg(OO.cncW, c.cncW); }
+    nUnk += Math.max(0, (c.totalCNC || 0) - Math.min(c.cncK || 0, c.totalCNC || 0));
+    for (var k in BD) BD[k] += k === 'parts' ? (ld.parts || ld.rows || 0) : (ld[k] || 0);
+    nMpr += ld.mprFiles || 0; if (ld.pool) pools[ld.pool] = 1; if (ld.lotWeek) weeks[ld.lotWeek] = 1; });
+  if (o && o.wk) weeks[o.wk] = 1;
+  window.SXD = { embed: !!o, o: o || {}, ALL: A, PARTS: PA, OO: OO, BD: BD, POOL_IDS: Object.keys(pools).sort(), WEEK_NUM: o && o.wk || 0, WEEK_NUMS: Object.keys(weeks).map(Number).sort(function (a, b) { return a - b; }),
+    parent: P, saved: o && o.saved && typeof o.saved === 'object' ? o.saved : null, ready: false, lastJ: '' };
+  window.SXE = window.SXD;   // StarStock ตรวจว่าหน้าเปิดได้ (SXE.embed) — ชื่อเดียวกับแท็บ Edge Banding
+  if (window.parent && window.parent !== window) document.documentElement.classList.add('sxs');
+  var D = document, set = function (id, t) { var e = D.getElementById(id); if (e) e.textContent = t; }, he = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  if (o) {
+    document.title = o.title || 'Drill';
+    set('sxdTitle', o.title || 'Drill'); set('sxdMeta', o.hdr || '');
+    set('sxdDay', '📅 ' + String(o.hdr || '').replace(/^\S+\s*/, '').split(' · ')[0]);
+    set('sxdLots', A.length.toLocaleString() + ' Lot'); set('sxdTot', A.length.toLocaleString());
+    var mp = o.mpr || {};
+    set('sxdMpr', '📁 ' + nMpr.toLocaleString() + ' ไฟล์ .mpr' + (!mp.have ? ' (ยังไม่มีข้อมูล .mpr จาก StarSync)' : mp.pending > 0 ? ' (StarSync ยังอ่านไม่ครบ ' + (+mp.pending).toLocaleString() + ' ไฟล์)' : ''));
+    set('sxdCfb', '(เดิม: 5' + (nUnk ? ' · ใช้กับ ' + nUnk.toLocaleString() + ' จุด' : '') + ')');
+    set('sxdFoot', 'CountDrill Production System · StarStock v' + (o.ver || '') + ' แท็บ Drill · ข้อมูลอัตโนมัติจาก StarSync' + (o.csvAt ? ' (CSV ราย Lot ' + String(o.csvAt).replace('T', ' ').slice(0, 16) + (mp.at ? ' · .mpr ' + String(mp.at).replace('T', ' ').slice(0, 16) : '') + ')' : ''));
+    var fl = D.getElementById('fLot'), fp = D.getElementById('fPool'), fw = D.getElementById('fWeek');
+    if (fl) fl.innerHTML = '<option value="">ทุก Lot</option>' + A.map(function (ld) { return '<option value="' + he(ld.lot) + '">' + he(ld.lot) + '</option>'; }).join('');
+    if (fp) fp.innerHTML = '<option value="">ทุก Pool</option>' + SXD.POOL_IDS.map(function (p) { return '<option value="' + he(p) + '">' + he(p) + '</option>'; }).join('');
+    if (fw) fw.innerHTML = '<option value="">ทุก Week</option>' + SXD.WEEK_NUMS.map(function (w) { return '<option value="' + w + '">Week ' + w + '</option>'; }).join('');
+  } else set('sxdMeta', 'ไม่มีข้อมูล — เปิดหน้านี้จากแท็บ Drill ของ StarStock');
+})();
+</script><script>var ALL=SXD.ALL;   /* StarStock v1.52: เดิมฝัง 374 Lot ของ W43 */
+var PARTS=SXD.PARTS;   /* StarStock v1.52: เดิมฝัง 112,923 Part (7.6 MB) */
+function renderPartList(el, parts){
+  if(!el) return;
+  if(!parts){
+    el.innerHTML = '<div style="font-size:11px;color:#94a3b8;padding:8px 2px">ไม่มีรายการ Part ในข้อมูลนี้ (Record บันทึกก่อนรุ่น 5.9.7 หรือไม่มีข้อมูล CSV)<\/div>';
+    return;
+  }
+  const F = {
+    all:   function(){ return true; },
+    drill: function(p){ return p[7] > 0; },
+    cnc:   function(p){ return p[8] > 0; },
+    led:   function(p){ return p[9] > 0; },
+    none:  function(p){ return !(p[7] > 0 || p[8] > 0 || p[9] > 0); }
+  };
+  const TIP = {
+    all: 'Part ทั้งหมดของ Lot นี้ (1 แถวใน CSV = 1 Part)',
+    drill: 'Part ที่มีรูเจาะอย่างน้อย 1 รู (<102 / <103 ในไฟล์ .mpr ของ Part)',
+    cnc: 'Part ที่มีจุด CNC (pocket) อย่างน้อย 1 จุด',
+    led: 'Part ที่มีร่อง LED อย่างน้อย 1 ร่อง',
+    none: 'Part ที่ไม่มีรู ไม่มี CNC ไม่มี LED — ส่วนใหญ่คือไม่มีไฟล์ .mpr (ไม่ต้องเข้าเครื่องเจาะ)'
+  };
+  const esc = function(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  const nf = function(n){ return (+n || 0).toLocaleString(); };
+  const mode = el.__mode || 'all', q = (el.__q || '').toLowerCase();
+  const chip = function(k, lbl, col){
+    const on = mode === k;
+    return '<button data-k="' + k + '" title="' + esc(TIP[k]) + '" style="cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;border-radius:16px;padding:4px 11px;'
+      + 'border:1.5px solid ' + (on ? col : '#e2e8f0') + ';background:' + (on ? col : '#fff') + ';color:' + (on ? '#fff' : col) + '">'
+      + lbl + ' ' + nf(parts.filter(F[k]).length) + '<\/button>';
+  };
+  const list = parts.filter(F[mode]).filter(function(p){
+    if(!q) return true;
+    return (String(p[0]) + ' ' + p[1] + ' ' + p[4] + ' ' + p[5]).toLowerCase().indexOf(q) >= 0;
+  });
+  const td = 'padding:3px 6px;border-bottom:1px solid #f1f5f9;font-size:10.5px;';
+  const tdr = td + 'text-align:right;font-family:monospace;';
+  const bcCell = function(bc, has){ return bc ? '<span style="font-family:monospace;color:' + (has ? '#1e2540' : '#94a3b8') + '">' + esc(bc) + (has ? ' <b style="color:#0e9f6e">✓<\/b>' : '') + '<\/span>' : ''; };
+  let rows = '';
+  list.forEach(function(p, i){
+    const tags = [];
+    if(p[7] > 0) tags.push('<span style="color:#5b3fd4">🔵 เจาะ<\/span>');
+    if(p[8] > 0) tags.push('<span style="color:#d4521a">🟠 CNC<\/span>');
+    if(p[9] > 0) tags.push('<span style="color:#0e9f6e">💡 LED<\/span>');
+    if(!tags.length) tags.push(p[6] ? '<span style="color:#94a3b8" title="มีไฟล์ .mpr แต่ไม่มีรู / CNC / LED">⚪ มีไฟล์ ไม่มีงานเจาะ<\/span>'
+                                     : '<span style="color:#94a3b8" title="ไม่พบไฟล์ .mpr ของบาร์โค้ดนี้ = ไม่ต้องเข้าเครื่องเจาะ">⚪ ไม่ได้เจาะ<\/span>');
+    rows += '<tr>'
+      + '<td style="' + tdr + 'color:#94a3b8">' + (i + 1) + '<\/td>'
+      + '<td style="' + td + 'font-family:monospace">' + esc(p[0]) + '<\/td>'
+      + '<td style="' + td + '">' + esc(p[1]) + '<\/td>'
+      + '<td style="' + tdr + '">' + (p[2] || p[3] ? nf(p[2]) + '×' + nf(p[3]) : '') + '<\/td>'
+      + '<td style="' + td + '">' + bcCell(p[4], p[6] & 1) + (p[5] ? '<br>' + bcCell(p[5], p[6] & 2) : '') + '<\/td>'
+      + '<td style="' + tdr + 'color:#5b3fd4">' + (p[7] ? nf(p[7]) : '-') + '<\/td>'
+      + '<td style="' + tdr + 'color:#d4521a">' + (p[8] ? nf(p[8]) : '-') + '<\/td>'
+      + '<td style="' + tdr + 'color:#0e9f6e">' + (p[9] ? nf(p[9]) + ' ร่อง' + (p[10] ? ' · ' + (p[10] / 1000).toFixed(2) + ' ม.' : '') : '-') + '<\/td>'
+      + '<td style="' + td + 'white-space:nowrap">' + tags.join(' ') + '<\/td><\/tr>';
+  });
+  const th = function(t, tip, right){ return '<th class="has-tip" title="' + esc(tip) + '" style="position:sticky;top:0;background:#f8fafc;padding:4px 6px;font-size:10px;color:#64748b;text-align:' + (right ? 'right' : 'left') + ';border-bottom:2px solid #e2e8f0;cursor:help">' + t + '<\/th>'; };
+  el.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px">'
+    + '<b style="font-size:12px;color:#475569;margin-right:4px">📋 รายการ Part<\/b>'
+    + chip('all', 'ทั้งหมด', '#475569') + chip('drill', '🔵 เจาะรู', '#5b3fd4') + chip('cnc', '🟠 CNC', '#d4521a')
+    + chip('led', '💡 LED', '#0e9f6e') + chip('none', '⚪ ไม่ได้เจาะอะไร', '#94a3b8')
+    + '<input type="search" placeholder="ค้นหา Part / บาร์โค้ด" value="' + esc(el.__q || '') + '" style="margin-left:auto;font-size:11px;padding:4px 9px;border:1px solid #e2e8f0;border-radius:7px;width:170px;font-family:inherit">'
+    + '<\/div>'
+    + '<div style="max-height:360px;overflow:auto;border:1px solid #e2e8f0;border-radius:8px;background:#fff">'
+    + '<table style="width:100%;border-collapse:collapse"><thead><tr>'
+    + th('#', 'ลำดับ', true) + th('Part ID', 'Part ID จาก CSV แผนผลิต') + th('ชื่อ Part', 'ชื่อชิ้นงานจาก CSV')
+    + th('ขนาด', 'กว้าง × ยาว (มม.) จาก CSV', true)
+    + th('บาร์โค้ด', 'บาร์โค้ด 1 = ด้านแรก · บาร์โค้ด 2 = ด้านที่พลิกเจาะ\n✓ = เจอไฟล์ .mpr ชื่อเดียวกับบาร์โค้ด')
+    + th('🔵 รู', 'จำนวนรูเจาะ (<102 + <103) ของไฟล์ทั้ง 2 ด้าน', true)
+    + th('🟠 CNC', 'จำนวนจุด CNC (pocket) ของไฟล์ทั้ง 2 ด้าน', true)
+    + th('💡 LED', 'จำนวนร่อง LED และความยาวร่องรวม', true)
+    + th('งานที่ทำ', 'สรุปว่า Part นี้มีงานอะไรบ้าง')
+    + '<\/tr><\/thead><tbody>' + (rows || '<tr><td colspan="9" style="padding:12px;text-align:center;color:#94a3b8;font-size:11px">ไม่มี Part ในกลุ่มนี้<\/td><\/tr>') + '<\/tbody><\/table><\/div>';
+  el.querySelectorAll('th.has-tip').forEach(function(h){ if(!h.querySelector('.tip-i')) h.insertAdjacentHTML('beforeend', '<span class="tip-i" title="คลิกดูคำอธิบาย">ⓘ<\/span>'); });
+  el.querySelectorAll('button[data-k]').forEach(function(b){ b.onclick = function(){ el.__mode = b.getAttribute('data-k'); renderPartList(el, parts); }; });
+  const inp = el.querySelector('input[type=search]');
+  if(inp) inp.oninput = function(){ el.__q = inp.value; const pos = inp.selectionStart; renderPartList(el, parts); const ni = el.querySelector('input[type=search]'); if(ni){ ni.focus(); try{ ni.setSelectionRange(pos, pos); }catch(e){} } };
+}
+var OP={"secHole":3,"secCNC":5,"secLED":0,"secLEDm":9.23076923076923,"ledDia":4,"ledFeed":10,"ledPct":65,"ledOver":2,"secCNCm":9.23076923076923,"cncDia":4,"cncFeed":10,"cncPct":65,"cncOver":2,"cncMode":"travel"};
+var TIPS={"files":"จำนวนไฟล์โปรแกรมเจาะ .mpr ที่โหลดมา\n1 ไฟล์ = 1 ด้านของ 1 ชิ้น · ชิ้นที่พลิกเจาะ 2 ด้านมี 2 ไฟล์","holes":"จำนวนรูเจาะ นับจากคำสั่งในไฟล์ MPR\n<102 = เจาะแนวตั้ง · <103 = เจาะแนวนอน (1 คำสั่ง = 1 รู)\nรวมทุกไฟล์ทุก folder","cncPts":"จำนวนจุด CNC (pocket/หลุม) นับจากคำสั่ง <112 ในไฟล์ MPR ที่ไม่ใช่ร่อง LED\n\"วิ่ง\" = ระยะที่ดอกวิ่งตี pocket ทั้งหมด\n\nวิธีแยก CNC กับ LED: คำสั่ง <112 ในไฟล์ MPR เป็นได้ทั้งหลุม pocket และร่อง LED\nโปรแกรมเอา ด้านยาว ÷ ด้านกว้าง (ได้กี่เท่า)\n• ตั้งแต่ 10 เท่าขึ้นไป = ร่องยาวแคบ → ร่อง LED\n• น้อยกว่า 10 เท่า = หลุมป้อม ๆ → จุด CNC\nเช่น ร่อง 1,939×19 มม. = 102 เท่า → LED · หลุม 100×50 = 2 เท่า → CNC · ช่อง 45×18 = 2.5 เท่า → CNC\nปรับตัวเลข 10 ได้ที่ช่อง \"เกณฑ์ LED\" ในแถบซ้าย (มีผลกับไฟล์ที่อ่านหลังจากนั้น)\n\nระยะวิ่งดอก CNC = การวิ่งกวาดไป-กลับเก็บเนื้อไม้ในหลุม pocket\n• ดอกวิ่ง 1 รอบ (วิ่ง 1 เที่ยวตามแนวยาว) กินความกว้างได้เท่าขนาดดอก (ขนาดดอก pocket)\n• จำนวนรอบ = ปัดขึ้น(ด้านกว้าง ÷ ขนาดดอก)\n• แต่ละรอบวิ่งยาวเท่าด้านยาวของ pocket\n• pocket ลึกที่ตั้งกินทีละชั้น (ZT ในไฟล์) → ทำซ้ำทุกชั้น\nระยะวิ่ง = ด้านยาว × จำนวนรอบ × จำนวนชั้น\nเช่น pocket 100×50 ดอก 4 มม. → 13 รอบ × 100 มม. = 1.3 ม.\n(เป็นค่าประมาณ: ไม่นับระยะทับซ้อนระหว่างรอบและรอบเก็บขอบ)","ledLen":"เมตร = ความยาวร่อง LED ตามแบบรวมกัน (ยังไม่คูณจำนวนรอบที่ดอกวิ่ง)\n\nวิธีแยก CNC กับ LED: คำสั่ง <112 ในไฟล์ MPR เป็นได้ทั้งหลุม pocket และร่อง LED\nโปรแกรมเอา ด้านยาว ÷ ด้านกว้าง (ได้กี่เท่า)\n• ตั้งแต่ 10 เท่าขึ้นไป = ร่องยาวแคบ → ร่อง LED\n• น้อยกว่า 10 เท่า = หลุมป้อม ๆ → จุด CNC\nเช่น ร่อง 1,939×19 มม. = 102 เท่า → LED · หลุม 100×50 = 2 เท่า → CNC · ช่อง 45×18 = 2.5 เท่า → CNC\nปรับตัวเลข 10 ได้ที่ช่อง \"เกณฑ์ LED\" ในแถบซ้าย (มีผลกับไฟล์ที่อ่านหลังจากนั้น)","tDrill":"เวลาเจาะรู = จำนวนรู × ค่า วิ/รูเจาะ","tCnc":"เวลา CNC ของ pocket 1 จุด = ยก-ลงหัว + เวลากัด\n• ยก-ลงหัว ค่า ยก-ลงหัว (เท่ากันทุกจุด) = วิ่งเปล่าไปที่จุด + ลงหัวกินไม้ + ยกหัวขึ้น\n• เวลากัด = ระยะวิ่งดอก ÷ ความเร็ว (ยิ่ง pocket ใหญ่ ยิ่งนาน)\nความเร็ว = ม./นาที × % หน้าเครื่อง → วินาทีต่อเมตร = 60 ÷ ความเร็วจริง\nจุดที่อ่านขนาดไม่ได้ (ไฟล์หาย/ถูกแก้ · ขนาดเป็นสูตร · ข้อมูลเก่ายังไม่อ่านย้อนหลัง) คิดเหมา ค่า วิ/จุด (ไม่รู้ขนาด)/จุด\n\nระยะวิ่งดอก CNC = การวิ่งกวาดไป-กลับเก็บเนื้อไม้ในหลุม pocket\n• ดอกวิ่ง 1 รอบ (วิ่ง 1 เที่ยวตามแนวยาว) กินความกว้างได้เท่าขนาดดอก (ขนาดดอก pocket)\n• จำนวนรอบ = ปัดขึ้น(ด้านกว้าง ÷ ขนาดดอก)\n• แต่ละรอบวิ่งยาวเท่าด้านยาวของ pocket\n• pocket ลึกที่ตั้งกินทีละชั้น (ZT ในไฟล์) → ทำซ้ำทุกชั้น\nระยะวิ่ง = ด้านยาว × จำนวนรอบ × จำนวนชั้น\nเช่น pocket 100×50 ดอก 4 มม. → 13 รอบ × 100 มม. = 1.3 ม.\n(เป็นค่าประมาณ: ไม่นับระยะทับซ้อนระหว่างรอบและรอบเก็บขอบ)","tLed":"เวลา LED ของร่อง 1 ร่อง = ยก-ลงหัว + เวลากัด\n• ยก-ลงหัว ค่า ยก-ลงหัว LED (เท่ากันทุกร่อง) = วิ่งเปล่าไปต้นร่อง + ลงหัว + ยกหัว\n• เวลากัด = ระยะวิ่งดอก ÷ ความเร็ว\nความเร็ว = ม./นาที × % หน้าเครื่อง → วินาทีต่อเมตร = 60 ÷ ความเร็วจริง\nระยะวิ่งดอกในร่อง LED = ความยาวร่อง × จำนวนรอบ\nจำนวนรอบ = ปัดขึ้น(ความกว้างร่อง ÷ ขนาดดอก ขนาดดอก LED)\nเช่น ร่องกว้าง 19 มม. ดอก 4 มม. = 5 รอบ → ร่องยาว 1.6 ม. ดอกวิ่ง 8 ม.","tTotal":"เวลารวม = เวลาเจาะรู + เวลา CNC + เวลา LED","rowDrill":"จำนวนรู × วินาทีต่อรู (ค่า วิ/รูเจาะ)","rowCnc":"เวลา CNC ของ pocket 1 จุด = ยก-ลงหัว + เวลากัด\n• ยก-ลงหัว ค่า ยก-ลงหัว (เท่ากันทุกจุด) = วิ่งเปล่าไปที่จุด + ลงหัวกินไม้ + ยกหัวขึ้น\n• เวลากัด = ระยะวิ่งดอก ÷ ความเร็ว (ยิ่ง pocket ใหญ่ ยิ่งนาน)\nความเร็ว = ม./นาที × % หน้าเครื่อง → วินาทีต่อเมตร = 60 ÷ ความเร็วจริง\nจุดที่อ่านขนาดไม่ได้ (ไฟล์หาย/ถูกแก้ · ขนาดเป็นสูตร · ข้อมูลเก่ายังไม่อ่านย้อนหลัง) คิดเหมา ค่า วิ/จุด (ไม่รู้ขนาด)/จุด\n\nระยะวิ่งดอก CNC = การวิ่งกวาดไป-กลับเก็บเนื้อไม้ในหลุม pocket\n• ดอกวิ่ง 1 รอบ (วิ่ง 1 เที่ยวตามแนวยาว) กินความกว้างได้เท่าขนาดดอก (ขนาดดอก pocket)\n• จำนวนรอบ = ปัดขึ้น(ด้านกว้าง ÷ ขนาดดอก)\n• แต่ละรอบวิ่งยาวเท่าด้านยาวของ pocket\n• pocket ลึกที่ตั้งกินทีละชั้น (ZT ในไฟล์) → ทำซ้ำทุกชั้น\nระยะวิ่ง = ด้านยาว × จำนวนรอบ × จำนวนชั้น\nเช่น pocket 100×50 ดอก 4 มม. → 13 รอบ × 100 มม. = 1.3 ม.\n(เป็นค่าประมาณ: ไม่นับระยะทับซ้อนระหว่างรอบและรอบเก็บขอบ)","rowLed":"เวลา LED ของร่อง 1 ร่อง = ยก-ลงหัว + เวลากัด\n• ยก-ลงหัว ค่า ยก-ลงหัว LED (เท่ากันทุกร่อง) = วิ่งเปล่าไปต้นร่อง + ลงหัว + ยกหัว\n• เวลากัด = ระยะวิ่งดอก ÷ ความเร็ว\nความเร็ว = ม./นาที × % หน้าเครื่อง → วินาทีต่อเมตร = 60 ÷ ความเร็วจริง\nระยะวิ่งดอกในร่อง LED = ความยาวร่อง × จำนวนรอบ\nจำนวนรอบ = ปัดขึ้น(ความกว้างร่อง ÷ ขนาดดอก ขนาดดอก LED)\nเช่น ร่องกว้าง 19 มม. ดอก 4 มม. = 5 รอบ → ร่องยาว 1.6 ม. ดอกวิ่ง 8 ม.\n\"เฉลี่ยกี่รอบ\" = ระยะวิ่งจริง ÷ ความยาวร่อง","avgFile":"เวลารวม ÷ จำนวนไฟล์ .mpr","avgPart":"เวลารวมของ Lot ÷ จำนวน Part ทั้งหมด","secHole":"ค่าตั้ง วินาที/รูเจาะ ในแถบซ้าย (เวลาเจาะ 1 รู รวมเวลาเลื่อนไปรูถัดไป)","bc1":"ไฟล์ที่หลักที่ 4 จากขวาของชื่อไฟล์ = 1 (เจาะด้านแรก)\nจำนวนรู = ประมาณจากรูเฉลี่ยต่อไฟล์ของ folder","bc2":"ไฟล์ที่หลักที่ 4 จากขวาของชื่อไฟล์ = 2 (พลิกเจาะด้านที่ 2)\nจำนวนรู = ประมาณจากรูเฉลี่ยต่อไฟล์ของ folder","bcSum":"รู Barcode 1 + รู Barcode 2","cncKnown":"pocket ที่อ่านขนาด LA (ยาว) / BR (กว้าง) ในไฟล์ MPR ได้ → คิดเวลาตามระยะวิ่งดอก\n\nระยะวิ่งดอก CNC = การวิ่งกวาดไป-กลับเก็บเนื้อไม้ในหลุม pocket\n• ดอกวิ่ง 1 รอบ (วิ่ง 1 เที่ยวตามแนวยาว) กินความกว้างได้เท่าขนาดดอก (ขนาดดอก pocket)\n• จำนวนรอบ = ปัดขึ้น(ด้านกว้าง ÷ ขนาดดอก)\n• แต่ละรอบวิ่งยาวเท่าด้านยาวของ pocket\n• pocket ลึกที่ตั้งกินทีละชั้น (ZT ในไฟล์) → ทำซ้ำทุกชั้น\nระยะวิ่ง = ด้านยาว × จำนวนรอบ × จำนวนชั้น\nเช่น pocket 100×50 ดอก 4 มม. → 13 รอบ × 100 มม. = 1.3 ม.\n(เป็นค่าประมาณ: ไม่นับระยะทับซ้อนระหว่างรอบและรอบเก็บขอบ)","cncUnknown":"pocket ที่ยังไม่มีขนาด มาจาก\n• ข้อมูลรุ่นก่อน 5.9 ที่ยังไม่ได้อ่านย้อนหลัง → กด 📐 อ่านขนาด pocket ย้อนหลัง\n• ไฟล์หาย / ถูกแก้หลังบันทึก (อ่านซ้ำก็ไม่ได้)\n• ขนาดในไฟล์เป็นสูตร เช่น LA=\"L-20\"\nคิดเหมา ค่า วิ/จุด (ไม่รู้ขนาด)/จุด · ถ้าเหลือไม่ถึง 1% ของจุดทั้งหมด ไม่ต้องทำอะไรเพิ่ม","cncTravel":"ระยะวิ่งดอก CNC = การวิ่งกวาดไป-กลับเก็บเนื้อไม้ในหลุม pocket\n• ดอกวิ่ง 1 รอบ (วิ่ง 1 เที่ยวตามแนวยาว) กินความกว้างได้เท่าขนาดดอก (ขนาดดอก pocket)\n• จำนวนรอบ = ปัดขึ้น(ด้านกว้าง ÷ ขนาดดอก)\n• แต่ละรอบวิ่งยาวเท่าด้านยาวของ pocket\n• pocket ลึกที่ตั้งกินทีละชั้น (ZT ในไฟล์) → ทำซ้ำทุกชั้น\nระยะวิ่ง = ด้านยาว × จำนวนรอบ × จำนวนชั้น\nเช่น pocket 100×50 ดอก 4 มม. → 13 รอบ × 100 มม. = 1.3 ม.\n(เป็นค่าประมาณ: ไม่นับระยะทับซ้อนระหว่างรอบและรอบเก็บขอบ)","wW":"ความกว้างของ pocket (ด้านแคบ) หน่วย มม.","wLen":"ผลรวมด้านยาวของทุก pocket ที่กว้างเท่านี้ × จำนวนชั้น (หน่วยเมตร)","wPass":"จำนวนรอบที่ดอกวิ่ง = ปัดขึ้น(กว้าง ÷ ขนาดดอก ขนาดดอก pocket)","wRun":"ระยะวิ่งดอก = ยาว×ชั้น × จำนวนรอบ","wTime":"เวลากัด pocket = ระยะวิ่ง × วินาทีต่อเมตร (ยังไม่รวมยก-ลงหัว)\nวินาทีต่อเมตร = 60 ÷ (ม./นาที × % หน้าเครื่อง)","wPct":"สัดส่วนของเวลากัดทั้งหมด — ดูว่า pocket ขนาดไหนกินเวลามากสุด","groove":"จำนวนชิ้นที่ช่อง Groove ใน CSV (ช่อง 13–16) มีค่า (ไม่ว่างและไม่ใช่ 0)\nเป็นข้อมูลจากแผนผลิต ไม่ได้ใช้คิดเวลา","grooveTotal":"ร่อง 1 + ร่อง 2 + ร่อง 3 + ร่อง 4","parts":"จำนวนแถว (Part) ของ Lot นี้ในไฟล์ CSV แผนผลิต","partsMpr":"Part ที่บาร์โค้ดจับคู่กับ folder MPR ได้ (10 หลักแรกของบาร์โค้ด = เลข Order)","drillP":"จำนวนชิ้นที่มีไฟล์เจาะ (ชิ้นเดียวกันมี 2 ไฟล์นับ 1 ชิ้น)\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","drill1":"ชิ้นที่มีไฟล์เจาะรอบเดียว (เจาะด้านเดียว)\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","drill2":"ชิ้นที่มีไฟล์ทั้งรอบ 1 และรอบ 2 (พลิกเจาะอีกด้าน)\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","cncP":"ชิ้นที่มีจุด CNC อย่างน้อย 1 จุด (นับรวมอยู่ใน \"ชิ้นที่เจาะ\" แล้ว)\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","cnc1":"ชิ้นที่มี CNC ในไฟล์รอบเดียว\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","cnc2":"ชิ้นที่มี CNC ทั้งไฟล์รอบ 1 และรอบ 2\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","ledP":"ชิ้นที่มีร่อง LED อย่างน้อย 1 ร่อง (นับรวมอยู่ใน \"ชิ้นที่เจาะ\" แล้ว)\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","led1":"ชิ้นที่มีร่อง LED ในไฟล์รอบเดียว\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","led2":"ชิ้นที่มีร่อง LED ทั้งไฟล์รอบ 1 และรอบ 2\nดูจากชื่อไฟล์ .mpr (บาร์โค้ด): หลักที่ 4 จากขวา = รอบ (1 หรือ 2) · 3 หลักท้าย = เลขชิ้น\nชิ้นเดียวกันมีไฟล์รอบ 1 และรอบ 2 = ต้องพลิกเจาะอีกด้าน (เจาะ 2 รอบ)","holesLot":"จำนวนรูเจาะของ folder MPR ที่จับคู่กับ Lot นี้\n<102 + <103 ในไฟล์ MPR","cncLot":"จำนวนจุด CNC (<112 ที่ไม่ใช่ LED) ของ folder ที่จับคู่กับ Lot นี้\n\nวิธีแยก CNC กับ LED: คำสั่ง <112 ในไฟล์ MPR เป็นได้ทั้งหลุม pocket และร่อง LED\nโปรแกรมเอา ด้านยาว ÷ ด้านกว้าง (ได้กี่เท่า)\n• ตั้งแต่ 10 เท่าขึ้นไป = ร่องยาวแคบ → ร่อง LED\n• น้อยกว่า 10 เท่า = หลุมป้อม ๆ → จุด CNC\nเช่น ร่อง 1,939×19 มม. = 102 เท่า → LED · หลุม 100×50 = 2 เท่า → CNC · ช่อง 45×18 = 2.5 เท่า → CNC\nปรับตัวเลข 10 ได้ที่ช่อง \"เกณฑ์ LED\" ในแถบซ้าย (มีผลกับไฟล์ที่อ่านหลังจากนั้น)","ledCnt":"จำนวนร่อง LED\n\nวิธีแยก CNC กับ LED: คำสั่ง <112 ในไฟล์ MPR เป็นได้ทั้งหลุม pocket และร่อง LED\nโปรแกรมเอา ด้านยาว ÷ ด้านกว้าง (ได้กี่เท่า)\n• ตั้งแต่ 10 เท่าขึ้นไป = ร่องยาวแคบ → ร่อง LED\n• น้อยกว่า 10 เท่า = หลุมป้อม ๆ → จุด CNC\nเช่น ร่อง 1,939×19 มม. = 102 เท่า → LED · หลุม 100×50 = 2 เท่า → CNC · ช่อง 45×18 = 2.5 เท่า → CNC\nปรับตัวเลข 10 ได้ที่ช่อง \"เกณฑ์ LED\" ในแถบซ้าย (มีผลกับไฟล์ที่อ่านหลังจากนั้น)","ledTravel":"ระยะวิ่งดอกในร่อง LED = ความยาวร่อง × จำนวนรอบ\nจำนวนรอบ = ปัดขึ้น(ความกว้างร่อง ÷ ขนาดดอก ขนาดดอก LED)\nเช่น ร่องกว้าง 19 มม. ดอก 4 มม. = 5 รอบ → ร่องยาว 1.6 ม. ดอกวิ่ง 8 ม.","ledPass":"จำนวนรอบที่ดอกวิ่งในร่อง = ปัดขึ้น(กว้างร่อง ÷ ขนาดดอก ขนาดดอก LED)","lotTotal":"เวลาเจาะ + เวลา CNC + เวลา LED ของ Lot นี้","lot":"ชื่อ Lot (จากชื่อไฟล์ CSV แผนผลิต)","pH":"วินาทีต่อการเจาะ 1 รู (รวมเวลาเลื่อนไปรูถัดไป)\nเวลาเจาะ = จำนวนรู × ค่านี้\nจำนวนรู นับจากคำสั่ง <102 (เจาะแนวตั้ง) + <103 (เจาะแนวนอน) ในไฟล์ MPR","pCfb":"ค่าเหมาแบบเดิม ใช้เฉพาะ pocket ที่ \"ไม่รู้ขนาด\" เท่านั้น\n• ข้อมูลที่อ่านด้วยโปรแกรมรุ่นก่อน 5.9 (ตอนนั้นไม่ได้เก็บขนาด) ที่ยังไม่ได้อ่านย้อนหลัง\n• ไฟล์หาย หรือถูกแก้หลังบันทึก (จำนวนจุดไม่ตรงของเดิม เลยไม่เอาขนาดมาใช้)\n• pocket ที่ขนาดในไฟล์เป็นสูตร เช่น LA=\"L-20\"\npocket ที่รู้ขนาดคิดตามระยะวิ่งดอก ไม่ใช้ค่านี้\nเวลา = จำนวนจุดที่ไม่รู้ขนาด × ค่านี้\nแก้ให้รู้ขนาด: ปุ่ม 📐 อ่านขนาด pocket ย้อนหลัง","pCF":"ความเร็วเดินดอกตอนกัด pocket (CNC) ที่ 100% (ม./นาที)\nไม่ใช่ความเร็ววิ่งเปล่า (BHX055 วิ่งเปล่าได้ 50 ม./นาที) — ตอนกัดจริงปกติ 4–12 ม./นาที\nความเร็วจริง = ค่านี้ × % หน้าเครื่อง\nเวลากัด = ระยะวิ่ง ÷ ความเร็วจริง","pCP":"% หน้าเครื่อง = ปุ่มปรับความเร็ว (Feed override) ที่หน้าจอเครื่อง CNC\nเครื่องเดินดอกจริง = ความเร็วที่ตั้ง × % นี้\nเช่น 10 ม./นาที × 65% = เดินจริง 6.5 ม./นาที\n→ ใช้เวลา 60 ÷ 6.5 = 9.2 วินาที ต่อ 1 เมตร\nช่างหมุนลด % → ดอกเดินช้าลง → เวลานานขึ้น (ปกติตั้ง 60–70%)\nใช้ปรับให้เวลาที่คำนวณตรงกับเวลาจริง: คำนวณได้น้อยกว่าจริง → ลด % · มากกว่าจริง → เพิ่ม %","pCD":"ขนาดดอกที่ใช้ตี pocket (มม.)\nระยะวิ่งดอก CNC = การวิ่งกวาดไป-กลับเก็บเนื้อไม้ในหลุม pocket\n• ดอกวิ่ง 1 รอบ (วิ่ง 1 เที่ยวตามแนวยาว) กินความกว้างได้เท่าขนาดดอก (ขนาดดอก pocket)\n• จำนวนรอบ = ปัดขึ้น(ด้านกว้าง ÷ ขนาดดอก)\n• แต่ละรอบวิ่งยาวเท่าด้านยาวของ pocket\n• pocket ลึกที่ตั้งกินทีละชั้น (ZT ในไฟล์) → ทำซ้ำทุกชั้น\nระยะวิ่ง = ด้านยาว × จำนวนรอบ × จำนวนชั้น\nเช่น pocket 100×50 ดอก 4 มม. → 13 รอบ × 100 มม. = 1.3 ม.\n(เป็นค่าประมาณ: ไม่นับระยะทับซ้อนระหว่างรอบและรอบเก็บขอบ)\nเปลี่ยนดอกเมื่อไหร่ก็แก้ค่านี้ ไม่ต้องอ่านไฟล์ MPR ใหม่","pCO":"ยก-ลงหัว = เวลาที่เสียทุกจุดเท่ากัน ไม่ว่า pocket เล็กหรือใหญ่\n• วิ่งเปล่าไปที่จุด\n• ลงหัวกินเนื้อไม้\n• ยกหัวขึ้นหลังกัดเสร็จ\n(เวลากัดคิดจากระยะวิ่งแยกต่างหาก)\nเวลา = จำนวนจุดที่รู้ขนาด × ค่านี้ · ใส่ 0 = คิดแต่เวลากัด","pLF":"ความเร็วเดินดอกตอนกัดร่อง LED ที่ 100% (ม./นาที)\nไม่ใช่ความเร็ววิ่งเปล่า (BHX055 วิ่งเปล่าได้ 50 ม./นาที) — ตอนกัดจริงปกติ 4–12 ม./นาที\nความเร็วจริง = ค่านี้ × % หน้าเครื่อง\nเวลากัด = ระยะวิ่ง ÷ ความเร็วจริง","pLP":"% หน้าเครื่อง = ปุ่มปรับความเร็ว (Feed override) ที่หน้าจอเครื่อง CNC\nเครื่องเดินดอกจริง = ความเร็วที่ตั้ง × % นี้\nเช่น 10 ม./นาที × 65% = เดินจริง 6.5 ม./นาที\n→ ใช้เวลา 60 ÷ 6.5 = 9.2 วินาที ต่อ 1 เมตร\nช่างหมุนลด % → ดอกเดินช้าลง → เวลานานขึ้น (ปกติตั้ง 60–70%)\nใช้ปรับให้เวลาที่คำนวณตรงกับเวลาจริง: คำนวณได้น้อยกว่าจริง → ลด % · มากกว่าจริง → เพิ่ม %","pLD":"ขนาดดอกที่ใช้กัดร่อง LED (มม.)\nระยะวิ่งดอกในร่อง LED = ความยาวร่อง × จำนวนรอบ\nจำนวนรอบ = ปัดขึ้น(ความกว้างร่อง ÷ ขนาดดอก ขนาดดอก LED)\nเช่น ร่องกว้าง 19 มม. ดอก 4 มม. = 5 รอบ → ร่องยาว 1.6 ม. ดอกวิ่ง 8 ม.","pLO":"ยก-ลงหัว = เวลาที่เสียทุกร่องเท่ากัน ไม่ว่าร่องสั้นหรือยาว\n• วิ่งเปล่าไปต้นร่อง\n• ลงหัว\n• ยกหัวขึ้นหลังกัดเสร็จ\nเวลา = จำนวนร่อง × ค่านี้ · ใส่ 0 = คิดแต่เวลากัด","pPass":"จำนวนรอบที่ดอกต้องวิ่งในร่อง LED แต่ละความกว้าง = ปัดขึ้น(กว้างร่อง ÷ ขนาดดอก)\nเช่น ร่อง 19 มม. ดอก 4 มม. → 19 ÷ 4 = 4.75 → ปัดขึ้นเป็น 5 รอบ\nระยะวิ่งจริง = ความยาวร่อง × จำนวนรอบ","ratioSet":"วิธีแยก CNC กับ LED: คำสั่ง <112 ในไฟล์ MPR เป็นได้ทั้งหลุม pocket และร่อง LED\nโปรแกรมเอา ด้านยาว ÷ ด้านกว้าง (ได้กี่เท่า)\n• ตั้งแต่ 10 เท่าขึ้นไป = ร่องยาวแคบ → ร่อง LED\n• น้อยกว่า 10 เท่า = หลุมป้อม ๆ → จุด CNC\nเช่น ร่อง 1,939×19 มม. = 102 เท่า → LED · หลุม 100×50 = 2 เท่า → CNC · ช่อง 45×18 = 2.5 เท่า → CNC\nปรับตัวเลข 10 ได้ที่ช่อง \"เกณฑ์ LED\" ในแถบซ้าย (มีผลกับไฟล์ที่อ่านหลังจากนั้น)","pRecalc":"คิดตารางและตัวเลขทั้งหมดใหม่ด้วยค่าที่แก้ในแถบนี้ (ไม่แก้ไฟล์เดิม)","pReset":"กลับไปใช้ค่าตั้งตอนบันทึกรายงาน","cncOver":"ยก-ลงหัว = เวลาที่เสียทุกจุดเท่ากัน ไม่ว่า pocket เล็กหรือใหญ่\nวิ่งเปล่าไปที่จุด + ลงหัวกินไม้ + ยกหัวขึ้น\nเวลา = จำนวนจุดที่รู้ขนาด × ค่า ยก-ลงหัว วิ/จุด","ledOver":"ยก-ลงหัว = เวลาที่เสียทุกร่องเท่ากัน ไม่ว่าร่องสั้นหรือยาว\nวิ่งเปล่าไปต้นร่อง + ลงหัว + ยกหัว\nเวลา = จำนวนร่อง × ค่า ยก-ลงหัว วิ/ร่อง","ledRun":"เวลากัดร่อง = ระยะวิ่งจริง × วินาทีต่อเมตร (ยังไม่รวมยก-ลงหัว)"};
+function installTipPopover(){
+  if(window.__tipPopOn) return;
+  window.__tipPopOn = true;
+  var pop = null, shownAt = 0;
+  function hide(){ if(pop){ pop.remove(); pop = null; } }
+  function hideOnScroll(){ if(Date.now() - shownAt > 400) hide(); }   // กันเลื่อนจอเล็กน้อยตอนคลิกแล้วกล่องหายทันที
+  function show(el, text){
+    hide();
+    shownAt = Date.now();
+    pop = document.createElement('div');
+    pop.className = 'tip-pop';
+    pop.style.cssText = 'position:fixed;z-index:100000;max-width:440px;background:#1e2540;color:#f1f5f9;font-size:12px;line-height:1.65;'
+      + 'padding:11px 32px 11px 13px;border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.32);white-space:pre-wrap;text-align:left;font-weight:400';
+    pop.textContent = text;
+    var x = document.createElement('span');
+    x.textContent = '✕';
+    x.style.cssText = 'position:absolute;top:7px;right:10px;cursor:pointer;opacity:.75;font-size:12px';
+    x.onclick = hide;
+    pop.appendChild(x);
+    document.body.appendChild(pop);
+    var r = el.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+    var left = Math.min(Math.max(8, r.left), window.innerWidth - pw - 8);
+    var top = r.bottom + 6;
+    if(top + ph > window.innerHeight - 8) top = Math.max(8, r.top - ph - 6);
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if(pop && pop.contains(t)) return;
+    var icon = t.closest ? t.closest('.tip-i') : null;
+    var el = icon ? icon.closest('.has-tip,[data-tip]') : (t.closest ? t.closest('.has-tip,[data-tip]') : null);
+    if(icon){ e.stopPropagation(); e.preventDefault(); }
+    else if(el && t.closest('button,input,select,textarea,a,th,[onclick]')){ hide(); return; }   // คลิกปุ่ม/หัวตาราง = ทำงานปกติ
+    var text = el ? (el.getAttribute('data-tiptext') || el.title) : '';
+    if(text){ show(el, text); return; }
+    hide();
+  }, true);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hide(); });
+  window.addEventListener('scroll', hideOnScroll, true);
+  window.addEventListener('resize', hide);
+}
+function addTipIcons(root){
+  (root || document).querySelectorAll('th.has-tip').forEach(function(th){
+    if(!th.querySelector('.tip-i')) th.insertAdjacentHTML('beforeend', '<span class="tip-i" title="คลิกดูคำอธิบาย">ⓘ</span>');
+  });
+}
+function applyTips(root){(root||document).querySelectorAll("[data-tip]").forEach(function(e){var t=TIPS[e.getAttribute("data-tip")];if(t){e.title=t;e.classList.add("has-tip");}});addTipIcons(root);}
+var OO=SXD.OO;   /* StarStock v1.52 (แก้บัค): ผลรวมของ Lot ในหน้า — เดิม = ทุกโฟลเดอร์ที่โหลดทั้งไดรฟ์ */
+var BD=SXD.BD;
+var POOL_IDS=SXD.POOL_IDS;
+var WEEK_NUM=SXD.WEEK_NUM;
+var WEEK_NUMS=SXD.WEEK_NUMS;
+var vis=ALL.slice(),sCol=-1,sAsc=true,sel={},isRecalced=false;
+function fN(n){return(+(n||0)).toLocaleString();}
+function fS(s){s=Math.round(s||0);var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return(h?h+"ช ":"")+(m?m+"น ":"")+ss+"ว";}
+function fSL(s){s=Math.round(s||0);var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;return(h?h+" ชม. ":"")+(m?m+" นาที ":"")+ss+" วิ";}
+function getSH(){return parseFloat(document.getElementById("iH").value)||OP.secHole;}
+function getSC(){return parseFloat(document.getElementById("iC").value)||OP.secCNC;}
+function getSL(){var e=document.getElementById("iL");var v=e?parseFloat(e.value):NaN;return isNaN(v)?(OP.secLED!=null?OP.secLED:0):v;}
+function getFeed(){var e=document.getElementById("iF");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<=0)?(OP.ledFeed||10):v;}
+function getPct(){var e=document.getElementById("iP");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<=0)?(OP.ledPct||65):v;}
+function getSLm(){var eff=getFeed()*getPct()/100;return eff>0?60/eff:0;}
+function getDia(){var e=document.getElementById("iD");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<=0)?(OP.ledDia!=null?OP.ledDia:4):v;}
+function ledPasses(w,d){w=parseFloat(w)||0;d=parseFloat(d)||4;if(w<=0||d<=0)return 1;return Math.max(1,Math.ceil(w/d));}
+function ledTravel(ld){var c=(ld&&ld.calc)||{};var w=c.ledW;var d=getDia();
+  if(!w||typeof w!=="object"){return (c.totalLEDmm||0)*ledPasses(19,d);}
+  var t=0;for(var k in w){t+=(w[k]||0)*ledPasses(k,d);}return t;}
+function getLO(){var e=document.getElementById("iLO");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<0)?(OP.ledOver!=null?OP.ledOver:0):v;}
+function ledTime(ld){var c=(ld&&ld.calc)||{};return (ledTravel(ld)/1000)*getSLm()+(c.totalLED||0)*getLO();}
+function getCF(){var e=document.getElementById("iCF");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<=0)?(OP.cncFeed||10):v;}
+function getCP(){var e=document.getElementById("iCP");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<=0)?(OP.cncPct||65):v;}
+function getCD(){var e=document.getElementById("iCD");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<=0)?(OP.cncDia!=null?OP.cncDia:4):v;}
+function getCO(){var e=document.getElementById("iCO");var v=e?parseFloat(e.value):NaN;return (isNaN(v)||v<0)?(OP.cncOver!=null?OP.cncOver:2):v;}
+function getCSm(){var eff=getCF()*getCP()/100;return eff>0?60/eff:0;}
+function cncTravelC(c){c=c||{};var w=c.cncW;if(!w||typeof w!=="object")return 0;var d=getCD(),t=0;for(var k in w){t+=(w[k]||0)*ledPasses(k,d);}return t;}
+function cncKnownC(c){c=c||{};var t=c.totalCNC||0;return (c.cncW&&typeof c.cncW==="object")?Math.min(c.cncK||0,t):0;}
+function cncTimeC(c){c=c||{};var t=c.totalCNC||0,k=cncKnownC(c);return (cncTravelC(c)/1000)*getCSm()+k*getCO()+(t-k)*getSC();}
+function cncTravel(ld){return cncTravelC((ld&&ld.calc)||{});}
+function cncTime(ld){return cncTimeC((ld&&ld.calc)||{});}
+function fM(mm){var m=(mm||0)/1000;return m>=100?m.toFixed(0):m.toFixed(2);}
+function getSelected(){return vis.filter(function(ld){return sel[ld.lot];});}
+
+var VIEW="all";
+var VIEWS={
+  all :{k:["D","C","L"], s:["Piece"]},
+  D   :{k:["D"],         s:["Piece","Rnd","Raw","Tim"]},
+  C   :{k:["C"],         s:["Piece","Rnd","Raw","Tim"]},
+  L   :{k:["L"],         s:["Piece","Rnd","Raw","Tim"]},
+  T   :{k:["D","C","L"], s:["Tim"]},
+  full:{k:["D","C","L"], s:["Piece","Rnd","Raw","Tim"]}
+};
+function setView(v){
+  VIEW=v; var cfg=VIEWS[v]||VIEWS.all;
+  var w=document.getElementById("wrapRoot")||document.body;
+  ["D","C","L"].forEach(function(k){ w.classList.toggle("h"+k, cfg.k.indexOf(k)<0); });
+  ["Piece","Rnd","Raw","Tim"].forEach(function(t){ w.classList.toggle("h"+t, cfg.s.indexOf(t)<0); });
+  var ids={all:"tvAll",D:"tvD",C:"tvC",L:"tvL",T:"tvT",full:"tvFull"};
+  for(var key in ids){ var b=document.getElementById(ids[key]); if(!b)continue;
+    var base="tab"+(key==="D"?" tD":key==="C"?" tC":key==="L"?" tL":key==="T"?" tT":"");
+    b.className=base+(key===v?" on":""); }
+}
+function closeDetail(){var d=document.getElementById("dpanel"); if(d)d.innerHTML="";}
+function showDetail(i){
+  var ld=vis[i]; if(!ld)return;
+  var c=ld.calc||{}, sH=getSH(), sC=getSC(), sLm=getSLm(), dia=getDia();
+  var tH=c.totalHoles||0,tC=c.totalCNC||0,tL=c.totalLED||0;
+  var trav=ledTravel(ld), dr=tH*sH, cn=cncTime(ld), ldur=ledTime(ld), tot=dr+cn+ldur;
+  var ck=cncKnownC(c), cu=tC-ck, ctr=cncTravel(ld), cSm=getCSm(), cO=getCO();
+  var pw=Object.keys(c.ledW||{});
+  var passTxt=pw.length?pw.map(function(k){return k+"มม. = "+ledPasses(k,dia)+" รอบ";}).join(", "):"-";
+  var fld=(ld.folders&&ld.folders.length)?ld.folders.join(", "):"ไม่พบ Folder MPR";
+  function row(a,b2,col,tk){return "<div class='drow'"+(tk?" data-tip='"+tk+"'":"")+"><span>"+a+"</span><b"+(col?" style='color:"+col+"'":"")+">"+b2+"</b></div>";}
+  var h="<div class='dpanel'>"
+   +"<div class='dpanel-head'><span style='font-size:16px'>&#128193;</span>"
+   +"<div style='flex:1;min-width:0'><div style='font-family:monospace;font-weight:700;color:#5b3fd4;font-size:13px'>"+ld.lot+"</div>"
+   +"<div style='font-size:10px;color:#94a3b8;margin-top:1px'>Part ทั้งหมด "+fN(ld.rows)+" &middot; ไฟล์ MPR "+fN(ld.mprFiles)+"</div>"
+   +((ld.drill2>0)?"<div style='font-size:10px;color:#0e9f6e;margin-top:2px'>= ชิ้นที่เจาะ "+fN(ld.drillParts)+" + ไฟล์รอบ 2 อีก "+fN(ld.drill2)+"</div>":"")+"</div>"
+   +"<button onclick='closeDetail()' style='background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:5px 11px;cursor:pointer;font-size:12px;font-family:inherit'>&#10005; ปิด</button></div>"
+   +"<div class='dpanel-body'>"
+   +"<div class='dcard' style='border-color:rgba(91,63,212,.35);background:rgba(91,63,212,.03)'>"
+   +"<h4 style='color:#5b3fd4'>&#128309; เจาะ</h4>"
+   +row("ชิ้นที่เจาะ", fN(ld.drillParts)+" ชิ้น","#5b3fd4","drillP")
+   +row("&nbsp;&nbsp;เจาะ 1 รอบ", fN(ld.drill1),"","drill1")
+   +row("&nbsp;&nbsp;เจาะ 2 รอบ", fN(ld.drill2),"","drill2")
+   +row("รูเจาะ", fN(tH)+" รู &times; "+sH+" วิ","","rowDrill")
+   +row("<b>เวลาเจาะ</b>", fSL(dr),"#5b3fd4","tDrill")
+   +"<div class='dnote'>1 ชิ้น = 1 ไฟล์ .mpr ถ้าเจาะรอบเดียว &middot; ชิ้นที่ต้องพลิกเจาะอีกด้านจะมี 2 ไฟล์ "
+     +"จำนวนไฟล์จึงมากกว่าจำนวนชิ้นเสมอเมื่อมีงานเจาะ 2 รอบ"
+     +((ld.drill2>0)?"<br><b>"+fN(ld.mprFiles)+" ไฟล์ = "+fN(ld.drillParts)+" ชิ้น + "+fN(ld.drill2)+" ไฟล์รอบ 2</b>":"")+"</div></div>"
+   +"<div class='dcard' style='border-color:rgba(212,82,26,.35);background:rgba(212,82,26,.03)'>"
+   +"<h4 style='color:#d4521a'>&#128992; CNC</h4>"
+   +row("ชิ้นที่ทำ CNC", fN(ld.cncParts)+" ชิ้น","#d4521a","cncP")
+   +row("&nbsp;&nbsp;CNC 1 รอบ", fN(ld.cnc1),"","cnc1")
+   +row("&nbsp;&nbsp;CNC 2 รอบ", fN(ld.cnc2),"","cnc2")
+   +row("จุด CNC", fN(tC)+" จุด","","cncPts")
+   +row("ระยะวิ่ง (ดอก "+getCD()+" มม.)", fM(ctr)+" เมตร","#d4521a","cncTravel")
+   +row("&nbsp;&nbsp;วิ่ง &times; "+cSm.toFixed(1)+" วิ/ม.", fSL(ctr/1000*cSm),"","wTime")
+   +row("&nbsp;&nbsp;ยก-ลงหัว "+fN(ck)+" จุด &times; "+cO+" วิ", fSL(ck*cO),"","cncOver")
+   +(cu>0?row("&nbsp;&nbsp;ไม่รู้ขนาด "+fN(cu)+" จุด &times; "+sC+" วิ", fSL(cu*sC)):"")
+   +row("<b>เวลา CNC</b>", fSL(cn),"#d4521a","tCnc")
+   +"<div class='dnote'>เวลา CNC 1 จุด = ยก-ลงหัว (เท่ากันทุกจุด: วิ่งเปล่าไปที่จุด + ลงหัว + ยกหัว) + เวลากัด (ยาว &times; ชั้น &times; ปัดขึ้น(กว้าง &divide; ดอก) &divide; ความเร็ว) &mdash; pocket ใหญ่จึงใช้เวลามากกว่า<br>ชิ้นที่ทำ CNC เป็นส่วนหนึ่งของ &quot;ชิ้นที่เจาะ " 
+     +fN(ld.drillParts)+" ชิ้น&quot; อยู่แล้ว ไม่ต้องเอาไปบวกเพิ่ม</div></div>"
+   +"<div class='dcard' style='border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.03)'>"
+   +"<h4 style='color:#0e9f6e'>&#128161; LED</h4>"
+   +row("ชิ้นที่ทำ LED", fN(ld.ledParts||0)+" ชิ้น","#0e9f6e","ledP")
+   +row("&nbsp;&nbsp;LED 1 รอบ", fN(ld.led1||0),"","led1")
+   +row("&nbsp;&nbsp;LED 2 รอบ", fN(ld.led2||0),"","led2")
+   +row("ร่อง LED", fN(tL)+" ร่อง","","ledCnt")
+   +row("ความยาวร่อง", fM(c.totalLEDmm)+" เมตร","","ledLen")
+   +row("จำนวนรอบ (ดอก "+dia+" มม.)", passTxt,"","ledPass")
+   +row("ระยะวิ่งจริง", fM(trav)+" เมตร","#0e9f6e","ledTravel")
+   +row("&nbsp;&nbsp;วิ่ง &times; "+getSLm().toFixed(1)+" วิ/ม.", fSL(trav/1000*getSLm()),"","ledRun")
+   +row("&nbsp;&nbsp;ยก-ลงหัว "+fN(tL)+" ร่อง &times; "+getLO()+" วิ", fSL(tL*getLO()),"","ledOver")
+   +row("<b>เวลา LED</b>", fSL(ldur),"#0e9f6e","tLed")
+   +"<div class='dnote'>ชิ้นที่ทำ LED เป็นส่วนหนึ่งของ &quot;ชิ้นที่เจาะ " 
+     +fN(ld.drillParts)+" ชิ้น&quot; อยู่แล้ว ไม่ต้องเอาไปบวกเพิ่ม</div></div>"
+   +"<div class='dcard' style='border-color:rgba(212,160,16,.45);background:rgba(212,160,16,.04)'>"
+   +"<h4 style='color:#c08800'>&#9201; สรุปเวลา</h4>"
+   +row("เจาะ", fSL(dr),"","tDrill")+row("CNC", fSL(cn),"","tCnc")+row("LED", fSL(ldur),"","tLed")
+   +"<div style='border-top:1px solid #e2e8f0;margin:5px 0'></div>"
+   +row("<b>รวมทั้ง Lot</b>", fSL(tot),"#c08800","lotTotal")
+   +row("เฉลี่ยต่อ Part", ld.rows?fSL(tot/ld.rows):"-","","avgPart")+"</div>"
+   +"</div>"
+   +"<div class='plist' style='padding:0 14px 12px'></div>"
+   +"<div style='padding:0 14px 12px;font-size:10px;color:#94a3b8'>&#128193; Folder MPR: <b style='color:#5b3fd4;font-family:monospace'>"+fld+"</b></div>"
+   +"</div>";
+  var d=document.getElementById("dpanel"); if(d){d.innerHTML=h; applyTips(d); var pl=d.querySelector(".plist"); if(pl)renderPartList(pl,(PARTS&&PARTS[ld.lot])||null); try{d.scrollIntoView({behavior:"smooth",block:"nearest"});}catch(e){}}
+}
+function showCncNote(){
+  var cn=document.getElementById("cncNote");
+  if(cn){
+    var cf=getCF(),cp=getCP(),ce=cf*cp/100,cs=getCSm(),cd=getCD(),co=getCO();
+    var ex=function(L,W){var ps=ledPasses(W,cd),m=L*ps/1000;return ps+" รอบ วิ่ง "+m.toFixed(2)+" ม. = "+(m*cs+co).toFixed(1)+" วิ";};
+    cn.innerHTML = "&#128992; <b>CNC pocket:</b> "+cf+" ม./นาที &times; "+cp+"% = <b style='color:#d4521a'>"+ce.toFixed(2)+" ม./นาที</b> &rarr; <b style='color:#d4521a'>"+cs.toFixed(1)+" วิ/ม.</b> &middot; 1 จุด = ยก-ลงหัว "+co+" วิ + เวลากัดตามระยะ"
+      + "<br>ระยะวิ่ง = ยาว &times; ชั้น &times; ปัดขึ้น(กว้าง &divide; ดอก "+cd+" มม.) &middot; ตัวอย่าง pocket 35&times;20: "+ex(35,20)+" &middot; 100&times;50: "+ex(100,50)
+      + (OP.cncFeed==null?"<br><b style='color:#b45309'>Record นี้บันทึกก่อนรุ่น 5.9 ไม่มีขนาด pocket &mdash; CNC ยังคิดแบบ วิ/จุด</b>":"");
+  }
+}
+function showPasses(){
+  showCncNote();
+  var el=document.getElementById("passInfo"); if(!el)return;
+  var d=getDia(),ws={};
+  ALL.forEach(function(ld){var w=(ld.calc||{}).ledW;for(var k in (w||{}))ws[k]=1;});
+  var keys=Object.keys(ws);
+  if(!keys.length){el.textContent="";return;}
+  var f=getFeed(),pc=getPct(),eff=f*pc/100,spm=getSLm();
+  el.textContent=keys.map(function(k){return "ร่อง "+k+"มม.="+ledPasses(k,d)+" รอบ";}).join(" · ");
+  var note=document.getElementById("speedNote");
+  if(note){
+    var warn = f>20 ? "<br><b style='color:#dc2626'>&#9888; "+f+" ม./นาที สูงผิดปกติ</b> — เลข 50 ม./นาที ในโบรชัวร์ BHX055 คือความเร็ว<b>วิ่งเปล่า</b> ไม่ใช่ตอนกัดไม้ (ตอนกัดปกติ 4–12 ม./นาที)" : "";
+    note.innerHTML = "&#128161; <b>วิธีคิดความเร็ว:</b> เครื่อง <b>"+f+"</b> ม./นาที (ที่ 100%) &times; <b>"+pc+"%</b> = <b style='color:#0e9f6e'>"+eff.toFixed(2)+" ม./นาที</b>"
+      + " &rarr; ใช้เวลา <b style='color:#0e9f6e'>"+spm.toFixed(1)+" วินาที ต่อ 1 เมตร</b> &middot; 1 ร่อง = ยก-ลงหัว "+getLO()+" วิ + เวลากัดตามระยะ"
+      + "<br><span style='opacity:.8'>(ไม่ใช่ "+(f/100).toFixed(2)+" ม./นาที — "+pc+"% หมายถึงเดินที่ "+pc+" ส่วนจาก 100 ส่วน)</span>" + warn;
+  }
+}
+function updateKPI(){
+  var sH=getSH(),sC=getSC(),sL=getSL();
+  var arr=getSelected();
+  var src=arr.length>0?arr:vis;
+  var tH=0,tC=0,tL=0,tLmm=0,tMpr=0,dP=0,d1=0,d2=0,cP=0,c1=0,c2=0,lP=0,l1=0,l2=0;
+  src.forEach(function(ld){var c=ld.calc||{};tH+=c.totalHoles||0;tC+=c.totalCNC||0;tL+=c.totalLED||0;tLmm+=c.totalLEDmm||0;tMpr+=ld.mprFiles||0;dP+=ld.drillParts||0;d1+=ld.drill1||0;d2+=ld.drill2||0;cP+=ld.cncParts||0;c1+=ld.cnc1||0;c2+=ld.cnc2||0;lP+=ld.ledParts||0;l1+=ld.led1||0;l2+=ld.led2||0;});
+  var tTrav=0,tCn=0,tCtr=0,tLd=0;src.forEach(function(ld){tTrav+=ledTravel(ld);tCn+=cncTime(ld);tCtr+=cncTravel(ld);tLd+=ledTime(ld);});
+  var tDr=tH*sH,tTot=tDr+tCn+tLd;
+  var k2s=document.getElementById("kv2s"); if(k2s)k2s.textContent="วิ่ง "+(tCtr/1000).toFixed(1)+" ม.";
+  var k0=document.getElementById("kv0"),k1=document.getElementById("kv1"),k2=document.getElementById("kv2"),k5=document.getElementById("kv5");
+  if(k0)k0.textContent=fN(tMpr);
+  if(k1)k1.textContent=fN(tH);
+  if(k2)k2.textContent=fN(tC);
+  if(k5)k5.textContent=fN(tL);
+  var k5s=document.getElementById("kv5s"); if(k5s)k5s.textContent=(tLmm/1000).toFixed(2)+" ม. → วิ่ง "+(tTrav/1000).toFixed(1)+" ม.";
+  var k3=document.getElementById("kv3"),k3s=document.getElementById("kv3s"),k4=document.getElementById("kv4"),k4s=document.getElementById("kv4s");
+  var k6=document.getElementById("kv6"),k6s=document.getElementById("kv6s");
+  if(k3)k3.textContent=fN(dP);
+  if(k3s)k3s.textContent="1รอบ "+fN(d1)+" \u00b7 2รอบ "+fN(d2);
+  if(k4)k4.textContent=fN(cP);
+  if(k4s)k4s.textContent="1รอบ "+fN(c1)+" \u00b7 2รอบ "+fN(c2);
+  if(k6)k6.textContent=fN(lP);
+  if(k6s)k6s.textContent="1รอบ "+fN(l1)+" \u00b7 2รอบ "+fN(l2);
+  var td=document.getElementById("tDr"),tdm=document.getElementById("tDrM");
+  var tc=document.getElementById("tCn"),tcm=document.getElementById("tCnM");
+  var tl=document.getElementById("tLd"),tlm=document.getElementById("tLdM");
+  var tt=document.getElementById("tTot"),ttm=document.getElementById("tTotM");
+  if(td)td.textContent=fSL(tDr); if(tdm)tdm.textContent=(tDr/60).toFixed(1)+" นาที";
+  if(tc)tc.textContent=fSL(tCn); if(tcm)tcm.textContent=(tCn/60).toFixed(1)+" นาที";
+  if(tl)tl.textContent=fSL(tLd); if(tlm)tlm.textContent=(tLd/60).toFixed(1)+" นาที";
+  if(tt)tt.textContent=fSL(tTot); if(ttm)ttm.textContent=(tTot/3600).toFixed(2)+" ชม.";
+  var hasS=arr.length>0;
+  for(var i=0;i<7;i++){var k=document.getElementById("kpi"+i);if(k)k.className="kpi-card"+(hasS?" active":"");}
+  for(var i=0;i<4;i++){var tc2=document.getElementById("tc"+i);if(tc2)tc2.className="time-card "+(["drill","cnc","led","total"][i])+(isRecalced?" recalced":"");}
+}
+
+function updateSelBar(){
+  var arr=getSelected();
+  var sH=getSH(),sC=getSC(),sL=getSL();
+  var bar=document.getElementById("selBar");
+  if(!arr.length){if(bar)bar.className="sel-bar";return;}
+  if(bar)bar.className="sel-bar show";
+  var tH=0,tC=0,tL=0,tLmm=0;
+  arr.forEach(function(ld){var c=ld.calc||{};tH+=c.totalHoles||0;tC+=c.totalCNC||0;tL+=c.totalLED||0;tLmm+=c.totalLEDmm||0;});
+  var tTrav=0,tCn=0,tLd=0;arr.forEach(function(ld){tTrav+=ledTravel(ld);tCn+=cncTime(ld);tLd+=ledTime(ld);});
+  var tDr=tH*sH;
+  var sc=document.getElementById("selCount"),sh=document.getElementById("selHoles"),scn=document.getElementById("selCNC"),st=document.getElementById("selTime");
+  if(sc)sc.textContent=arr.length;
+  if(sh)sh.textContent=fN(tH);
+  if(scn)scn.textContent=fN(tC);
+  if(st)st.textContent=fSL(tDr+tCn+tLd);
+}
+
+function updateFooter(){
+  var sH=getSH(),sC=getSC(),sL=getSL();
+  var arr=getSelected();
+  var src=arr.length?arr:vis;
+  var tH=0,tC=0,tL=0,tLmm=0,tPcs=0,tMpr=0,dP=0,d1=0,d2=0,cP=0,c1=0,c2=0,lP=0,l1=0,l2=0;
+  src.forEach(function(ld){var c=ld.calc||{};tH+=c.totalHoles||0;tC+=c.totalCNC||0;tL+=c.totalLED||0;tLmm+=c.totalLEDmm||0;tPcs+=ld.rows||0;tMpr+=ld.mprFiles||0;dP+=ld.drillParts||0;d1+=ld.drill1||0;d2+=ld.drill2||0;cP+=ld.cncParts||0;c1+=ld.cnc1||0;c2+=ld.cnc2||0;lP+=ld.ledParts||0;l1+=ld.led1||0;l2+=ld.led2||0;});
+  var tTrav=0,tCn=0,tCtr=0,tLd=0;src.forEach(function(ld){tTrav+=ledTravel(ld);tCn+=cncTime(ld);tCtr+=cncTravel(ld);tLd+=ledTime(ld);});
+  var tDr=tH*sH;
+  var fcct=document.getElementById("fCNCt"); if(fcct)fcct.textContent=(tCtr/1000).toFixed(2);
+  var fc=document.getElementById("fCnt"),fp=document.getElementById("fPcs"),fm=document.getElementById("fMpr");
+  var fh=document.getElementById("fHol"),fcc=document.getElementById("fCNC"),fll=document.getElementById("fLED"),fdr=document.getElementById("fDrT"),fcn=document.getElementById("fCnT"),fld=document.getElementById("fLdT"),ft=document.getElementById("fTim");
+  var fdp=document.getElementById("fDrP"),fd1=document.getElementById("fDr1"),fd2=document.getElementById("fDr2"),fcp=document.getElementById("fCnP"),fc1=document.getElementById("fCn1"),fc2=document.getElementById("fCn2");
+  var flp=document.getElementById("fLdP"),fl1=document.getElementById("fLd1"),fl2=document.getElementById("fLd2");
+  if(fdp)fdp.textContent=fN(dP);if(fd1)fd1.textContent=fN(d1);if(fd2)fd2.textContent=fN(d2);
+  if(fcp)fcp.textContent=fN(cP);if(fc1)fc1.textContent=fN(c1);if(fc2)fc2.textContent=fN(c2);
+  if(flp)flp.textContent=fN(lP);if(fl1)fl1.textContent=fN(l1);if(fl2)fl2.textContent=fN(l2);
+  if(fc)fc.textContent=src.length;
+  if(fp)fp.textContent=fN(tPcs);
+  if(fm)fm.textContent=fN(tMpr);
+  if(fh)fh.textContent=fN(tH);
+  if(fcc)fcc.textContent=fN(tC);
+  if(fll)fll.textContent=fN(tL);
+  var fllm=document.getElementById("fLEDm"); if(fllm)fllm.textContent=(tLmm/1000).toFixed(2);
+  var fllt=document.getElementById("fLEDt"); if(fllt)fllt.textContent=(tTrav/1000).toFixed(2);
+  if(fdr)fdr.textContent=fS(tDr);
+  if(fcn)fcn.textContent=fS(tCn);
+  if(fld)fld.textContent=fS(tLd);
+  if(ft)ft.textContent=fS(tDr+tCn+tLd);
+}
+
+function renderTable(){
+  var sH=getSH(),sC=getSC(),sL=getSL();
+  var body=document.getElementById("ltb");
+  var noRes=document.getElementById("noR");
+  var cnt=document.getElementById("sCnt2");
+  if(cnt)cnt.textContent=vis.length;
+  if(!vis.length){body.innerHTML="";noRes.style.display="block";updateKPI();updateSelBar();updateFooter();return;}
+  noRes.style.display="none";
+  var html="";
+  for(var i=0;i<vis.length;i++){
+    var ld=vis[i],c=ld.calc||{};
+    var tH=c.totalHoles||0,tC=c.totalCNC||0,tL=c.totalLED||0;
+    var dr=tH*sH,cn=cncTime(ld),lduration=ledTime(ld),tot=dr+cn+lduration;
+    var isSel=!!sel[ld.lot];
+    var fldArr=(ld.folders&&ld.folders.length>0)?ld.folders:[];
+    var fldHtml=fldArr.map(function(f){return "<b style='color:#5b3fd4;background:rgba(91,63,212,.1);padding:1px 8px;border-radius:4px;font-size:10px;font-weight:normal;font-family:monospace'>"+f+"</b>";}).join(" ");
+    if(!fldHtml)fldHtml="<i style='color:#94a3b8;font-size:10px'>ไม่พบ Folder MPR (barcode ไม่ตรง)</i>";
+    html+="<tr class='lotrow "+(isSel?"selected":"")+"' onclick='showDetail("+i+")' title='คลิกดูรายละเอียด Lot นี้'>";
+    html+="<td class='cb-cell no-print'><input type='checkbox' "+(isSel?"checked ":"")+"onclick='event.stopPropagation();toggleRow(this.closest(String.fromCharCode(116,114)))'>" + "</td>";
+    html+="<td style='font-family:monospace;font-weight:600;color:#5b3fd4'>"+ld.lot+"</td>";
+    html+="<td style='text-align:right'>"+fN(ld.rows)+"</td>";
+    html+="<td style='text-align:right'>"+fN(ld.mprFiles)+"</td>";
+    html+="<td class='kD sPiece' style='text-align:right;color:#5b3fd4;font-weight:700'>"+fN(ld.drillParts)+"</td>";
+    html+="<td class='kD sRnd' style='text-align:right;color:#5b3fd4'>"+fN(ld.drill1)+"</td>";
+    html+="<td class='kD sRnd' style='text-align:right;color:#5b3fd4'>"+fN(ld.drill2)+"</td>";
+    html+="<td class='kC sPiece' style='text-align:right;color:#d4521a;font-weight:700'>"+fN(ld.cncParts)+"</td>";
+    html+="<td class='kC sRnd' style='text-align:right;color:#d4521a'>"+fN(ld.cnc1)+"</td>";
+    html+="<td class='kC sRnd' style='text-align:right;color:#d4521a'>"+fN(ld.cnc2)+"</td>";
+    html+="<td class='kL sPiece' style='text-align:right;color:#0e9f6e;font-weight:700'>"+fN(ld.ledParts||0)+"</td>";
+    html+="<td class='kL sRnd' style='text-align:right;color:#0e9f6e'>"+fN(ld.led1||0)+"</td>";
+    html+="<td class='kL sRnd' style='text-align:right;color:#0e9f6e'>"+fN(ld.led2||0)+"</td>";
+    html+="<td class='kD sRaw' style='text-align:right;color:#5b3fd4;font-weight:700;font-family:monospace'>"+fN(tH)+"</td>";
+    html+="<td class='kC sRaw' style='text-align:right;color:#d4521a;font-weight:700;font-family:monospace'>"+fN(tC)+"</td>";
+    html+="<td class='kC sRaw' style='text-align:right;color:#d4521a;font-family:monospace' title='ระยะที่หัวกัดวิ่งตี pocket = ยาว x ชั้น x ปัดขึ้น(กว้าง/ดอก)'>"+fM(cncTravel(ld))+"</td>";
+    html+="<td class='kL sRaw' style='text-align:right;color:#0e9f6e;font-weight:700;font-family:monospace'>"+fN(tL)+"</td>";
+    html+="<td class='kL sRaw' style='text-align:right;color:#0e9f6e;font-family:monospace' title='ความยาวร่องตามแบบ'>"+fM(c.totalLEDmm)+"</td>";
+    html+="<td class='kL sRaw' style='text-align:right;color:#0e9f6e;font-weight:700;font-family:monospace' title='ระยะที่หัวกัดวิ่งจริง = ความยาวร่อง x จำนวนรอบ'>"+fM(ledTravel(ld))+"</td>";
+    html+="<td class='kD sTim' style='text-align:right;color:#5b3fd4;font-family:monospace'>"+fS(dr)+"</td>";
+    html+="<td class='kC sTim' style='text-align:right;color:#d4521a;font-family:monospace'>"+fS(cn)+"</td>";
+    html+="<td class='kL sTim' style='text-align:right;color:#0e9f6e;font-family:monospace'>"+fS(lduration)+"</td>";
+    html+="<td style='text-align:right;color:#d4a010;font-weight:700;font-family:monospace'>"+fS(tot)+"</td>";
+    html+="<td class='no-print' style='padding:4px;text-align:center'>";
+    html+="<button onclick='event.stopPropagation();showDetail("+i+")' title='ดูรายละเอียด' style='background:rgba(91,63,212,.12);border:1px solid rgba(91,63,212,.35);color:#5b3fd4;border-radius:5px;width:22px;height:20px;cursor:pointer;font-size:11px;font-weight:700;line-height:1'>&#8250;</button>";
+    html+="</td></tr>";
+  }
+  body.innerHTML=html;
+  var cb=document.getElementById("chkAll");
+  if(cb){var allVis=vis.length>0&&vis.every(function(ld){return sel[ld.lot];});cb.checked=allVis;cb.indeterminate=Object.keys(sel).length>0&&!allVis;}
+  updateKPI();updateSelBar();updateFooter();
+}
+function applyFilter(){
+  var q=(document.getElementById("fSrch").value||"").toLowerCase();
+  var lot=document.getElementById("fLot")?document.getElementById("fLot").value:"";
+  var pool=document.getElementById("fPool")?document.getElementById("fPool").value:"";
+  var week=document.getElementById("fWeek")?document.getElementById("fWeek").value:"";
+  vis=ALL.filter(function(ld){
+    if(q&&ld.lot.toLowerCase().indexOf(q)<0)return false;
+    if(lot&&ld.lot!==lot)return false;
+    if(pool&&String(ld.pool||"")!==pool)return false;
+    if(week&&String(ld.lotWeek||0)!==week)return false;
+    return true;
+  });
+  renderTable();
+}
+function clearFilter(){
+  document.getElementById("fSrch").value="";
+  var fl=document.getElementById("fLot");if(fl)fl.value="";
+  var fp=document.getElementById("fPool");if(fp)fp.value="";
+  var fw=document.getElementById("fWeek");if(fw)fw.value="";
+  vis=ALL.slice();renderTable();
+}
+function toggleRow(tr){
+  if(!tr)return;
+  var td=tr.cells[1];if(!td)return;
+  var lot=td.textContent.trim();if(!lot)return;
+  sel[lot]=!sel[lot];if(!sel[lot])delete sel[lot];
+  tr.className=sel[lot]?"selected":"";
+  var cb=tr.querySelector("input[type=checkbox]");if(cb)cb.checked=!!sel[lot];
+  updateKPI();updateSelBar();updateFooter();
+  var chkAll=document.getElementById("chkAll");
+  if(chkAll){var allVis=vis.length>0&&vis.every(function(ld){return sel[ld.lot];});chkAll.checked=allVis;chkAll.indeterminate=Object.keys(sel).length>0&&!allVis;}
+}
+function toggleAll(cb){
+  vis.forEach(function(ld){if(cb.checked)sel[ld.lot]=1;else delete sel[ld.lot];});
+  renderTable();
+}
+function selectAll(){vis.forEach(function(ld){sel[ld.lot]=1;});renderTable();}
+function clearSel(){sel={};renderTable();}
+
+function onParamChange(){
+  var sH=getSH(),sC=getSC(),sL=getSL(),sLm=getSLm();
+  var sD=getDia(),sF=getFeed(),sP=getPct();
+  var cF=getCF(),cP=getCP(),cD=getCD(),cO=getCO();
+  var cF0=OP.cncFeed||10,cP0=OP.cncPct||65,cD0=(OP.cncDia!=null?OP.cncDia:4),cO0=(OP.cncOver!=null?OP.cncOver:2);
+  var lO=getLO(),lO0=(OP.ledOver!=null?OP.ledOver:0); var iLOe=document.getElementById("iLO"); if(iLOe)iLOe.className="param-input"+(lO!==lO0?" changed":"");
+  var ch=sH!==OP.secHole||sC!==OP.secCNC||sD!==(OP.ledDia!=null?OP.ledDia:4)||sF!==(OP.ledFeed||10)||sP!==(OP.ledPct||65)||cF!==cF0||cP!==cP0||cD!==cD0||cO!==cO0||lO!==lO0;
+  [["iCF",cF,cF0],["iCP",cP,cP0],["iCD",cD,cD0],["iCO",cO,cO0]].forEach(function(a){var e=document.getElementById(a[0]);if(e)e.className="param-input"+(a[1]!==a[2]?" changed":"");});
+  isRecalced=ch;
+  document.getElementById("pBar").className="param-bar"+(ch?" changed":"");
+  document.getElementById("rBdg").className="recalc-badge"+(ch?" show":"");
+  var iH=document.getElementById("iH"),iC=document.getElementById("iC");
+  if(iH)iH.className="param-input"+(sH!==OP.secHole?" changed":"");
+  if(iC)iC.className="param-input"+(sC!==OP.secCNC?" changed":"");
+  var iD=document.getElementById("iD"),iF=document.getElementById("iF"),iP=document.getElementById("iP");
+  if(iD)iD.className="param-input"+(sD!==(OP.ledDia!=null?OP.ledDia:4)?" changed":"");
+  if(iF)iF.className="param-input"+(sF!==(OP.ledFeed||10)?" changed":"");
+  if(iP)iP.className="param-input"+(sP!==(OP.ledPct||65)?" changed":"");
+  showPasses();
+}
+function doRecalc(){isRecalced=true;renderTable();closeDetail();}
+function resetParams(){
+  document.getElementById("iH").value=OP.secHole;
+  document.getElementById("iC").value=OP.secCNC;
+  var iF0=document.getElementById("iF"); if(iF0){iF0.value=(OP.ledFeed||10);iF0.className="param-input";}
+  var iP0=document.getElementById("iP"); if(iP0){iP0.value=(OP.ledPct||65);iP0.className="param-input";}
+  var iD0=document.getElementById("iD"); if(iD0){iD0.value=(OP.ledDia!=null?OP.ledDia:4);iD0.className="param-input";}
+  [["iLO",(OP.ledOver!=null?OP.ledOver:0)],["iCF",OP.cncFeed||10],["iCP",OP.cncPct||65],["iCD",(OP.cncDia!=null?OP.cncDia:4)],["iCO",(OP.cncOver!=null?OP.cncOver:2)]].forEach(function(a){var e=document.getElementById(a[0]);if(e){e.value=a[1];e.className="param-input";}});
+  showPasses();
+  isRecalced=false;
+  document.getElementById("pBar").className="param-bar";
+  document.getElementById("rBdg").className="recalc-badge";
+  document.getElementById("iH").className="param-input";
+  document.getElementById("iC").className="param-input";
+  renderTable();
+}
+function sortTable(col){
+  if(sCol===col)sAsc=!sAsc;else{sCol=col;sAsc=true;}
+  var sH=getSH(),sC=getSC(),sL=getSL();
+  vis.sort(function(a,b){
+    var av,bv;
+    var ac=a.calc||{},bc=b.calc||{};
+    if(col===0){av=a.lot;bv=b.lot;}
+    else if(col===1){av=a.rows||0;bv=b.rows||0;}
+    else if(col===2){av=a.mprFiles||0;bv=b.mprFiles||0;}
+    else if(col===3){av=ac.totalHoles||0;bv=bc.totalHoles||0;}
+    else if(col===4){av=ac.totalCNC||0;bv=bc.totalCNC||0;}
+    else if(col===5){av=ac.totalLED||0;bv=bc.totalLED||0;}
+    else if(col===6){av=ac.totalLEDmm||0;bv=bc.totalLEDmm||0;}
+    else if(col===9){av=ledTravel(a);bv=ledTravel(b);}
+    else if(col===10){av=a.drillParts||0;bv=b.drillParts||0;}
+    else if(col===11){av=a.cncParts||0;bv=b.cncParts||0;}
+    else if(col===12){av=a.ledParts||0;bv=b.ledParts||0;}
+    else if(col===7){av=(ac.totalHoles||0)*sH+cncTime(a)+ledTime(a);bv=(bc.totalHoles||0)*sH+cncTime(b)+ledTime(b);}
+    else if(col===13){av=cncTravel(a);bv=cncTravel(b);}
+    else return 0;
+    if(typeof av==="string")return sAsc?av.localeCompare(bv):bv.localeCompare(av);
+    return sAsc?av-bv:bv-av;
+  });
+  renderTable();
+}
+function exportXL(){
+  if(typeof XLSX==="undefined"){alert("ไม่พบ XLSX library");return;}
+  var sH=getSH(),sC=getSC(),sL=getSL();
+  var rows=[["Lot","Pool","Week","Part ทั้งหมด","ไฟล์ MPR","ชิ้นที่เจาะ","เจาะ 1 รอบ","เจาะ 2 รอบ","ชิ้น CNC","CNC 1 รอบ","CNC 2 รอบ","ชิ้น LED","LED 1 รอบ","LED 2 รอบ","รูเจาะ","จุด CNC","CNC เมตรวิ่ง","ร่อง LED","เมตร ร่อง","เมตร วิ่งจริง","เวลาเจาะ(วิ)","เวลาCNC(วิ)","เวลาLED(วิ)","เวลารวม(วิ)","เวลาเจาะ","เวลาCNC","เวลาLED","เวลารวม","Folder MPR (จับคู่)"]];
+  var sDP=0,sD1=0,sD2=0,sCP=0,sC1=0,sC2=0,sLP=0,sL1=0,sL2=0;
+  ALL.forEach(function(ld){
+    var c=ld.calc||{},tH=c.totalHoles||0,tC=c.totalCNC||0,tL=c.totalLED||0;
+    var dr=Math.round(tH*sH),cn=Math.round(cncTime(ld)),lp=Math.round(ledTime(ld));
+    var folders=(ld.folders&&ld.folders.length>0)?ld.folders.map(function(f){return"+ "+f;}).join("\n"):"-";
+    sDP+=ld.drillParts||0;sD1+=ld.drill1||0;sD2+=ld.drill2||0;sCP+=ld.cncParts||0;sC1+=ld.cnc1||0;sC2+=ld.cnc2||0;sLP+=ld.ledParts||0;sL1+=ld.led1||0;sL2+=ld.led2||0;
+    rows.push([ld.lot,String(ld.pool||"-"),ld.lotWeek?"Week "+ld.lotWeek:"-",ld.rows||0,ld.mprFiles||0,ld.drillParts||0,ld.drill1||0,ld.drill2||0,ld.cncParts||0,ld.cnc1||0,ld.cnc2||0,ld.ledParts||0,ld.led1||0,ld.led2||0,tH,tC,+(cncTravel(ld)/1000).toFixed(2),tL,+((c.totalLEDmm||0)/1000).toFixed(2),+(ledTravel(ld)/1000).toFixed(2),dr,cn,lp,dr+cn+lp,fS(dr),fS(cn),fS(lp),fS(dr+cn+lp),folders]);
+  });
+  var tH=OO.totalHoles||0,tC=OO.totalCNC||0,tL=OO.totalLED||0;
+  var tLdRaw=0;ALL.forEach(function(ld){tLdRaw+=ledTime(ld);});
+  var tDr=Math.round(tH*sH),tCn=Math.round(cncTimeC(OO)),tLd=Math.round(tLdRaw);
+  var tLmmAll=0,tTravAll=0;ALL.forEach(function(ld){tLmmAll+=(ld.calc&&ld.calc.totalLEDmm)||0;tTravAll+=ledTravel(ld);});
+  rows.push(["รวม","","","","",sDP,sD1,sD2,sCP,sC1,sC2,sLP,sL1,sL2,tH,tC,+(cncTravelC(OO)/1000).toFixed(2),tL,+(tLmmAll/1000).toFixed(2),+(tTravAll/1000).toFixed(2),tDr,tCn,tLd,tDr+tCn+tLd,fS(tDr),fS(tCn),fS(tLd),fS(tDr+tCn+tLd),""]);
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"]=[{wch:22},{wch:8},{wch:8},{wch:10},{wch:10},{wch:10},{wch:9},{wch:9},{wch:9},{wch:9},{wch:9},{wch:9},{wch:9},{wch:9},{wch:10},{wch:10},{wch:11},{wch:10},{wch:10},{wch:12},{wch:12},{wch:12},{wch:12},{wch:13},{wch:13},{wch:13},{wch:13},{wch:15},{wch:50}];
+  XLSX.utils.book_append_sheet(wb,ws,"DrillCNC");
+  if(PARTS){var pr=[["Lot","Part ID","ชื่อ Part","W","L","Barcode 1","Barcode 2","ไฟล์ .mpr","รูเจาะ","จุด CNC","ร่อง LED","LED (ม.)","งานที่ทำ"]];
+    ALL.forEach(function(ld){(PARTS[ld.lot]||[]).forEach(function(p){var t=[];if(p[7]>0)t.push("เจาะ");if(p[8]>0)t.push("CNC");if(p[9]>0)t.push("LED");
+      pr.push([ld.lot,p[0],p[1],p[2],p[3],p[4],p[5],(p[6]&1?"1":"")+(p[6]===3?"+":"")+(p[6]&2?"2":"")||"-",p[7],p[8],p[9],+((p[10]||0)/1000).toFixed(2),t.length?t.join(" + "):(p[6]?"มีไฟล์ ไม่มีงานเจาะ":"ไม่ได้เจาะ")]);});});
+    var ws2=XLSX.utils.aoa_to_sheet(pr);ws2["!cols"]=[{wch:24},{wch:10},{wch:26},{wch:7},{wch:7},{wch:17},{wch:17},{wch:9},{wch:8},{wch:8},{wch:8},{wch:8},{wch:18}];XLSX.utils.book_append_sheet(wb,ws2,"Part");}
+  XLSX.writeFile(wb,document.title+".xlsx");
+}
+window.onload=function(){setView("all");applyFilter();showPasses();applyTips(document);installTipPopover();};
+</script><script id="sxdPost">
+/* StarStock v1.52: ค่าที่ปรับที่บันทึกไว้ (Google Drive lots/edplan.json) + บันทึกเมื่อเปลี่ยน */
+(function () {
+  var D = document, IDS = ['iH', 'iC', 'iCF', 'iCP', 'iCD', 'iCO', 'iF', 'iP', 'iD', 'iLO'];
+  SXD.state = function () { var o = {}; IDS.forEach(function (id) { var e = D.getElementById(id), v = e ? parseFloat(e.value) : NaN; if (!isNaN(v)) o[id] = v; }); return o; };
+  SXD.changed = function () {
+    if (!SXD.ready || !SXD.parent || typeof SXD.parent.edSave !== 'function') return;
+    var st = SXD.state(), j = JSON.stringify(st); if (j === SXD.lastJ) return;
+    SXD.lastJ = j; try { SXD.parent.edSave('drill', st); } catch (e) { if (window.console) console.warn('[SXD] save', e); }
+  };
+  SXD.flush = function () { SXD.changed(); };
+  var _pc = onParamChange; onParamChange = function () { var r = _pc.apply(this, arguments); SXD.changed(); return r; };
+  var _rp = resetParams; resetParams = function () { var r = _rp.apply(this, arguments); SXD.changed(); return r; };
+  SXD.apply = function () {
+    var s = SXD.saved;
+    if (s) { IDS.forEach(function (id) { var e = D.getElementById(id), v = parseFloat(s[id]); if (e && !isNaN(v) && v >= 0) e.value = v; }); try { onParamChange(); doRecalc(); } catch (e) { if (window.console) console.warn('[SXD] apply', e); } }
+    SXD.lastJ = JSON.stringify(SXD.state()); SXD.ready = true;
+  };
+  var _ol = window.onload; window.onload = function (ev) { if (typeof _ol === 'function') _ol.call(window, ev); try { SXD.apply(); } catch (e) { if (window.console) console.error('[SXD] apply', e); SXD.ready = true; } };
+  window.addEventListener('pagehide', function () { SXD.changed(); });
+})();
+</script></body></html>
