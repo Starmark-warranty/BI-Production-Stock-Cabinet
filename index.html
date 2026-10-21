@@ -1751,7 +1751,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.54</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.55</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2757,10 +2757,15 @@ var GasFS = (function () {
    v1.54 (2026-10-21 10:50 ผู้ใช้ส่งรูป Master Plan v1.53: “อันนี้หรอ ทำไมย้าย ตารางตรงไหน”)
      · เดิม v1.53 ลากหัวช่องได้ แต่ไม่มีอะไรบนจอบอก (แค่ title ตอนชี้ · cursor) → หาไม่เจอ · ผู้ใช้ขอแบบ “คลิกย้าย” ตั้งแต่แรก
      · ไอคอน ⠿ หน้าชื่อทุกช่อง (จับลาก · คลิก = โหมดย้ายช่อง) · ปุ่ม “⇄ ย้ายช่อง” ที่แถบตัวกรอง → ทุกช่องมี ◀ ย้ายซ้าย / ย้ายขวา ▶ · “✓ เสร็จ” ปิดโหมด — ดู bdColMvBar / bdColMvUI
+
+   v1.55 (2026-10-21 11:05 ผู้ใช้ติดตั้ง StarSync v1.13 แล้ว: “ทำไมยังไม่ขึ้นรายการชิ้น” · รูป 🧩 “Lot นี้ไม่มีในรายการ Part … ตัดครบแล้ว / อยู่นอกช่วง enddate”)
+     · สาเหตุจริง: รอบแรกยังไม่ครบ — partsall.csv รันทุก 30 นาที (รอบ 10:56 ยังเป็น v1.9) · CSV ราย Lot ทยอยอ่าน (57/891 Lot · เหลือ 460 ไฟล์)
+     · เดิม: มี lotcsv.csv บางส่วนแล้ว = ถือว่า “มีรายการ Part” → Lot ที่ยังไม่ถึงคิวอ่าน ถูกบอกว่า “ตัดครบแล้ว / นอกช่วง” (ผิด)
+     · ตอนนี้: ยังไม่มี partsall.csv (StarSync ≥ v1.12) หรือ CSV ราย Lot ยังอ่านไม่ครบ = “StarSync ยังส่งรอบแรกไม่ครบ … เหลือ N ไฟล์ · รอสักครู่” — ดู plWhy
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.54';
+var VER = '1.55';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -10127,7 +10132,15 @@ function plWhy(id, code) {
     ? 'ยังไม่มีรายการ Part — StarSync ที่ส่งข้อมูลตอนนี้เป็น v' + v + ' (ต้อง v1.12 ขึ้นไป) · ติดตั้ง sync-ax-lots.ps1 v1.13 ที่เครื่องออฟฟิศ แล้วรอรอบแรก (≤ 30 นาที)'
     : 'ยังไม่มีรายการ Part — StarSync ยังไม่ส่ง lots/partsall.csv (รอรอบแรกทุก 30 นาที · ดู sync.log ที่เครื่องออฟฟิศ)';
   var K = String(id).toUpperCase(), inPa = B.pa && B.pa.map && B.pa.map.has(K), inPl = B.pl && B.pl.map && B.pl.map.has(K), inLc = lc && B.lc.map.has(K);
-  if (!inPa && !inPl && !inLc) return 'Lot นี้ไม่มีในรายการ Part ของ StarSync (ส่งเฉพาะ Lot ที่ยังตัดไม่จบ — Lot นี้ตัดครบแล้ว / อยู่นอกช่วง enddate)';
+  if (!inPa && !inPl && !inLc) {
+    /* v1.55 รอบแรกหลังติดตั้ง v1.13 ยังไม่ครบ = บอกว่ารอ (เดิมบอก “ตัดครบแล้ว / นอกช่วง” ทั้งที่ยังไม่ถึงคิวอ่าน) */
+    var lm = B.lc && B.lc.meta || null, pend = lm && +lm.pending > 0 ? +lm.pending : 0, paWait = !has && !!v && ssVerCmp(v, '1.12') >= 0;
+    if (paWait || (!has && pend)) return 'ยังไม่มีรายการ Part ของ Lot นี้ — StarSync v' + (v || '?') + ' ยังส่งรอบแรกไม่ครบ'
+      + (paWait ? ' · รายการ Part ทุกชิ้น (lots/partsall.csv) ส่งทุก 30 นาที — รอบแรกภายใน 30 นาทีหลังติดตั้ง (ไม่อยากรอ: ปุ่ม “ส่งใหม่ทั้งหมด” ที่หน้าต่าง StarSync)' : '')
+      + (pend ? ' · CSV ราย Lot ยังอ่านไม่ครบ เหลือ ' + fmtN(pend) + ' ไฟล์ (ทยอยนาทีละราว 20 ไฟล์ · สั่ง .\\sync-ax-lots.ps1 -EdgeDrillOnly = อ่านรวดเดียว)' : '')
+      + ' · รอสักครู่แล้วหน้านี้อัปเดตเอง';
+    return 'Lot นี้ไม่มีในรายการ Part ของ StarSync (ส่งเฉพาะ Lot ที่ยังตัดไม่จบ — Lot นี้ตัดครบแล้ว / อยู่นอกช่วง enddate)';
+  }
   return code ? 'ชั้นไม้ ' + code + ' ไม่มีในรายการ Part ของ Lot นี้ (รหัสวัสดุใน AX ไม่ตรงกับรหัสชั้นไม้ของ Cut Rite)' : 'ไม่มีรายการ Part ของ Lot นี้';
 }
 
