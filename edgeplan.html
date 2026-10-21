@@ -10,7 +10,7 @@
 /* StarStock v1.52 (แท็บ Edge Banding): หน้าในกรอบของ StarStock — ขอบนอกบางลง */
 html.sxs .wrap{padding-top:12px}
 </style>
-<meta name="starstock-edgeplan" content="v1.52 · จาก Edge_W43 (Edge Production System v5.9) 19/10/2569">
+<meta name="starstock-edgeplan" content="v1.53 · จาก Edge_W43 (Edge Production System v5.9) 19/10/2569">
 </head>
 <body>
 <div class="wrap">
@@ -876,8 +876,8 @@ function renderTable(){
     var isSel=sel[ld.lot]?true:false;
     var thisHalved=dsLots[ld.lot]?true:false;
     var rowId="row_"+ld.lot.replace(/[^a-zA-Z0-9]/g,"_");
-    var poolCell=ld.pool
-      ?"<span style=\"background:"+pc+"22;color:"+pc+";border:1px solid "+pc+"55;border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700\">"+ld.pool+"</span>"
+    var poolCell=(ld.pool||ld.pnm)
+      ?"<span style=\"background:"+pc+"22;color:"+pc+";border:1px solid "+pc+"55;border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700\">"+(ld.pnm||ld.pool)+"</span>"
       :"\u2014";
     html+="<tr id=\""+ rowId +"\" class=\""+(isSel?"selected":"")+"\">";
     html+="<td class=\"cb-cell no-print\"><input type=\"checkbox\" "+(isSel?"checked ":"")+"onchange=\"onCheck('"+ ld.lot +"',this.checked)\"></td>";
@@ -1341,7 +1341,7 @@ function lpvSheets(rows){
   var T = {n:0, t:0, e:0, p:0, s:0, np:0, ns:0, nm:0, ne:0, g:[]};
   for (j = 0; j < on.length; j++) T.g.push({p:0, s:0, t:0, m:0});
   for (i = 0; i < rows.length; i++){
-    var ld = rows[i], c = ld.calc || {}, row = [ld.lot, ld.pool || '', ld.week ? 'W' + ld.week : '', Math.max(0, (+ld.rows || 0) - (c.totalEdgePieces || 0)), c.totalEdgePieces || 0, c.totalEdgeSides || 0, c.normPcs || 0, c.normSides || 0, r2((c.normMM || 0) / 1000), fmtS(c.normSec)];
+    var ld = rows[i], c = ld.calc || {}, row = [ld.lot, ld.pnm || ld.pool || '', ld.week ? 'W' + ld.week : '', Math.max(0, (+ld.rows || 0) - (c.totalEdgePieces || 0)), c.totalEdgePieces || 0, c.totalEdgeSides || 0, c.normPcs || 0, c.normSides || 0, r2((c.normMM || 0) / 1000), fmtS(c.normSec)];
     for (j = 0; j < on.length; j++){ var x = (c.grp && c.grp[on[j]]) || {pcs:0, sides:0, sec:0, mm:0}; row.push(x.pcs, x.sides, r2((x.mm || 0) / 1000), lpFmtT(x.sec)); T.g[j].p += x.pcs; T.g[j].s += x.sides; T.g[j].t += x.sec; T.g[j].m += x.mm || 0; }
     row.push(fmtS(c.totalActualSec), r2(c.totalActualSec), c.longEst || '');
     a.push(row);
@@ -1350,7 +1350,7 @@ function lpvSheets(rows){
     for (var k2 = 0; k2 < st.parts.length; k2++){
       var y = st.parts[k2], qg = G[y.inf.g];
       var it = (ld.pl && ld.pl.r && y.p.ix != null) ? lpvPlItem(ld, y.p.ix) : {no:'', it:'', ar:'', pid:y.p.pid || '', pn:y.p.pn || '', bc:y.p.bc || '', T:''};
-      b.push([ld.lot, ld.pool || '', it.no, lpGName(qg), it.it, it.ar, it.pid, it.pn, it.bc, y.p.W, y.p.L, it.T || '', lst(y.ef), y.inf.sides, y.inf.len, qg.speed, r2(lpvPartTime(y.inf, gap, sp)), y.est ? '≈' : '']);
+      b.push([ld.lot, ld.pnm || ld.pool || '', it.no, lpGName(qg), it.it, it.ar, it.pid, it.pn, it.bc, y.p.W, y.p.L, it.T || '', lst(y.ef), y.inf.sides, y.inf.len, qg.speed, r2(lpvPartTime(y.inf, gap, sp)), y.est ? '≈' : '']);
     }
   }
   var tr = ['รวม', '', '', T.ne, T.p, T.s, T.np, T.ns, r2(T.nm / 1000), fmtS(T.n)];
@@ -1562,13 +1562,15 @@ window.addEventListener('load', function(){ _sortMark(); xsSync(); });
 /* StarStock v1.52: ป้าย/ตัวกรอง Pool · Week จากข้อมูลจริง + ค่าที่ปรับ/ติ๊กที่บันทึกไว้ (Google Drive lots/edplan.json) */
 (function () {
   var D = document, pools = {}, weeks = {};
-  ALL_ORIG.forEach(function (ld) { if (ld.pool) pools[ld.pool] = 1; if (ld.week) weeks[ld.week] = 1; });
+  var pnm = {};   // v1.53 เลข Pool → ชื่อเต็ม (ป้าย/ตัวเลือก = MP323 แบบเดียวกับ StarStock · ค่าที่กรองยังเป็นเลขแบบโปรแกรม BI)
+  ALL_ORIG.forEach(function (ld) { if (ld.pool) { pools[ld.pool] = 1; if (ld.pnm) (pnm[ld.pool] = pnm[ld.pool] || {})[ld.pnm] = 1; } if (ld.week) weeks[ld.week] = 1; });
+  var pName = function (p) { return pnm[p] ? Object.keys(pnm[p]).sort().join(' / ') : p; };
   var pk = Object.keys(pools).sort(), wk = Object.keys(weeks).map(Number).sort(function (a, b) { return a - b; });
   var fp = D.getElementById('fPool'), fw = D.getElementById('fWeek');
-  if (fp) fp.innerHTML = '<option value="">ทุก Pool</option>' + pk.map(function (p) { return '<option value="' + lpvE(p) + '">' + lpvE(p) + '</option>'; }).join('');
+  if (fp) fp.innerHTML = '<option value="">ทุก Pool</option>' + pk.map(function (p) { return '<option value="' + lpvE(p) + '">' + lpvE(pName(p)) + '</option>'; }).join('');
   if (fw) fw.innerHTML = '<option value="">ทุก Week</option>' + wk.map(function (w) { return '<option value="' + w + '">W' + w + '</option>'; }).join('');
   var bg = D.getElementById('sxeBadges');
-  if (bg) bg.innerHTML = pk.map(function (p) { var c = PC[p] || '#888'; return '<span class="badge" style="background:' + c + '22;color:' + c + ';border-color:' + c + '55">' + lpvE(p) + '</span>'; }).join(' ')
+  if (bg) bg.innerHTML = pk.map(function (p) { var c = PC[p] || '#888'; return '<span class="badge" style="background:' + c + '22;color:' + c + ';border-color:' + c + '55">' + lpvE(pName(p)) + '</span>'; }).join(' ')
     + ' ' + wk.map(function (w) { return '<span class="badge" style="background:#0891b222;color:#0891b2;border-color:#0891b255">W' + w + '</span>'; }).join(' ');
   /* ค่าที่ใช้ตอนนี้ (บันทึกเมื่อเปลี่ยน) */
   SXE.state = function () {
