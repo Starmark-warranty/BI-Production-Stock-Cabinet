@@ -1752,6 +1752,17 @@
   .rjt td small{display:block;font-family:var(--font);font-size:10.5px;color:var(--ink-faint);font-weight:500;white-space:normal}
   .rjt td.neg small{color:var(--bad)}
   @media print{ .dpjm{color:#000!important;background:none!important;border:1px solid #000!important} .dpbrd span.jm{outline:1px dashed #000} }
+  /* v1.58 Lot ไม่มี .saw ท้ายวัน (แถวคั่น + จาง) · ปุ่ม 🔄 จัดแผนวันนี้ใหม่ (กดครั้งแรก = ส้ม ถามยืนยัน) */
+  .dphead .dpact{flex-wrap:wrap;justify-content:flex-end;row-gap:6px}
+  .dptab tr.dpnsh td{padding:10px 8px 6px;font-size:12px;font-weight:800;color:#b7791f;border-bottom:1px dashed color-mix(in srgb,#b7791f 45%,transparent);background:color-mix(in srgb,#b7791f 5%,transparent)}
+  .dptab tr.ns td{background:color-mix(in srgb,#b7791f 4%,transparent)} .dptab tr.ns td.lot > span[data-cp]{opacity:.8}
+  .dbsaw tr.sep.ns td,.dbtp tr.sep.ns td{padding:10px 10px 6px;font-size:12px;font-weight:800;color:#b7791f;border-bottom:1px dashed color-mix(in srgb,#b7791f 45%,transparent)}
+  .dbtl li.nsh{cursor:default} .dbtl li.nsh small{color:#b7791f;font-weight:700} .dbtl li.nsh:hover{background:none}
+  .dpunit.dpns button small{font-size:11px;font-weight:800;margin-left:3px;opacity:.85}
+  .tprf.arm,.dbpickrow > .dbxl.tprf.arm{background:#e8890c!important;color:#fff!important;border-color:#e8890c!important}
+  .tprf:disabled{opacity:.65;cursor:progress}
+  p.nsoff,.cy.nsoff{color:#b7791f} b.nsoff{color:#b7791f;font-weight:700}
+  @media print{ .tprf,.dpns,tr.dpnsh{display:none!important} }
 </style>
 </head>
 <body>
@@ -1762,7 +1773,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.57</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.58</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2784,10 +2795,16 @@ var GasFS = (function () {
      · ตอนนี้: lots/rmjn.csv (StarSync v1.14 · ใบ TFRM ราย Lot เฉพาะแผ่นไม้) — แผ่นในใบที่ “แยกออกมา” (มี Original journal) ยังไม่ Post = 🪵 ไม้ยังไม่มี
        Lot รอตัด = ติดอยู่ · Lot ค้างตัด = ป้ายแดง + ชั้นไม้ที่ขาดขึ้นแดง (Master Plan · Daily Plan · Dashboard · SAW PLAN) · ใบปกติที่ยังไม่ Post = รอจ่าย (โชว์ในแผงรายละเอียด ไม่กันแผน)
        ไม่มี rmjn.csv (StarSync เก่า) = แบบเดิม — ดู rjMiss / rjMissBoard / bdAlloc / rjSpRm
+
+   v1.58 (2026-10-21 13:27 ผู้ใช้: “ถ้า Lot ไหนไม่มี .saw ให้แยกออกมาไว้ท้ายสุดในแผนแต่ละวัน ให้กดปิดไม่ให้ขึ้นได้ · Daily Plan … ให้มีปุ่ม Refresh จัดลำดับแผนให้ใหม่”
+     13:35 “ปุ่ม Refresh ให้มีหน้า Dashboard ด้วย” · 13:36 รูป Dashboard วันนี้ แถว 5 BO69-0926_Mc 🪵: “มีติดรายการไม้ กดรีเฟรช มันต้องเปลี่ยนแผนได้”)
+     · Lot ไม่มี .saw: ค่าตั้งร่วม noSaw “ท้ายวัน” (ค่าตั้งต้น · ไว้ท้ายแต่ละวันของเครื่อง) / “ปิด” (ไม่นับในแผน → ช่องติดอยู่ · วันว่างเติม Lot ที่มี .saw)
+       ปุ่มอยู่หัว Daily Plan · ค้างตัด/ยิงแล้ว/ปรับแผนเอง ไม่โดน — ดู nsOrder / nsSet
+     · 🔄 จัดแผนวันนี้ใหม่ (Daily Plan + Dashboard): อ่านข้อมูลล่าสุด → แผนวันนี้คิดสดจากตอนนี้ → บันทึกทับ lots/plan/<วันนี้>.json (เก็บสำรอง .bak) — ดู tpRefresh
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.57';
+var VER = '1.58';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4231,7 +4248,7 @@ var BD_DEF = { v: 1, lead: 5, work: [1, 2, 3, 4, 5, 6], capSaw: 480, capCnc: 420
      tgLoad วินาที/กอง · tgBunN แผ่น/กอง · tgBunH มม./กอง · tgLabel วินาที/ชิ้น · tgSetup วินาที/ผัง · tgLoss % · tgInc = ชุดค่า Cut Rite ที่คิดโหลดกองไม้ไว้ใน Total Time แล้ว */
   tgOn: true, tgLoad: 120, tgBunN: 60, tgBunH: 1000, tgLabel: 3, tgSetup: 0, tgLoss: 0, tgInc: '140404', dpStart: '08:00', dpBrk: '12:00', dpBrkMin: 60,
   /* v1.40 หน่วยลงเครื่อง: 'lot' = ทั้ง Lot (เหมือนเดิม) · 'board' = ทีละชั้นไม้ — ดูหัวบล็อก v1.40 */
-  unit: 'lot' };   // capSaw (นาที) ใช้เฉพาะเมื่อปิด “วางตามเครื่อง” (mcOn:false)
+  unit: 'lot', /* v1.58 Lot ไม่มี .saw: 'end' = ท้ายวัน · 'off' = ไม่นับในแผน */ noSaw: 'end' };   // capSaw (นาที) ใช้เฉพาะเมื่อปิด “วางตามเครื่อง” (mcOn:false)
 var B = { set: JSON.parse(JSON.stringify(BD_DEF)), setU: 0, setFrom: '', stock: null, stockU: 0, stockNone: false, extra: new Map(), extraU: {}, xdirNone: true,
   sel: null, plan: null, loading: null, err: null, lastCheck: 0,
   /* v1.6 */ sp: { map: null, at: 0, ok: 0, err: null, n: 0, cols: null, sig: '', busy: null }, cr: { map: null, at: 0, ok: 0, err: null, n: 0, sig: '', busy: null },
@@ -4577,6 +4594,7 @@ function bdNormSet(o) {
   if (typeof o.tgInc === 'string') s.tgInc = o.tgInc.trim();
   ['dpStart', 'dpBrk'].forEach(function (k) { if (typeof o[k] === 'string' && /^\d{1,2}:\d{2}$/.test(o[k].trim())) s[k] = o[k].trim(); });
   if (o.unit === 'board' || o.unit === 'lot') s.unit = o.unit;   // v1.40
+  if (o.noSaw === 'end' || o.noSaw === 'off') s.noSaw = o.noSaw;   // v1.58
   return s;
 }
 
@@ -4756,6 +4774,7 @@ function bdPlan() {
   cand.forEach(function (g) {
     var x = g.x;
     if (x && x.ready === false) { g.why = x.note ? String(x.note) : 'โปรแกรมต้นทางแจ้งว่ายังไม่พร้อม'; g.mat = 'short'; g.rmRows = []; blocked.push(g); return; }
+    if (st.noSaw === 'off' && !nsHas(g) && !adjOf(g)) { g.noSaw = true; g.why = NS_WHY; g.rmRows = []; blocked.push(g); return; }   // v1.58 ปิด Lot ไม่มี .saw = ไม่นับในแผน (ปรับแผนเองไว้ = ยังเข้าแผน)
     bdAlloc(g, left, true);
     if (g.mat === 'short') { g.why = g.matWhy; blocked.push(g); return; }
     if (g.mat === 'unk' && st.needRm) { g.why = g.rmNoT ? g.matWhy : 'ยังไม่มีข้อมูลวัตถุดิบของ Lot นี้'; blocked.push(g); return; }   // v1.34 ยังไม่ Transfer
@@ -5274,6 +5293,7 @@ function bdSettings() {
       o.machines = s.machines.map(function (m, i) { return { n: m.n, pc: m.pc, on: q('[data-mon="' + i + '"]').checked, ppd: +q('[data-mppd="' + i + '"]').value, hpd: +q('[data-mhpd="' + i + '"]').value,
         maxThk: +q('[data-mthk="' + i + '"]').value || 0, deny: String(q('[data-mdeny="' + i + '"]').value || '').trim() }; });   // v1.40
       o.unit = q('#bsUnit').value === 'board' ? 'board' : 'lot';   // v1.40
+      o.noSaw = B.set.noSaw === 'off' ? 'off' : 'end';   // v1.58 ตั้งที่หัว Daily Plan (ไม่มีช่องใน ⚙) — บันทึก ⚙ แล้วค่าเดิมไม่หาย
       if (o.machines.some(function (m) { return !isFinite(m.ppd) || m.ppd < 0; })) { q('#bsM').textContent = 'ชิ้น/วัน ต้องไม่ติดลบ'; return; }
       if (o.machines.some(function (m) { return !isFinite(m.hpd) || m.hpd < 0 || m.hpd > 24; })) { q('#bsM').textContent = 'ชม./วัน ต้องอยู่ระหว่าง 0–24'; return; }   // v1.32
       if (!o.work.length) { q('#bsM').textContent = 'เลือกวันทำงานอย่างน้อย 1 วัน'; return; }
@@ -7925,7 +7945,7 @@ function dbMcPick(S) {
   return '<div class="dbpickrow"><nav class="dbpick" aria-label="เลือกเครื่อง"><button type="button" data-dbsel=""' + (!DB.mc ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>ทุกเครื่อง</button>'
     + S.mcs.map(function (x) { var on = DB.mc === x.m.n, c = x.o.c, i = bdMqIdle(c, Date.now()), run = i != null && i <= 20, ppd = x.m.ppd || 0, v = c ? c.codes.size : 0;
       return '<button type="button" data-dbsel="' + esc(x.m.n) + '" class="' + (on ? 'on' : '') + (run ? ' run' : '') + '" aria-pressed="' + on + '"><i></i>' + esc(x.m.n) + (ppd ? '<small>' + dbPct(v / ppd) + '</small>' : '') + '</button>'; }).join('')
-    + '</nav><button type="button" class="dbxl" data-dbxl title="ไฟล์ Excel จัดหน้า A4 แบบแท็บ SAW PLAN: สรุป · รายเครื่อง · พรุ่งนี้ต้องขึ้น · ค้างตัด · เลยกำหนดตัด">📊 Excel A4</button></div>';   /* v1.51 + ปุ่ม Excel A4 */
+    + '</nav>' + tpRfHtml('dbxl') /* v1.58 */ + '<button type="button" class="dbxl" data-dbxl title="ไฟล์ Excel จัดหน้า A4 แบบแท็บ SAW PLAN: สรุป · รายเครื่อง · พรุ่งนี้ต้องขึ้น · ค้างตัด · เลยกำหนดตัด">📊 Excel A4</button></div>';   /* v1.51 + ปุ่ม Excel A4 */
 }
 /* เลข .saw ของ Lot (ทุก Run ใหม่ก่อน) */
 function dbSawNos(id) { var a = crxOf(id); return a && a.length ? a.map(function (r) { return r.run; }) : []; }
@@ -8044,7 +8064,8 @@ function dbDayTabs(P, pm, k, x) {
 function dbCapBar(lbl, v, cap, txt, unit) { var u = cap ? v / cap : 0; return '<div class="dbcr' + (u >= 0.95 ? ' full' : '') + '"><div class="t"><span>' + lbl + ' <b>' + txt(Math.min(v, cap)) + '</b> / ' + txt(cap) + unit + '</span><b>' + dbPct(Math.min(1, u)) + '</b></div><div class="bar" role="img" aria-label="' + esc(lbl + ' ' + txt(v) + ' จาก ' + txt(cap) + unit) + '"><i style="width:' + Math.min(100, u * 100).toFixed(1) + '%"></i></div></div>'; }
 function dbDaySec(x, P, k) {
   var pm = x.o.pm, ppd = x.m.ppd || 0, mn = pm && pm.min || 0, L = dbDayLots(pm, k), ms = bdMqDayMs(P, k), W = dbDayW(P, k, true), U = dbDayUse(pm, L);
-  var sawN = 0, estN = 0, tl = L.map(function (t, i) { var nos = dbSawNos(t.g.id), sec = dbSawSec(t.g.id), ra = crxOf(t.g.id) || [], pp = Math.round(t.p || 0), pre = Math.round(t.pre), inD = Math.round(t.inD), post = Math.round(t.post); if (nos.length) sawN++; else estN++;
+  var LD = nsOrder(L, function (t) { return t.g; }, function (t) { return !!adjOf(t.g); }), NSD = LD.ns[0];   // v1.58 ไม่มี .saw = ท้ายวัน
+  var sawN = 0, estN = 0, tl = LD.map(function (t, i) { var nos = dbSawNos(t.g.id), sec = dbSawSec(t.g.id), ra = crxOf(t.g.id) || [], pp = Math.round(t.p || 0), pre = Math.round(t.pre), inD = Math.round(t.inD), post = Math.round(t.post); if (nos.length) sawN++; else estN++;
     var sp = (pre || post) ? [pre ? 'ต่อจากวันก่อน ' + fmtN(pre) : '', W + ' ' + fmtN(inD), post ? 'ต่อวันถัดไป ' + fmtN(post) : ''].filter(Boolean).join(' · ') : '';
     /* v1.32 เวลาตัด: มี .saw = เวลาจากไฟล์ · ไม่มี = เวลาที่แผนใช้ (≈ ประมาณ) · Lot คร่อมวัน = บอกเวลาในวันนี้ */
     var tmTxt = sec ? esc(crxDur(sec / 60)) : t.t > 0 ? '≈ ' + esc(crxDur(t.t)) : '', tmSub = !sec && t.t > 0 ? (t.g.cutSrc === 'pt' ? 'ประมาณจากขนาดชิ้นงาน' : 'ประมาณ ' + B.set.cutPP + ' นาที/ชิ้น') : ra.length > 1 ? ra.length + ' Run' : '';
@@ -8052,7 +8073,7 @@ function dbDaySec(x, P, k) {
     /* v1.42 ชม.:นาที:วินาที ไม่ปัด (เดิม crxDur ปัดเป็นนาที — ผู้ใช้ 20/10 09:17 “เหมือนเวลาถูกปัดขึ้นไป”) · .saw = เวลาผังรายชั้นไม้รวม (StarSync v1.9) */
     if (t.g.tg) { tmTxt = esc(tgHms(t.t * 60)); tmSub = '.saw ' + tgHms(t.g.tg.cut) + (t.g.tg.load > 0 ? ' + โหลด ' + tgHms(t.g.tg.load) : '') + (t.g.tg.label > 0 ? ' + Label ' + tgHms(t.g.tg.label) : ''); }
     if (pre || post) tmSub = (tmSub ? tmSub + ' · ' : '') + W + ' ' + (t.g.tg ? tgHms(t.tIn * 60) : crxDur(t.tIn));
-    return '<tr data-dbl="' + esc(t.g.id) + '"' + (pre ? ' class="cont"' : '') + '><td class="no">' + (i + 1) + '</td><td class="lot"><span data-cp="' + esc(t.g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(t.g.id) + '</span>' + poolChip(t.g.id, t.g.pool) /* v1.53 */ + '</td>' + dbEndCell(t.g, P) + '<td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
+    return (t === NSD ? '<tr class="sep ns"><td></td><td colspan="6">' + esc(nsSepTxt(LD.ns.length, LD.ns.reduce(function (a, q) { return a + (q.tIn || 0); }, 0))) + '</td></tr>' : '') /* v1.58 */ + '<tr data-dbl="' + esc(t.g.id) + '"' + (pre ? ' class="cont"' : '') + '><td class="no">' + (i + 1) + '</td><td class="lot"><span data-cp="' + esc(t.g.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(t.g.id) + '</span>' + poolChip(t.g.id, t.g.pool) /* v1.53 */ + '</td>' + dbEndCell(t.g, P) + '<td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
       + dbMatCell(t.g)
       + '<td class="pc">' + fmtN(pp) + (sp ? '<small>' + esc(sp) + '</small>' : '') + '</td>'
       + '<td class="tm' + (!sec && t.t > 0 ? ' est' : '') + '"' + (ra.length > 1 ? ' title="' + esc(crxTip(ra)) + '"' : '') + '>' + (tmTxt || '<em>—</em>') + (tmSub ? '<small>' + esc(tmSub) + '</small>' : '') + '</td></tr>'; });
@@ -8294,7 +8315,7 @@ async function tpLoad() {
   var fs = ensureFs(); if (!fs) return false;
   var X = B.tp, key = tpKey(Date.now());
   if (X.loading) return X.loading;
-  if (X.date === key && Date.now() - X.at < 10 * 60e3) return false;
+  if (X.date === key && Date.now() - X.at < 2 * 60e3) return false;   // v1.58 เดิม 10 นาที — แผนจัดใหม่ (🔄) ถึงเครื่องอื่นภายใน 2 นาที
   X.loading = (async function () {
     var ch = false;
     try {
@@ -8366,22 +8387,25 @@ function tpLive(x, P) {
 function dbTodaySec(x, P) {
   var pm = x.o.pm, c = x.o.c, snap = tpToday(P), ms = snap && snap.mcs[x.m.n], ppd = x.m.ppd || 0, mn = pm && pm.min || bdMcMin(x.m), W = 'วันนี้';
   var h = '<section class="dbc dbonetmr dbtoday"><header><h3>วันนี้ต้องตัด<small>' + esc(bdDayTxt(P.today)) + ' · '
-    + (snap ? 'แผนที่บันทึกไว้ ' + esc(String(snap.at || '').replace('T', ' ').slice(0, 16)) + (snap.by ? ' (' + esc(snap.by) + ')' : '') : 'ยังไม่มีแผนที่บันทึกไว้ — คำนวณสดจากตอนนี้') + '</small></h3></header>' + dbDayTabs(P, pm, -1, x);
+    + (snap ? (snap.re ? 'จัดแผนใหม่ ' : 'แผนที่บันทึกไว้ ') /* v1.58 */ + esc(String(snap.at || '').replace('T', ' ').slice(0, 16)) + (snap.by ? ' (' + esc(snap.by) + ')' : '') : 'ยังไม่มีแผนที่บันทึกไว้ — คำนวณสดจากตอนนี้') + '</small></h3></header>' + dbDayTabs(P, pm, -1, x);
   var head = '<table class="dbsaw dbtp"><thead><tr><th>#</th><th>Lot</th><th class="ed">ส่ง (enddate)</th><th>เลข .saw</th><th class="pc">' + (snap ? 'แผน (ชิ้น)' : 'เหลือ (ชิ้น)') + '</th><th class="pc">ตัดวันนี้</th><th>สถานะ</th></tr></thead><tbody>';
   var seen = new Set(), rows = [], nDone = 0, nRun = 0, nWait = 0, nOth = 0;
   if (ms) {
-    ms.lots.forEach(function (o, i) { var g = P.G.get(o.id), nT = tpCutHere(c, o.id); seen.add(String(o.id).toUpperCase());
+    var LS = nsOrder(ms.lots, function (o) { return P.G.get(o.id); }, function (o) { var g = P.G.get(o.id); return tpCutHere(c, o.id) > 0 || !!(g && (tpDone(g, P) || adjOf(g))); }), NS0 = LS.ns[0];   // v1.58 ไม่มี .saw = ท้าย · ปิด = ไม่นับ
+    LS.forEach(function (o, i) { if (o === NS0) rows.push('<tr class="sep ns"><td></td><td colspan="6">' + esc(nsSepTxt(LS.ns.length, LS.ns.reduce(function (a, z) { return a + (z.t || 0); }, 0))) + '</td></tr>');
+      var g = P.G.get(o.id), nT = tpCutHere(c, o.id); seen.add(String(o.id).toUpperCase());
       var d = tpDone(g, P); if (d) nDone++; else if (nT) nRun++; else if (g && tpCutElse(x.m.pc, g.id).length) nOth++; else nWait++;
       rows.push(tpRow(i + 1, o.id, g, P, fmtN(o.p) + (o.t ? '<small>' + esc(crxDur(o.t)) + (o.all > o.p ? ' · ทั้ง Lot ' + fmtN(o.all) : '') + '</small>' : ''), nT, tpStatus(g, P, nT, x.m.pc), d ? 'done' : '')); });
     (ms.carry || []).forEach(function (o) { seen.add(String(o.id).toUpperCase()); });
     var outs = c && c.lotCodes ? Object.keys(c.lotCodes).filter(function (l) { return !seen.has(l.toUpperCase()); }) : [];
-    var nL = ms.lots.length, tot = ms.lots.reduce(function (a, o) { return a + o.p; }, 0);
+    var nL = LS.length, tot = LS.reduce(function (a, o) { return a + o.p; }, 0);   // v1.58
     h += '<div class="dbcap dbtpsum' + (nDone === nL && nL ? ' full' : '') + '"><div class="t"><span>ทำตามแผนแล้ว <b>' + (nDone + nRun) + '</b> / ' + nL + ' Lot</span><b>' + dbPct(nL ? (nDone + nRun) / nL : 0) + '</b></div>'
       + '<div class="bar"><i style="width:' + (nL ? (nDone / nL * 100).toFixed(1) : 0) + '%"></i><i class="r" style="width:' + (nL ? (nRun / nL * 100).toFixed(1) : 0) + '%"></i></div>'
       + '<small>✓ ตัดครบ ' + nDone + ' · ▶ กำลังตัด ' + nRun + (nOth ? ' · ตัดที่เครื่องอื่น ' + nOth : '') + ' · ยังไม่เริ่ม ' + nWait + ' · แผน ' + fmtN(tot) + ' ชิ้น · ยิงวันนี้ ' + fmtN(c ? c.codes.size : 0) + ' ชิ้น'
       + ((ms.carry || []).length ? ' · ตอนวางแผนมีค้างตัด ' + ms.carry.length + ' Lot' : '') + '</small></div>';
-    h += nL || outs.length ? head + rows.join('') + (outs.length ? '<tr class="sep"><td></td><td colspan="6">ตัดนอกแผน (ยิงวันนี้ที่เครื่องนี้ ไม่อยู่ในแผน)</td></tr>' + outs.map(function (l) { var g = P.G.get(l) || P.G.get(String(l).toUpperCase()); var nT = tpCutHere(c, l); return tpRow('+', l, g, P, '<em>—</em>', nT, tpStatus(g, P, nT, x.m.pc), 'out'); }).join('') : '') + '</tbody></table>'
+    h += nL || outs.length ? head + rows.join('') + dbTpOuts(outs, ms, c, P, x) /* v1.58 ยิงก่อนจัดใหม่ แยกจากนอกแผน */ + '</tbody></table>'
       : '<p class="mqnone">แผนที่บันทึกไว้ไม่มี Lot ใหม่ลงเครื่องนี้วันนี้</p>';
+    if (LS.off.length) h += '<p class="mqnone nsoff">' + esc(nsOffTxt(LS.off.length) + ' — กด 🔄 จัดแผนวันนี้ใหม่ ให้ Lot ที่มี .saw ขึ้นมาแทน') + '</p>';   // v1.58
     return h + '</section>';
   }
   /* คำนวณสด: ค้างตัด (เหลือ) + Lot ถัดไปในคิวที่ยังใส่เวลาที่เหลือของวันนี้ได้ */
@@ -8392,8 +8416,9 @@ function dbTodaySec(x, P) {
   h += '<div class="dbcap dbtpsum"><div class="t"><span>ยิงไปแล้ววันนี้ <b>' + fmtN(cutP) + '</b> ชิ้น ≈ ' + esc(crxDur(usedT) || '0 นาที') + (mn ? ' · เหลือเวลา ≈ ' + esc(crxDur(leftT) || '0 นาที') + ' / ' + (mn / 60) + ' ชม.' : '') + '</span><b>' + dbPct(mn ? Math.min(1, usedT / mn) : 0) + '</b></div>'
     + '<div class="bar"><i style="width:' + (mn ? Math.min(100, usedT / mn * 100).toFixed(1) : 0) + '%"></i></div>'
     + '<small>คำนวณสด: Lot ค้างตัดของเครื่องนี้ก่อน แล้วต่อด้วย Lot ในคิวที่ยังใส่เวลาที่เหลือได้ (Lot เหล่านี้ในแผนเดิมอยู่วันถัดไป — ถ้าตัดวันนี้ได้ แผนพรุ่งนี้จะเลื่อนขึ้นเอง)</small></div>';
+  live = nsOrder(live, function (z) { return z.e.g; }, function (z) { return z.carry || z.pin || tpCutHere(c, z.e.g.id) > 0 || !!adjOf(z.e.g); }); var NSL = live.ns[0];   // v1.58
   h += live.length ? head + live.map(function (z, i) { var g = z.e.g, nT = tpCutHere(c, g.id);
-      return tpRow(i + 1, g.id, g, P, fmtN(Math.round(z.e.p || 0)) + (z.t ? '<small>' + esc(crxDur(z.t)) + '</small>' : ''), nT, z.carry ? tpStatus(g, P, nT, x.m.pc) : '<span class="wait">ต่อคิว</span><small>แผนเดิม ' + esc(dbDayW(P, z.e.d0 || 0, true)) + '</small>', z.carry ? 'cy' : ''); }).join('') + '</tbody></table>'
+      return (z === NSL ? '<tr class="sep ns"><td></td><td colspan="6">' + esc(nsSepTxt(live.ns.length, live.ns.reduce(function (a, q) { return a + (q.t || 0); }, 0))) + '</td></tr>' : '') + tpRow(i + 1, g.id, g, P, fmtN(Math.round(z.e.p || 0)) + (z.t ? '<small>' + esc(crxDur(z.t)) + '</small>' : ''), nT, z.carry ? tpStatus(g, P, nT, x.m.pc) : '<span class="wait">ต่อคิว</span><small>แผนเดิม ' + esc(dbDayW(P, z.e.d0 || 0, true)) + '</small>', z.carry ? 'cy' : ''); }).join('') + '</tbody></table>'
     : '<p class="mqnone">ไม่มี Lot ค้างตัด และเวลาที่เหลือวันนี้ไม่พอให้ Lot ถัดไป</p>';
   return h + '</section>';
 }
@@ -8439,6 +8464,7 @@ function dbTodayPlan(x, P, GU, cur, run, idle) {
     if (x.o.pm) x.o.pm.q.filter(function (e) { return e.today; }).forEach(function (e) { plan.push({ id: e.g.id, g: e.g, p: Math.round(e.p || 0), t: e.t || null }); });
   } else if (x.o.pm) tpLive(x, P).live.forEach(function (z) { plan.push({ id: z.e.g.id, g: z.e.g, p: Math.round(z.e.p || 0), t: z.t || null, carry: !!z.carry }); });
   plan = plan.filter(function (o) { var K = U(o.id); if (shot.has(K) || seen.has(K)) return false; seen.add(K); return true; });
+  plan = nsOrder(plan, function (o) { return o.g; }, function (o) { return o.carry || !!(o.g && adjOf(o.g)); }); var NSP = plan.ns[0], NSPn = plan.ns.length;   // v1.58
   plan.forEach(function (o) { o.fin = dbTpFin(o.g, P); o.el = o.g && !o.fin ? tpCutElse(x.m.pc, o.g.id) : []; if (o.t == null && o.g) o.t = bdLotMin(o.g, o.p); });
   /* ③ ตัวชี้: Lot ที่ยิงล่าสุดยังไม่ครบ = อยู่ที่ Lot นั้น · ครบแล้ว (หรือวันนี้ยังไม่ยิง) = Lot ถัดไปในแผน */
   var gc = cur ? gOf(cur) : null, curOn = !!cur && !dbTpFin(gc, P), nx = -1;
@@ -8457,7 +8483,7 @@ function dbTodayPlan(x, P, GU, cur, run, idle) {
   if (plan.length) {
     var rest = plan.filter(function (o) { return !o.fin; }), rP = 0, rT = 0; rest.forEach(function (o) { rP += o.p || 0; rT += o.t || 0; });
     h += '<span class="l dbtpl">แผนวันนี้ต่อจากนี้ · ' + rest.length + ' Lot · ' + fmtN(Math.round(rP)) + ' ชิ้น' + (rT > 0 ? ' ≈ ' + esc(crxDur(rT)) : '')
-      + '<em>' + (snap ? 'แผนที่บันทึกไว้ ' + esc(String(snap.at || '').slice(11, 16)) : 'คำนวณสดจากเวลาที่เหลือวันนี้') + '</em></span>';
+      + '<em>' + (snap ? esc(tpSrcTxt(snap)) /* v1.58 */ : 'คำนวณสดจากเวลาที่เหลือวันนี้') + '</em></span>';
     h += '<ol class="dbtl dbtp2">' + plan.slice(0, DBTP_MAX).map(function (o, i) {
       var g = o.g, mk = i === nx, run1 = mk && !curOn, s0 = g ? bdMqLotNow(g, P) : null;
       var pr = s0 && s0.s0 && s0.s0.v ? 'ตัดแล้ว ' + fmtN(s0.s0.v) + ' / ' + fmtN(s0.s0.tt) : '';
@@ -8467,7 +8493,7 @@ function dbTodayPlan(x, P, GU, cur, run, idle) {
       else { if (o.el.length) sub.push('ตัดที่ ' + o.el.join(' · ')); if (pr) sub.push(pr); }
       if (run1 && cur) sub.push('ต่อจาก ' + cur + ' (ครบแล้ว) · ยังไม่ยิงชิ้นแรก');
       var tg = mk ? (curOn ? '<span class="tg nx">ต่อไป</span>' : cur ? '<span class="tg">กำลังตัด</span>' : '<span class="tg">เริ่มที่ Lot นี้</span>') : o.el.length ? '<span class="tg oth">ตัดที่เครื่องอื่น</span>' : '';
-      return '<li class="pl' + (mk ? (run1 ? ' cur mk' : ' nx') : '') + (o.fin ? ' done' : '') + (o.carry ? ' cy' : '') + '"' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (g && !o.fin && ptTip(g.id) ? ' title="' + esc(ptTip(g.id)) + '"' : '')
+      return (o === NSP ? '<li class="more nsh"><i></i><div><small>' + esc(nsSepTxt(NSPn, plan.ns.reduce(function (a, q) { return a + (q.t || 0); }, 0))) + '</small></div></li>' : '') /* v1.58 */ + '<li class="pl' + (mk ? (run1 ? ' cur mk' : ' nx') : '') + (o.fin ? ' done' : '') + (o.carry ? ' cy' : '') + '"' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (g && !o.fin && ptTip(g.id) ? ' title="' + esc(ptTip(g.id)) + '"' : '')
         + '><i>' + (o.fin ? '✓' : run1 ? '▶' : (i + 1)) + '</i><div><b data-cp="' + esc(o.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(o.id) + '</b>' + poolChip(o.id) /* v1.52 */ + crxChip(o.id) + tg
         + '<small>' + esc(sub.join(' · ')) + '</small>' + (g && !o.fin && !g.closed ? rjTag(g, 'dpjm') : '') /* v1.57 */ + '</div></li>'; }).join('')
       + (plan.length > DBTP_MAX ? '<li class="more"><i></i><div><small>+ อีก ' + (plan.length - DBTP_MAX) + ' Lot — ดูแท็บ “วันนี้”</small></div></li>' : '') + '</ol>';
@@ -8612,11 +8638,11 @@ function dpDayW(P, k, long) { return k < 0 ? 'วันนี้' : dbDayW(P, k,
 function dpDefDay(P) { var d = new Date(P.today), w = B.set.work || []; return !w.length || w.indexOf(d.getDay()) >= 0 ? -1 : 0; }
 /* แถวของเครื่องในวัน k: [{ g, id, p ชิ้นในวัน, t นาทีในวัน, carry, all ชิ้นทั้ง Lot, pre, post }] + ที่มา */
 function dpRows(x, P, k) {
-  var pm = x.o.pm, out = [], src = '';
+  var pm = x.o.pm, out = [], src = '', from = null, pre0 = null, re = 0;   // v1.58
   if (k < 0) {
     var snap = tpToday(P), ms = snap && snap.mcs ? snap.mcs[x.m.n] : null;
     if (ms) {
-      src = 'snap';
+      src = 'snap'; from = ms.from != null ? +ms.from : null; pre0 = ms.pre || null; re = snap.re || 0;   // v1.58 แผนที่กด 🔄 จัดใหม่
       (ms.carry || []).forEach(function (o) { var g = P.G.get(o.id) || null; out.push({ g: g, id: o.id, p: o.p || 0, t: g ? bdLotMin(g, o.p || 0) : 0, carry: true }); });
       (ms.lots || []).forEach(function (o) { var g = P.G.get(o.id) || null; out.push({ g: g, id: o.id, p: o.p || 0, t: o.t || (g ? bdLotMin(g, o.p || 0) : 0), all: o.all || 0 }); });
       /* v1.39 ปรับแผนวันนี้หลังบันทึกแผน: Lot ที่ย้ายไปเครื่อง/วันอื่น = ขีดฆ่า (ไม่นับ) · Lot ที่ปักไว้ “วันนี้” ที่เครื่องนี้ = ต่อท้าย */
@@ -8635,7 +8661,13 @@ function dpRows(x, P, k) {
     src = 'plan';
     dbDayLots(pm, k).forEach(function (t) { out.push({ g: t.g, id: t.g.id, p: Math.round(t.inD), t: t.tIn, all: Math.round(t.p || 0), pre: Math.round(t.pre), post: Math.round(t.post), boards: t.boards /* v1.40 */ }); });
   }
-  return { rows: out, src: src };
+  /* v1.58 ยิงแล้วก่อนกด 🔄 จัดแผนใหม่ = ขึ้นก่อน “ตัดก่อนจัดใหม่” (เดิมจะเป็น “นอกแผน”) */
+  if (pre0 && pre0.length) { var PS = new Set(pre0.map(function (o) { return String(o.id).toUpperCase(); })), d0 = out.filter(function (r) { return r.extra && PS.has(String(r.id).toUpperCase()); });
+    if (d0.length) { d0.forEach(function (r) { r.done0 = true; }); out = d0.concat(out.filter(function (r) { return !r.done0; })); } }
+  /* v1.58 Lot ไม่มี .saw = ท้ายวัน · ปิด = ไม่นับ (ค้างตัด · ปักวันนี้ · ยิงแล้ว · ปรับแผนเอง · นอกแผน · ย้ายออก = อยู่ที่เดิม) */
+  var NO = nsOrder(out, function (r) { return r.g; }, function (r) { return r.extra || r.moved || r.carry || r.pin || r.done0 || !!(r.g && adjOf(r.g)) || (k < 0 && !!dpShot(x, r.id)); });
+  NO.ns.forEach(function (r, i) { r.ns = true; if (!i) r.nsHead = NO.ns.length; });
+  return { rows: NO, src: src, from: from, re: re, nsOff: NO.off.length, nsT: NO.ns.reduce(function (a, r) { return a + (r.t || 0); }, 0) };
 }
 /* ชั้นไม้ (แผ่นที่ใช้) ของ Lot จาก Cut Rite Run ล่าสุด — หนาก่อน แล้วจำนวนมาก → น้อย
    StarSync v1.9 (mats) = ชั้นไม้ตามรหัสวัสดุ + เวลาเป้าหมายต่อชั้นไม้ · รุ่นก่อน = แผ่นตามรหัสแผ่น (Board summary) ไม่มีเวลา */
@@ -8678,7 +8710,7 @@ function dpCard(x, P, k, print) {
   var pm = x.o.pm, R = dpRows(x, P, k), rows = R.rows, ppd = x.m.ppd || 0, mn = pm && pm.min || bdMcMin(x.m), st = B.set;
   var plan = rows.filter(function (r) { return !r.extra && !r.moved; }), sp = 0, stt = 0; plan.forEach(function (r) { sp += r.p || 0; stt += r.t || 0; });   // v1.39 ไม่นับที่ย้ายออก
   var now = new Date(), nowMin = now.getHours() * 60 + now.getMinutes(), t0 = dpHm(st.dpStart, 480);
-  var clock = k < 0 && R.src === 'live' ? Math.max(t0, nowMin) : t0, cum = clock, c = x.o.c;
+  var clock = k < 0 && R.src === 'live' ? Math.max(t0, nowMin) : R.from != null ? Math.max(t0, R.from) /* v1.58 จัดแผนใหม่ = นับจากเวลาที่จัด */ : t0, cum = clock, c = x.o.c;
   var idle = c ? bdMqIdle(c, Date.now()) : null, run = idle != null && idle <= 20;
   var head = '<header><h3>' + esc(x.m.n) + '<small>' + (x.m.pc ? esc(x.m.pc) : '') + (k < 0 && !print ? ' · <i class="dpdot' + (run ? ' on' : c ? ' idle' : '') + '"></i>' + (run ? 'กำลังยิง' : c ? 'ว่าง ' + esc(bdH(idle)) : 'วันนี้ยังไม่ยิง') : '') + '</small></h3>'
     + '<div class="dpsum"><span>เป้าหมาย <b>' + esc(tgHms(stt * 60)) + '</b>' + (mn ? ' / ' + (mn / 60) + ' ชม.' : '') + '</span><span>ชิ้น <b>' + fmtN(Math.round(sp)) + '</b>' + (ppd ? ' / ' + fmtN(ppd) : '') + '</span>'
@@ -8704,14 +8736,15 @@ function dpCard(x, P, k, print) {
     var act = '';
     if (S && S.sh) { var dur = S.sh.m0 != null && S.sh.m1 != null ? Math.max(1, Math.round((S.sh.m1 - S.sh.m0) / 60000)) : null;
       act = '<small class="dpact">ยิง ' + fmtN(S.sh.n) + ' ชิ้น' + (S.sh.t0 ? ' · ' + esc(S.sh.t0) + '–' + esc(S.sh.t1 || S.sh.t0) : '') + (dur ? ' (' + esc(crxDur(dur)) + ')' : '') + '</small>'; }
-    return '<tr' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + ' class="' + (r.extra ? 'xtra' : '') + (r.moved ? ' mv' : '') + (S ? ' s-' + S.cls : '') + (r.carry ? ' cy' : '') + (hid ? ' dpx' : '') + '">'
-      + '<td class="no">' + (r.extra ? '+' : r.moved ? '–' : i) + '</td>'
+    return (r.nsHead ? '<tr class="dpnsh' + (hid ? ' dpx' : '') + '"><td></td><td colspan="' + (k < 0 || print ? 6 : 5) + '">' + esc(nsSepTxt(r.nsHead, R.nsT)) + '</td></tr>' : '')   /* v1.58 แถวคั่น Lot ไม่มี .saw */
+      + '<tr' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + ' class="' + (r.ns ? 'ns ' : '') + (r.extra ? 'xtra' : '') + (r.moved ? ' mv' : '') + (S ? ' s-' + S.cls : '') + (r.carry ? ' cy' : '') + (hid ? ' dpx' : '') + '">'
+      + '<td class="no">' + (r.done0 ? '·' : r.extra ? '+' : r.moved ? '–' : i) + '</td>'
       + '<td class="lot"><span data-cp="' + esc(r.id) + '" title="คลิกเพื่อคัดลอกชื่อ Lot">' + esc(r.id) + '</span>' + poolChip(r.id) /* v1.52 */ + (print ? (crxOf(r.id) ? ' <small class="mono">SAW ' + esc(crxOf(r.id)[0].run) + '</small>' : '') : crxChip(r.id) + (g ? adjChip(g, P) : '') + (g && !g.closed ? '<button type="button" class="dpadjb" data-dpadj="' + esc(g.id) + '" title="ปรับแผน: ย้ายเครื่อง · ย้ายวัน · ตัดก่อน" aria-label="ปรับแผน ' + esc(g.id) + '">⋯</button>' : '')) + (sub.length ? '<small>' + esc(sub.join(' · ')) + '</small>' : '') + (g && !g.closed ? rjTag(g, 'dpjm') : '') /* v1.57 ไม้ยังไม่มี */
       + '</td>'
       + (g ? dbEndCell(g, P) : '<td class="ed"><em>—</em></td>')
       + '<td class="pc">' + fmtN(Math.round(r.p || 0)) + '</td>'
       + '<td class="tm"' + (tg ? ' title="' + esc('เวลาเป้าหมาย: ' + tgTxt(tg)) + '"' : '') + '>' + tm + (tsub ? '<small>' + esc(tsub) + '</small>' : '') + '</td>'
-      + '<td class="se">' + (r.extra ? '<small>นอกแผน</small>' : r.moved ? '<small>ไม่นับ</small>' : esc(se)) + '</td>'
+      + '<td class="se">' + (r.extra ? '<small>' + (r.done0 ? 'ตัดก่อนจัดใหม่' : 'นอกแผน') + '</small>' : r.moved ? '<small>ไม่นับ</small>' : esc(se)) + '</td>'
       + (k < 0 ? '<td class="st"><span class="' + S.cls + '">' + esc(S.t) + '</span>' + act + '</td>' : print ? '<td class="sign"></td>' : '') + '</tr>'
       + (dpShowB() || print ? (function () {
           /* v1.40 ทีละชั้นไม้: ชั้นไม้ที่ได้ตัดในวัน/เครื่องนี้ (เวลาในวัน) + ชั้นไม้ที่เหลืออยู่ไหน · ทั้ง Lot = ชั้นไม้ทั้งหมดของ Lot (เดิม) */
@@ -8722,7 +8755,8 @@ function dpCard(x, P, k, print) {
   return '<section class="dpcard' + (stt > mn * 1.001 && mn ? ' over' : '') + '" data-dpm="' + esc(x.m.n) + '">' + head
     + (fon ? '<p class="dpfn">ตรงตัวกรอง <b>' + fmtN(nShow) + '</b> จาก ' + fmtN(rows.length) + ' Lot</p>' : '')   /* v1.42 */
     + '<table class="dptab"><thead><tr><th>#</th><th>Lot' + (dpShowB() || print ? ' · ชั้นไม้ที่ต้องยก' : '') + '</th><th class="ed">ส่ง</th><th class="pc">ชิ้น</th><th class="tm">เวลาเป้าหมาย</th><th class="se">เริ่ม–เสร็จ</th>' + (k < 0 ? '<th class="st">สถานะ</th>' : print ? '<th class="sign">ลงชื่อ/เวลาจริง</th>' : '') + '</tr></thead><tbody>' + body + '</tbody>'
-    + '<tfoot><tr><td></td><td>รวม ' + plan.length + ' Lot' + (R.src === 'snap' ? '<small>แผนที่บันทึกไว้</small>' : R.src === 'live' ? '<small>คำนวณสดจากเวลาที่เหลือ</small>' : '') + '</td><td></td><td class="pc">' + fmtN(Math.round(sp)) + '</td><td class="tm">' + esc(stt > 0 ? tgHms(stt * 60) : '—') + '</td><td class="se">' + (ends ? 'เสร็จ ≈ ' + ends : '') + '</td>' + (k < 0 || print ? '<td></td>' : '') + '</tr></tfoot></table>'
+    + '<tfoot><tr><td></td><td>รวม ' + plan.length + ' Lot' + (R.src === 'snap' ? '<small>' + (R.re ? 'จัดแผนใหม่ ' + esc(dpClk(R.from || 0)) : 'แผนที่บันทึกไว้') + '</small>' : R.src === 'live' ? '<small>คำนวณสดจากเวลาที่เหลือ</small>' : '') + '</td><td></td><td class="pc">' + fmtN(Math.round(sp)) + '</td><td class="tm">' + esc(stt > 0 ? tgHms(stt * 60) : '—') + '</td><td class="se">' + (ends ? 'เสร็จ ≈ ' + ends : '') + '</td>' + (k < 0 || print ? '<td></td>' : '') + '</tr></tfoot></table>'
+    + (R.nsOff ? '<p class="cy nsoff">' + esc(nsOffTxt(R.nsOff) + (k < 0 && R.src === 'snap' ? ' — กด 🔄 จัดแผนวันนี้ใหม่ ให้ Lot ที่มี .saw ขึ้นมาแทน' : '')) + '</p>' : '')   /* v1.58 */
     + (k >= 0 && x.carry && x.carry.length ? '<p class="cy">+ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ไม่นับในแผนวันนี้ — หน้างานหาเวลาตัดเอง)</p>' : '') + '</section>';
 }
 function dpMachines(P) {
@@ -8776,10 +8810,10 @@ function dpRender(P) {
   var cards = xs.map(function (x) { var R = dpRows(x, P, k), hit = 0; R.rows.forEach(function (r) { if (fon && dpMatch(x, r, P, k)) hit++;   /* นับทุกแถวที่ตรง (เหมือน dpCard) */ if (r.extra || r.moved) return; tot.n++; tot.p += r.p || 0; tot.t += r.t || 0; }); if (x.o.pm) tot.cap += x.o.pm.min || 0; nHit += hit; return fon && !hit ? '' : dpCard(x, P, k, false); }).join('');
   if (fon && !nHit) cards = '<p class="dpnone">ไม่พบ Lot ที่ตรงตัวกรอง' + (DP.q ? ' “' + esc(DP.q) + '”' : '') + ' ใน' + esc(k < 0 ? 'วันนี้' : 'วันที่เลือก') + 'ของเครื่องที่เลือก — <button type="button" class="tbtn" data-dpclr>ล้างตัวกรอง</button></p>';
   var keep = E.scrollTop;
-  E.innerHTML = '<div class="dpwrap"><div class="dphead"><div><h2>แผนตัดรายวัน<small>' + esc(bdDayTxt(dpDayMs(P, k))) + (k < 0 ? (tpToday(P) ? ' · แผนที่บันทึกไว้ ' + esc(String(tpToday(P).at || '').slice(11, 16)) : ' · ยังไม่มีแผนที่บันทึกไว้ — คำนวณสดจากตอนนี้') : '') + '</small></h2>'
+  E.innerHTML = '<div class="dpwrap"><div class="dphead"><div><h2>แผนตัดรายวัน<small>' + esc(bdDayTxt(dpDayMs(P, k))) + (k < 0 ? (tpToday(P) ? ' · ' + esc(tpSrcTxt(tpToday(P))) : ' · ยังไม่มีแผนที่บันทึกไว้ — คำนวณสดจากตอนนี้') : '') + '</small></h2>'
     + '<p class="dpk">' + fmtN(tot.n) + ' Lot · ' + fmtN(Math.round(tot.p)) + ' ชิ้น · เวลาเป้าหมาย ' + esc(bdH(tot.t)) + (tot.cap ? ' / ' + esc(bdH(tot.cap)) + ' (' + dbPct(Math.min(9.99, tot.t / tot.cap)) + ')' : '')
-    + ' · เริ่มงาน ' + esc(dpClk(dpHm(st.dpStart, 480))) + (+st.dpBrkMin > 0 ? ' · พัก ' + esc(dpClk(dpHm(st.dpBrk, 720))) + ' ' + st.dpBrkMin + ' นาที' : '') + (st.tgOn ? ' · <span title="' + esc('เวลาเป้าหมาย = เวลา Cut Rite + โหลดกองไม้ ' + st.tgLoad + ' วิ/กอง (ชุดค่าที่ยังไม่คิด) + ติด Label ' + st.tgLabel + ' วิ/ชิ้น' + (+st.tgSetup ? ' + ตั้งผัง ' + st.tgSetup + ' วิ/ผัง' : '') + (+st.tgLoss ? ' × เผื่อ ' + st.tgLoss + '%' : '')) + '">สูตรเวลาเป้าหมาย SAW PLAN</span>' : ' · เวลา Cut Rite ล้วน (ปิดเวลาเป้าหมายใน ⚙)') + '</p></div>'
-    + '<div class="dpact">' + dpUnitHtml() + (st.unit === 'board' ? '' : '<label class="dpchk"><input type="checkbox" data-dpbrd' + (DP.brd ? ' checked' : '') + '> แสดงชั้นไม้</label>') + '<button type="button" class="tbtn" data-dpprint>🖨 พิมพ์ใบสั่งตัด</button><button type="button" class="tbtn" data-dpxl title="ไฟล์ Excel จัดหน้า A4 แบบแท็บ SAW PLAN: สรุป + เครื่องละชีต (เครื่องที่เลือก) · รวมงานค้างตัด">📊 Excel A4</button></div></div>'   /* v1.41 ปุ่ม “จัดแผน: ทั้ง Lot | ทีละชั้นไม้” · ทีละชั้นไม้ = แสดงชั้นไม้เสมอ */
+    + ' · เริ่มงาน ' + esc(dpClk(dpHm(st.dpStart, 480))) + (+st.dpBrkMin > 0 ? ' · พัก ' + esc(dpClk(dpHm(st.dpBrk, 720))) + ' ' + st.dpBrkMin + ' นาที' : '') + (st.tgOn ? ' · <span title="' + esc('เวลาเป้าหมาย = เวลา Cut Rite + โหลดกองไม้ ' + st.tgLoad + ' วิ/กอง (ชุดค่าที่ยังไม่คิด) + ติด Label ' + st.tgLabel + ' วิ/ชิ้น' + (+st.tgSetup ? ' + ตั้งผัง ' + st.tgSetup + ' วิ/ผัง' : '') + (+st.tgLoss ? ' × เผื่อ ' + st.tgLoss + '%' : '')) + '">สูตรเวลาเป้าหมาย SAW PLAN</span>' : ' · เวลา Cut Rite ล้วน (ปิดเวลาเป้าหมายใน ⚙)') + (nsOff() && nsBlocked(P) ? ' · <b class="nsoff">' + esc(nsOffTxt(nsBlocked(P))) + ' (อยู่ช่องติดอยู่)</b>' : '') /* v1.58 */ + '</p></div>'
+    + '<div class="dpact">' + tpRfHtml() /* v1.58 */ + dpUnitHtml() + nsHtml(P) /* v1.58 */ + (st.unit === 'board' ? '' : '<label class="dpchk"><input type="checkbox" data-dpbrd' + (DP.brd ? ' checked' : '') + '> แสดงชั้นไม้</label>') + '<button type="button" class="tbtn" data-dpprint>🖨 พิมพ์ใบสั่งตัด</button><button type="button" class="tbtn" data-dpxl title="ไฟล์ Excel จัดหน้า A4 แบบแท็บ SAW PLAN: สรุป + เครื่องละชีต (เครื่องที่เลือก) · รวมงานค้างตัด">📊 Excel A4</button></div></div>'   /* v1.41 ปุ่ม “จัดแผน: ทั้ง Lot | ทีละชั้นไม้” · ทีละชั้นไม้ = แสดงชั้นไม้เสมอ */
     + dpDayBar(P, k) + dpFltBar(P, k, xAll, fon ? nHit : null) + '<div class="dpgrid">' + cards + '</div></div>';
   E.scrollTop = keep;
   dpQFocus();   // v1.42 พิมพ์ค้นหาอยู่ = วาดใหม่แล้วโฟกัส/ตำแหน่งเคอร์เซอร์อยู่ที่เดิม
@@ -10818,7 +10852,131 @@ function bdAlloc(g, left, gate) {
   bdAlloc0(g, left, gate); g.jnMiss = jm;
 }
 
-window.StarStock = { rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ───────── v1.58: Lot ที่ไม่มี .saw ต่อท้ายแผนแต่ละวัน / ปิดไม่นับในแผน · ปุ่ม 🔄 จัดแผนวันนี้ใหม่ ─────────
+   ผู้ใช้ 21/10/2026 13:27: “ถ้า Lot ไหนไม่มี .saw ให้แยกออกมาไว้ท้ายสุดในแผนแต่ละวัน ให้กดปิดไม่ให้ขึ้นได้ด้วย
+     ส่วนตรง Daily Plan รายวันที่เงื่อนไขก่อนหน้าไม่ให้แก้ ตอนนี้ให้มีปุ่ม Refresh ให้จัดลำดับแผนให้ใหม่” (13:35 “ปุ่ม Refresh ให้มีหน้า Dashboard ด้วย”)
+   ตอบคำถาม 13:3x: ปิด = “ไม่นับในแผน ดึง Lot มี .saw ขึ้นมาแทน” · Refresh = “จัดใหม่แล้วบันทึกแทน”
+   13:36 (รูป Dashboard วันนี้ HPP: แถว 5 BO69-0926_Mc 🪵 ไม้ยังไม่มี): “พอมีข้อมูลเข้ามา มีติดรายการไม้ กดรีเฟรช มันต้องเปลี่ยนแผนได้”
+   ① Lot ไม่มี .saw (ยังไม่ได้ Optimize Cut Rite = ไม่มี Run ใน lots/cutrite.csv / cut_lot_latest — เวลาเป็น ≈ ประมาณ)
+      · ค่าตั้งร่วม board.json noSaw: 'end' (ค่าตั้งต้น) = อยู่ในแผนตามเดิม แต่ย้ายไปท้ายวันของเครื่องนั้น (เวลาเริ่ม–เสร็จต่อจาก Lot ที่มี .saw)
+                                     'off' = ไม่นับในแผน → Lot รอตัดที่ไม่มี .saw ไปช่อง “ติดอยู่” · วันที่ว่างเติมด้วย Lot ที่มี .saw
+      · ไม่ย้าย/ไม่ตัดออก: ค้างตัด · ยิงแล้ววันนี้ · ปรับแผนเอง (⋯) · ตัดนอกแผน
+      · ใช้ที่ Daily Plan (ตาราง · พิมพ์ · Excel) และ Dashboard (วันนี้ · วันถัดไป · ไทม์ไลน์ใต้วงแหวน) — ดู nsOrder
+   ② 🔄 จัดแผนวันนี้ใหม่ (Daily Plan + Dashboard): อ่านข้อมูลล่าสุด (data 6 · StarSync · การยิง) → วางแผนใหม่
+      → แผนวันนี้ของทุกเครื่อง = คำนวณสดจากตอนนี้ (ค้างตัด → ปักไว้วันนี้ → Lot ในคิวที่ใส่เวลาที่เหลือได้ — tpLive)
+      → บันทึกทับ lots/plan/<วันนี้>.json (แผนเดิมเก็บสำรอง <วันนี้>.bak-HHMMSS.json) · Lot ที่ยิงไปแล้วก่อนจัดใหม่ = “ตัดแล้วก่อนจัดใหม่” (ไม่ใช่นอกแผน)
+      → เวลาเริ่ม–เสร็จนับจากเวลาที่จัดใหม่ · เครื่องอื่นเห็นภายใน 2 นาที (เดิมอ่านแผนวันนี้ทุก 10 นาที)
+      กด 2 ครั้ง (ครั้งแรก = ถามยืนยัน 6 วิ) — แทนแผนของทุกเครื่อง */
+var NS_WHY = '⏸ ยังไม่มี .saw (ยังไม่ได้ Optimize Cut Rite) — ปิดไว้ ไม่นับในแผน';
+function nsOff() { return !!(B.set && B.set.noSaw === 'off'); }
+/* Lot นี้มี .saw ไหม (Run จาก StarSync cutrite.csv หรือ Cut Rite ของ Supabase) */
+function nsHas(g, id) { var i = g ? g.id : id; return !!((i != null && crxOf(i)) || (g && g.cr)); }
+/* รายการของวันหนึ่ง → มี .saw (และที่ keep) ก่อน · ไม่มี .saw ต่อท้าย (out.ns) · โหมดปิด = ตัดออก (out.off) */
+function nsOrder(list, gOf, keep) {
+  var a = [], b = [], off = [];
+  (list || []).forEach(function (o) { var g = gOf(o); if ((keep && keep(o)) || nsHas(g, o && o.id)) a.push(o); else if (nsOff()) off.push(o); else b.push(o); });
+  var out = a.concat(b); out.ns = b; out.off = off; return out;
+}
+function nsSepTxt(n, t) { return '⏸ ยังไม่มี .saw (ยังไม่ได้ Optimize Cut Rite) · ' + n + ' Lot' + (t > 0 ? ' ≈ ' + bdH(t) : '') + ' — ต่อท้ายแผนของวัน · กด “ปิด” ที่ Daily Plan = ไม่นับในแผน'; }
+function nsOffTxt(n) { return '⏸ ปิด Lot ไม่มี .saw อยู่ — ' + n + ' Lot ไม่นับในแผนนี้'; }
+function nsBlocked(P) { return P && P.blocked ? P.blocked.filter(function (g) { return g.noSaw; }).length : 0; }
+/* ปุ่มสลับที่หัว Daily Plan */
+function nsHtml(P) {
+  var off = nsOff(), nb = nsBlocked(P);
+  return '<div class="dpunit dpns" role="group" aria-label="Lot ไม่มี .saw"><span>Lot ไม่มี .saw</span>'
+    + '<button type="button" data-dpns="end" class="' + (!off ? 'on' : '') + '" aria-pressed="' + !off + '" title="อยู่ในแผนตามเดิม แต่ไว้ท้ายสุดของแต่ละวัน (เวลาเริ่ม–เสร็จต่อจาก Lot ที่มี .saw)">ท้ายวัน</button>'
+    + '<button type="button" data-dpns="off" class="' + (off ? 'on' : '') + '" aria-pressed="' + off + '" title="ไม่นับในแผน: Lot รอตัดที่ยังไม่มี .saw ไปช่อง “ติดอยู่” · วันที่ว่างเติมด้วย Lot ที่มี .saw · มี .saw เมื่อไร (StarSync) เข้าแผนเอง · ค้างตัด/ปรับแผนเองไม่โดน">ปิด' + (off && nb ? ' <small>' + nb + '</small>' : '') + '</button></div>';
+}
+/* บันทึกค่าตั้งร่วม (lots/board.json) — แบบเดียวกับ dpUnitSet (v1.41) */
+async function nsSet(v) {
+  v = v === 'off' ? 'off' : 'end';
+  if (!B.set || (B.set.noSaw || 'end') === v || nsSet.busy) return;
+  nsSet.busy = true; var bs = document.querySelectorAll('[data-dpns]'); bs.forEach(function (b) { b.disabled = true; });
+  var o = JSON.parse(JSON.stringify(B.set)); o.v = 1; o.noSaw = v; o.at = nowIso(); o.by = me();
+  try { try { await S.fs.call({ a: 'fsMkdir', p: LOT_DIR }); S.fs._dirAdd(LOT_DIR); } catch (e) { }
+    var f = await S.fs.write(LOT_DIR, BD_SETF, new TextEncoder().encode(JSON.stringify(o)));
+    B.set = bdNormSet(o); B.setU = f.u; B.setFrom = o.by + ' · ' + o.at.replace('T', ' ').slice(0, 16);
+    bdRender();
+    toast(v === 'off' ? 'ปิด Lot ไม่มี .saw แล้ว — ไม่นับในแผน (ทุกเครื่องใช้ค่านี้) · แผนวันนี้ที่บันทึกไว้: กด 🔄 จัดแผนวันนี้ใหม่' : 'Lot ไม่มี .saw กลับเข้าแผนแล้ว — ไว้ท้ายแต่ละวัน (ทุกเครื่องใช้ค่านี้)');
+  } catch (e) { toast('✗ บันทึกไม่สำเร็จ: ' + netMsg(e)); bs.forEach(function (b) { b.disabled = false; }); }
+  finally { nsSet.busy = false; }
+}
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('[data-dpns]'); if (!a || a.disabled) return;
+  e.preventDefault(); nsSet(a.dataset.dpns);
+});
+
+/* ── ② จัดแผนวันนี้ใหม่ ── */
+function tpRfArmed() { return !!(tpRefresh.armAt && Date.now() - tpRefresh.armAt < 6000); }
+function tpRfArmTxt() { var sn = B.plan ? tpToday(B.plan) : null; return '⚠ กดอีกครั้ง = จัดใหม่' + (sn ? ' (แทนแผน ' + String(sn.at || '').slice(11, 16) + ' ทุกเครื่อง)' : ' (ทุกเครื่อง)'); }
+function tpRfHtml(cls) {
+  var sn = B.plan ? tpToday(B.plan) : null, arm = tpRfArmed();   // วาดใหม่ระหว่างรอยืนยัน (รอบตรวจ 30 วิ) = ยังเป็นปุ่มส้มอยู่
+  return '<button type="button" class="' + (cls || 'tbtn') + ' tprf' + (arm ? ' arm' : '') + '" data-tprf' + (tpRefresh.busy ? ' disabled' : '') + ' title="' + esc('อ่านข้อมูลล่าสุดแล้ววางแผนวันนี้ใหม่จากตอนนี้ (ค้างตัด → Lot ที่ใส่เวลาที่เหลือได้) · บันทึกแทน' + (sn ? 'แผนที่บันทึกไว้ ' + String(sn.at || '').slice(11, 16) : 'แผนคำนวณสด') + ' — ทุกเครื่องใช้แผนนี้ · แผนเดิมเก็บสำรองใน Drive') + '">' + (tpRefresh.busy ? '⏳ กำลังจัดแผนใหม่…' : arm ? esc(tpRfArmTxt()) : '🔄 จัดแผนวันนี้ใหม่') + '</button>';
+}
+/* แผนวันนี้ (ทุกเครื่อง) จากตอนนี้ — รูปแบบเดียวกับ tpBuild (lots · carry) + pre (ยิงแล้วก่อนจัดใหม่) + from (นาทีของวันที่จัด) */
+function tpBuildToday(P, old) {
+  var d = new Date(), nowMin = d.getHours() * 60 + d.getMinutes(), mcs = {};
+  dpMachines(P).forEach(function (x) {
+    var pm = x.o.pm; if (!pm) return;
+    var LV = tpLive(x, P), c = x.o.c, carry = [], lots = [], have = new Set();
+    LV.live.forEach(function (z) { var e = z.e, id = e.g.id; have.add(String(id).toUpperCase());
+      if (z.carry) carry.push({ id: id, p: Math.round(e.p || 0) });
+      else lots.push({ id: id, p: Math.round(e.p || 0), t: Math.round(z.t || 0), all: Math.round(e.p || 0) }); });
+    var pre = [];
+    if (c && c.lotCodes) Object.keys(c.lotCodes).sort(function (a, b) { var A = (c.lotT0 || {})[a] || '', Z = (c.lotT0 || {})[b] || ''; return A < Z ? -1 : A > Z ? 1 : 0; })
+      .forEach(function (l) { if (have.has(l.toUpperCase())) return; var g = P.G.get(l); pre.push({ id: g ? g.id : l, n: c.lotCodes[l].size }); });
+    mcs[x.m.n] = { ppd: pm.ppd, min: pm.min || 0, lots: lots, carry: carry, pre: pre, from: nowMin };
+  });
+  return { v: 1, date: tpKey(P.today), at: nowIso(), by: me(), ver: VER, mcs: mcs, re: ((old && old.re) || 0) + 1, from: nowMin, prevAt: old ? old.at || '' : '', noSaw: B.set.noSaw || 'end' };
+}
+async function tpRefresh() {
+  if (tpRefresh.busy) return; tpRefresh.busy = true;
+  var bs = function (on, txt) { document.querySelectorAll('[data-tprf]').forEach(function (b) { b.disabled = on; b.classList.remove('arm'); if (txt) b.textContent = txt; }); };
+  bs(true, '⏳ กำลังจัดแผนใหม่…');
+  try {
+    var fs = ensureFs(); if (!fs) throw new Error('ยังไม่ได้เชื่อม Google Drive');
+    /* ข้อมูลล่าสุดก่อน: data 6 · ไฟล์ของ StarSync (วัตถุดิบ · ใบเบิกไม้ · Cut Rite · ความคืบหน้า) · การยิงวันนี้ */
+    fs.L[LOT_DIR] = null; if (typeof SCAN_DIR !== 'undefined') fs.L[SCAN_DIR] = null;
+    var ext = bdLoadExt(true);
+    await Promise.all([lotLoad({ quiet: true }), bdLoadAux(), ext]);
+    B.tp.at = 0; try { await tpLoad(); } catch (e) { }
+    var P = B.plan = bdPlan(), old = tpToday(P), snap = tpBuildToday(P, old);
+    if (!Object.keys(snap.mcs).length) throw new Error('ไม่มีเครื่องที่เปิดวางแผน (⚙ เครื่องตัด)');
+    try { await fs.call({ a: 'fsMkdir', p: TP_DIR }); fs._dirAdd(TP_DIR); } catch (e) { }
+    if (old) { var t = new Date(), q = function (n) { return (n < 10 ? '0' : '') + n; };
+      try { await fs.write(TP_DIR, snap.date + '.bak-' + q(t.getHours()) + q(t.getMinutes()) + q(t.getSeconds()) + '.json', new TextEncoder().encode(JSON.stringify(old))); } catch (e) { console.warn('StarStock: สำรองแผนเดิมไม่ได้', e); } }
+    var f = await fs.write(TP_DIR, snap.date + '.json', new TextEncoder().encode(JSON.stringify(snap)));
+    var X = B.tp; X.snap = snap; X.date = snap.date; X.u = f && f.u ? f.u : X.u; X.at = Date.now(); X.err = null;
+    tpRefresh.busy = false; bdRender(); bs(false, '🔄 จัดแผนวันนี้ใหม่');   // ปุ่มที่วาดใหม่ไม่ค้าง ⏳
+    var n = 0; Object.keys(snap.mcs).forEach(function (k) { n += snap.mcs[k].lots.length; });
+    toast('✓ จัดแผนวันนี้ใหม่แล้ว ' + snap.at.slice(11, 16) + ' — Lot ใหม่ ' + n + ' Lot · ทุกเครื่องเห็นภายใน 2 นาที' + (old ? ' · แผนเดิม ' + String(old.at || '').slice(11, 16) + ' เก็บสำรองไว้' : ''));
+  } catch (e) { console.warn('StarStock: จัดแผนวันนี้ใหม่ไม่ได้', e); tpRefresh.busy = false; bs(false, '🔄 จัดแผนวันนี้ใหม่'); toast('✗ จัดแผนวันนี้ใหม่ไม่สำเร็จ: ' + netMsg(e)); }
+  finally { tpRefresh.busy = false; }
+}
+/* กดครั้งแรก = ถามยืนยัน (6 วิ · ทุกปุ่ม 🔄 บนจอ) · กดอีกครั้ง = จัดใหม่ */
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('[data-tprf]'); if (!a || a.disabled) return;
+  e.preventDefault();
+  if (!tpRfArmed()) {
+    tpRefresh.armAt = Date.now();
+    document.querySelectorAll('[data-tprf]').forEach(function (b) { b.classList.add('arm'); b.textContent = tpRfArmTxt(); });
+    clearTimeout(tpRefresh.armT); tpRefresh.armT = setTimeout(function () { tpRefresh.armAt = 0; document.querySelectorAll('[data-tprf]').forEach(function (b) { if (!b.disabled) { b.classList.remove('arm'); b.textContent = '🔄 จัดแผนวันนี้ใหม่'; } }); }, 6000);
+    return;
+  }
+  tpRefresh.armAt = 0; clearTimeout(tpRefresh.armT); tpRefresh();
+});
+/* ข้อความที่มาของแผนวันนี้ */
+function tpSrcTxt(sn) { return sn ? (sn.re ? 'จัดแผนใหม่ ' : 'แผนที่บันทึกไว้ ') + String(sn.at || '').slice(11, 16) + (sn.re && sn.by ? ' (' + sn.by + ')' : '') : ''; }
+/* Dashboard “วันนี้”: Lot ที่ยิงวันนี้แต่ไม่อยู่ในแผน — ยิงก่อนกด 🔄 จัดแผนใหม่ (ms.pre) แยกจาก “ตัดนอกแผน” จริง */
+function dbTpOuts(outs, ms, c, P, x) {
+  var PS = new Set(((ms && ms.pre) || []).map(function (o) { return String(o.id).toUpperCase(); }));
+  var row = function (l) { var g = P.G.get(l) || P.G.get(String(l).toUpperCase()), nT = tpCutHere(c, l); return tpRow('+', l, g, P, '<em>—</em>', nT, tpStatus(g, P, nT, x.m.pc), 'out'); };
+  var a = outs.filter(function (l) { return PS.has(String(l).toUpperCase()); }), b = outs.filter(function (l) { return !PS.has(String(l).toUpperCase()); });
+  return (a.length ? '<tr class="sep"><td></td><td colspan="6">ตัดแล้ววันนี้ก่อนจัดแผนใหม่</td></tr>' + a.map(row).join('') : '')
+    + (b.length ? '<tr class="sep"><td></td><td colspan="6">ตัดนอกแผน (ยิงวันนี้ที่เครื่องนี้ ไม่อยู่ในแผน)</td></tr>' + b.map(row).join('') : '');
+}
+
+window.StarStock = { nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
