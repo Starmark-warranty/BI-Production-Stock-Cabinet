@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edge_W43</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>*{box-sizing:border-box}body{margin:0;padding:0;background:#f0f2f7;font-family:Arial,sans-serif;color:#1e2540;font-size:13px}.wrap{max-width:1320px;margin:0 auto;padding:20px 16px}.hdr{background:linear-gradient(135deg,#2563eb,#6366f1);border-radius:16px;padding:18px 22px;margin-bottom:14px;color:#fff;display:flex;align-items:center;gap:14px}.hdr-icon{width:42px;height:42px;background:rgba(255,255,255,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}.hdr-sub{font-size:10px;opacity:.7;font-family:monospace;margin-bottom:2px}.hdr-title{font-size:16px;font-weight:800;word-break:break-all}.hdr-meta{font-size:10px;opacity:.8;margin-top:3px;font-family:monospace}.info-bar{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:11px;color:#64748b}.badge{border:1px solid;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap}.kpi-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.kpi-card{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:12px 14px;flex:1;min-width:120px;text-align:center;transition:all .2s}.kpi-card.active{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.kpi-card.recalced{border-color:#d97706;box-shadow:0 0 0 3px rgba(217,119,6,.08)}.kpi-val{font-size:22px;font-weight:800;font-family:monospace;transition:all .25s}.kpi-unit{font-size:11px;color:#64748b}.kpi-lbl{font-size:10px;color:#94a3b8;margin-top:2px}.param-bar{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}.param-bar.changed{border-color:#d97706;background:#fffbeb}.param-label{font-size:11px;font-weight:700;color:#475569}.param-input{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:5px 10px;font-size:13px;font-weight:700;color:#1e2540;width:80px;text-align:center;outline:none;font-family:monospace}.param-input:focus{border-color:#2563eb;background:#eff6ff}.param-input.changed{border-color:#d97706;background:#fef9c3;color:#92400e}.btn-recalc{background:#2563eb;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;transition:all .15s}.btn-recalc:hover{background:#1d4ed8;transform:translateY(-1px)}.btn-recalc:active{transform:translateY(0)}.btn-reset{background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:11px;color:#64748b;cursor:pointer}.btn-reset:hover{border-color:#dc2626;color:#dc2626}.orig-val{font-size:10px;color:#94a3b8;font-family:monospace}.recalc-badge{background:#d97706;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;margin-left:6px;display:none}.recalc-badge.show{display:inline}.filter-bar{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px 12px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ldrow{display:flex;align-items:center;gap:8px;padding:5px 10px;font-size:12px;cursor:pointer;color:#1e2235}.ldrow:hover{background:#f3f4f8}.ldrow input{cursor:pointer}.ldname{font-family:monospace}.xf-row{flex-basis:100%;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:8px;margin-top:1px;border-top:1px dashed #e2e8f0}.xf-row:empty{display:none}.xf-dd{position:relative}.xf-btn{min-width:120px;max-width:230px;text-align:left;background:#fff;border:1px solid #c8ccd8;border-radius:8px;padding:5px 10px;font-size:11.5px;color:#4a5278;cursor:pointer;display:flex;align-items:center;gap:6px}.xf-btn .xl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.xf-btn.on{border-color:#2563eb;background:#eff6ff;color:#1d4ed8;font-weight:700}.xf-pan{display:none;position:absolute;top:100%;left:0;z-index:500;width:260px;background:#fff;border:1px solid #c8ccd8;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.15);margin-top:4px}.xf-pan .xf-tools{display:flex;gap:6px;padding:6px 8px;border-bottom:1px solid #eef0f4}.xf-pan .xf-tools button{flex:1;font-size:10px;padding:4px;border:1px solid #c8ccd8;border-radius:5px;background:#f7f8fa;cursor:pointer}.xs-sel{background:#fff!important;border:1px solid #c8ccd8!important;border-radius:8px!important;padding:5px 8px!important;font-size:11.5px!important;max-width:240px}.xs-sel.on{border-color:#2563eb!important;background:#eff6ff!important;color:#1d4ed8!important;font-weight:700}.xf-list{max-height:280px;overflow-y:auto;padding:4px 0}.xf-cnt{margin-left:auto;font-size:10px;color:#94a3b8;white-space:nowrap}.xf-clr{font-size:10.5px;color:#dc2626;cursor:pointer;background:none;border:none;text-decoration:underline}.filter-bar label{font-size:11px;color:#64748b;font-weight:600}.filter-bar select,.filter-bar input[type=text]{background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;padding:5px 9px;font-size:11px;color:#1e2540;outline:none}.filter-bar select:focus,.filter-bar input:focus{border-color:#2563eb}.sel-bar{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:7px 12px;margin-bottom:10px;display:none;align-items:center;gap:10px;font-size:11px;color:#1d4ed8}.sel-bar.show{display:flex}.btn{border:1px solid #e2e8f0;border-radius:7px;padding:5px 12px;font-size:11px;cursor:pointer;background:#fff;color:#475569}.btn:hover{border-color:#2563eb;color:#2563eb}.btn-red:hover{border-color:#dc2626;color:#dc2626}.table-wrap{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}.table-head{padding:9px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#475569;display:flex;align-items:center;gap:8px}table{width:100%;border-collapse:collapse;font-size:11px}thead tr{background:#f8fafc}th{padding:7px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:600;border-bottom:2px solid #e2e8f0;cursor:pointer;user-select:none;white-space:nowrap}th:hover{color:#2563eb}th.sorted .sa{color:#2563eb;opacity:1}.sa{font-size:9px;opacity:.35;margin-left:2px}tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s}tbody tr:hover{background:#f8fafc}tbody tr.selected{background:#eff6ff!important}.cb-cell{width:32px;text-align:center;padding:0!important}input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:#2563eb}.tfoot-row td{padding:7px 10px;font-weight:700;font-size:11px;background:#f8fafc;border-top:2px solid #e2e8f0}.lot-scroll{overflow:auto;max-height:calc(100vh - 80px);position:relative}.lot-scroll thead th{position:sticky;top:0;z-index:3;background-color:#f8fafc;box-shadow:inset 0 -2px 0 #e2e8f0}.lot-scroll tfoot td{position:sticky;bottom:0;z-index:3;box-shadow:inset 0 2px 0 #e2e8f0}body.wide-tbl .wrap{max-width:1900px}.lot-scroll #lotTable>thead>tr>th:nth-child(-n+2),.lot-scroll #lotTable>tbody>tr:not(.lpv-sub)>td:nth-child(-n+2),.lot-scroll #lotTable>tfoot>tr>td:nth-child(-n+2){position:sticky;z-index:2;background-color:#fff}.lot-scroll #lotTable>thead>tr>th:nth-child(1),.lot-scroll #lotTable>tbody>tr:not(.lpv-sub)>td:nth-child(1),.lot-scroll #lotTable>tfoot>tr>td:nth-child(1){left:0;width:34px;min-width:34px;max-width:34px}.lot-scroll #lotTable>thead>tr>th:nth-child(2),.lot-scroll #lotTable>tbody>tr:not(.lpv-sub)>td:nth-child(2),.lot-scroll #lotTable>tfoot>tr>td:nth-child(2){left:34px;box-shadow:inset -1px 0 0 #e2e8f0}.lot-scroll #lotTable>thead>tr>th:nth-child(-n+2){z-index:4;background-color:#f8fafc}.lot-scroll #lotTable>tfoot>tr>td:nth-child(-n+2){z-index:4;background-color:#f8fafc}.lot-scroll #lotTable>tbody>tr:hover>td:nth-child(-n+2){background-color:#f8fafc}.lot-scroll #lotTable>tbody>tr.selected>td:nth-child(-n+2){background-color:#eff6ff}.lot-scroll .lpv-sub>td>*{position:sticky;left:0;max-width:calc(100vw - 80px)}.no-result{text-align:center;padding:32px;color:#94a3b8;font-size:13px}.notes-wrap{margin-top:14px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}.footer{margin-top:14px;text-align:center;font-size:10px;color:#94a3b8;font-family:monospace;padding-bottom:10px}.lpv-box{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border:1.5px solid rgba(217,119,6,.45);background:#fffbeb;border-radius:10px;padding:6px 10px;width:100%}.lpv-box.off{background:#f8fafc;border-color:#e2e8f0}.lpv-box.off .lpv-hint{opacity:.5}.lpv-g{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--gc);background:var(--gbg);border-radius:8px;padding:3px 8px;font-size:11.5px;font-weight:800;color:var(--gc);white-space:nowrap}.lpv-g.off{opacity:.5;border-color:#cbd5e1;background:#fff}.lpv-g input[type=checkbox]{width:16px;height:16px;accent-color:var(--gc);cursor:pointer}#lotTable tfoot td.cg-lp{white-space:nowrap}.lpv-hms{font-size:10px;opacity:.9}.lpv-mtr{font-size:10px;font-weight:700;opacity:.85}.lpv-g .param-input{width:76px}.lpv-g .lpv-sp{width:58px;border-color:var(--gc);color:var(--gc);font-weight:700}.lpv-g .lpv-gp{width:58px}.lpv-g input[type=number]::-webkit-inner-spin-button,.lpv-g input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.lpv-g input[type=number]{-moz-appearance:textfield;text-align:center}.lpv-gchip{display:inline-block;border:1px solid;border-radius:6px;padding:1px 7px;font-size:10.5px;font-weight:700}.lpv-pl-btn.lpv-gbtn{border-color:var(--gc);color:var(--gc)}.lpv-pl-btn.lpv-gbtn.on{background:var(--gc);border-color:var(--gc);color:#fff}.lpv-side.sp{font-weight:800;opacity:1}.lpv-side.sp.g0{background:#ffe4e6;color:#be123c;box-shadow:inset 0 0 0 1px #fb7185}.lpv-side.sp.g1{background:#cffafe;color:#0e7490;box-shadow:inset 0 0 0 1px #22d3ee}.lpv-side.sp.g2{background:#fef3c7;color:#b45309;box-shadow:inset 0 0 0 1px #f59e0b}.lpv-parts tr.lpv-hl.lpv-g0 td{background:#fff1f2}.lpv-parts tr.lpv-hl.lpv-g0 td:first-child{box-shadow:inset 4px 0 0 #e11d48}.lpv-parts tr.lpv-hl.lpv-g1 td{background:#ecfeff}.lpv-parts tr.lpv-hl.lpv-g1 td:first-child{box-shadow:inset 4px 0 0 #06b6d4}#lotTableCollapse.hide-lpg0 .cg-lpg0,#lotTableCollapse.hide-lpg1 .cg-lpg1,#lotTableCollapse.hide-lpg2 .cg-lpg2{display:none}.lpv-on{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#b45309;cursor:pointer;white-space:nowrap}.lpv-on input{width:17px;height:17px;accent-color:#d97706;cursor:pointer}.lpv-box.off .lpv-on{color:#475569}.lpv-hint{font-size:10px;color:#92400e}.lpv-cell{cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}.lpv-lotcell{cursor:pointer}.lpv-lotcell:hover{text-decoration:underline}.lpv-lchev{display:inline-block;font-size:9px;color:#94a3b8;transition:transform .15s}.lpv-lotcell.open .lpv-lchev{transform:rotate(90deg);color:#d97706}.lpv-pl-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:#475569;margin:2px 0 6px}.lpv-hl-chip{background:#fef3c7;border:1px solid #f59e0b;color:#92400e;border-radius:6px;padding:1px 8px;font-size:10.5px;font-weight:600}.lpv-pl-btn{background:#fff;border:1px solid #cbd5e1;color:#475569;border-radius:6px;padding:3px 9px;font-size:10.5px;cursor:pointer}.lpv-pl-btn.on{background:#2563eb;border-color:#2563eb;color:#fff;font-weight:700}.lpv-parts tr.lpv-hl td{background:#fef3c7}.lpv-parts tr.lpv-hl td:first-child{box-shadow:inset 4px 0 0 #f59e0b}.lpv-parts td.m{font-family:monospace}.lpv-parts .tip{cursor:help}.lpv-parts tr.lpv-ne td{color:#94a3b8!important;opacity:.55}.lpv-parts tr.lpv-ne0 td{color:#64748b!important;background:#f8fafc}.lpv-unit{font-size:11px;color:#475569;font-family:inherit}.lpv-parts tr.lpv-nesum td{color:#64748b;background:#f1f5f9;text-align:left;padding:7px 10px;border-bottom:1px dashed #cbd5e1;white-space:normal!important;line-height:1.5}.lpv-neold{font-size:12px;color:#475569;background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 12px;line-height:1.7}.lpv-ne-tg{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:#475569;cursor:pointer;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:2px 8px;user-select:none}.lpv-ne-tg input{accent-color:#2563eb;margin:0}.lpv-tag{display:inline-block;background:#f59e0b;color:#fff;border-radius:4px;padding:0 5px;font-size:9px;font-weight:800;margin-left:4px}.lp-totlbl{display:none}#lotTableCollapse:not(.hide-lp) .lp-totlbl{display:inline}.vtab{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:9px 14px;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;display:flex;align-items:center;gap:6px}.vtab:hover{color:#1e2540}.vtab.active{color:#2563eb;border-bottom-color:#2563eb}.vbadge{background:rgba(217,119,6,.15);color:#b45309;border-radius:10px;padding:1px 7px;font-size:10px;font-family:monospace}.lpv-ctl{background:#fff;border:2px solid rgba(217,119,6,.35);border-radius:12px;padding:9px 14px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:11px;color:#475569}.lpv-ctl label{display:inline-flex;align-items:center;gap:5px;font-weight:700;white-space:nowrap}.lpv-ctl input[type=number]{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;color:#1e2540;width:74px;text-align:center;font-family:monospace;outline:none}.lpv-ctl input[type=number]:focus{border-color:#2563eb}.lpv-ctl select{background:#f8fafc;border:1px solid #e2e8f0;border-radius:7px;padding:5px 8px;font-size:11px;color:#1e2540}.lpv-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}.lpv-kpi{background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 13px}.lpv-kpi.hl{border-color:rgba(217,119,6,.5);background:#fffbeb}.lpv-kpi .k-l{font-size:10px;color:#94a3b8;margin-bottom:4px}.lpv-kpi .k-v{font-size:21px;font-weight:800;font-family:monospace}.lpv-kpi .k-u{font-size:10px;color:#64748b}.lpv-note{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:9px 14px;margin-bottom:10px;font-size:11px;color:#475569;line-height:1.75}.lpv-warn{background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#92400e;line-height:1.6}.lpv-tbl td{padding:6px 10px;white-space:nowrap;font-size:11px}.lpv-tbl td.n,.lpv-parts td.n{text-align:right;font-family:monospace}.lpv-lot{cursor:pointer}.lpv-lot.zero{cursor:default}.lpv-lot.zero td.n,.lpv-zero td.n{color:#94a3b8!important;font-weight:400!important}.lpv-lot.open{background:#fffbeb}.lpv-chev{display:inline-block;color:#94a3b8;font-size:10px;transition:transform .15s}.lpv-lot.open .lpv-chev{transform:rotate(90deg)}.lpv-sub>td{background:#f8fafc;padding:6px 10px 10px 30px}.lpv-parts{width:100%;border-collapse:collapse;font-size:10.5px;background:#fff;border:1px solid #e2e8f0}.lpv-parts th{background:#f1f5f9;padding:5px 8px;font-size:10px;cursor:default;border-bottom:1px solid #e2e8f0}.lpv-parts td{padding:4px 8px;border-top:1px solid #f1f5f9;white-space:nowrap;color:#475569}.lpv-side{display:inline-block;min-width:17px;height:17px;line-height:17px;text-align:center;border-radius:4px;font-size:10px;font-family:monospace;margin-right:2px;background:#f1f5f9;color:#cbd5e1}.lpv-side.on{background:#dbeafe;color:#2563eb;font-weight:700}.lpv-side.long{background:#fde68a;color:#92400e;font-weight:800;box-shadow:inset 0 0 0 1px #f59e0b}.lpv-bar{height:7px;background:#e2e8f0;border-radius:4px;overflow:hidden;min-width:70px}.lpv-bar>i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#d97706)}@media print{#fltSpacer{display:none!important}}@media print{.lot-scroll{max-height:none!important;overflow:visible!important}.lot-scroll th,.lot-scroll td,.lot-scroll .lpv-sub>td>*{position:static!important}.no-print{display:none!important}body{background:#fff}.filter-bar,.sel-bar,.param-bar,.lpv-ctl{display:none!important}}</style>
+<style id="sxeEmbedStyle">
+/* StarStock v1.52 (แท็บ Edge Banding): หน้าในกรอบของ StarStock — ขอบนอกบางลง */
+html.sxs .wrap{padding-top:12px}
+</style>
+<meta name="starstock-edgeplan" content="v1.52 · จาก Edge_W43 (Edge Production System v5.9) 19/10/2569">
+</head>
+<body>
+<div class="wrap">
+<div class="hdr">
+<div class="hdr-icon">&#9881;&#65039;</div>
+<div style="flex:1">
+<div class="hdr-sub">EDGE PRODUCTION REPORT</div>
+<div class="hdr-title" id="sxeTitle">Edge Banding</div>
+<div class="hdr-meta" id="sxeMeta">—</div>
+</div>
+<div class="no-print" style="display:flex;gap:6px;flex-shrink:0">
+<button onclick="exportExcel()" class="btn" style="border-color:rgba(80,200,120,.6);color:#50c878;background:rgba(80,200,120,.12);font-weight:700">&#128202; Excel</button>
+<button onclick="window.print()" class="btn" style="border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.15)">&#128424; พิมพ์</button>
+</div>
+</div>
+<div class="info-bar">
+<span id="sxeDay">&#128197;</span>
+<span style="color:#cbd5e1">|</span>
+<span id="paramDisplay" style="font-family:monospace">Gap=1.5 ม. &middot; Speed=16 ม./นาที</span>
+<span style="color:#cbd5e1">|</span>
+<span id="lotCountInfo">0 Lot</span>
+<span style="color:#cbd5e1">|</span> <span id="sxeBadges" style="display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;max-width:100%"></span> </div>
+<div class="kpi-row" id="kpiRow">
+<div class="kpi-card" id="kpiNE" style="border-color:rgba(100,116,139,0.4)" title="ชิ้นที่ไม่ปิดขอบ = แถวใน CSV − ชิ้นที่ปิดขอบ · ไม่นับด้าน ไม่คิดเวลา (ตาม Lot ที่ติ๊ก / ที่กรอง)"><div style="font-size:20px;margin-bottom:4px">&#9675;</div><div class="kpi-val" id="kvNE" style="color:#64748b">0</div><div class="kpi-unit" id="kvNEunit">ชิ้น</div><div class="kpi-lbl">ชิ้นงานไม่ปิดขอบ</div></div>
+<div class="kpi-card" id="kpi0"><div style="font-size:20px;margin-bottom:4px">&#128290;</div><div class="kpi-val" id="kv0" style="color:#2563eb">78,711</div><div class="kpi-unit">ชิ้น</div><div class="kpi-lbl">ชิ้นงานปิดขอบ</div></div>
+<div class="kpi-card" id="kpi1"><div style="font-size:20px;margin-bottom:4px">&#128260;</div><div class="kpi-val" id="kv1" style="color:#16a34a">245,484</div><div class="kpi-unit">รอบ</div><div class="kpi-lbl">รอบ/ด้าน</div></div>
+<div class="kpi-card" id="kpi2"><div style="font-size:20px;margin-bottom:4px">&#128207;</div><div class="kpi-val" id="kv2" style="color:#d97706">145658.92</div><div class="kpi-unit">เมตร</div><div class="kpi-lbl">ระยะเอจ</div></div>
+<div class="kpi-card" id="kpi3"><div style="font-size:20px;margin-bottom:4px">&#128640;</div><div class="kpi-val" id="kv3" style="color:#0891b2">513884.92</div><div class="kpi-unit">เมตร</div><div class="kpi-lbl">ปล่อยงาน</div></div>
+<div class="kpi-card" id="kpi4"><div style="font-size:20px;margin-bottom:4px">&#9201;</div><div class="kpi-val" id="kv4" style="color:#ca8a04">1053 ชม. 42 นาที 58 วิ</div><div class="kpi-unit"></div><div class="kpi-lbl">เวลารวม</div></div>
+<div class="kpi-card" id="kpi5" style="border-color:rgba(34,201,138,0.4)"><div style="font-size:20px;margin-bottom:4px">&#129529;</div><div class="kpi-val" id="kv5" style="color:#16a34a;font-size:16px">602782 g</div><div class="kpi-unit" id="kv5kg">= 602.78 kg</div><div class="kpi-lbl" id="kv5lbl">กาว (250 g/ตร.ม.)</div></div>
+<div class="kpi-card" style="border-color:rgba(217,119,6,0.4)"><div style="font-size:20px;margin-bottom:4px">&#9851;&#65039;</div><div class="kpi-val" id="kvDS" style="color:#d97706;font-size:18px">58269.16</div><div class="kpi-unit">เมตร</div><div class="kpi-lbl">Deadstock Edge</div></div>
+<div class="kpi-card" id="kpiLP" style="border-color:rgba(217,119,6,0.55)" title="ชิ้นที่ปิดขอบในกลุ่ม Speed พิเศษ (แคบ / ยาว) และเวลาที่ Speed กลุ่ม"><div style="font-size:20px;margin-bottom:4px">&#128207;</div><div class="kpi-val" id="kvLP" style="color:#b45309;font-size:20px">0</div><div class="kpi-unit" id="kvLPunit">ชิ้น</div><div class="kpi-lbl" id="kvLPlbl">ชิ้นยาว</div></div>
+</div>
+<div class="param-bar no-print" id="paramBar">
+<span style="font-size:13px">&#9881;&#65039;</span>
+<span class="param-label">ปรับค่าเครื่อง:</span>
+<div style="display:flex;align-items:center;gap:6px">
+  <span class="param-label">Gap (ม.)</span>
+  <input type="number" id="inGap" class="param-input" value="1.5" step="0.1" min="0" oninput="onParamChange()">
+  <span class="orig-val" id="origGap">(เดิม: 1.5)</span>
+</div>
+<div style="display:flex;align-items:center;gap:6px">
+  <span class="param-label">Speed (ม./นาที)</span>
+  <input type="number" id="inSpeed" class="param-input" value="16" step="1" min="1" oninput="onParamChange()">
+  <span class="orig-val" id="origSpeed">(เดิม: 16)</span>
+</div>
+<div style="display:flex;align-items:center;gap:6px">
+  <span class="param-label">&#129529; กาว (g/ตร.ม.)</span>
+  <input type="number" id="inGlue" class="param-input" value="250" step="10" min="0" oninput="onParamChange()" style="border-color:rgba(22,163,74,0.5);color:#16a34a">
+  <span class="orig-val" id="origGlue">(เดิม: 250)</span>
+</div>
+<div id="dsBox" style="display:flex;align-items:center;gap:8px;border-left:1px solid #d8dbe6;padding-left:12px;margin-left:2px">
+  <span style="font-size:12px;font-weight:700;color:#7c3aed">&#9881;&#65039; ปิดขอบ 2 ด้าน</span>
+  <span style="font-size:11px;color:#8b5cf6">&#128072; ติ๊กงานในตารางที่เข้าเครื่องนี้ เวลาจะหาร 2 ให้เอง</span>
+  <button type="button" onclick="dsBulk(true)" style="font-size:11px;font-weight:600;padding:4px 10px;border:1px solid #c4b5fd;border-radius:6px;background:#f5f3ff;color:#7c3aed;cursor:pointer">&#10003; ติ๊กทั้งหมด</button>
+  <button type="button" onclick="dsBulk(false)" style="font-size:11px;font-weight:600;padding:4px 10px;border:1px solid #e2e8f0;border-radius:6px;background:#f8fafc;color:#64748b;cursor:pointer">&#10007; ล้างทั้งหมด</button>
+</div>
+<div id="lpvBox" class="lpv-box">
+  <span class="lpv-on" style="cursor:default">&#128207; แยก Speed ตามขนาดชิ้น <span style="font-weight:600;color:#92400e">(&#9745; = คำนวณ · ม./นาที)</span></span>
+  <span class="lpv-g" id="lpvG0" style="--gc:#be123c;--gbg:#ffe4e6"><input type="checkbox" id="lpvOn0" onchange="lpvSet(0,'on',this.checked)"> แคบ &le; <input type="number" id="lpvThr0" class="param-input" min="1" step="10" oninput="lpvSetD(0,'thr',this.value,this)"> mm &middot; Speed <input type="number" id="lpvSpeed0" class="param-input lpv-sp" min="0.1" step="0.5" oninput="lpvSetD(0,'speed',this.value,this)"> &middot; Gap <input type="number" id="lpvGap0" class="param-input lpv-gp" min="0" step="0.1" oninput="lpvSetD(0,'gap',this.value,this)" title="Gap (ม./ด้าน)"></span>
+  <span class="lpv-g" id="lpvG1" style="--gc:#0e7490;--gbg:#cffafe"><input type="checkbox" id="lpvOn1" onchange="lpvSet(1,'on',this.checked)"> แคบ &le; <input type="number" id="lpvThr1" class="param-input" min="1" step="10" oninput="lpvSetD(1,'thr',this.value,this)"> mm &middot; Speed <input type="number" id="lpvSpeed1" class="param-input lpv-sp" min="0.1" step="0.5" oninput="lpvSetD(1,'speed',this.value,this)"> &middot; Gap <input type="number" id="lpvGap1" class="param-input lpv-gp" min="0" step="0.1" oninput="lpvSetD(1,'gap',this.value,this)" title="Gap (ม./ด้าน)"></span>
+  <span class="lpv-g" id="lpvG2" style="--gc:#b45309;--gbg:#fef3c7"><input type="checkbox" id="lpvOn2" onchange="lpvSet(2,'on',this.checked)"> ยาว &ge; <input type="number" id="lpvThr2" class="param-input" min="1" step="50" oninput="lpvSetD(2,'thr',this.value,this)"> mm &middot; Speed <input type="number" id="lpvSpeed2" class="param-input lpv-sp" min="0.1" step="0.5" oninput="lpvSetD(2,'speed',this.value,this)"> &middot; Gap <input type="number" id="lpvGap2" class="param-input lpv-gp" min="0" step="0.1" oninput="lpvSetD(2,'gap',this.value,this)" title="Gap (ม./ด้าน)"></span>
+  <span class="lpv-hint">ติ๊ก = คำนวณกลุ่มนั้นที่ Speed และ Gap ของกลุ่ม (Gap ค่าเริ่มต้น 1.5 ม./ด้าน) · ติ๊กออก = ชิ้นกลุ่มนั้นใช้ Speed ปกติ · ด้านแคบ = W หรือ L ที่สั้นกว่า · ด้านยาว = ที่ยาวกว่า · กลุ่มแคบแบ่งช่วงไม่ซ้อนกัน (≤50 · 51–250) · ชิ้นที่ทั้งแคบและยาวนับกลุ่มแคบก่อน (ถ้าติ๊กไว้) · ทุกด้านที่ปิดของชิ้นในกลุ่มเดินที่ Speed กลุ่ม</span>
+</div>
+<button class="btn-recalc" onclick="doRecalc()">&#9654; คำนวณใหม่</button>
+<button class="btn-reset" onclick="resetParams()">&#8635; รีเซ็ต</button>
+<span class="recalc-badge" id="recalcBadge">&#9888; ค่าเปลี่ยน</span>
+</div>
+<div class="filter-bar no-print">
+<label>&#128269; เลือก Lot:</label>
+<div style="position:relative">
+  <button type="button" id="lotDropBtn" onclick="toggleLotDrop()" style="width:200px;text-align:left;background:#fff;border:1px solid #c8ccd8;border-radius:8px;padding:6px 10px;font-size:12px;color:#4a5278;cursor:pointer;display:flex;align-items:center;gap:6px">
+    <span id="lotDropLabel" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">ทุก Lot</span>
+    <span style="font-size:10px;color:#8892b0">&#9660;</span>
+  </button>
+  <div id="lotDropPanel" style="display:none;position:absolute;top:100%;left:0;z-index:500;width:280px;background:#fff;border:1px solid #c8ccd8;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.15);margin-top:4px">
+    <div style="padding:8px;border-bottom:1px solid #eef0f4">
+      <input type="text" id="lotDropSearch" placeholder="&#128269; พิมพ์ค้นหา Lot..." oninput="renderLotDrop()" style="width:100%;box-sizing:border-box;border:1px solid #c8ccd8;border-radius:6px;padding:5px 8px;font-size:12px">
+    </div>
+    <div style="display:flex;gap:6px;padding:6px 8px;border-bottom:1px solid #eef0f4">
+      <button type="button" onclick="lotDropAll(true)" style="flex:1;font-size:10px;padding:4px;border:1px solid #c8ccd8;border-radius:5px;background:#f7f8fa;cursor:pointer;color:#2563eb">&#9745; เลือกที่แสดง</button>
+      <button type="button" onclick="lotDropAll(false)" style="flex:1;font-size:10px;padding:4px;border:1px solid #c8ccd8;border-radius:5px;background:#f7f8fa;cursor:pointer;color:#dc2626">&#9744; ล้างทั้งหมด</button>
+    </div>
+    <div id="lotDropList" style="max-height:280px;overflow-y:auto;padding:4px 0"></div>
+  </div>
+</div>
+<label>Pool:</label>
+<select id="fPool" onchange="onPoolChange()"><option value="">ทุก Pool</option></select>
+<label>Week ส่ง:</label>
+<select id="fWeek" onchange="onWeekChange()"><option value="">ทุก Week</option></select>
+<button class="btn btn-red" onclick="clearFilter()">&#10005; ล้าง</button>
+<span id="filterStat" style="font-size:11px;color:#64748b;margin-left:2px"></span>
+<div style="margin-left:auto;display:flex;gap:6px">
+<button class="btn" onclick="selectAll()">&#9745; เลือกทั้งหมด</button>
+<button class="btn" onclick="clearSel()">&#9744; ยกเลิก</button>
+</div>
+<div id="xfRow" class="xf-row"></div>
+</div>
+<div class="sel-bar no-print" id="selBar">
+<span>&#9745; เลือก <strong id="selCount">0</strong> Lot</span>
+<span style="color:#93c5fd">|</span>
+<span>&#128290; <strong id="selPcs">0</strong> ชิ้น</span>
+<span style="color:#93c5fd">|</span>
+<span>&#128207; <strong id="selMtr">0</strong> เมตร</span>
+<span style="color:#93c5fd">|</span>
+<span>&#9201; <strong id="selTime">0 วิ</strong></span>
+<span style="margin-left:auto;font-size:10px;color:#3b82f6">KPI ด้านบนแสดงผลตาม Lot ที่เลือก</span>
+</div>
+<div class="table-wrap">
+<div class="table-head" onclick="toggleLotTable()" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px"><span id="lotTableChevron" style="font-size:11px;transition:transform .2s;display:inline-block">&#9660;</span>&#128230; รายละเอียดแต่ละ Lot (<span id="shownCount">0</span> / <span id="sxeTot">0</span> Lot)<span style="margin-left:auto;font-size:10px;color:#8892b0;font-weight:400">คลิกเพื่อซ่อน/แสดง</span></div>
+<div id="lotTableCollapse" class="hide-d1234 hide-sqm hide-sqmedge hide-glueg hide-gluekg hide-ds">
+<style>
+#lotTableCollapse.hide-d1234 .cg-d1234{display:none}
+#lotTableCollapse.hide-sqm .cg-sqm{display:none}
+#lotTableCollapse.hide-sqmedge .cg-sqmedge{display:none}
+#lotTableCollapse.hide-glueg .cg-glueg{display:none}
+#lotTableCollapse.hide-gluekg .cg-gluekg{display:none}
+#lotTableCollapse.hide-ds .cg-ds{display:none}
+#lotTableCollapse.hide-lp .cg-lp{display:none}
+#lotTable th,#lotTable td{padding-left:7px !important;padding-right:7px !important}
+.colchip{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 9px;border-radius:14px;border:1px solid #cbd5e1;background:#fff;color:#334155;cursor:pointer;user-select:none;white-space:nowrap}
+.colchip.off{background:#f1f5f9;color:#94a3b8;border-style:dashed}
+.colchip .dot{width:8px;height:8px;border-radius:50%;background:#22c55e}
+.colchip.off .dot{background:#cbd5e1}
+</style>
+<div class="no-print" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 12px;background:#f8fafc;border-bottom:1px solid #eef0f4">
+  <span style="font-size:11px;color:#64748b;font-weight:700">&#128065;&#65039; แสดงคอลัมน์ (คลิกเพื่อซ่อน/แสดง):</span>
+  <span class="colchip" id="chip-d1234" onclick="toggleCol('d1234')"><span class="dot"></span>d1/2/3/4</span>
+  <span class="colchip" id="chip-sqm" onclick="toggleCol('sqm')"><span class="dot"></span>ตร.ม.แผ่น</span>
+  <span class="colchip" id="chip-sqmedge" onclick="toggleCol('sqmedge')"><span class="dot"></span>ตร.ม.ขอบ</span>
+  <span class="colchip" id="chip-glueg" onclick="toggleCol('glueg')"><span class="dot"></span>กาว(g)</span>
+  <span class="colchip" id="chip-gluekg" onclick="toggleCol('gluekg')"><span class="dot"></span>กาว(kg)</span>
+  <span class="colchip" id="chip-ds" onclick="toggleCol('ds')"><span class="dot"></span>DS(ม.)</span>
+  <span style="width:1px;height:16px;background:#cbd5e1;margin:0 3px"></span>
+  <button type="button" onclick="colPreset('min')" style="font-size:11px;font-weight:700;padding:4px 11px;border:1px solid #7c3aed;border-radius:6px;background:#7c3aed;color:#fff;cursor:pointer">&#128241; มุมมองย่อ (ผลิต)</button>
+  <button type="button" onclick="colPreset('all')" style="font-size:11px;font-weight:600;padding:4px 11px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:#475569;cursor:pointer">แสดงทั้งหมด</button>
+</div>
+<div id="lotScroll" class="lot-scroll">
+<table id="lotTable">
+<thead><tr>
+<th class="cb-cell no-print"><input type="checkbox" id="chkAll" onclick="toggleAll(this)"></th>
+<th onclick="sortTable(0)">Lot <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(1)" style="text-align:center">Pool <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(2)" style="text-align:center">W.ส่ง <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(3)" style="text-align:center">วันส่ง <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(19)" class="cg-ne" style="text-align:right;color:#64748b;background:#f1f5f9" title="ชิ้นที่ไม่ปิดขอบ = แถวใน CSV − ชิ้นงานปิดขอบ · ไม่นับด้าน ไม่คิดเวลา · คลิกตัวเลขเพื่อดูรายการชิ้น (สีจาง)">&#9675; ชิ้นงาน<br>ไม่ปิดขอบ <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(4)" style="text-align:right" title="ชิ้นงานที่ปิดขอบ (มีรหัสขอบอย่างน้อย 1 ด้าน)">ชิ้นงาน<br>ปิดขอบ <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(5)" style="text-align:right">รอบ <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(6)" style="text-align:right">เอจ(ม.) <span class="sa">&#9650;</span></th>
+<th class="cg-d1234" style="text-align:right">d1/2/3/4</th>
+<th onclick="sortTable(7)" class="cg-sqm" style="text-align:right;color:#0891b2">ตร.ม.แผ่น <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(8)" class="cg-sqmedge" style="text-align:right;color:#d97706">ตร.ม.ขอบ <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(9)" class="cg-glueg" style="text-align:right;color:#16a34a">&#129529; กาว(g) <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(10)" class="cg-gluekg" style="text-align:right;color:#00d4aa">&#129529; กาว(kg) <span class="sa">&#9650;</span></th>
+<th class="no-print" style="text-align:center;color:#7c3aed;background:#faf5ff" title="ติ๊กงานที่เข้าเครื่องปิดขอบ 2 ด้าน แล้วเวลาจะหาร 2 ให้อัตโนมัติ">&#9881;&#65039; เข้าเครื่อง<br>2 ด้าน?</th>
+<th onclick="sortTable(14)" class="cg-lp" style="text-align:right;color:#2563eb" title="เวลาชิ้นปกติ = (ขอบรวมชิ้นปกติ + ด้าน × Gap ปกติ) ÷ Speed ปกติ × 60 · ชี้ที่ตัวเลขเพื่อดูการคำนวณ">&#9201; ปกติ <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(16)" class="cg-lp cg-lpg0" style="text-align:right;color:#be123c;background:#fff1f2" title="ชิ้นแคบ ที่ปิดขอบ (ชิ้น · เวลาที่ Speed กลุ่ม) · คลิกตัวเลขเพื่อดูรายการชิ้น">&#128207; <span class="lpvGLbl0">≤50</span> <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(17)" class="cg-lp cg-lpg1" style="text-align:right;color:#0e7490;background:#ecfeff" title="ชิ้นแคบช่วงที่ 2 ที่ปิดขอบ (ต่อจากกลุ่มแรก) · คลิกตัวเลขเพื่อดูรายการชิ้น">&#128207; <span class="lpvGLbl1">51–250</span> <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(15)" class="cg-lp cg-lpg2" style="text-align:right;color:#b45309;background:#fffbeb" title="ชิ้นยาว ที่ปิดขอบ (ชิ้น · เวลาที่ Speed กลุ่ม) · คลิกตัวเลขเพื่อดูรายการชิ้น">&#128207; <span class="lpvGLbl2">≥2,000</span> <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(18)" class="cg-lp cg-lpn" style="text-align:right;color:#2563eb;background:#eff6ff" title="ชิ้นที่ปิดขอบแต่ไม่เข้า 3 กลุ่ม (เดินที่ Speed ปกติ) · แสดง ชิ้น / เวลา / ความยาวเอจ (ม.) · คลิกตัวเลขเพื่อดูรายการชิ้น">&#9632; ชิ้นปกติ <span class="sa">&#9650;</span></th>
+<th onclick="sortTable(11)" style="text-align:right" title="เวลารวม = ปกติ + ≤50 + 51–250 + ≥2000 (แต่ละส่วน = (ขอบรวม + ด้าน × Gap) ÷ Speed × 60) · ÷2 ถ้าติ๊กเข้าเครื่อง 2 ด้าน · ชี้ที่ตัวเลขเพื่อดูการคำนวณ">&#9201; เวลา<span class="lp-totlbl">รวม</span> <span class="sa">&#9650;</span></th>
+<th onclick="openDeadstockPopup()" class="cg-ds" style="text-align:right;color:#d97706;cursor:pointer" title="คลิกเพื่อดูข้อมูล Deadstock">&#9851; DS(ม.) &#128269;</th>
+</tr></thead>
+<tbody id="lotBody"></tbody>
+<tfoot><tr class="tfoot-row">
+<td class="no-print"></td>
+<td style="color:#475569;white-space:nowrap">รวม <span id="footerCount">540</span> Lot</td><td colspan="3"></td>
+<td class="cg-ne" style="text-align:right;color:#64748b;font-family:monospace;white-space:nowrap" id="footerNE"></td>
+<td style="text-align:right;color:#2563eb;font-family:monospace" id="footerPcs">78,711</td>
+<td style="text-align:right;color:#475569;font-family:monospace" id="footerSides">245,484</td>
+<td style="text-align:right;color:#16a34a;font-family:monospace" id="footerMtr">145658.92</td>
+<td class="cg-d1234"></td>
+<td class="cg-sqm" style="text-align:right;color:#0891b2;font-family:monospace" id="footerSqm"></td>
+<td class="cg-sqmedge" style="text-align:right;color:#d97706;font-family:monospace" id="footerSqmEdge"></td>
+<td class="cg-glueg" style="text-align:right;color:#16a34a;font-family:monospace" id="footerGlue">602782 g</td>
+<td class="cg-gluekg" style="text-align:right;color:#00d4aa;font-family:monospace" id="footerGlueKg">602.782 kg</td>
+<td class="no-print"></td>
+<td class="cg-lp" style="text-align:right;color:#2563eb;font-family:monospace" id="footerLpNorm"></td>
+<td class="cg-lp cg-lpg0" style="text-align:right;color:#be123c;font-family:monospace" id="footerLpG0"></td>
+<td class="cg-lp cg-lpg1" style="text-align:right;color:#0e7490;font-family:monospace" id="footerLpG1"></td>
+<td class="cg-lp cg-lpg2" style="text-align:right;color:#b45309;font-family:monospace" id="footerLpG2"></td>
+<td class="cg-lp cg-lpn" style="text-align:right;color:#2563eb;font-family:monospace" id="footerLpN"></td>
+<td style="text-align:right;color:#ca8a04;font-family:monospace" id="footerTime">1053 ชม. 42 นาที 58 วิ</td>
+<td class="cg-ds" style="text-align:right;color:#d97706;font-family:monospace;font-weight:700" id="footerDS">58269.16 ม.</td>
+</tr></tfoot>
+</table>
+<div id="noResult" class="no-result" style="display:none">&#128269; ไม่พบ Lot ที่ตรงกัน</div>
+</div>
+</div>
+</div>
+<div id="dsOverlay" onclick="if(event.target===this)closeDeadstockPopup()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(30,34,53,0.55);align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto">
+  <div style="background:#f5f6fa;border-radius:14px;max-width:900px;width:100%;box-shadow:0 12px 48px rgba(0,0,0,.3);margin:auto">
+    <div style="position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:14px 18px;background:#fff;border-bottom:2px solid #d97706;border-radius:14px 14px 0 0">
+      <span style="font-size:18px">&#9851;&#65039;</span>
+      <div style="font-size:15px;font-weight:700;color:#d97706">Deadstock Edge — ข้อมูลทั้งหมด</div>
+      <button onclick="closeDeadstockPopup()" style="margin-left:auto;background:#f0f1f5;border:1px solid #c8ccd8;border-radius:8px;width:30px;height:30px;font-size:16px;cursor:pointer;color:#4a5278">&#10005;</button>
+    </div>
+    <div style="padding:16px 18px">
+<div style="background:#fff;border:1px solid rgba(217,119,6,0.3);border-radius:12px;overflow:hidden;margin-bottom:14px">
+  <div onclick="toggleDsCard('dsExplain')" style="cursor:pointer;user-select:none;padding:11px 14px;background:rgba(217,119,6,0.06);border-bottom:1px solid rgba(217,119,6,0.15);display:flex;align-items:center;gap:8px">
+    <span id="dsExplainChev" style="font-size:11px;transition:transform .2s;display:inline-block">&#9660;</span>
+    <span style="font-size:16px">&#9851;&#65039;</span>
+    <div><div style="font-size:12px;font-weight:700;color:#d97706">Deadstock Edge คืออะไร?</div>
+    <div style="font-size:10px;color:#8892b0;margin-top:2px">ใช้เอจเศษเหลือ (deadstock) แทนเอจปกติ ที่ด้านหลังชิ้นงานที่มองไม่เห็น เพื่อลดต้นทุน</div></div>
+  </div>
+  <div id="dsExplain" style="padding:14px 16px">
+    <div style="font-size:11px;color:#4a5278;line-height:1.7;margin-bottom:12px">
+      ชิ้นงานเฟอร์นิเจอร์ที่ <b style="color:#1e2235">ปิดขอบ 2 ด้าน</b> เช่น แผ่นบน/ล่างตู้, Rail, ชั้นวาง — ในการผลิตจริง <b style="color:#d97706">ด้านหลังที่ชิดผนัง/ถูกตู้บัง คนมองไม่เห็น</b> ดังนั้นด้านนั้นไม่จำเป็นต้องใช้เอจปกติราคาแพง <b style="color:#1e2235">เปลี่ยนมาใช้เอจ deadstock แทนได้</b>
+    </div>
+    <svg width="100%" viewBox="0 0 680 220" style="display:block;max-width:560px;margin:0 auto">
+      <text x="160" y="22" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#4a5278">ปัจจุบัน: ปิดขอบปกติ 2 ด้าน</text>
+      <rect x="90" y="40" width="140" height="130" rx="6" fill="#f0f1f5" stroke="#c8ccd8" stroke-width="1"/>
+      <line x1="90" y1="40" x2="230" y2="40" stroke="#16a34a" stroke-width="5" stroke-linecap="round"/>
+      <line x1="90" y1="170" x2="230" y2="170" stroke="#16a34a" stroke-width="5" stroke-linecap="round"/>
+      <text x="160" y="100" text-anchor="middle" style="font-size:10px;fill:#8892b0">แผ่นชิ้นงาน</text>
+      <text x="160" y="116" text-anchor="middle" style="font-size:10px;fill:#8892b0">(เช่น Top Panel)</text>
+      <text x="160" y="195" text-anchor="middle" style="font-size:9px;fill:#16a34a">ด้านยาวบน-ล่าง: เอจปกติ</text>
+      <text x="520" y="22" text-anchor="middle" style="font-size:12px;font-weight:700;fill:#d97706">แนวคิดใหม่: ใช้ deadstock</text>
+      <rect x="450" y="40" width="140" height="130" rx="6" fill="#f0f1f5" stroke="#c8ccd8" stroke-width="1"/>
+      <line x1="450" y1="40" x2="590" y2="40" stroke="#16a34a" stroke-width="5" stroke-linecap="round"/>
+      <line x1="450" y1="170" x2="590" y2="170" stroke="#d97706" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 4"/>
+      <text x="520" y="100" text-anchor="middle" style="font-size:10px;fill:#8892b0">แผ่นเดิม</text>
+      <text x="520" y="116" text-anchor="middle" style="font-size:10px;fill:#8892b0">ลดต้นทุน</text>
+      <text x="520" y="190" text-anchor="middle" style="font-size:9px;fill:#16a34a">ด้านโชว์: เอจปกติ</text>
+      <text x="520" y="204" text-anchor="middle" style="font-size:9px;fill:#d97706">ด้านหลังไม่โชว์: deadstock</text>
+      <text x="340" y="105" text-anchor="middle" style="font-size:20px;fill:#8892b0">&#8594;</text>
+    </svg>
+  </div>
+</div>
+<div style="background:#fff;border:1px solid rgba(217,119,6,0.3);border-radius:12px;overflow:hidden;margin-bottom:14px">
+  <div onclick="toggleDsCard('dsLogic')" style="cursor:pointer;user-select:none;padding:11px 14px;background:rgba(217,119,6,0.06);border-bottom:1px solid rgba(217,119,6,0.15);display:flex;align-items:center;gap:8px">
+    <span id="dsLogicChev" style="font-size:11px;transition:transform .2s;display:inline-block">&#9660;</span>
+    <span style="font-size:15px">&#127959;&#65039;</span>
+    <div><div style="font-size:12px;font-weight:700;color:#d97706">เงื่อนไข — ประเมินจากโครงสร้างเฟอร์นิเจอร์</div>
+    <div style="font-size:10px;color:#8892b0;margin-top:2px">จัดกลุ่มชิ้นงานตาม Part Name แล้วประเมินว่า "ด้านหลังที่ไม่โชว์" คือด้านใด</div></div>
+  </div>
+  <div id="dsLogic" style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div style="background:#f0f1f5;border:1px solid rgba(37,99,235,0.2);border-radius:9px;padding:11px 13px">
+      <div style="font-size:10px;font-weight:700;color:#2563eb;margin-bottom:6px">&#128208; ปิดขอบ 4 ด้าน (Cycle = 4)</div>
+      <div style="font-size:11px;color:#4a5278;line-height:1.6">Deadstock = <b style="color:#1e2235">ด้านยาว (L) × 1 ด้าน</b><br><span style="font-size:10px;color:#8892b0">ชิ้นปิดครบ 4 ด้านแล้ว เศษด้านยาว 1 ด้านนำกลับมาใช้ได้</span></div>
+    </div>
+    <div style="background:#f0f1f5;border:1px solid rgba(5,150,105,0.2);border-radius:9px;padding:11px 13px">
+      <div style="font-size:10px;font-weight:700;color:#16a34a;margin-bottom:6px">&#128208; ปิดขอบ 2 ด้าน (Cycle = 2)</div>
+      <div style="font-size:11px;color:#4a5278;line-height:1.6">Deadstock = <b style="color:#1e2235">ด้านหลังที่ไม่โชว์ (L หรือ W)</b><br><span style="font-size:10px;color:#8892b0">ประเมินตามชนิดชิ้น: ส่วนใหญ่ด้านยาว(L) ชนผนัง · กลุ่ม Filler/Support/Back ใช้ด้านกว้าง(W)</span></div>
+    </div>
+  </div>
+</div>
+<div id="dsSection"></div>
+    </div>
+  </div>
+</div>
+<div class="footer" id="footerText">Edge Production System v5.9 &middot; StarStock แท็บ Edge Banding</div>
+</div>
+<script id="sxeBoot">
+/* ───────── StarStock v1.52: หน้านี้ = Edge_W43 (Edge Production System v5.9) ที่ฝังในแท็บ Edge Banding ของ StarStock ─────────
+   ข้อมูล Lot ไม่ได้ฝังในไฟล์แล้ว — อ่านจากหน้า StarStock ที่เปิดหน้านี้ (CSV ราย Lot ของ Cut Rite\AX จาก StarSync v1.13 + Pool/วันส่ง จาก data 6 · อัตโนมัติ)
+   เปิดหน้านี้ตรง ๆ (ไม่ผ่าน StarStock) = ไม่มีข้อมูล */
+(function () {
+  var P = null; try { P = window.parent && window.parent !== window ? window.parent.StarStock : null; } catch (e) { P = null; }
+  var o = null; try { var j = P && P.edBootJson ? P.edBootJson('edge') : ''; o = j ? JSON.parse(j) : null; } catch (e) { o = null; if (window.console) console.error('[SXE] boot', e); }
+  window.SXE = { embed: !!o, o: o || {}, lots: o && Array.isArray(o.lots) ? o.lots : [], parent: P, saved: o && o.saved && typeof o.saved === 'object' ? o.saved : null, ready: false, lastJ: '' };
+  if (window.parent && window.parent !== window) document.documentElement.classList.add('sxs');
+  var D = document, set = function (id, t) { var e = D.getElementById(id); if (e) e.textContent = t; };
+  if (o) {
+    document.title = o.title || 'Edge Banding';
+    set('sxeTitle', o.title || 'Edge Banding');
+    set('sxeMeta', o.hdr || '');
+    set('sxeDay', '📅 ' + String(o.hdr || '').replace(/^\S+\s*/, '').split(' · ')[0]);
+    set('lotCountInfo', (o.lots ? o.lots.length : 0).toLocaleString() + ' Lot');
+    set('sxeTot', (o.lots ? o.lots.length : 0).toLocaleString());
+    set('footerText', 'Edge Production System v5.9 · StarStock v' + (o.ver || '') + ' แท็บ Edge Banding · ข้อมูลอัตโนมัติจาก StarSync' + (o.csvAt ? ' (CSV ราย Lot ' + String(o.csvAt).replace('T', ' ').slice(0, 16) + ')' : ''));
+  } else {
+    set('sxeMeta', 'ไม่มีข้อมูล — เปิดหน้านี้จากแท็บ Edge Banding ของ StarStock');
+  }
+})();
+</script>
+<script>
+function lpUnpackLots(lds) {
+  for (var i = 0; i < lds.length; i++) {
+    var ld = lds[i], pl = ld.pl;
+    if (!pl || !pl.r || ld.dsParts) continue;
+    var d = pl.d, R = pl.r, parts = [];
+    for (var j = 0; j < R.length; j++) {
+      var x = R[j], ef = x[7];
+      if (!ef) continue;
+      var c = (ef & 1) + ((ef >> 1) & 1) + ((ef >> 2) & 1) + ((ef >> 3) & 1), bw = (c === 2 && x[10] === 1);
+      parts.push({ pn: d[x[3]], L: x[5], W: x[4], cycle: c, group: d[x[9]], backSide: bw ? 'W' : 'L', ds: bw ? x[4] : x[5], ef: ef, ix: j });
+    }
+    ld.dsParts = parts;
+  }
+  return lds;
+}
+var ALL_ORIG=lpUnpackLots(window.SXE ? SXE.lots : []);   /* StarStock v1.52: ข้อมูลจาก StarStock (StarSync v1.13 · lots/lotcsv.csv + data 6) — เดิมฝัง 540 Lot ของ W43 ในบรรทัดนี้ */
+var viewGlueRate=250;
+var ALL=ALL_ORIG.map(function(ld){return Object.assign({},ld,{calc:Object.assign({},ld.calc)});});
+var PC={"311":"#2563eb","321":"#0891b2","322":"#d97706","323":"#a855f7","324":"#dc2626","325":"#16a34a","326":"#ca8a04","327":"#06b6d4","328":"#ec4899"};
+var ORIG_O={"totalEdgePieces":78711,"totalEdgeSides":245484,"totalEdgeMM":145658924.39999074,"totalEdgeMeters":145658.92439999073,"releaseDist":368226,"netMachineSec":1078579.4307749763,"extraSec":2714798.25,"totalActualSec":3793377.6807749765,"lpOn":true,"grp":[{"k":"n50","on":true,"thr":50,"speed":5,"gap":231858,"pcs":4826,"sides":12881,"mm":10476620.19999967,"net":125719.44239999604,"sec":357577.44239999604},{"k":"n250","on":true,"thr":250,"speed":5,"gap":1621926,"pcs":30787,"sides":90107,"mm":47198718.30000165,"net":566384.6196000199,"sec":2188310.61960002},{"k":"l2000","on":true,"thr":2000,"speed":5,"gap":86508,"pcs":1253,"sides":4806,"mm":6852960.199999999,"net":82235.5224,"sec":168743.52240000002}],"longPcs":36866,"longSides":107794,"longMM":64528298.700001314,"normPcs":41845,"normSides":137690,"normMM":81130625.69998942,"normNetSec":304239.8463749603,"normGapSec":774506.25,"normSec":1078746.0963749604,"longNetSec":774339.584400016,"longGapSec":1940292,"longSec":2714631.584400016};
+var ORIG_PMS={"gap":1.5,"speed":16,"glueRate":250,"lp":{"unit":"mpm","on":true,"g":[{"k":"n50","op":"le","on":true,"thr":50,"speed":5,"gap":1.5},{"k":"n250","op":"le","on":true,"thr":250,"speed":5,"gap":1.5},{"k":"l2000","op":"ge","on":true,"thr":2000,"speed":5,"gap":1.5}]}};
+var vis=ALL.slice();
+var sel={};
+var lotFilter={};
+var sortCol=-1,sortAsc=true;
+var isRecalced=false;
+var dsLots={};
+var curGap=ORIG_PMS.gap;
+var curSpeed=ORIG_PMS.speed;
+
+function fmtN(n){return (+(n||0)).toLocaleString();}
+function fmtM(n){return (+(n||0)).toFixed(2);}
+function fmtS(s){
+  s=Math.round(s||0);
+  var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),ss=s%60;
+  return (h?h+" ชม. ":"")+(m?m+" นาที ":"")+ss+" วิ";
+}
+
+// Export to Excel (real XLSX via SheetJS)
+function exportExcel() {
+  var gap   = parseFloat(document.getElementById("inGap").value)   || ORIG_PMS.gap;
+  var speed = parseFloat(document.getElementById("inSpeed").value) || ORIG_PMS.speed;
+  var rows = vis.length ? vis : ALL;
+  if(!rows.length){ alert("ไม่มีข้อมูล"); return; }
+
+  // ─── Sheet 1: สรุปตาม Lot ───────────────────────────────────
+  var summary = [["Lot","Pool","Week ส่ง","วันส่ง","ไม่ปิดขอบ (ชิ้น)","ชิ้นงานปิดขอบ","รอบ","เอจ (ม.)","ด้าน 1","ด้าน 2","ด้าน 3","ด้าน 4","ตร.ม.แผ่น","ตร.ม.ขอบ","กาว(g)","กาว(kg)","Gap (ม.)","Speed (ม./นาที)","เวลา (วินาที)","เวลา","Deadstock Edge (ม.)"]];
+  rows.forEach(function(r){
+    var cl = computeLot(r, gap, speed);
+    summary.push([
+      r.lot, r.pool||"", r.week ? "W"+r.week : "", r.enddate||"",
+      Math.max(0,(+r.rows||0)-(cl.totalEdgePieces||0)), cl.totalEdgePieces, cl.totalEdgeSides,
+      parseFloat(cl.totalEdgeMeters.toFixed(2)),
+      r.e1||0, r.e2||0, r.e3||0, r.e4||0,
+      parseFloat((+(r.sqm||0)).toFixed(4)),
+      parseFloat((+(r.sqmEdge||0)).toFixed(4)),
+      parseFloat((+(r.sqmEdge||0)*viewGlueRate).toFixed(2)),
+      parseFloat((+(r.sqmEdge||0)*viewGlueRate/1000).toFixed(4)),
+      gap, speed,
+      Math.round(cl.totalActualSec), fmtS(cl.totalActualSec),
+      parseFloat(((+(r.deadstockMM||0))/1000).toFixed(3))
+    ]);
+  });
+
+  // ─── Sheet 2: สรุปรวมทั้งหมด ──────────────────────────────
+  var totalPcs=0,totalSides=0,totalMtr=0,totalSec=0,totalNE=0;
+  rows.forEach(function(r){
+    var cl=computeLot(r,gap,speed);
+    totalPcs+=cl.totalEdgePieces; totalSides+=cl.totalEdgeSides; totalNE+=Math.max(0,(+r.rows||0)-(cl.totalEdgePieces||0));
+    totalMtr+=cl.totalEdgeMeters; totalSec+=cl.totalActualSec;
+  });
+  var totSqm2=0,totSqmE2=0;
+  rows.forEach(function(r){totSqm2+=+(r.sqm||0);totSqmE2+=+(r.sqmEdge||0);});
+  var overall = [
+    ["รายการ","ค่า"],
+    ["จำนวน Lot", rows.length],
+    ["ชิ้นไม่ปิดขอบรวม", totalNE],
+    ["ชิ้นงานปิดขอบรวม", totalPcs],
+    ["รอบ/ด้านรวม", totalSides],
+    ["ระยะเอจรวม (ม.)", parseFloat(totalMtr.toFixed(2))],
+    ["ระยะปล่อยงานรวม (ม.)", parseFloat((totalMtr + totalSides*gap).toFixed(2))],
+    ["ตร.ม.แผ่นรวม (W×L)", parseFloat(totSqm2.toFixed(4))],
+    ["ตร.ม.ขอบรวม (Σด้าน×หนา)", parseFloat(totSqmE2.toFixed(4))],
+    ["🧴 กาวรวม (g) — "+viewGlueRate+" g/ตร.ม.", parseFloat((totSqmE2*viewGlueRate).toFixed(2))],
+    ["🧴 กาวรวม (kg)", parseFloat((totSqmE2*viewGlueRate/1000).toFixed(4))],
+    ["เวลารวม (วินาที)", Math.round(totalSec)],
+    ["เวลารวม", fmtS(totalSec)],
+    ["Deadstock Edge รวม (ม.)", parseFloat((rows.reduce(function(s,r){return s+(+(r.deadstockMM||0));},0)/1000).toFixed(3))],
+    ["Gap ที่ใช้ (ม.)", gap],
+  ];
+
+  if(typeof XLSX === "undefined"){ alert("ไม่พบ XLSX library — กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต"); return; }
+
+  var wb = XLSX.utils.book_new();
+  var ws1 = XLSX.utils.aoa_to_sheet(summary);
+  var ws2 = XLSX.utils.aoa_to_sheet(overall);
+
+  // Column widths for sheet 1
+  ws1["!cols"] = [{wch:22},{wch:8},{wch:9},{wch:12},{wch:13},{wch:13},{wch:8},{wch:10},{wch:7},{wch:7},{wch:7},{wch:7},{wch:7},{wch:14},{wch:14},{wch:18}];
+  ws2["!cols"] = [{wch:28},{wch:20}];
+
+  XLSX.utils.book_append_sheet(wb, ws1, "สรุปตาม Lot");
+  XLSX.utils.book_append_sheet(wb, ws2, "สรุปรวม");
+
+  if(typeof lpvSheets==="function"){ lpvSheets(rows).forEach(function(sh){ var w=XLSX.utils.aoa_to_sheet(sh.rows); w["!cols"]=sh.cols; XLSX.utils.book_append_sheet(wb, w, sh.name); }); }
+  var fname = document.title.replace(/[\\/:*?"<>|]/g,"_") + ".xlsx";
+  XLSX.writeFile(wb, fname);
+}
+
+// Same formula as main app
+function computeLot(ld, gap, speed) {
+  var sides  = ld.rows_sides || (ld.calc ? ld.calc.totalEdgeSides  : 0);
+  var meters = ld.calc ? ld.calc.totalEdgeMeters : 0;
+  var pieces = ld.calc ? ld.calc.totalEdgePieces : 0;
+  var releaseDist = sides * gap;
+  var netSec      = (meters / speed) * 60;
+  var extraSec    = (releaseDist / speed) * 60;
+  var totalSec    = netSec + extraSec;
+  if (dsLots[ld.lot]) { netSec/=2; extraSec/=2; totalSec/=2; }
+  return {
+    totalEdgePieces: pieces,
+    totalEdgeSides:  sides,
+    totalEdgeMeters: meters,
+    releaseDist:     releaseDist,
+    totalActualSec:  totalSec
+  };
+}
+
+var _autoRT=null;
+function onParamChange(){
+  var g  = parseFloat(document.getElementById("inGap").value);
+  var sp = parseFloat(document.getElementById("inSpeed").value);
+  var gl = parseFloat(document.getElementById("inGlue").value);
+  var gChanged  = g  !== ORIG_PMS.gap;
+  var spChanged = sp !== ORIG_PMS.speed;
+  var glChanged = gl !== (ORIG_PMS.glueRate||250);
+  document.getElementById("inGap").classList.toggle("changed",  gChanged);
+  document.getElementById("inSpeed").classList.toggle("changed", spChanged);
+  document.getElementById("inGlue").classList.toggle("changed", glChanged);
+  document.getElementById("paramBar").classList.toggle("changed", gChanged||spChanged||glChanged);
+  document.getElementById("recalcBadge").classList.toggle("show", gChanged||spChanged||glChanged);
+  var okG=!isNaN(g)&&g>=0, okS=!isNaN(sp)&&sp>0, okL=!isNaN(gl)&&gl>=0;
+  document.getElementById("inGap").style.borderColor   = okG?"":"#dc2626";
+  document.getElementById("inSpeed").style.borderColor = okS?"":"#dc2626";
+  document.getElementById("inGlue").style.borderColor  = okL?"":"#dc2626";
+  clearTimeout(_autoRT);
+  if(okG&&okS&&okL) _autoRT=setTimeout(function(){ doRecalc(true); }, 300);
+}
+
+function doRecalc(keepSel){
+  var g0=parseFloat(document.getElementById("inGap").value), s0=parseFloat(document.getElementById("inSpeed").value), l0=parseFloat(document.getElementById("inGlue").value);
+  var gap   = (!isNaN(g0)&&g0>=0) ? g0 : ORIG_PMS.gap;
+  var speed = (!isNaN(s0)&&s0>0)  ? s0 : ORIG_PMS.speed;
+  viewGlueRate = (!isNaN(l0)&&l0>=0) ? l0 : (ORIG_PMS.glueRate||250);
+  curGap = gap; curSpeed = speed;
+  if(!keepSel) sel = {};
+  applyDouble();
+}
+
+// Recompute all lots; computeLot halves the ones ticked in dsLots
+function _recalcAll(){
+  ALL = ALL_ORIG.map(function(ld){ return Object.assign({}, ld, {calc: computeLot(ld, curGap, curSpeed)}); });
+}
+
+function dsCount(){ var n=0; for(var k in dsLots){ if(dsLots[k]) n++; } return n; }
+
+function updateDsBadge(){
+  var pd=document.getElementById("paramDisplay"); if(!pd) return;
+  var base="Gap=<strong>"+curGap+"</strong> ม. &middot; Speed=<strong>"+curSpeed+"</strong> ม./นาที";
+  var n=dsCount();
+  var dsB=n>0?" <span style='background:#7c3aed;color:#fff;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700'>&#9881;&#65039; ปิดขอบ 2 ด้าน &divide;2 &middot; "+n+" Lot</span>":"";
+  var rc=(curGap!==ORIG_PMS.gap||curSpeed!==ORIG_PMS.speed)?" <span style='background:#d97706;color:#fff;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700'>คำนวณใหม่</span>":"";
+  pd.innerHTML=base+dsB+rc;
+}
+
+function applyDouble(){
+  _recalcAll();
+  isRecalced=(curGap!==ORIG_PMS.gap||curSpeed!==ORIG_PMS.speed);
+  for(var i=0;i<6;i++){ var k=document.getElementById("kpi"+i); if(k){ k.classList.toggle("recalced", isRecalced); k.classList.remove("active"); } }
+  updateDsBadge();
+  applyFilter();
+}
+
+// ติ๊ก 1 Lot -> เวลาหาร 2 ทันที
+function toggleDs(lot,on){
+  if(on) dsLots[lot]=true; else delete dsLots[lot];
+  applyDouble();
+}
+
+// ปุ่ม ติ๊กทั้งหมด / ล้างทั้งหมด (เฉพาะ Lot ที่แสดงอยู่)
+function dsBulk(on){
+  for(var i=0;i<vis.length;i++){ if(on) dsLots[vis[i].lot]=true; else delete dsLots[vis[i].lot]; }
+  applyDouble();
+}
+
+function resetParams(){
+  document.getElementById("inGap").value   = ORIG_PMS.gap;
+  document.getElementById("inSpeed").value = ORIG_PMS.speed;
+  document.getElementById("inGlue").value  = ORIG_PMS.glueRate||250;
+  viewGlueRate = ORIG_PMS.glueRate||250;
+  dsLots = {};
+  curGap = ORIG_PMS.gap; curSpeed = ORIG_PMS.speed;
+  document.getElementById("inGap").classList.remove("changed");
+  document.getElementById("inSpeed").classList.remove("changed");
+  document.getElementById("inGlue").classList.remove("changed");
+  document.getElementById("paramBar").classList.remove("changed");
+  document.getElementById("recalcBadge").classList.remove("show");
+  document.getElementById("paramDisplay").innerHTML =
+    "Gap=" + ORIG_PMS.gap + " ม. &middot; Speed=" + ORIG_PMS.speed + " ม./นาที";
+  ALL = ALL_ORIG.map(function(ld){return Object.assign({},ld,{calc:Object.assign({},ld.calc)});});
+  isRecalced = false;
+  for(var i=0;i<6;i++){ var kk=document.getElementById("kpi"+i); if(kk) kk.classList.remove("recalced","active"); }
+  sel = {};
+  applyFilter();
+}
+
+var COLS=["d1234","sqm","sqmedge","glueg","gluekg","ds"];
+function _syncChips(){
+  var t=document.getElementById("lotTableCollapse"); if(!t) return;
+  var anyOn=false;
+  for(var i=0;i<COLS.length;i++){
+    var hidden=t.classList.contains("hide-"+COLS[i]);
+    var c=document.getElementById("chip-"+COLS[i]);
+    if(c) c.classList.toggle("off", hidden);
+    if(!hidden) anyOn=true;
+  }
+  document.body.classList.toggle("wide-tbl", anyOn);
+}
+function toggleCol(k){
+  document.getElementById("lotTableCollapse").classList.toggle("hide-"+k);
+  _syncChips();
+}
+function colPreset(m){
+  var t=document.getElementById("lotTableCollapse");
+  for(var i=0;i<COLS.length;i++){ if(m==="min") t.classList.add("hide-"+COLS[i]); else t.classList.remove("hide-"+COLS[i]); }
+  _syncChips();
+}
+
+function getV(ld,col){
+  switch(col){
+    case 0:return (ld.lot||"").toLowerCase();
+    case 1:return ld.pool||"";
+    case 2:return +(ld.week||0);
+    case 3:{var dp=(ld.enddate||"").split("/");return dp.length===3?(+dp[2])*10000+(+dp[1])*100+(+dp[0]):0;}
+    case 4:return ld.calc?(ld.calc.totalEdgePieces||0):0;
+    case 5:return ld.calc?(ld.calc.totalEdgeSides||0):0;
+    case 6:return ld.calc?(ld.calc.totalEdgeMeters||0):0;
+    case 7:return +(ld.sqm||0);
+    case 8:return +(ld.sqmEdge||0);
+    case 9:return +(ld.sqmEdge||0)*(typeof viewGlueRate!=="undefined"?viewGlueRate:250);
+    case 10:return +(ld.sqmEdge||0)*(typeof viewGlueRate!=="undefined"?viewGlueRate:250)/1000;
+    case 11:return ld.calc?(ld.calc.totalActualSec||0):0;
+    case 12:return +(ld.deadstockMM||0);
+    case 13:return ld.calc?(ld.calc.longSec||0):0;
+    case 14:return ld.calc?(ld.calc.normSec||0):0;
+    case 15:return (ld.calc&&ld.calc.grp&&ld.calc.grp[2])?ld.calc.grp[2].sec:0;
+    case 16:return (ld.calc&&ld.calc.grp&&ld.calc.grp[0])?ld.calc.grp[0].sec:0;
+    case 17:return (ld.calc&&ld.calc.grp&&ld.calc.grp[1])?ld.calc.grp[1].sec:0;
+    case 18:return ld.calc?(ld.calc.normPcs||0):0;
+    case 19:return (+ld.rows||0)-(ld.calc?(ld.calc.totalEdgePieces||0):0);
+    case 20:case 21:case 22:{var gg=ld.calc&&ld.calc.grp&&ld.calc.grp[col-20];return gg?(gg.pcs||0):0;}
+    case 23:return +ld.rows||0;
+    default:return "";
+  }
+}
+
+function sortTable(col){
+  if(sortCol===col)sortAsc=!sortAsc; else{sortCol=col;sortAsc=true;}
+  applyFilter();
+  _sortMark();
+}
+function _sortMark(){
+  var col=sortCol;
+  document.querySelectorAll("#lotTable thead th").forEach(function(th){
+    var mm=(th.getAttribute("onclick")||"").match(/sortTable\((\d+)\)/); var c=mm?+mm[1]:-1;
+    th.classList.toggle("sorted",c>=0&&c===col);
+    var sa=th.querySelector(".sa");
+    if(sa) sa.textContent=(c>=0&&c===col&&!sortAsc)?"\u25bc":"\u25b2";
+  });
+}
+
+function _lotPass(ld){
+  var fp=document.getElementById("fPool").value, fw=document.getElementById("fWeek").value;
+  if(fp&&ld.pool!==fp) return false;
+  if(fw&&String(ld.week)!==String(fw)) return false;
+  if(typeof xfPass==="function"&&!xfPass(ld)) return false;
+  return true;
+}
+function _pruneLotFilter(){
+  if(typeof xfPrune==="function") xfPrune();
+  var ok={}; for(var i=0;i<ALL.length;i++){ if(_lotPass(ALL[i])) ok[ALL[i].lot]=1; }
+  for(var k in lotFilter){ if(lotFilter.hasOwnProperty(k)&&!ok[k]) delete lotFilter[k]; }
+  var p=document.getElementById("lotDropPanel"); if(p&&p.style.display==="block") renderLotDrop();
+}
+function onWeekChange(){ _pruneLotFilter(); applyFilter(); }
+function onPoolChange(){
+  var fp=document.getElementById("fPool").value;
+  // Rebuild Week dropdown to only show weeks of lots in selected pool
+  var seen={}, weeks=[];
+  ALL.forEach(function(ld){
+    if(fp && ld.pool!==fp) return;
+    if(ld.week && !seen[ld.week]){ seen[ld.week]=1; weeks.push(ld.week); }
+  });
+  weeks.sort(function(a,b){return +a-+b;});
+  var fw=document.getElementById("fWeek").value;
+  var weekSel=document.getElementById("fWeek");
+  weekSel.innerHTML='<option value="">ทุก Week</option>';
+  weeks.forEach(function(w){
+    weekSel.innerHTML+='<option value="'+w+'"'+(String(w)===fw?' selected':'')+'>W'+w+'</option>';
+  });
+  if(fw && weeks.indexOf(+fw)<0 && weeks.indexOf(fw)<0) weekSel.value="";
+  _pruneLotFilter();
+  applyFilter();
+}
+
+function applyFilter(){ _keepFilterPos(_applyFilterCore); }
+function _keepFilterPos(fn){
+  var a=document.getElementById("lotDropBtn"); if(!a){ fn(); return; }
+  var y0=a.getBoundingClientRect().top;
+  fn();
+  var sp=document.getElementById("fltSpacer");
+  if(!sp){ sp=document.createElement("div"); sp.id="fltSpacer"; document.body.appendChild(sp); }
+  sp.style.height="0px";
+  var target=Math.max(0, a.getBoundingClientRect().top+window.pageYOffset-y0);
+  for(var t=0,h=0;t<3;t++){ var need=target+window.innerHeight-document.documentElement.scrollHeight; if(need<=0) break; h+=Math.ceil(need); sp.style.height=h+"px"; }
+  window.scrollTo(window.pageXOffset, target);
+}
+function _applyFilterCore(){
+  var fp=document.getElementById("fPool").value;
+  var fw=document.getElementById("fWeek").value;
+  var lotKeys=Object.keys(lotFilter).filter(function(k){return lotFilter[k];});
+  var hasLotFilter=lotKeys.length>0;
+  vis=ALL.filter(function(ld){
+    if(hasLotFilter&&!lotFilter[ld.lot])return false;
+    if(fp&&ld.pool!==fp)return false;
+    if(fw&&String(ld.week)!==String(fw))return false;
+    if(typeof xfPass==="function"&&!xfPass(ld))return false;
+    return true;
+  });
+  if(sortCol>=0){
+    vis.sort(function(a,b){
+      var av=getV(a,sortCol),bv=getV(b,sortCol);
+      if(sortCol===3&&(!av||!bv)&&av!==bv) return av?-1:1;
+      if(av<bv)return sortAsc?-1:1;
+      if(av>bv)return sortAsc?1:-1;
+      return 0;
+    });
+  }
+  updateLotDropLabel();
+  renderTable();
+}
+
+function clearFilter(){
+  lotFilter={};
+  if(typeof xfClear==="function") xfClear();
+  document.getElementById("fPool").value="";
+  document.getElementById("fWeek").value="";
+  var ds=document.getElementById("lotDropSearch"); if(ds) ds.value="";
+  sortCol=-1;sortAsc=true;
+  renderLotDrop();
+  onPoolChange();
+  _sortMark();
+}
+
+function toggleLotDrop(){
+  var p=document.getElementById("lotDropPanel");
+  if(!p) return;
+  var show=p.style.display==="none"||!p.style.display;
+  p.style.display=show?"block":"none";
+  if(show) renderLotDrop();
+}
+function renderLotDrop(){
+  var list=document.getElementById("lotDropList"); if(!list) return;
+  var q=(document.getElementById("lotDropSearch").value||"").toLowerCase().trim();
+  var html="";
+  for(var i=0;i<ALL.length;i++){
+    var ln=ALL[i].lot||"";
+    if(!_lotPass(ALL[i])) continue;
+    if(q&&ln.toLowerCase().indexOf(q)<0) continue;
+    var ck=lotFilter[ln]?" checked":"";
+    var enc=ln.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+    html+="<label class=ldrow><input type=checkbox"+ck+" data-lot='"+enc+"' onchange=onLotFilterCheck(this)><span class=ldname>"+enc+"</span></label>";
+  }
+  if(!html) html="<div style='padding:12px;text-align:center;color:#8892b0;font-size:11px'>ไม่พบ Lot (ใน Pool / Week ที่กรอง)</div>";
+  list.innerHTML=html;
+}
+function onLotFilterCheck(el){
+  var lot=el.getAttribute("data-lot");
+  if(el.checked) lotFilter[lot]=true; else delete lotFilter[lot];
+  applyFilter();
+}
+function lotDropAll(on){
+  var q=(document.getElementById("lotDropSearch").value||"").toLowerCase().trim();
+  for(var i=0;i<ALL.length;i++){
+    var ln=ALL[i].lot||"";
+    if(!_lotPass(ALL[i])) continue;
+    if(q&&ln.toLowerCase().indexOf(q)<0) continue;
+    if(on) lotFilter[ln]=true; else delete lotFilter[ln];
+  }
+  renderLotDrop();
+  applyFilter();
+}
+function updateLotDropLabel(){
+  var lbl=document.getElementById("lotDropLabel"); if(!lbl) return;
+  var keys=Object.keys(lotFilter).filter(function(k){return lotFilter[k];});
+  if(keys.length===0) lbl.textContent="ทุก Lot";
+  else if(keys.length===1) lbl.textContent=keys[0];
+  else lbl.textContent="เลือก "+keys.length+" Lot";
+}
+document.addEventListener("click",function(e){
+  var btn=document.getElementById("lotDropBtn");
+  var pan=document.getElementById("lotDropPanel");
+  if(!btn||!pan) return;
+  if(!btn.contains(e.target)&&!pan.contains(e.target)) pan.style.display="none";
+});
+
+function toggleAll(cb){vis.forEach(function(ld){sel[ld.lot]=cb.checked;});renderTable();}
+function selectAll(){vis.forEach(function(ld){sel[ld.lot]=true;});renderTable();}
+function clearSel(){sel={};renderTable();}
+
+function onCheck(lot,checked){
+  sel[lot]=checked;
+  updateKPI();
+  updateSelBar();
+  updateFooter();
+  var rowEl=document.getElementById("row_"+lot.replace(/[^a-zA-Z0-9]/g,"_"));
+  if(rowEl)rowEl.classList.toggle("selected",checked);
+  var selArr=Object.keys(sel).filter(function(k){return sel[k];});
+  var cb=document.getElementById("chkAll");
+  if(cb){cb.indeterminate=selArr.length>0&&selArr.length<vis.length;}
+}
+
+function getSelected(){return ALL.filter(function(ld){return sel[ld.lot];});}
+
+function updateKPI(){
+  var arr=getSelected();
+  var hasS=arr.length>0;
+  var source=hasS?arr:vis;
+  var pcs=0,sid=0,mtr=0,rls=0,sec=0,sqme=0;
+  source.forEach(function(ld){
+    pcs+=ld.calc?(ld.calc.totalEdgePieces||0):0;
+    sid+=ld.calc?(ld.calc.totalEdgeSides||0):0;
+    mtr+=ld.calc?(ld.calc.totalEdgeMeters||0):0;
+    rls+=ld.calc?(ld.calc.releaseDist||0):0;
+    sec+=ld.calc?(ld.calc.totalActualSec||0):0;
+    sqme+=+(ld.sqmEdge||0);
+  });
+  var gRate=typeof viewGlueRate!=="undefined"?viewGlueRate:250;
+  var gG=sqme*gRate;
+  document.getElementById("kv0").textContent=fmtN(pcs);
+  document.getElementById("kv1").textContent=fmtN(sid);
+  document.getElementById("kv2").textContent=fmtM(mtr);
+  document.getElementById("kv3").textContent=fmtM(mtr+rls);
+  document.getElementById("kv4").textContent=fmtS(sec);
+  var kv5=document.getElementById("kv5"); if(kv5) kv5.textContent=gG.toFixed(0)+" g";
+  var kv5kg=document.getElementById("kv5kg"); if(kv5kg) kv5kg.textContent="= "+(gG/1000).toFixed(2)+" kg";
+  var kv5lbl=document.getElementById("kv5lbl"); if(kv5lbl) kv5lbl.textContent="กาว ("+gRate+" g/ตร.ม.)";
+  for(var i=0;i<6;i++){
+    var k=document.getElementById("kpi"+i);
+    if(!k) continue;
+    k.classList.toggle("active",hasS&&!isRecalced);
+    k.classList.toggle("recalced",isRecalced);
+  }
+}
+
+function updateSelBar(){
+  var arr=getSelected();
+  var bar=document.getElementById("selBar");
+  if(!arr.length){bar.classList.remove("show");return;}
+  bar.classList.add("show");
+  var pcs=0,mtr=0,sec=0;
+  arr.forEach(function(ld){
+    pcs+=ld.calc?(ld.calc.totalEdgePieces||0):0;
+    mtr+=ld.calc?(ld.calc.totalEdgeMeters||0):0;
+    sec+=ld.calc?(ld.calc.totalActualSec||0):0;
+  });
+  document.getElementById("selCount").textContent=arr.length;
+  document.getElementById("selPcs").textContent=fmtN(pcs);
+  document.getElementById("selMtr").textContent=fmtM(mtr);
+  document.getElementById("selTime").textContent=fmtS(sec);
+}
+
+function updateFooter(){
+  var selArr=getSelected();
+  var arr=selArr.length?selArr:vis;
+  var pcs=0,sid=0,mtr=0,sec=0,sqm=0,sqme=0;
+  arr.forEach(function(ld){
+    pcs+=ld.calc?(ld.calc.totalEdgePieces||0):0;
+    sid+=ld.calc?(ld.calc.totalEdgeSides||0):0;
+    mtr+=ld.calc?(ld.calc.totalEdgeMeters||0):0;
+    sec+=ld.calc?(ld.calc.totalActualSec||0):0;
+    sqm+=+(ld.sqm||0);
+    sqme+=+(ld.sqmEdge||0);
+  });
+  document.getElementById("footerCount").textContent=arr.length;
+  document.getElementById("footerPcs").textContent=fmtN(pcs);
+  document.getElementById("footerSides").textContent=fmtN(sid);
+  document.getElementById("footerMtr").textContent=fmtM(mtr);
+  var fsqm=document.getElementById("footerSqm"); if(fsqm) fsqm.textContent=sqm.toFixed(4);
+  var fsqme=document.getElementById("footerSqmEdge"); if(fsqme) fsqme.textContent=sqme.toFixed(4);
+  var fg=document.getElementById("footerGlue"); if(fg) fg.textContent=(sqme*(typeof viewGlueRate!=="undefined"?viewGlueRate:250)).toFixed(0)+" g";
+  var fgkg=document.getElementById("footerGlueKg"); if(fgkg) fgkg.textContent=(sqme*(typeof viewGlueRate!=="undefined"?viewGlueRate:250)/1000).toFixed(3)+" kg";
+  document.getElementById("footerTime").textContent=fmtS(sec);
+  var ds=0; arr.forEach(function(ld){ds+=+(ld.deadstockMM||0);});
+  var fds=document.getElementById("footerDS"); if(fds) fds.textContent=(ds/1000).toFixed(2)+" ม.";
+  var kvds=document.getElementById("kvDS"); if(kvds) kvds.textContent=(ds/1000).toFixed(2);
+  if(typeof rebuildDeadstockSection==="function") rebuildDeadstockSection(arr);
+  if(typeof lpvRefresh==="function") lpvRefresh();
+}
+
+function openDeadstockPopup(){
+  var ov=document.getElementById("dsOverlay"); if(!ov) return;
+  var arr=(typeof getSelected==="function"&&getSelected().length)?getSelected():(typeof vis!=="undefined"?vis:ALL);
+  if(typeof rebuildDeadstockSection==="function") rebuildDeadstockSection(arr);
+  ov.style.display="flex";
+  document.body.style.overflow="hidden";
+}
+function closeDeadstockPopup(){
+  var ov=document.getElementById("dsOverlay"); if(ov) ov.style.display="none";
+  document.body.style.overflow="";
+}
+function toggleDsCard(id){
+  var el=document.getElementById(id); if(!el) return;
+  var chev=document.getElementById(id+"Chev");
+  var hidden=el.style.display==="none";
+  el.style.display=hidden?"":"none";
+  if(chev) chev.style.transform=hidden?"rotate(0deg)":"rotate(-90deg)";
+}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeDeadstockPopup();});
+
+function toggleLotTable(){
+  var c=document.getElementById("lotTableCollapse");
+  var ch=document.getElementById("lotTableChevron");
+  if(!c) return;
+  var hidden=c.style.display==="none";
+  c.style.display=hidden?"":"none";
+  if(ch) ch.style.transform=hidden?"rotate(0deg)":"rotate(-90deg)";
+}
+
+function rebuildDeadstockSection(arr){
+  var sec=document.getElementById("dsSection"); if(!sec) return;
+  var GC={DOOR:"#2563eb",FRONT_PANEL:"#7c3aed",SIDE_PANEL:"#0891b2",TOP_BOTTOM:"#0e7490",SHELF:"#059669",RAIL_FIX:"#d97706",BACK_PANEL:"#b45309",FILLER:"#6d28d9",DRAWER:"#dc2626",SUPPORT:"#16a34a",PARTITION:"#0284c7",BOX:"#9333ea",PLINTH:"#c2410c",PANEL_GENERAL:"#475569",OTHER:"#64748b"};
+  var t4=0,c4=0,t2=0,c2=0,tO=0,cO=0,groupAll={};
+  for(var i=0;i<arr.length;i++){var d=arr[i];t4+=d.ds4mm||0;c4+=d.ds4c||0;t2+=d.ds2mm||0;c2+=d.ds2c||0;tO+=d.dsOmm||0;cO+=d.dsOc||0;if(d.dsGroups){for(var g in d.dsGroups){if(!groupAll[g])groupAll[g]={mm:0,count:0,reason:d.dsGroups[g].reason||""};groupAll[g].mm+=d.dsGroups[g].mm;groupAll[g].count+=d.dsGroups[g].count;}}}
+  var grand=t4+t2+tO;
+  var h="<div style='font-size:15px;font-weight:700;color:#d97706;margin-bottom:12px'>&#9851;&#65039; Deadstock Edge — รายละเอียดเต็ม</div>";
+  h+="<div style='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px'>";
+  var kp=[['Deadstock รวม',(grand/1000).toFixed(3),(c4+c2+cO),'#d97706'],['ปิด 4 ด้าน',(t4/1000).toFixed(3),c4,'#2563eb'],['ปิด 2 ด้าน (ด้านหลัง)',(t2/1000).toFixed(3),c2,'#16a34a'],['อื่น ๆ',(tO/1000).toFixed(3),cO,'#64748b']];
+  for(var k=0;k<kp.length;k++){h+="<div style='background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px'><div style='font-size:9px;color:#8892b0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px'>"+kp[k][0]+"</div><div style='font-size:20px;font-weight:700;font-family:monospace;color:"+kp[k][3]+"'>"+kp[k][1]+"</div><div style='font-size:10px;color:#8892b0'>เมตร · "+kp[k][2]+" ชิ้น</div></div>";}
+  h+="</div>";
+  var gKeys=Object.keys(groupAll).sort(function(a,b){return groupAll[b].mm-groupAll[a].mm;});
+  if(gKeys.length){h+="<div style='background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:14px'><div onclick=\"toggleDsCard('dsGroupBox')\" style='cursor:pointer;user-select:none;padding:11px 14px;background:#f7f8fa;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#1e2235;display:flex;align-items:center;gap:8px'><span id='dsGroupBoxChev' style='font-size:11px;transition:transform .2s;display:inline-block'>&#9660;</span>&#129681; Deadstock แยกตามประเภทชิ้นงานเฟอร์นิเจอร์<span style='margin-left:auto;font-size:10px;color:#8892b0;font-weight:400'>คลิกซ่อน/แสดง</span></div><div id='dsGroupBox' style='padding:10px 14px'>";
+    for(var gi=0;gi<gKeys.length;gi++){var gn=gKeys[gi],gd=groupAll[gn],gc=GC[gn]||'#64748b';h+="<div style='display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9'><span style='background:"+gc+"22;color:"+gc+";border:1px solid "+gc+"55;border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700;font-family:monospace;min-width:110px;text-align:center'>"+gn.replace('_',' ')+"</span><div style='flex:1;font-size:10px;color:#8892b0'>"+(gd.reason||'')+"</div><span style='font-family:monospace;font-size:11px;font-weight:700;color:"+gc+";min-width:80px;text-align:right'>"+(gd.mm/1000).toFixed(2)+" ม.</span><span style='font-size:10px;color:#8892b0;min-width:50px;text-align:right'>"+gd.count+" ชิ้น</span></div>";}
+    h+="</div></div>";}
+  h+="<div style='background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:14px'><div style='padding:11px 14px;background:#f7f8fa;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#1e2235'>&#128230; Deadstock แยกตาม Lot ("+arr.length+" Lot)</div><div style='padding:8px 14px'>";
+  for(var li=0;li<arr.length;li++){var ld=arr[li];var lt=(ld.deadstockMM||0)/1000;h+="<div style='display:grid;grid-template-columns:1fr auto auto auto auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:11px'><span style='font-family:monospace;color:#2563eb;font-weight:700'>"+(ld.lot||ld.lotId||'')+"</span><span style='color:#8892b0'>4ด้าน: <b style='color:#2563eb'>"+((ld.ds4mm||0)/1000).toFixed(2)+"</b></span><span style='color:#8892b0'>2ด้าน: <b style='color:#16a34a'>"+((ld.ds2mm||0)/1000).toFixed(2)+"</b></span><span style='color:#8892b0'>อื่นๆ: <b style='color:#64748b'>"+((ld.dsOmm||0)/1000).toFixed(2)+"</b></span><span style='font-family:monospace;font-weight:700;color:#d97706;min-width:80px;text-align:right'>"+lt.toFixed(3)+" ม.</span></div>";}
+  h+="</div></div>";
+  h+="<div style='background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden'><div style='padding:11px 14px;background:#f7f8fa;border-bottom:1px solid #e2e8f0;font-size:12px;font-weight:700;color:#1e2235'>&#128203; ตารางรายละเอียด Deadstock ต่อชิ้น</div><div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse;font-size:10px'><thead><tr style='background:#f7f8fa;border-bottom:1px solid #e2e8f0'><th style='padding:6px 8px;text-align:left;color:#475569'>Lot</th><th style='padding:6px 8px;text-align:left;color:#475569'>Part Name</th><th style='padding:6px 8px;text-align:left;color:#475569'>กลุ่ม</th><th style='padding:6px 8px;text-align:right;color:#475569'>L (mm)</th><th style='padding:6px 8px;text-align:center;color:#475569'>Cycle</th><th style='padding:6px 8px;text-align:center;color:#475569'>ด้านหลัง</th><th style='padding:6px 8px;text-align:right;color:#d97706'>DS (ม.)</th></tr></thead><tbody>";
+  var shown=0,MAX=600;
+  for(var li2=0;li2<arr.length&&shown<MAX;li2++){var ld2=arr[li2];if(!ld2.dsParts)continue;for(var pi=0;pi<ld2.dsParts.length&&shown<MAX;pi++){var p=ld2.dsParts[pi];var pgc=GC[p.group]||'#64748b';var sl=(p.cycle===2)?(p.backSide==='W'?'W (กว้าง)':'L (ยาว)'):'L (ยาว)';h+="<tr style='border-bottom:1px solid #f1f5f9'><td style='padding:5px 8px;font-family:monospace;color:#2563eb'>"+(ld2.lot||ld2.lotId||'')+"</td><td style='padding:5px 8px;color:#1e2235;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+(p.pn||'')+"</td><td style='padding:5px 8px'><span style='background:"+pgc+"18;color:"+pgc+";border:1px solid "+pgc+"44;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;white-space:nowrap'>"+p.group.replace('_',' ')+"</span></td><td style='padding:5px 8px;text-align:right;font-family:monospace;color:#1e2235'>"+(p.L||0).toLocaleString()+"</td><td style='padding:5px 8px;text-align:center'>"+p.cycle+" ด้าน</td><td style='padding:5px 8px;text-align:center;font-size:9px;color:#8892b0'>"+sl+"</td><td style='padding:5px 8px;text-align:right;font-family:monospace;font-weight:700;color:#d97706'>"+((p.ds||0)/1000).toFixed(3)+"</td></tr>";shown++;}}
+  h+="</tbody></table></div>";
+  if(shown>=MAX)h+="<div style='padding:8px 14px;font-size:10px;color:#8892b0;border-top:1px solid #e2e8f0'>แสดง "+MAX+" รายการแรก</div>";
+  h+="</div>";
+  sec.innerHTML=h;
+}
+
+function renderTable(){
+  var body=document.getElementById("lotBody");
+  var noRes=document.getElementById("noResult");
+  document.getElementById("shownCount").textContent=vis.length;
+  var fstat=document.getElementById("filterStat");
+  fstat.textContent=vis.length<ALL.length?"แสดง "+vis.length+" / "+ALL.length+" Lot":"";
+  if(!vis.length){body.innerHTML="";noRes.style.display="";updateKPI();updateSelBar();updateFooter();return;}
+  noRes.style.display="none";
+  var html="";
+  for(var i=0;i<vis.length;i++){
+    var ld=vis[i];
+    var pc=PC[ld.pool]||"#888";
+    var pcs=ld.calc?(ld.calc.totalEdgePieces||0):0;
+    var sid=ld.calc?(ld.calc.totalEdgeSides||0):0;
+    var mtr=ld.calc?(ld.calc.totalEdgeMeters||0):0;
+    var sec=ld.calc?(ld.calc.totalActualSec||0):0;
+    var sqmV=(+(ld.sqm||0)).toFixed(4);
+    var sqmeV=(+(ld.sqmEdge||0)).toFixed(4);
+    var glueV=((+(ld.sqmEdge||0))*viewGlueRate).toFixed(1);
+    var isSel=sel[ld.lot]?true:false;
+    var thisHalved=dsLots[ld.lot]?true:false;
+    var rowId="row_"+ld.lot.replace(/[^a-zA-Z0-9]/g,"_");
+    var poolCell=ld.pool
+      ?"<span style=\"background:"+pc+"22;color:"+pc+";border:1px solid "+pc+"55;border-radius:5px;padding:1px 7px;font-size:10px;font-weight:700\">"+ld.pool+"</span>"
+      :"\u2014";
+    html+="<tr id=\""+ rowId +"\" class=\""+(isSel?"selected":"")+"\">";
+    html+="<td class=\"cb-cell no-print\"><input type=\"checkbox\" "+(isSel?"checked ":"")+"onchange=\"onCheck('"+ ld.lot +"',this.checked)\"></td>";
+    var lotOpen=(typeof LPV!=="undefined"&&LPV.open[ld.lot]);
+    html+="<td class=\"lpv-lotcell"+(lotOpen?" open":"")+"\" data-lot=\""+String(ld.lot).replace(/&/g,"&amp;").replace(/"/g,"&quot;")+"\" onclick=\"lpvToggleAll(this)\" title=\"คลิกเพื่อดูรายการชิ้น\" style=\"padding:7px 10px;font-family:monospace;color:#2563eb;font-weight:600\"><span class=\"lpv-lchev\">&#9654;</span> "+ld.lot+"</td>";
+    html+="<td style=\"padding:7px 10px;text-align:center\">"+poolCell+"</td>";
+    html+="<td style=\"padding:7px 10px;text-align:center;font-family:monospace;color:#0891b2\">"+(ld.week?"W"+ld.week:"\u2014")+"</td>";
+    html+="<td style=\"padding:7px 10px;text-align:center;font-family:monospace;color:#64748b\">"+(ld.enddate||"\u2014")+"</td>";
+    if(typeof lpvNECell==="function") html+=lpvNECell(ld);
+    html+="<td style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#2563eb\">"+fmtN(pcs)+"</td>";
+    html+="<td style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#475569\">"+fmtN(sid)+"</td>";
+    html+="<td style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#16a34a\">"+fmtM(mtr)+"</td>";
+    html+="<td class=\"cg-d1234\" style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#475569;font-size:10px\">"+(ld.e1||0)+"/"+(ld.e2||0)+"/"+(ld.e3||0)+"/"+(ld.e4||0)+"</td>";
+    html+="<td class=\"cg-sqm\" style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#0891b2\">"+sqmV+"</td>";
+    html+="<td class=\"cg-sqmedge\" style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#d97706\">"+sqmeV+"</td>";
+    html+="<td class=\"cg-glueg\" style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#16a34a\">"+glueV+"</td>";
+    html+="<td class=\"cg-gluekg\" style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#00d4aa\">"+(+(ld.sqmEdge||0)>0?((+(ld.sqmEdge||0))*viewGlueRate/1000).toFixed(4):"")+"</td>";
+    html+="<td class=\"no-print\" style=\"text-align:center;background:"+(thisHalved?"#faf5ff":"transparent")+"\"><input type=\"checkbox\" "+(thisHalved?"checked ":"")+"onchange=\"toggleDs('"+ ld.lot +"',this.checked)\" style=\"width:17px;height:17px;accent-color:#7c3aed;cursor:pointer\" title=\"ติ๊ก = งานนี้เข้าเครื่องปิดขอบ 2 ด้าน (เวลา \u00f72)\"></td>";
+    if(typeof lpvCells==="function") html+=lpvCells(ld);
+    html+="<td title=\""+(typeof lpvTotTip==="function"?lpvTotTip(ld,sec,thisHalved):"")+"\" style=\"padding:7px 10px;text-align:right;font-family:monospace;white-space:nowrap;cursor:help;color:"+(thisHalved?"#7c3aed;font-weight:700":"#ca8a04")+"\">"+fmtS(sec)+(thisHalved?" <span style=\"font-size:9px;color:#7c3aed\">\u00f72</span>":"")+"</td>";
+    html+="<td class=\"cg-ds\" style=\"padding:7px 10px;text-align:right;font-family:monospace;color:#d97706;font-weight:700\">"+((+(ld.deadstockMM||0))/1000).toFixed(3)+"</td>";
+    html+="</tr>";
+    if(typeof lpvSubRow==="function") html+=lpvSubRow(ld);
+  }
+  body.innerHTML=html;
+  var cb=document.getElementById("chkAll");
+  var selArr=Object.keys(sel).filter(function(k){return sel[k];});
+  if(cb){
+    var allVis=vis.length>0&&vis.every(function(ld){return sel[ld.lot];});
+    cb.checked=allVis;
+    cb.indeterminate=selArr.length>0&&!allVis;
+  }
+  updateKPI();updateSelBar();updateFooter();
+}
+
+window.onload=function(){applyFilter();_syncChips();};
+</script>
+<script>
+var LPV_SAVED={"unit":"mpm","on":true,"g":[{"k":"n50","op":"le","on":true,"thr":50,"speed":5,"gap":1.5},{"k":"n250","op":"le","on":true,"thr":250,"speed":5,"gap":1.5},{"k":"l2000","op":"ge","on":true,"thr":2000,"speed":5,"gap":1.5}]};
+function lpGMeta() {
+  return [
+    { k: 'n50',   op: 'le', c: '#be123c', bg: '#ffe4e6', bd: '#fb7185' },
+    { k: 'n250',  op: 'le', c: '#0e7490', bg: '#cffafe', bd: '#22d3ee' },
+    { k: 'l2000', op: 'ge', c: '#b45309', bg: '#fef3c7', bd: '#f59e0b' }
+  ];
+}
+function lpBandLo(G) {
+  // v5.2: กลุ่มแคบแบ่งเป็นช่วงต่อกัน ไม่ซ้อนกัน (≤50 · 51–250) — ขอบล่างของแต่ละกลุ่ม = เกณฑ์ของกลุ่มแคบก่อนหน้า (ไม่ขึ้นกับติ๊ก)
+  var lo = 0;
+  for (var i = 0; G && i < G.length; i++) if (G[i] && G[i].op === 'le') { G[i].lo = lo; if (+G[i].thr > lo) lo = +G[i].thr; }
+  return G;
+}
+function lpGLabel(g) {
+  var t = (+g.thr || 0).toLocaleString(), lo = +g.lo || 0;
+  if (g.op !== 'le') return '≥' + t;
+  if (lo > 0) return (Math.round(lo) === lo ? (lo + 1).toLocaleString() : '>' + lo.toLocaleString()) + '–' + t;
+  return '≤' + t;
+}
+function lpGName(g) { return (g.op === 'le' ? 'แคบ ' : 'ยาว ') + lpGLabel(g); }
+function lpPartInfo(L, W, ef, G) {
+  // G = [{op:'le'|'ge', on, thr, speed}] → g = กลุ่มของชิ้น (-1 = Speed ปกติ)
+  //   กลุ่มแคบ (le) เป็นช่วงไม่ซ้อนกัน: กลุ่มแรก 0 < ด้านแคบ ≤ เกณฑ์ · กลุ่มถัดไป เกณฑ์ก่อนหน้า < ด้านแคบ ≤ เกณฑ์ (ไม่ขึ้นกับติ๊ก)
+  //   กลุ่มยาว (ge) ด้านยาว ≥ เกณฑ์ · ติ๊กออก = ไม่คิดกลุ่มนั้น (ชิ้นใช้ Speed ปกติ)
+  //   ชิ้นที่ทั้งแคบและยาว → กลุ่มแรกที่ติ๊กไว้ตามลำดับ (แคบก่อน)
+  L = +L || 0; W = +W || 0; ef = (+ef || 0) & 15;
+  if (!ef) return null;
+  var lens = [L, W, L, W], bits = [1, 2, 4, 8], allLen = 0, allSides = 0, i;
+  for (i = 0; i < 4; i++) if (ef & bits[i]) { allLen += lens[i]; allSides++; }
+  var mn = Math.min(L, W), mx = Math.max(L, W), g = -1, lo = 0;
+  for (i = 0; G && i < G.length; i++) {
+    var q = G[i];
+    if (!q) continue;
+    var hit = q.op === 'le' ? (mn > lo && mn <= q.thr) : (mx >= q.thr);
+    if (q.op === 'le' && +q.thr > lo) lo = +q.thr;
+    if (q.on && hit) { g = i; break; }
+  }
+  var sp = g >= 0;
+  return { g: g, isLong: sp, allLen: allLen, allSides: allSides, maxDim: mx, minDim: mn,
+           sides: sp ? allSides : 0, len: sp ? allLen : 0, cntMask: sp ? ef : 0 };
+}
+function lpTimeCalc(lenMM, passes, s) {
+  var mps = s.unit === 'mpm' ? (+s.speed || 0) / 60 : (+s.speed || 0);
+  if (!(mps > 0)) return { net: 0, gap: 0, total: 0, mps: 0 };
+  var net = (lenMM / 1000) / mps;
+  var gap = s.gapOn ? (passes * (+s.gap || 0)) / mps : 0;
+  return { net: net, gap: gap, total: net + gap, mps: mps };
+}
+function lpFmtT(s) {
+  s = +s || 0;
+  if (s <= 0) return '0 วิ';
+  if (s < 60) return (s < 10 ? s.toFixed(2) : s.toFixed(1)) + ' วิ';
+  var r = Math.round(s), h = Math.floor(r / 3600), m = Math.floor((r % 3600) / 60), x = r % 60;
+  return (h ? h + ' ชม. ' : '') + (m ? m + ' นาที ' : '') + x + ' วิ';
+}
+function lpModeText(G) {
+  var a = [];
+  for (var i = 0; G && i < G.length; i++) if (G[i].on) a.push((G[i].op === 'le' ? 'ด้านแคบ ' : 'ด้านยาว ') + lpGLabel(G[i]) + ' mm @ Speed ' + G[i].speed + ' ม./นาที · Gap ' + (G[i].gap != null ? G[i].gap : 1.5));
+  return a.length ? 'ชิ้นที่ปิดขอบ: ' + a.join(' · ') + ' · ทุกด้านที่ปิดของชิ้นนั้นเดินที่ Speed กลุ่ม · กลุ่มที่ติ๊กออกใช้ Speed ปกติ · ชิ้นที่ทั้งแคบและยาวนับกลุ่มแคบก่อน' : 'ปิดทุกกลุ่ม (ทุกชิ้นใช้ Speed ปกติ)';
+}
+function lpTips(L, W, ef, inf, G, gapN, spN) {
+  // v5.6: ข้อความอธิบายวิธีคำนวณของชิ้น (แสดงเมื่อชี้เมาส์ที่ช่อง) — คืนค่า {sides, len, speed, time}
+  L = +L || 0; W = +W || 0; ef = (+ef || 0) & 15;
+  var f = function(n, d){ return (+n || 0).toLocaleString(undefined, {maximumFractionDigits: d == null ? 1 : d}); };
+  if (!inf) { var t0 = 'ไม่ปิดขอบ (edgecode ทั้ง 4 ด้านว่าง/0) → ไม่นับด้าน ไม่คิดเวลา'; return {sides:t0, len:t0, speed:t0, time:t0}; }
+  var nm = ['1 (L)', '2 (W)', '3 (L)', '4 (W)'], ln = [L, W, L, W], b = [1, 2, 4, 8], ps = [], sd = [], i;
+  for (i = 0; i < 4; i++) if (ef & b[i]) { ps.push(f(ln[i])); sd.push(nm[i]); }
+  var g = inf.g >= 0 && G ? G[inf.g] : null;
+  var sp = g ? +g.speed : +spN, gp = g ? (g.gap != null ? +g.gap : +gapN) : +gapN;
+  var mn = Math.min(L, W), mx = Math.max(L, W), why;
+  if (g) why = (g.op === 'le' ? 'ด้านแคบ (W หรือ L ที่สั้นกว่า) = ' + f(mn) + ' mm → อยู่ช่วง ' + lpGLabel(g) : 'ด้านยาว (W หรือ L ที่ยาวกว่า) = ' + f(mx) + ' mm ≥ ' + f(g.thr, 0)) + ' → กลุ่ม ' + lpGName(g) + ' mm';
+  else why = 'ไม่เข้ากลุ่ม Speed พิเศษที่ติ๊กไว้ (ด้านแคบ ' + f(mn) + ' mm · ด้านยาว ' + f(mx) + ' mm) → ชิ้นปกติ';
+  var m = inf.allLen / 1000, gd = inf.allSides * gp, sec = sp > 0 ? (m + gd) / sp * 60 : 0;
+  return {
+    sides: 'ด้านที่ปิดขอบ: ' + sd.join(', ') + ' = ' + inf.allSides + ' ด้าน\n(นับด้านที่มีรหัสขอบ edgecode 1–4 ในไฟล์ CSV · ด้าน 1, 3 = L · ด้าน 2, 4 = W)',
+    len: 'ขอบรวม = ' + ps.join(' + ') + ' = ' + f(inf.allLen) + ' mm\n(ด้าน 1, 3 ยาวเท่า L = ' + f(L) + ' · ด้าน 2, 4 ยาวเท่า W = ' + f(W) + ')',
+    speed: why + '\n→ Speed ' + sp + ' ม./นาที · Gap ' + gp + ' ม./ด้าน' + (g ? '\n(ชิ้นในกลุ่ม คิดทุกด้านที่ปิดที่ Speed/Gap ของกลุ่ม)' : ' (ค่าปกติด้านบน)'),
+    time: 'เวลา = (ขอบรวม + จำนวนด้าน × Gap) ÷ Speed × 60\n= (' + f(m, 3) + ' ม. + ' + inf.allSides + ' × ' + gp + ' ม.) ÷ ' + sp + ' ม./นาที × 60\n= ' + f(m + gd, 3) + ' ม. ÷ ' + sp + ' × 60 = ' + f(sec, 2) + ' วินาที'
+  };
+}
+
+/* ══ v5.1 — แยก Speed ตามขนาดชิ้นงาน 3 กลุ่ม ในตาราง Lot (แต่ละกลุ่มติ๊กเปิด/ปิด · เกณฑ์ · Speed แยกกัน) ══
+   กลุ่ม 1 แคบ ≤50 · กลุ่ม 2 แคบ ≤250 (ด้านแคบ = W หรือ L ที่สั้นกว่า) · กลุ่ม 3 ยาว ≥2000 (ด้านยาว = ที่ยาวกว่า)
+   v5.2 กลุ่มแคบเป็นช่วงไม่ซ้อนกัน (≤50 · 51–250) · ติ๊ก = คำนวณกลุ่มนั้น · ติ๊กออก = ชิ้นกลุ่มนั้นใช้ Speed ปกติ
+   ชิ้นที่ทั้งแคบและยาว → กลุ่มแรกที่ติ๊กไว้ (แคบก่อน) · ทุกด้านที่ปิดของชิ้นในกลุ่มเดินที่ Speed กลุ่ม (ม./นาที)
+   ข้อมูลรายชิ้นจาก dsParts (ef: 1=ด้าน1 L · 2=ด้าน2 W · 4=ด้าน3 L · 8=ด้าน4 W)
+   ไฟล์ที่ Save ก่อน v4.4 ไม่มี ef → ชิ้นปิด 4 ด้านรู้ครบ · ชิ้นปิด 1–3 ด้านประมาณจากชนิดชิ้น (≈) */
+var LPV_META = lpGMeta();
+function lpvDefG(){ return [{k:'n50',op:'le',on:true,thr:50,speed:5,gap:1.5},{k:'n250',op:'le',on:true,thr:250,speed:5,gap:1.5},{k:'l2000',op:'ge',on:true,thr:2000,speed:5,gap:1.5}]; }
+function lpvCopyG(G){ var o = []; for (var i = 0; i < G.length; i++) o.push({k:G[i].k, op:G[i].op, on:!!G[i].on, thr:G[i].thr, speed:G[i].speed, gap:(G[i].gap != null ? G[i].gap : 1.5)}); return o; }
+function lpvGap(q, d){ return (q && q.gap != null && !isNaN(+q.gap)) ? +q.gap : d; }
+var LPV_DEF = (function(d){
+  var G = lpvDefG(), ks = ['on','thr','speed','gap'], i, k;
+  if (d && d.g && d.g.length) {
+    for (i = 0; i < G.length; i++) { var x = d.g[i]; if (!x) continue; for (k = 0; k < ks.length; k++) if (x[ks[k]] !== undefined && x[ks[k]] !== null) G[i][ks[k]] = x[ks[k]]; }
+  } else if (d) {   // ค่าตั้งแบบเดิม (กลุ่มยาวกลุ่มเดียว)
+    G[0].on = false; G[1].on = false;
+    for (k = 0; k < 3; k++) if (d[ks[k]] !== undefined && d[ks[k]] !== null) G[2][ks[k]] = d[ks[k]];
+  }
+  return {g:G};
+})(typeof LPV_SAVED !== 'undefined' ? LPV_SAVED : null);
+lpBandLo(LPV_DEF.g);
+var LPV = {g:lpBandLo(lpvCopyG(LPV_DEF.g)), unit:'mpm', open:{}};
+function lpvAnyOn(){ for (var i = 0; i < LPV.g.length; i++) if (LPV.g[i].on) return true; return false; }
+var LPV_GW = {RAIL_FIX:1, BACK_PANEL:1, SUPPORT:1, BOX:1, SIDE_PANEL:1};
+var _lpvCache = {sig:null, map:{}};
+function lpvSig(){ var s = ''; for (var i = 0; i < LPV.g.length; i++) s += (LPV.g[i].on ? 1 : 0) + ':' + LPV.g[i].thr + ';'; return s; }
+
+function lpvE(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function lpvN(n, d){ return (+n || 0).toLocaleString(undefined, {minimumFractionDigits:d||0, maximumFractionDigits:d||0}); }
+function lpvM(mm, d){ return ((+mm || 0) / 1000).toLocaleString(undefined, {minimumFractionDigits:d, maximumFractionDigits:d}); }
+function lpvU(){ return 'ม./นาที'; }
+function lpvEstEf(p){
+  var c = +p.cycle || 0;
+  if (c >= 4) return {ef:15, est:false};
+  if (c === 2) return {ef:(LPV_GW[p.group] ? 10 : 3), est:true};
+  if (c === 3) return {ef:7, est:true};
+  if (c === 1) return {ef:1, est:true};
+  return {ef:0, est:false};
+}
+/* สถิติแต่ละกลุ่มของ Lot (cache ตามเกณฑ์ + ติ๊ก) */
+function lpvLotStats(ld){
+  var sig = lpvSig();
+  if (_lpvCache.sig !== sig) _lpvCache = {sig:sig, map:{}};
+  var hit = _lpvCache.map[ld.lot]; if (hit) return hit;
+  var parts = ld.dsParts || [], st = {g:[], est:0, parts:[]}, i;
+  for (i = 0; i < LPV.g.length; i++) st.g.push({pcs:0, sides:0, len:0, est:0});
+  for (var j = 0; j < parts.length; j++){
+    var p = parts[j], ef, est = false;
+    if (p.ef !== undefined && p.ef !== null) ef = p.ef; else { var e = lpvEstEf(p); ef = e.ef; est = e.est; }
+    var inf = lpPartInfo(p.L, p.W, ef, LPV.g);
+    if (!inf || inf.g < 0) continue;
+    var a = st.g[inf.g]; a.pcs++; a.sides += inf.sides; a.len += inf.len;
+    if (est) { a.est++; st.est++; }
+    st.parts.push({p:p, inf:inf, ef:ef, est:est});
+  }
+  _lpvCache.map[ld.lot] = st;
+  return st;
+}
+
+/* แทนที่ computeLot เดิม: เวลาปกติ + เวลาแต่ละกลุ่ม (ปิดทุกกลุ่ม = สูตรเดิม) */
+function computeLot(ld, gap, speed){
+  var c = ld.calc || {};
+  var sides = +c.totalEdgeSides || 0, meters = +c.totalEdgeMeters || 0, pieces = +c.totalEdgePieces || 0;
+  var on = lpvAnyOn(), st = on ? lpvLotStats(ld) : null;
+  var f = (typeof dsLots !== 'undefined' && dsLots[ld.lot]) ? 0.5 : 1;
+  var grp = [], lS = 0, lMM = 0, lPcs = 0, lng = 0, sS = 0, sL = 0, gD = 0, i;
+  // ไฟล์เก่า (ประมาณด้าน ≈) ความยาวรวมของกลุ่มอาจเกินความยาวจริงของ Lot → ย่อตามสัดส่วนไม่ให้เกิน
+  if (st) for (i = 0; i < LPV.g.length; i++) { sS += st.g[i].sides; sL += st.g[i].len; }
+  var kS = sS > sides ? sides / sS : 1, kL = sL > meters * 1000 ? meters * 1000 / sL : 1;
+  for (i = 0; i < LPV.g.length; i++){
+    var a = st ? st.g[i] : {pcs:0, sides:0, len:0, est:0}, aS = a.sides * kS, aL = a.len * kL;
+    var gg = lpvGap(LPV.g[i], gap);   // v5.3 Gap ของกลุ่ม
+    var t = (st && LPV.g[i].on) ? lpTimeCalc(aL, aS, {speed:LPV.g[i].speed, unit:'mpm', gapOn:true, gap:gg}).total : 0;
+    if (st && LPV.g[i].on) gD += aS * gg;
+    grp.push({pcs:a.pcs, sides:a.sides, mm:aL, sec:t * f, est:a.est});
+    lS += aS; lMM += aL; lPcs += a.pcs; lng += t * f;
+  }
+  var nNet = ((meters - lMM / 1000) / speed) * 60, nGap = ((sides - lS) * gap / speed) * 60;
+  var norm = (nNet + nGap) * f;
+  return {totalEdgePieces:pieces, totalEdgeSides:sides, totalEdgeMeters:meters, releaseDist:(sides - lS) * gap + gD,
+          totalActualSec:norm + lng, normSec:norm, longSec:lng, grp:grp,
+          normPcs:Math.max(0, pieces - lPcs), normSides:Math.max(0, Math.round(sides - lS)), normMM:Math.max(0, meters * 1000 - lMM),   // v5.3 ชิ้นปกติ (ไม่เข้า 3 กลุ่ม)
+          longSides:lS, longPcs:lPcs, longMM:lMM, longEst:st ? st.est : 0, lpOn:on};
+}
+
+/* ── ค่าตั้ง ── */
+function lpvSync(){
+  var g = function(id){ return document.getElementById(id); }, act = document.activeElement, i, j;
+  for (i = 0; i < LPV.g.length; i++){
+    var q = LPV.g[i];
+    if (g('lpvOn' + i)) g('lpvOn' + i).checked = !!q.on;
+    if (g('lpvThr' + i) && g('lpvThr' + i) !== act) { g('lpvThr' + i).value = q.thr; g('lpvThr' + i).style.borderColor = ''; }
+    if (g('lpvSpeed' + i) && g('lpvSpeed' + i) !== act) { g('lpvSpeed' + i).value = q.speed; g('lpvSpeed' + i).style.borderColor = ''; }
+    if (g('lpvGap' + i) && g('lpvGap' + i) !== act) { g('lpvGap' + i).value = q.gap; g('lpvGap' + i).style.borderColor = ''; }
+    if (g('lpvG' + i)) g('lpvG' + i).classList.toggle('off', !q.on);
+    var l = document.querySelectorAll('.lpvGLbl' + i); for (j = 0; j < l.length; j++) l[j].textContent = lpGLabel(q);
+  }
+  var on = lpvAnyOn();
+  if (g('lpvBox')) g('lpvBox').classList.toggle('off', !on);
+  var t = g('lotTableCollapse');
+  if (t) { t.classList.toggle('hide-lp', !on); for (i = 0; i < LPV.g.length; i++) t.classList.toggle('hide-lpg' + i, !LPV.g[i].on); }
+}
+var _lpvT = {};
+function lpvSetD(i, k, v, el){ var key = i + k; clearTimeout(_lpvT[key]); _lpvT[key] = setTimeout(function(){ lpvSet(i, k, v, el); }, 300); }
+function lpvSet(i, k, v, el){
+  var q = LPV.g[i]; if (!q) return;
+  if (k === 'thr' || k === 'speed' || k === 'gap'){
+    var n = parseFloat(v), ok = !isNaN(n) && (k === 'gap' ? n >= 0 : n > 0);
+    if (el) el.style.borderColor = ok ? '' : '#dc2626';
+    if (!ok) return;
+    v = n;
+  } else v = !!v;
+  q[k] = v;
+  lpBandLo(LPV.g);
+  lpvSync();
+  applyDouble();   // คำนวณทุก Lot ใหม่ + วาดตาราง/KPI
+}
+
+/* ── ช่องในตาราง Lot: ⏱ ปกติ + แต่ละกลุ่ม (ชิ้น · เวลา) ── */
+function lpvD3(n){ return (+n || 0).toLocaleString(undefined, {maximumFractionDigits:3}); }
+function lpvMtr(mm){ return '<br><span class="lpv-mtr">' + ((+mm || 0) / 1000).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ม.</span>'; }   // v5.7 ความยาวเอจ (เมตร)
+function lpvHalfOn(ld){ return !!(typeof dsLots !== 'undefined' && dsLots[ld.lot]); }
+function lpvRes(ld, sec, fmt){   // ผลลัพธ์ในสูตร: ถ้าติ๊กเข้าเครื่อง 2 ด้าน แสดงค่าก่อน ÷2 แล้วค่อย ÷2
+  return lpvHalfOn(ld) ? fmt(sec * 2) + '\n÷ 2 (ติ๊กเข้าเครื่องปิดขอบ 2 ด้าน) = ' + fmt(sec) : fmt(sec);
+}
+function lpvNormTip(ld){
+  var c = ld.calc || {};
+  return lpvE('ชิ้นปกติ ' + lpvN(c.normPcs) + ' ชิ้น (ปิดขอบแต่ไม่เข้ากลุ่ม Speed พิเศษ) · ' + lpvN(c.normSides) + ' ด้าน\nเวลา = (ขอบรวม + จำนวนด้าน × Gap ปกติ) ÷ Speed ปกติ × 60\n= (' + lpvD3((+c.normMM || 0) / 1000) + ' ม. + ' + lpvN(c.normSides) + ' × ' + curGap + ' ม.) ÷ ' + curSpeed + ' ม./นาที × 60 = ' + lpvRes(ld, +c.normSec || 0, fmtS));
+}
+function lpvGrpTip(ld, i){
+  var c = ld.calc || {}, a = (c.grp && c.grp[i]) || {pcs:0, sides:0, mm:0, sec:0}, q = LPV.g[i], gg = lpvGap(q, curGap);
+  return lpvE('กลุ่ม ' + lpGName(q) + ' mm: ' + lpvN(a.pcs) + ' ชิ้น · ' + lpvN(a.sides) + ' ด้าน\nเวลา = (ขอบรวม + จำนวนด้าน × Gap กลุ่ม) ÷ Speed กลุ่ม × 60\n= (' + lpvD3((+a.mm || 0) / 1000) + ' ม. + ' + lpvN(a.sides) + ' × ' + gg + ' ม.) ÷ ' + q.speed + ' ม./นาที × 60 = ' + lpvRes(ld, +a.sec || 0, lpFmtT) + (a.est ? '\n≈ มีชิ้นที่ประมาณด้านจากชนิดชิ้น (ไฟล์เก่า)' : '') + '\nคลิกตัวเลขเพื่อดูรายการชิ้น');
+}
+function lpvTotTip(ld, sec, halved){
+  var c = ld.calc || {}, s;
+  if (!lpvAnyOn()) {
+    s = 'เวลารวม = (ความยาวเอจ + จำนวนด้าน × Gap) ÷ Speed × 60\n= (' + lpvD3(c.totalEdgeMeters) + ' ม. + ' + lpvN(c.totalEdgeSides) + ' × ' + curGap + ' ม.) ÷ ' + curSpeed + ' × 60\n= '
+      + (halved ? fmtS(sec * 2) + '\n÷ 2 (ติ๊กเข้าเครื่องปิดขอบ 2 ด้าน) = ' + fmtS(sec) : fmtS(sec));
+  } else {
+    s = 'เวลารวม = ปกติ ' + lpvHMS(c.normSec);
+    for (var i = 0; i < LPV.g.length; i++) if (LPV.g[i].on) s += ' + ' + lpGLabel(LPV.g[i]) + ' ' + lpvHMS(c.grp && c.grp[i] ? c.grp[i].sec : 0);
+    s += '\n= ' + fmtS(sec) + (halved ? '\n(ทุกส่วน ÷ 2 แล้ว เพราะติ๊กเข้าเครื่องปิดขอบ 2 ด้าน)' : '')
+      + '\nแต่ละส่วน = (ขอบรวม + ด้าน × Gap) ÷ Speed × 60 · ชี้ที่ช่องแต่ละกลุ่มเพื่อดูตัวเลข';
+  }
+  return lpvE(s);
+}
+/* ── ช่องในตาราง Lot: ⏱ ปกติ + แต่ละกลุ่ม + ชิ้นปกติ (ชี้เมาส์ = วิธีคำนวณ) ── */
+function lpvCells(ld){
+  var c = ld.calc || {}, on = lpvAnyOn();
+  var td = function(cls, st, tip){ return '<td class="cg-lp' + cls + '"' + (tip ? ' title="' + tip + '"' : '') + ' style="padding:7px 10px;text-align:right;font-family:monospace;white-space:nowrap;' + (tip ? 'cursor:help;' : '') + st + '">'; };
+  var h = td('', 'color:#2563eb', on ? lpvNormTip(ld) : '') + (on ? fmtS(c.normSec) : '&mdash;') + '</td>';
+  for (var i = 0; i < LPV.g.length; i++){
+    var m = LPV_META[i], a = (c.grp && c.grp[i]) || {pcs:0, sides:0, sec:0, est:0};
+    var cell = a.pcs
+      ? '<span class="lpv-cell" data-lot="' + lpvE(ld.lot) + '" data-g="' + i + '" onclick="lpvToggleG(this)">' + lpvN(a.pcs) + '</span><span style="font-size:9px;color:#94a3b8"> ชิ้น</span>'
+        + (a.est ? '<span style="color:#d97706">&asymp;</span>' : '') + '<br><span class="lpv-hms">' + lpvHMS(a.sec) + '</span>' + lpvMtr(a.mm)
+      : '<span style="color:#cbd5e1">&mdash;</span>';
+    h += td(' cg-lpg' + i, 'color:' + m.c + ';background:' + m.bg + '66', a.pcs ? lpvGrpTip(ld, i) : '') + cell + '</td>';
+  }
+  var np = +c.normPcs || 0;   // v5.3 ชิ้นปกติ = ชิ้นที่ปิดขอบแต่ไม่เข้า 3 กลุ่ม (Speed ปกติ)
+  h += td(' cg-lpn', 'color:#2563eb;background:#eff6ff', np ? lpvNormTip(ld) + lpvE('\nคลิกตัวเลขเพื่อดูรายการชิ้น') : '') + (np
+    ? '<span class="lpv-cell" data-lot="' + lpvE(ld.lot) + '" data-g="n" onclick="lpvToggleG(this)">' + lpvN(np) + '</span><span style="font-size:9px;color:#94a3b8"> ชิ้น</span><br><span class="lpv-hms">' + lpvHMS(c.normSec) + '</span>' + lpvMtr(c.normMM)
+    : '<span style="color:#cbd5e1">&mdash;</span>') + '</td>';
+  return h;
+}
+// v5.9 ชิ้นไม่ปิดขอบ = แถวใน CSV − ชิ้นที่ปิดขอบ (ไม่นับด้าน ไม่คิดเวลา) · อยู่ข้างคอลัมน์ "ชิ้นงานปิดขอบ"
+function lpvNECell(ld){
+  var h = '', ne = Math.max(0, (+ld.rows || 0) - pieces0(ld)), full = !!(ld.pl && ld.pl.r);
+  var neTip = lpvE('ชิ้นไม่ปิดขอบ = แถวใน CSV ' + lpvN(ld.rows) + ' − ชิ้นที่ปิดขอบ ' + lpvN(pieces0(ld)) + ' = ' + lpvN(ne) + ' ชิ้น\n(ไม่นับด้าน ไม่คิดเวลา)' + (ne ? (full ? '\nคลิกตัวเลขเพื่อดูรายการชิ้น' : '\nไฟล์เก่า: ไม่มีรายละเอียดชิ้นที่ไม่ปิดขอบ (คลิกดูวิธีทำให้ขึ้น)') : ''));
+  h += '<td class="cg-ne" title="' + neTip + '" style="padding:7px 10px;text-align:right;font-family:monospace;white-space:nowrap;cursor:help;color:#64748b;background:#f8fafc">'
+    + (ne ? ('<span class="lpv-cell" data-lot="' + lpvE(ld.lot) + '" data-g="ne" onclick="lpvToggleG(this)">' + lpvN(ne) + '</span>') + '<span class="lpv-unit"> ชิ้น</span>' : '<span style="color:#cbd5e1">&mdash;</span>') + '</td>';
+  return h;
+}
+function pieces0(ld){ return +((ld.calc || {}).totalEdgePieces) || 0; }
+
+/* v4.8 คลิกชื่อ Lot = รายการชิ้น · คลิกตัวเลขกลุ่ม = เฉพาะกลุ่มนั้น · สร้างเฉพาะ Lot ที่เปิด
+   v5.0 เรียงตามแถวในไฟล์ CSV (ลำดับ = แถวที่ในไฟล์) · ติ๊กแสดง/ซ่อนแถวที่ไม่ปิดขอบ (สีจาง)
+   v5.1 แถบสีตามกลุ่ม Speed */
+var LPV_CAP = {};
+function lpvOpen(lot, mode){
+  if (LPV.open[lot] === mode) delete LPV.open[lot]; else { LPV.open[lot] = mode; LPV_CAP[lot] = 1000; }
+  renderTable();
+}
+function lpvToggleG(el){ lpvOpen(el.getAttribute('data-lot'), 'g' + el.getAttribute('data-g')); }
+function lpvToggleAll(el){ lpvOpen(el.getAttribute('data-lot'), 'all'); }
+function lpvMode(el, mode){
+  var lot = el.getAttribute('data-lot');
+  if (mode === 'more') LPV_CAP[lot] = (LPV_CAP[lot] || 1000) + 1000; else { LPV.open[lot] = mode; LPV_CAP[lot] = 1000; }
+  renderTable();
+}
+function lpvClose(el){ delete LPV.open[el.getAttribute('data-lot')]; renderTable(); }
+function lpvSides(ef, cm, g){
+  var b = [1,2,4,8], s = '';
+  for (var i = 0; i < 4; i++) s += '<span class="lpv-side' + ((ef & b[i]) ? ((cm & b[i]) ? ' sp g' + g : ' on') : '') + '">' + (i + 1) + '</span>';
+  return s;
+}
+function lpvPartTime(inf, gap, speed){
+  if (inf.g >= 0 && LPV.g[inf.g]) return lpTimeCalc(inf.len, inf.sides, {speed:LPV.g[inf.g].speed, unit:'mpm', gapOn:true, gap:lpvGap(LPV.g[inf.g], gap)}).total;
+  return ((inf.allLen / 1000) + inf.allSides * gap) / speed * 60;
+}
+var LPV_NE = (function(){ try { return localStorage.getItem('edgeLpvShowNE') !== '0'; } catch(e) { return true; } })();
+function lpvSetNE(on){ LPV_NE = !!on; try { localStorage.setItem('edgeLpvShowNE', LPV_NE ? '1' : '0'); } catch(e) {} renderTable(); }
+function lpvHMS(s){ s = Math.round(+s || 0); var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h + ':' + (m < 10 ? '0' : '') + m + ':' + (x < 10 ? '0' : '') + x; }
+function lpvD(n){ return (+n || 0).toLocaleString(undefined, {maximumFractionDigits:1}); }
+function lpvBc(d, x){ var b = x[8]; if (typeof b === 'number') return b < 0 ? '' : d[b] + '-' + String(x[2]); return b == null ? '' : String(b); }
+function lpvPlItem(ld, j){
+  var d = ld.pl.d, x = ld.pl.r[j];
+  return {no:j + 1, it:d[x[0]], ar:d[x[1]], pid:String(x[2]), pn:d[x[3]], W:x[4], L:x[5], T:x[6], ef:x[7], bc:lpvBc(d, x), est:false};
+}
+function lpvItems(ld){
+  var out = [], j;
+  if (ld.pl && ld.pl.r){ for (j = 0; j < ld.pl.r.length; j++) out.push(lpvPlItem(ld, j)); return out; }
+  var P = ld.dsParts || [];
+  for (j = 0; j < P.length; j++){
+    var p = P[j], ef, est = false;
+    if (p.ef !== undefined && p.ef !== null) ef = p.ef; else { var e = lpvEstEf(p); ef = e.ef; est = e.est; }
+    out.push({no:j + 1, it:'', ar:'', pid:p.pid || '', pn:p.pn, W:p.W, L:p.L, T:'', ef:ef, bc:p.bc || '', est:est});
+  }
+  return out;
+}
+function lpvSubRow(ld){
+  var mode = LPV.open[ld.lot];
+  if (!mode) return '';
+  var full = !!(ld.pl && ld.pl.r), G = LPV.g;
+  var gm = /^g(\d)$/.exec(mode), gi = gm ? +gm[1] : -1, gn = mode === 'gn', gne = mode === 'gne';   // gn = เฉพาะชิ้นปกติ · gne = เฉพาะไม่ปิดขอบ
+  if (gi >= 0 && !(G[gi] && G[gi].on)) gi = -1;
+  var items = lpvItems(ld), gap = (typeof curGap !== 'undefined') ? curGap : 1.5, sp = (typeof curSpeed !== 'undefined') ? curSpeed : 16;
+  var nEdge = 0, nEst = 0, nG = [], sG = [], j, i;
+  for (i = 0; i < G.length; i++) { nG.push(0); sG.push(0); }
+  for (j = 0; j < items.length; j++){
+    var it = items[j];
+    it.inf = it.ef ? lpPartInfo(it.L, it.W, it.ef, G) : null;
+    if (it.inf){ nEdge++; if (it.inf.g >= 0){ nG[it.inf.g]++; sG[it.inf.g] += it.inf.sides; } }
+    if (it.est) nEst++;
+  }
+  var nNE = items.length - nEdge, showNE = full && LPV_NE, shown = [];
+  var neOld = full ? 0 : Math.max(0, (+ld.rows || 0) - nEdge);   // ไฟล์เก่า: มีจำนวนแต่ไม่มีรายการ
+  var nN = 0, sN = 0;
+  for (j = 0; j < items.length; j++) if (items[j].inf && items[j].inf.g < 0) { nN++; sN += items[j].inf.allSides; }
+  for (j = 0; j < items.length; j++){ var q = items[j]; if (gne ? !q.inf : gn ? (q.inf && q.inf.g < 0) : gi >= 0 ? (q.inf && q.inf.g === gi) : (q.inf || showNE)) shown.push(q); }
+  var dl = ' data-lot="' + lpvE(ld.lot) + '"', cap = LPV_CAP[ld.lot] || 1000, chips = '', btns = '', legend = '';
+  for (i = 0; i < G.length; i++){
+    if (!G[i].on) continue;
+    var m = LPV_META[i], lb = lpvE(lpGLabel(G[i]));
+    chips += ' <span class="lpv-gchip" style="color:' + m.c + ';background:' + m.bg + ';border-color:' + m.bd + '">' + lb + ': ' + lpvN(nG[i]) + ' ชิ้น &middot; ' + lpvN(sG[i]) + ' ด้าน (Speed ' + G[i].speed + ' &middot; Gap ' + G[i].gap + ')</span>';
+    btns += '<button class="lpv-pl-btn lpv-gbtn' + (gi === i ? ' on' : '') + '" style="--gc:' + m.c + ';--gbg:' + m.bg + '"' + dl + ' onclick="lpvMode(this,\'g' + i + '\')">เฉพาะ ' + lb + ' (' + lpvN(nG[i]) + ')</button>';
+    legend += '<span class="lpv-side sp g' + i + '">1</span> ' + lpvE(lpGName(G[i])) + ' &nbsp;';
+  }
+  chips += ' <span class="lpv-gchip" style="color:#2563eb;background:#eff6ff;border-color:#93c5fd">ปกติ: ' + lpvN(nN) + ' ชิ้น &middot; ' + lpvN(sN) + ' ด้าน (Speed ' + sp + ')</span>';
+  btns += '<button class="lpv-pl-btn lpv-gbtn' + (gn ? ' on' : '') + '" style="--gc:#2563eb;--gbg:#eff6ff"' + dl + ' onclick="lpvMode(this,\'gn\')">เฉพาะปกติ (' + lpvN(nN) + ')</button>';
+  if (full || neOld) btns += '<button class="lpv-pl-btn lpv-gbtn' + (gne ? ' on' : '') + '" style="--gc:#64748b;--gbg:#f1f5f9"' + dl + ' onclick="lpvMode(this,\'gne\')">เฉพาะไม่ปิดขอบ (' + lpvN(full ? nNE : neOld) + ')</button>';
+  var h = '<tr class="lpv-sub"><td colspan="30"><div class="lpv-pl-bar"><b>&#128203; ' + lpvE(ld.lot) + '</b> &mdash; '
+    + (full ? lpvN(items.length) + ' แถวใน CSV &middot; ' : '') + 'ปิดขอบ ' + lpvN(nEdge) + ' ชิ้น' + chips
+    + (full ? ' <label class="lpv-ne-tg" title="ติ๊ก = แสดงทุกแถวตามไฟล์ CSV (แถวไม่ปิดขอบเป็นสีจาง) · ไม่ติ๊ก = เฉพาะชิ้นที่ปิดขอบ"><input type="checkbox" class="lpv-ne-cb"' + (LPV_NE ? ' checked' : '') + ' onchange="lpvSetNE(this.checked)"> แสดงแถวไม่ปิดขอบ (' + lpvN(nNE) + ' แถว &middot; สีจาง)</label>'
+            : ' <span style="color:#94a3b8;font-size:10px">ไฟล์เก่า: มีเฉพาะชิ้นที่ปิดขอบ (ไม่ปิดขอบ ' + lpvN(Math.max(0, (+ld.rows || 0) - nEdge)) + ' ชิ้น ไม่มีรายละเอียด) &middot; ไม่มี ItemIdSet / producArticle (Save ใหม่จากโปรแกรม v5.9 จะได้ครบ)</span>')
+    + (nEst ? ' <span style="color:#b45309;font-size:10px">&asymp; ' + nEst + ' ชิ้นประมาณด้านที่ปิด</span>' : '')
+    + '<span style="margin-left:auto;display:inline-flex;gap:4px;flex-wrap:wrap">'
+    + '<button class="lpv-pl-btn' + (gi < 0 && !gn && !gne ? ' on' : '') + '"' + dl + ' onclick="lpvMode(this,\'all\')">' + (showNE ? 'ทั้งหมด (' + lpvN(items.length) + ')' : 'ปิดขอบ (' + lpvN(nEdge) + ')') + '</button>'
+    + btns
+    + '<button class="lpv-pl-btn"' + dl + ' onclick="lpvClose(this)">&#10005; ปิด</button></span></div>';
+  // v5.9 ไฟล์เก่าไม่ได้เก็บรายการชิ้นที่ไม่ปิดขอบ → แถวแจ้งสีจางบนสุดของรายการ (เห็นทันที)
+  var neMsg = 'ไฟล์รายงานนี้ Save จากโปรแกรมรุ่นเก่า เก็บไว้แค่ชิ้นที่ปิดขอบ จึงไม่มีรายละเอียดชิ้นที่ไม่ปิดขอบ'
+    + ' &middot; วิธีให้ขึ้นครบ: เปิดโปรแกรม v5.9 &rarr; โหลด CSV ของ Week นี้ &rarr; คำนวณ &rarr; Save File (ได้ทุกชิ้นตามไฟล์ CSV · ไม่ปิดขอบเป็นสีจาง)';
+  if (!items.length) return h + '<div style="font-size:11px;color:#94a3b8;padding:4px">Lot นี้ไม่มีข้อมูลรายชิ้น' + (neOld ? ' &middot; ไม่ปิดขอบ ' + lpvN(neOld) + ' ชิ้น &mdash; ' + neMsg : '') + '</div></td></tr>';
+  if (gne && neOld) return h + '<div class="lpv-neold">&#9675; ไม่ปิดขอบ <b>' + lpvN(neOld) + '</b> ชิ้น (' + lpvN(ld.rows) + ' แถวใน CSV − ' + lpvN(nEdge) + ' ชิ้นปิดขอบ)<br>' + neMsg + '</div></td></tr>';
+  if (!shown.length) return h + '<div style="font-size:11px;color:#94a3b8;padding:4px">' + (gne ? 'Lot นี้ไม่มีชิ้นที่ไม่ปิดขอบ' : gn ? 'ไม่มีชิ้นปกติ (ทุกชิ้นเข้ากลุ่ม Speed พิเศษ)' : gi >= 0 ? 'ไม่มีชิ้นกลุ่ม ' + lpvE(lpGName(G[gi])) + ' mm ที่ปิดขอบ' : 'Lot นี้ไม่มีชิ้นที่ปิดขอบ') + '</div></td></tr>';
+  var R = ' style="text-align:right"';
+  h += '<div style="overflow-x:auto"><table class="lpv-parts"><thead><tr><th' + R + '>' + (full ? 'ลำดับ' : '#') + '</th><th>ItemIdSet</th><th>producArticle</th><th>PartId</th><th>PartName</th>'
+    + '<th' + R + '>W (mm)</th><th' + R + '>L (mm)</th><th' + R + '>T</th><th>ด้านที่ปิด</th><th' + R + ' class="tip" title="นับด้านที่ปิดขอบ = ด้านที่มีรหัสขอบ (edgecode 1–4) ในไฟล์ CSV · ด้าน 1, 3 = L · ด้าน 2, 4 = W">จำนวนด้าน</th><th' + R + ' class="tip" title="ผลรวมความยาวด้านที่ปิดขอบ (mm) · ด้าน 1, 3 ยาวเท่า L · ด้าน 2, 4 ยาวเท่า W">ขอบรวม (mm)</th><th' + R + ' class="tip" title="ชิ้นในกลุ่มที่ติ๊ก (≤50 / 51–250 / ≥2000) → Speed และ Gap ของกลุ่ม · ชิ้นอื่น → Speed และ Gap ปกติด้านบน">Speed (ม./นาที)</th><th' + R + ' class="tip" title="เวลา = (ขอบรวม (ม.) + จำนวนด้าน × Gap) ÷ Speed (ม./นาที) × 60 = วินาที · ชี้ที่ตัวเลขเพื่อดูการคำนวณของชิ้นนั้น">&#9201; เวลา</th><th>BarcodePart</th></tr></thead><tbody>';
+  if (neOld && gi < 0 && !gn) h += '<tr class="lpv-nesum"><td colspan="14">&#9675; ไม่ปิดขอบ ' + lpvN(neOld) + ' ชิ้น (' + lpvN(ld.rows) + ' แถว − ' + lpvN(nEdge) + ' ชิ้นปิดขอบ) &mdash; ' + neMsg + '</td></tr>';
+  for (var k = 0; k < shown.length && k < cap; k++){
+    var x = shown[k], f = x.inf, g = f ? f.g : -1, qg = g >= 0 ? G[g] : null, mg = g >= 0 ? LPV_META[g] : null;
+    var hd = function(dv){ return (qg && (qg.op === 'le' ? (dv > 0 && dv <= qg.thr) : dv >= qg.thr)) ? ' style="color:' + mg.c + ';font-weight:700"' : ''; };
+    var tp = lpTips(x.L, x.W, x.ef, f, G, gap, sp), es = x.est ? '\n≈ ไฟล์เก่า: ด้านที่ปิดประมาณจากชนิดชิ้น' : '';   // v5.6 ชี้เมาส์ = วิธีคำนวณ
+    h += '<tr' + (g >= 0 ? ' class="lpv-hl lpv-g' + g + '"' : (f ? '' : (gne ? ' class="lpv-ne0"' : ' class="lpv-ne"'))) + '><td class="n" style="color:#94a3b8">' + x.no + '</td>'
+      + '<td class="m">' + (lpvE(x.it) || '&mdash;') + '</td><td class="m">' + (lpvE(x.ar) || '&mdash;') + '</td><td class="m">' + (lpvE(x.pid) || '&mdash;') + '</td>'
+      + '<td style="color:#1e2540">' + (lpvE(x.pn) || '&mdash;') + (g >= 0 ? ' <span class="lpv-tag" style="background:' + mg.c + '">' + lpvE(lpGLabel(qg)) + '</span>' : '') + '</td>'
+      + '<td class="n"' + hd(+x.W || 0) + '>' + lpvD(x.W) + '</td>'
+      + '<td class="n"' + hd(+x.L || 0) + '>' + lpvD(x.L) + '</td>'
+      + '<td class="n" style="color:#94a3b8">' + (x.T ? lpvD(x.T) : '&mdash;') + '</td>'
+      + '<td>' + lpvSides(x.ef, f ? f.cntMask : 0, g) + (x.est ? ' <span title="ประมาณจากชนิดชิ้น (ไฟล์เก่า)" style="color:#d97706">&asymp;</span>' : '') + '</td>'
+      + '<td class="n tip" title="' + lpvE(tp.sides + es) + '">' + (f ? f.allSides : 0) + '</td><td class="n tip" title="' + lpvE(tp.len + es) + '">' + (f ? lpvD(f.allLen) : '&mdash;') + '</td>'
+      + '<td class="n tip" title="' + lpvE(tp.speed) + '" style="' + (g >= 0 ? 'color:' + mg.c + ';font-weight:700' : 'color:#94a3b8') + '">' + (!f ? 'ไม่ปิดขอบ' : (g >= 0 ? 'Speed ' + qg.speed : 'ปกติ ' + sp)) + '</td>'
+      + '<td class="n tip" title="' + lpvE(tp.time + es) + '" style="color:#d97706">' + (f ? lpFmtT(lpvPartTime(f, gap, sp)) : '&mdash;') + '</td>'
+      + '<td class="m">' + (lpvE(x.bc) || '&mdash;') + '</td></tr>';
+  }
+  // v5.9 ไฟล์เก่าไม่ได้เก็บรายการชิ้นที่ไม่ปิดขอบ → แถวสรุปสีจางท้ายรายการ
+  h += '</tbody></table></div><div style="font-size:10px;color:#94a3b8;margin-top:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
+    + (shown.length > cap ? '<button class="lpv-pl-btn"' + dl + ' onclick="lpvMode(this,\'more\')">แสดงเพิ่ม (' + lpvN(cap) + ' / ' + lpvN(shown.length) + ')</button>' : '')
+    + '<span>' + (full ? 'ลำดับ = แถวที่ในไฟล์ CSV (ไม่นับหัวตาราง) &middot; ' : '') + 'ด้าน 1, 3 = L &middot; 2, 4 = W &middot; ' + legend
+    + '<span class="lpv-side on">1</span> ปิดขอบ (Speed ปกติ ' + sp + ') <span class="lpv-side">1</span> ไม่ปิด &middot; ด้านแคบ = W หรือ L ที่สั้นกว่า &middot; ชิ้นที่ทั้งแคบและยาวนับกลุ่มแคบก่อน &middot; Gap ปกติ ' + gap + ' ม./ด้าน</span></div></td></tr>';
+  return h;
+}
+
+/* ── KPI + แถวรวม (เรียกจาก updateFooter ทุกครั้ง) ── */
+function lpvRefresh(){
+  var s = (typeof getSelected === 'function') ? getSelected() : [];
+  var arr = s.length ? s : vis, on = lpvAnyOn();
+  var norm = 0, est = 0, T = [], i, j, pcs = 0, sec = 0, nP = 0, nNE = 0, nRows = 0;
+  for (i = 0; i < LPV.g.length; i++) T.push({pcs:0, sides:0, sec:0, lots:0, mm:0});
+  var nMM = 0;
+  for (j = 0; j < arr.length; j++){
+    var c = arr[j].calc || {};
+    norm += +c.normSec || 0; est += +c.longEst || 0; nP += +c.normPcs || 0; nMM += +c.normMM || 0; nNE += Math.max(0, (+arr[j].rows || 0) - (+c.totalEdgePieces || 0)); nRows += +arr[j].rows || 0;
+    for (i = 0; i < LPV.g.length; i++){ var a = c.grp && c.grp[i]; if (!a) continue; T[i].pcs += a.pcs; T[i].sides += a.sides; T[i].sec += a.sec; T[i].mm += +a.mm || 0; if (a.pcs) T[i].lots++; }
+  }
+  var g = function(id){ return document.getElementById(id); }, parts = [];
+  if (g('footerLpNorm')) g('footerLpNorm').textContent = on ? fmtS(norm) : '';
+  for (i = 0; i < LPV.g.length; i++){
+    var el = g('footerLpG' + i), q = LPV.g[i];
+    if (el) el.innerHTML = (on && q.on) ? lpvN(T[i].pcs) + ' ชิ้น<br><span class="lpv-hms" title="' + lpFmtT(T[i].sec) + '">' + lpvHMS(T[i].sec) + '</span>' + lpvMtr(T[i].mm) : '';
+    if (q.on) { pcs += T[i].pcs; sec += T[i].sec; parts.push('<span style="color:' + LPV_META[i].c + '">' + lpvE(lpGLabel(q)) + ': <b>' + lpvN(T[i].pcs) + '</b></span>'); }
+  }
+  if (g('footerLpN')) g('footerLpN').innerHTML = on ? lpvN(nP) + ' ชิ้น<br><span class="lpv-hms" title="' + fmtS(norm) + '">' + lpvHMS(norm) + '</span>' + lpvMtr(nMM) : '';
+  if (on) parts.push('<span style="color:#2563eb">ปกติ: <b>' + lpvN(nP) + '</b></span>');
+  if (g('footerNE')) g('footerNE').innerHTML = lpvN(nNE) + ' ชิ้น';
+  if (g('kvNE')) g('kvNE').textContent = lpvN(nNE);
+  if (g('kvNEunit')) g('kvNEunit').textContent = 'ชิ้น · จาก ' + lpvN(nRows) + ' แถว';
+  if (g('kvLP')) g('kvLP').textContent = on ? lpvN(pcs) : 'ปิด';
+  if (g('kvLPunit')) g('kvLPunit').innerHTML = on ? ('ชิ้น &middot; ' + parts.join(' &middot; ')) : 'แยก Speed ตามขนาดชิ้น';
+  if (g('kvLPlbl')) g('kvLPlbl').innerHTML = on ? ('&#9201; <b style="color:#b45309">' + lpFmtT(sec) + '</b> (เวลากลุ่ม Speed พิเศษ)') : 'ติ๊ก &#128207; เพื่อเปิด';
+  var n = g('lpvEstNote');
+  if (!n && g('lpvBox')) { n = document.createElement('span'); n.id = 'lpvEstNote'; n.className = 'lpv-hint'; n.style.color = '#b45309'; g('lpvBox').appendChild(n); }
+  if (typeof xsSync === 'function') xsSync();
+  if (n) n.innerHTML = (on && est) ? ('&asymp; ไฟล์เก่า: ' + lpvN(est) + ' ชิ้นที่ปิด 1&ndash;3 ด้าน ประมาณด้านจากชนิดชิ้น (Save ใหม่จากโปรแกรม v5.9 จะได้ค่าจริง)') : '';
+}
+
+/* ── Excel: sheet เวลาแยกกลุ่ม + รายการชิ้นในกลุ่ม ── */
+function lpvSheets(rows){
+  if (!lpvAnyOn()) return [];
+  var r2 = function(n){ return Math.round((+n || 0) * 100) / 100; }, sp = (typeof curSpeed !== 'undefined') ? curSpeed : 16, gap = (typeof curGap !== 'undefined') ? curGap : 1.5;
+  var G = LPV.g, i, j, on = [];
+  for (i = 0; i < G.length; i++) if (G[i].on) on.push(i);
+  var hA = ['Lot','Pool','Week ส่ง','ไม่ปิดขอบ (ชิ้น)','ชิ้นงานปิดขอบ','รอบ/ด้านทั้งหมด','ชิ้นปกติ','ด้านปกติ','ขอบปกติ (ม.)','เวลาปกติ (' + sp + ' ม./นาที)'], cA = [{wch:30},{wch:7},{wch:9},{wch:9},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12},{wch:18}];
+  for (j = 0; j < on.length; j++){ var q = G[on[j]]; hA.push('ชิ้น ' + lpGName(q), 'ด้าน ' + lpGLabel(q), 'ขอบ ' + lpGLabel(q) + ' (ม.)', 'เวลา ' + lpGLabel(q) + ' (Speed ' + q.speed + ' · Gap ' + q.gap + ')'); cA.push({wch:13},{wch:11},{wch:13},{wch:18}); }
+  hA.push('เวลารวม','เวลารวม (วินาที)','ค่าประมาณ (ชิ้น)'); cA.push({wch:18},{wch:14},{wch:12});
+  var a = [hA];
+  var b = [['Lot','Pool','ลำดับ (CSV)','กลุ่ม','ItemIdSet','producArticle','PartId','PartName','BarcodePart','W (mm)','L (mm)','T (mm)','ด้านที่ปิด','จำนวนด้าน','ความยาวขอบ (mm)','Speed (ม./นาที)','เวลา (วินาที)','ค่าประมาณ']];
+  var sn = ['ด้าน1(L)','ด้าน2(W)','ด้าน3(L)','ด้าน4(W)'];
+  var lst = function(ef){ var o = []; for (var k = 0; k < 4; k++) if (ef & [1,2,4,8][k]) o.push(sn[k]); return o.join(', '); };
+  var T = {n:0, t:0, e:0, p:0, s:0, np:0, ns:0, nm:0, ne:0, g:[]};
+  for (j = 0; j < on.length; j++) T.g.push({p:0, s:0, t:0, m:0});
+  for (i = 0; i < rows.length; i++){
+    var ld = rows[i], c = ld.calc || {}, row = [ld.lot, ld.pool || '', ld.week ? 'W' + ld.week : '', Math.max(0, (+ld.rows || 0) - (c.totalEdgePieces || 0)), c.totalEdgePieces || 0, c.totalEdgeSides || 0, c.normPcs || 0, c.normSides || 0, r2((c.normMM || 0) / 1000), fmtS(c.normSec)];
+    for (j = 0; j < on.length; j++){ var x = (c.grp && c.grp[on[j]]) || {pcs:0, sides:0, sec:0, mm:0}; row.push(x.pcs, x.sides, r2((x.mm || 0) / 1000), lpFmtT(x.sec)); T.g[j].p += x.pcs; T.g[j].s += x.sides; T.g[j].t += x.sec; T.g[j].m += x.mm || 0; }
+    row.push(fmtS(c.totalActualSec), r2(c.totalActualSec), c.longEst || '');
+    a.push(row);
+    T.p += c.totalEdgePieces || 0; T.ne += Math.max(0, (+ld.rows || 0) - (c.totalEdgePieces || 0)); T.s += c.totalEdgeSides || 0; T.np += c.normPcs || 0; T.ns += c.normSides || 0; T.nm += c.normMM || 0; T.n += c.normSec || 0; T.t += c.totalActualSec || 0; T.e += c.longEst || 0;
+    var st = lpvLotStats(ld);
+    for (var k2 = 0; k2 < st.parts.length; k2++){
+      var y = st.parts[k2], qg = G[y.inf.g];
+      var it = (ld.pl && ld.pl.r && y.p.ix != null) ? lpvPlItem(ld, y.p.ix) : {no:'', it:'', ar:'', pid:y.p.pid || '', pn:y.p.pn || '', bc:y.p.bc || '', T:''};
+      b.push([ld.lot, ld.pool || '', it.no, lpGName(qg), it.it, it.ar, it.pid, it.pn, it.bc, y.p.W, y.p.L, it.T || '', lst(y.ef), y.inf.sides, y.inf.len, qg.speed, r2(lpvPartTime(y.inf, gap, sp)), y.est ? '≈' : '']);
+    }
+  }
+  var tr = ['รวม', '', '', T.ne, T.p, T.s, T.np, T.ns, r2(T.nm / 1000), fmtS(T.n)];
+  for (j = 0; j < on.length; j++) tr.push(T.g[j].p, T.g[j].s, r2(T.g[j].m / 1000), lpFmtT(T.g[j].t));
+  tr.push(fmtS(T.t), r2(T.t), T.e || '');
+  a.push([]); a.push(tr); a.push([]);
+  a.push(['สูตร', 'เวลารวม = ปกติ (ความยาว + ด้าน×Gap ปกติ ' + gap + ') ÷ ' + sp + ' ม./นาที + แต่ละกลุ่ม (ความยาว + ด้าน×Gap กลุ่ม) ÷ Speed กลุ่ม · ' + lpModeText(G)]);
+  return [{name:'เวลาแยกกลุ่ม Speed', rows:a, cols:cA},
+          {name:'รายการชิ้นกลุ่ม Speed', rows:b, cols:[{wch:30},{wch:7},{wch:9},{wch:12},{wch:30},{wch:14},{wch:10},{wch:22},{wch:22},{wch:9},{wch:9},{wch:7},{wch:34},{wch:10},{wch:14},{wch:12},{wch:12},{wch:8}]}];
+}
+
+/* ── ต่อเข้ากับฟังก์ชันเดิมของรายงาน ── */
+var _lpvOrigReset = resetParams;
+resetParams = function(){
+  _lpvOrigReset();
+  LPV.g = lpBandLo(lpvCopyG(LPV_DEF.g)); LPV.open = {};
+  _lpvCache = {sig:null, map:{}};
+  lpvSync(); applyDouble();
+};
+var _lpvOrigUDB = updateDsBadge;
+updateDsBadge = function(){
+  _lpvOrigUDB();
+  var pd = document.getElementById('paramDisplay');
+  if (!pd || !lpvAnyOn()) return;
+  for (var i = 0; i < LPV.g.length; i++) if (LPV.g[i].on)
+    pd.innerHTML += ' <span style="background:' + LPV_META[i].c + ';color:#fff;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700">&#128207; ' + lpvE(lpGLabel(LPV.g[i])) + ' @ ' + LPV.g[i].speed + ' · Gap ' + LPV.g[i].gap + '</span>';
+};
+window.addEventListener('load', function(){ lpvSync(); applyDouble(); });
+/* ══ v5.9 แถบตัวกรองเพิ่ม (ดรอปดาว เลือกได้หลายค่า) — วันส่ง · เข้าเครื่อง 2 ด้าน · มีชิ้นกลุ่ม
+   ตัวเลือกแต่ละอัน = เฉพาะค่าที่มีใน Pool / Week / ตัวกรองอื่นที่เลือกอยู่ (กรองซ้อนแล้วไม่เหลือ 0)
+   เปลี่ยน Pool / Week / ตัวกรองอื่น → ค่าที่เลือกไว้แต่ไม่มีแล้วถูกตัดออกเอง ══ */
+var XF = {end:{}, ds:{}, grp:{}};
+function xfDateKey(v){ var p = String(v).split('/'); return p.length === 3 ? (+p[2]) * 10000 + (+p[1]) * 100 + (+p[0]) : 99999999; }
+function xfGrpOpts(){
+  var G = LPV.g, o = [], i;
+  for (i = 0; i < G.length; i++) if (G[i].on) o.push({v:'g' + i, t:'📏 ' + lpGLabel(G[i])});
+  o.push({v:'n', t:'■ ชิ้นปกติ'}, {v:'ne', t:'○ ไม่ปิดขอบ'});
+  return o;
+}
+function xfDefs(){
+  return [
+    {k:'end', lbl:'วันส่ง', all:'ทุกวันส่ง', unit:'วัน', search:true,
+     vals:function(ld){ return [ld.enddate || '(ไม่มีวันส่ง)']; }},
+    {k:'ds', lbl:'เข้าเครื่อง 2 ด้าน', all:'ทั้งหมด', unit:'แบบ',
+     fixed:[{v:'y', t:'☑ ติ๊ก 2 ด้าน'}, {v:'n', t:'☐ ไม่ได้ติ๊ก'}],
+     vals:function(ld){ return [dsLots[ld.lot] ? 'y' : 'n']; }},
+    {k:'grp', lbl:'มีชิ้นกลุ่ม', all:'ทุกกลุ่ม', unit:'กลุ่ม', fixed:xfGrpOpts(),
+     vals:function(ld){
+       var c = ld.calc || {}, o = [], i;
+       for (i = 0; i < LPV.g.length; i++) if (LPV.g[i].on && c.grp && c.grp[i] && c.grp[i].pcs > 0) o.push('g' + i);
+       if ((+c.normPcs || 0) > 0) o.push('n');
+       if ((+ld.rows || 0) - (+c.totalEdgePieces || 0) > 0) o.push('ne');
+       return o;
+     }}
+  ];
+}
+function xfDef(k){ var d = xfDefs(); for (var i = 0; i < d.length; i++) if (d[i].k === k) return d[i]; return null; }
+function xfKeys(k){ var o = [], m = XF[k] || {}; for (var v in m) if (m.hasOwnProperty(v) && m[v]) o.push(v); return o; }
+function xfBase(ld){
+  var fp = (document.getElementById('fPool') || {}).value || '', fw = (document.getElementById('fWeek') || {}).value || '';
+  if (fp && ld.pool !== fp) return false;
+  if (fw && String(ld.week) !== String(fw)) return false;
+  return true;
+}
+function xfPass(ld, skip){
+  var D = xfDefs();
+  for (var i = 0; i < D.length; i++){
+    var d = D[i]; if (d.k === skip) continue;
+    var ks = xfKeys(d.k); if (!ks.length) continue;
+    var vs = d.vals(ld), hit = false;
+    for (var j = 0; j < vs.length && !hit; j++) if (XF[d.k][vs[j]]) hit = true;
+    if (!hit) return false;
+  }
+  return true;
+}
+/* ค่าที่เลือกได้ของตัวกรอง k = จาก Lot ที่ผ่าน Pool/Week + ตัวกรองอื่น (นับจำนวน Lot) */
+function xfOpts(k){
+  var d = xfDef(k), cnt = {}, i, j, out = [];
+  for (i = 0; i < ALL.length; i++){
+    var ld = ALL[i]; if (!xfBase(ld) || !xfPass(ld, k)) continue;
+    var vs = d.vals(ld); for (j = 0; j < vs.length; j++) cnt[vs[j]] = (cnt[vs[j]] || 0) + 1;
+  }
+  if (d.fixed){ for (i = 0; i < d.fixed.length; i++) if (cnt[d.fixed[i].v]) out.push({v:d.fixed[i].v, t:d.fixed[i].t, n:cnt[d.fixed[i].v]}); }
+  else { for (var v in cnt) if (cnt.hasOwnProperty(v)) out.push({v:v, t:v, n:cnt[v]}); out.sort(function(a, b){ return xfDateKey(a.v) - xfDateKey(b.v) || (a.v < b.v ? -1 : 1); }); }
+  return out;
+}
+function xfPrune(){
+  var D = xfDefs(), t, i;
+  for (t = 0; t < 2; t++) for (i = 0; i < D.length; i++){
+    var ks = xfKeys(D[i].k); if (!ks.length) continue;
+    var ok = {}, op = xfOpts(D[i].k);
+    for (var j = 0; j < op.length; j++) ok[op[j].v] = 1;
+    for (j = 0; j < ks.length; j++) if (!ok[ks[j]]) delete XF[D[i].k][ks[j]];
+  }
+  xfLabels();
+}
+function xfLabels(){
+  var D = xfDefs(), act = 0;
+  for (var i = 0; i < D.length; i++){
+    var d = D[i], b = document.getElementById('xfBtn_' + d.k), l = document.getElementById('xfLbl_' + d.k); if (!b || !l) continue;
+    var ks = xfKeys(d.k), txt = d.all;
+    if (ks.length === 1){ txt = ks[0]; if (d.fixed) for (var j = 0; j < d.fixed.length; j++) if (d.fixed[j].v === ks[0]) txt = d.fixed[j].t; }
+    else if (ks.length > 1) txt = 'เลือก ' + ks.length + ' ' + d.unit;
+    l.textContent = txt; b.classList.toggle('on', ks.length > 0); if (ks.length) act++;
+  }
+  var c = document.getElementById('xfClr'); if (c) c.style.display = act ? '' : 'none';
+}
+function xfCloseAll(except){
+  var D = xfDefs();
+  for (var i = 0; i < D.length; i++){ var p = document.getElementById('xfPan_' + D[i].k); if (p && D[i].k !== except) p.style.display = 'none'; }
+}
+function xfToggle(k){
+  var p = document.getElementById('xfPan_' + k); if (!p) return;
+  var show = p.style.display !== 'block';
+  xfCloseAll(k);
+  var lp = document.getElementById('lotDropPanel'); if (lp) lp.style.display = 'none';
+  p.style.display = show ? 'block' : 'none';
+  if (show){ var s = document.getElementById('xfQ_' + k); if (s) s.value = ''; xfRender(k); }
+}
+function xfRender(k){
+  var L = document.getElementById('xfList_' + k); if (!L) return;
+  var q = ((document.getElementById('xfQ_' + k) || {}).value || '').toLowerCase().trim(), op = xfOpts(k), h = '';
+  for (var i = 0; i < op.length; i++){
+    var o = op[i]; if (q && String(o.t).toLowerCase().indexOf(q) < 0) continue;
+    h += '<label class="ldrow"><input type="checkbox"' + (XF[k][o.v] ? ' checked' : '') + ' data-k="' + k + '" data-v="' + lpvE(o.v) + '" onchange="xfCheck(this)"><span class="ldname">' + lpvE(o.t) + '</span><span class="xf-cnt">' + lpvN(o.n) + ' Lot</span></label>';
+  }
+  L.innerHTML = h || '<div style="padding:12px;text-align:center;color:#8892b0;font-size:11px">ไม่มีค่าให้เลือก (ใน Pool / Week / ตัวกรองที่เลือกอยู่)</div>';
+}
+function xfChanged(){ _pruneLotFilter(); applyFilter(); }
+function xfCheck(el){
+  var k = el.getAttribute('data-k'), v = el.getAttribute('data-v');
+  if (el.checked) XF[k][v] = true; else delete XF[k][v];
+  xfChanged();
+}
+function xfAll(k, on){
+  var q = ((document.getElementById('xfQ_' + k) || {}).value || '').toLowerCase().trim(), op = xfOpts(k);
+  for (var i = 0; i < op.length; i++){ if (q && String(op[i].t).toLowerCase().indexOf(q) < 0) continue; if (on) XF[k][op[i].v] = true; else delete XF[k][op[i].v]; }
+  xfRender(k); xfChanged();
+}
+function xfClear(){ XF = {end:{}, ds:{}, grp:{}}; xfCloseAll(); xfLabels(); }
+function xfClearBtn(){ xfClear(); xfChanged(); }
+function xfInit(){
+  var row = document.getElementById('xfRow'); if (!row) return;
+  var D = xfDefs(), h = '<label title="กรองเพิ่มจาก Pool / Week · เลือกได้หลายค่าในแต่ละตัวกรอง">&#9881;&#65039; ตัวกรองเพิ่ม:</label>';
+  for (var i = 0; i < D.length; i++){
+    var d = D[i];
+    h += '<label>' + d.lbl + ':</label><div class="xf-dd"><button type="button" class="xf-btn" id="xfBtn_' + d.k + '" onclick="xfToggle(\'' + d.k + '\')"><span class="xl" id="xfLbl_' + d.k + '">' + d.all + '</span><span style="font-size:10px;color:#8892b0">&#9660;</span></button>'
+      + '<div class="xf-pan" id="xfPan_' + d.k + '">'
+      + (d.search ? '<div style="padding:8px;border-bottom:1px solid #eef0f4"><input type="text" id="xfQ_' + d.k + '" placeholder="&#128269; พิมพ์ค้นหา..." oninput="xfRender(\'' + d.k + '\')" style="width:100%;box-sizing:border-box;border:1px solid #c8ccd8;border-radius:6px;padding:5px 8px;font-size:12px"></div>' : '')
+      + '<div class="xf-tools"><button type="button" onclick="xfAll(\'' + d.k + '\',true)" style="color:#2563eb">&#9745; เลือกที่แสดง</button><button type="button" onclick="xfAll(\'' + d.k + '\',false)" style="color:#dc2626">&#9744; ล้าง</button></div>'
+      + '<div class="xf-list" id="xfList_' + d.k + '"></div></div></div>';
+  }
+  h += '<button type="button" class="xf-clr" id="xfClr" style="display:none" onclick="xfClearBtn()">ล้างตัวกรองเพิ่ม</button>';
+  row.innerHTML = h;
+  document.addEventListener('click', function(e){
+    var t = e.target; while (t && t !== document){ if (t.className && String(t.className).indexOf('xf-dd') >= 0) return; t = t.parentNode; }
+    xfCloseAll();
+  });
+}
+xfInit();
+/* ══ v5.9 เรียง Lot (ดรอปดาว) — ใช้ร่วมกับคลิกหัวตาราง · จำไว้ในเครื่อง ══ */
+function xsOpts(){
+  var G = LPV.g, L = function(i){ return G[i] ? lpGLabel(G[i]) : ''; };
+  return [
+    ['จำนวนชิ้น', [['4:d','ชิ้นงานปิดขอบ มาก → น้อย'],['4:a','ชิ้นงานปิดขอบ น้อย → มาก'],['19:d','ชิ้นงานไม่ปิดขอบ มาก → น้อย'],['19:a','ชิ้นงานไม่ปิดขอบ น้อย → มาก'],
+                   ['23:d','ชิ้นทั้งหมด (แถวใน CSV) มาก → น้อย'],['20:d','ชิ้น ' + L(0) + ' มาก → น้อย'],['21:d','ชิ้น ' + L(1) + ' มาก → น้อย'],['22:d','ชิ้น ' + L(2) + ' มาก → น้อย'],
+                   ['18:d','ชิ้นปกติ มาก → น้อย'],['5:d','รอบ/ด้าน มาก → น้อย']]],
+    ['เวลา / ความยาว', [['11:d','เวลารวม มาก → น้อย'],['11:a','เวลารวม น้อย → มาก'],['6:d','เอจ (ม.) มาก → น้อย'],['6:a','เอจ (ม.) น้อย → มาก']]],
+    ['วันส่ง / ชื่อ', [['3:a','วันส่ง ใกล้ → ไกล'],['3:d','วันส่ง ไกล → ใกล้'],['2:a','Week น้อย → มาก'],['1:a','Pool'],['0:a','ชื่อ Lot A → Z'],['0:d','ชื่อ Lot Z → A']]]
+  ];
+}
+function xsHTML(){
+  var h = '<option value="">ตามลำดับในไฟล์</option>', O = xsOpts();
+  for (var i = 0; i < O.length; i++){
+    h += '<optgroup label="' + O[i][0] + '">';
+    for (var j = 0; j < O[i][1].length; j++) h += '<option value="' + O[i][1][j][0] + '">' + lpvE(O[i][1][j][1]) + '</option>';
+    h += '</optgroup>';
+  }
+  return h + '<option value="hdr" disabled>↕ ตามหัวตารางที่คลิก</option>';
+}
+var _xsSig = '';
+function xsSync(){
+  var el = document.getElementById('xsSel'); if (!el) return;
+  var sig = lpvSig(); if (sig !== _xsSig){ _xsSig = sig; el.innerHTML = xsHTML(); }   // ชื่อกลุ่มเปลี่ยนตามเกณฑ์
+  var v = sortCol < 0 ? '' : sortCol + ':' + (sortAsc ? 'a' : 'd');
+  var has = false; for (var i = 0; i < el.options.length; i++) if (el.options[i].value === v && !el.options[i].disabled) has = true;
+  el.value = has ? v : 'hdr';
+  el.classList.toggle('on', sortCol >= 0);
+}
+function xsApply(v){
+  if (!v){ sortCol = -1; sortAsc = true; }
+  else { var p = v.split(':'); sortCol = +p[0]; sortAsc = p[1] === 'a'; }
+  try { localStorage.setItem('edgeLpvSort', v || ''); } catch(e) {}
+  applyFilter(); _sortMark();
+}
+(function(){
+  var row = document.getElementById('xfRow'); if (!row) return;
+  var w = document.createElement('span'); w.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-right:6px';
+  w.innerHTML = '<label for="xsSel" title="เรียงรายการ Lot (คลิกหัวตารางก็เรียงได้เหมือนเดิม)">↕ เรียงตาม:</label><select id="xsSel" class="xs-sel" onchange="xsApply(this.value)"></select>';
+  row.insertBefore(w, row.firstChild);
+  var sv = ''; try { sv = localStorage.getItem('edgeLpvSort') || ''; } catch(e) {}
+  if (/^\d+:[ad]$/.test(sv)){ var p = sv.split(':'); sortCol = +p[0]; sortAsc = p[1] === 'a'; }
+  xsSync();
+})();
+window.addEventListener('load', function(){ _sortMark(); xsSync(); });
+
+</script>
+<script id="sxePost">
+/* StarStock v1.52: ป้าย/ตัวกรอง Pool · Week จากข้อมูลจริง + ค่าที่ปรับ/ติ๊กที่บันทึกไว้ (Google Drive lots/edplan.json) */
+(function () {
+  var D = document, pools = {}, weeks = {};
+  ALL_ORIG.forEach(function (ld) { if (ld.pool) pools[ld.pool] = 1; if (ld.week) weeks[ld.week] = 1; });
+  var pk = Object.keys(pools).sort(), wk = Object.keys(weeks).map(Number).sort(function (a, b) { return a - b; });
+  var fp = D.getElementById('fPool'), fw = D.getElementById('fWeek');
+  if (fp) fp.innerHTML = '<option value="">ทุก Pool</option>' + pk.map(function (p) { return '<option value="' + lpvE(p) + '">' + lpvE(p) + '</option>'; }).join('');
+  if (fw) fw.innerHTML = '<option value="">ทุก Week</option>' + wk.map(function (w) { return '<option value="' + w + '">W' + w + '</option>'; }).join('');
+  var bg = D.getElementById('sxeBadges');
+  if (bg) bg.innerHTML = pk.map(function (p) { var c = PC[p] || '#888'; return '<span class="badge" style="background:' + c + '22;color:' + c + ';border-color:' + c + '55">' + lpvE(p) + '</span>'; }).join(' ')
+    + ' ' + wk.map(function (w) { return '<span class="badge" style="background:#0891b222;color:#0891b2;border-color:#0891b255">W' + w + '</span>'; }).join(' ');
+  /* ค่าที่ใช้ตอนนี้ (บันทึกเมื่อเปลี่ยน) */
+  SXE.state = function () {
+    var ds = [], ok = {}; ALL_ORIG.forEach(function (ld) { ok[ld.lot] = 1; });
+    for (var k in dsLots) if (dsLots[k] && ok[k]) ds.push(k);
+    return { gap: curGap, speed: curSpeed, glue: viewGlueRate, lp: LPV.g.map(function (q) { return { on: !!q.on, thr: +q.thr, speed: +q.speed, gap: +q.gap }; }), ds: ds.sort() };
+  };
+  SXE.changed = function () {
+    if (!SXE.ready || !SXE.parent || typeof SXE.parent.edSave !== 'function') return;
+    var st = SXE.state(), j = JSON.stringify(st); if (j === SXE.lastJ) return;
+    SXE.lastJ = j; try { SXE.parent.edSave('edge', st); } catch (e) { if (window.console) console.warn('[SXE] save', e); }
+  };
+  SXE.flush = function () { SXE.changed(); };
+  var _ad = applyDouble; applyDouble = function () { var r = _ad.apply(this, arguments); SXE.changed(); return r; };   // ทุกการเปลี่ยน (ค่าเครื่อง · กลุ่ม Speed · ติ๊ก 2 ด้าน · รีเซ็ต) ผ่าน applyDouble
+  SXE.apply = function () {
+    var s = SXE.saved;
+    if (s) {
+      var num = function (v, ok) { v = parseFloat(v); return !isNaN(v) && ok(v) ? v : null; }, g = num(s.gap, function (v) { return v >= 0; }), sp = num(s.speed, function (v) { return v > 0; }), gl = num(s.glue, function (v) { return v >= 0; });
+      if (g != null) D.getElementById('inGap').value = g; if (sp != null) D.getElementById('inSpeed').value = sp; if (gl != null) D.getElementById('inGlue').value = gl;
+      if (Array.isArray(s.lp)) s.lp.forEach(function (x, i) { var q = LPV.g[i]; if (!q || !x) return;
+        if (typeof x.on === 'boolean') q.on = x.on; ['thr', 'speed', 'gap'].forEach(function (k) { var v = parseFloat(x[k]); if (!isNaN(v) && (k === 'gap' ? v >= 0 : v > 0)) q[k] = v; }); });
+      lpBandLo(LPV.g); _lpvCache = { sig: null, map: {} };
+      var ok = {}; ALL_ORIG.forEach(function (ld) { ok[ld.lot] = 1; }); dsLots = {}; (s.ds || []).forEach(function (l) { if (ok[l]) dsLots[l] = true; });
+      try { onParamChange(); } catch (e) { }
+      clearTimeout(_autoRT); lpvSync(); doRecalc(true);
+    }
+    SXE.lastJ = JSON.stringify(SXE.state()); SXE.ready = true;
+  };
+  /* v1.52 เปิดหน้าแล้วอยู่บนสุด — เดิม _keepFilterPos (ตรึงตำแหน่งแถบกรองตอนเปลี่ยนตัวกรอง) ทำงานตอนเติม Pool/Week/ป้ายด้านบน → หน้าเลื่อนลง ~40px หัว Edge_W43 โดนตัด */
+  var _top0 = function () { if (window.pageYOffset > 0 && !SXE.userScrolled) window.scrollTo(0, 0); };
+  window.addEventListener('wheel', function () { SXE.userScrolled = true; }, { passive: true }); window.addEventListener('touchmove', function () { SXE.userScrolled = true; }, { passive: true }); window.addEventListener('keydown', function () { SXE.userScrolled = true; });
+  window.addEventListener('load', function () { try { SXE.apply(); } catch (e) { if (window.console) console.error('[SXE] apply', e); SXE.ready = true; } _top0(); setTimeout(_top0, 120); setTimeout(_top0, 600); });
+  window.addEventListener('pagehide', function () { SXE.changed(); });
+})();
+</script>
+</body>
+</html>
