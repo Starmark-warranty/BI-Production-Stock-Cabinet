@@ -1751,7 +1751,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.55</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.56</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2762,10 +2762,15 @@ var GasFS = (function () {
      · สาเหตุจริง: รอบแรกยังไม่ครบ — partsall.csv รันทุก 30 นาที (รอบ 10:56 ยังเป็น v1.9) · CSV ราย Lot ทยอยอ่าน (57/891 Lot · เหลือ 460 ไฟล์)
      · เดิม: มี lotcsv.csv บางส่วนแล้ว = ถือว่า “มีรายการ Part” → Lot ที่ยังไม่ถึงคิวอ่าน ถูกบอกว่า “ตัดครบแล้ว / นอกช่วง” (ผิด)
      · ตอนนี้: ยังไม่มี partsall.csv (StarSync ≥ v1.12) หรือ CSV ราย Lot ยังอ่านไม่ครบ = “StarSync ยังส่งรอบแรกไม่ครบ … เหลือ N ไฟล์ · รอสักครู่” — ดู plWhy
+
+   v1.56 (2026-10-21 11:20 ผู้ใช้ส่งรูป Cutting Center HPP 300/1 = 7 ชิ้น · StarStock = 4 / 1,200: “ตัดจริงไป 7 แล้วนะ ทำไมยอดไม่ตาม”)
+     · เดิม: การยิงตัดอ่านจาก Supabase check_part (StarSync-CheckPart) — แถวล่าสุด 10:06 แล้วหยุด · Cutting Center (อีกแชท) ย้ายไป Google Drive scan/ แล้ว
+     · ตอนนี้: Google Drive scan/YYYY-MM-DD.csv (StarSync sync-ax-scan ทุก 1 นาที) ก่อน · ไม่มีโฟลเดอร์ / StarSync หยุดนาน = Supabase เหมือนเดิม
+       วันนี้ + ตัดแล้ว 7 วันทำงาน (ที่จำในเครื่อง cpHist v2 = อ่านใหม่จาก Drive) — ดู cpDriveLoad / cphDriveRows / cpApplyRow
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.55';
+var VER = '1.56';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4363,22 +4368,13 @@ async function bdLoadCp() {
   var X = B.cp, day = bdIsoLocal(Date.now()).slice(0, 10);
   try {
     if (X.day !== day) { if (X.day && X.lotMc.size) { X.prev = X.lotMc; X.prevDay = X.day; } X.day = day; X.ids = new Set(); X.pc = {}; X.lotMc = new Map(); X.last = ''; X.maxId = null; X.n = 0; }
+    var dv = await cpDriveLoad(X, day);   // v1.56 Google Drive scan/ ก่อน (null = ไม่มีโฟลเดอร์ / StarSync หยุดนาน → Supabase)
+    if (dv !== null) { var wd = X.err; X.err = null; X.ok = Date.now(); return dv || !!wd; }
+    if (X.src === 'drive') { X.ids = new Set(); X.pc = {}; X.lotMc = new Map(); X.last = ''; X.maxId = null; X.n = 0; X.du = null; }   // กลับมาใช้ Supabase กลางวัน = นับวันนี้ใหม่
+    X.src = 'supabase';
     var f = '&part_date=gte.' + encodeURIComponent(day + 'T00:00:00') + (X.maxId != null ? '&id=gt.' + encodeURIComponent(X.maxId) : '');
     var r = await sbAll(SB_CR, 'check_part', ['id', 'part_date', 'computer', 'code_part', 'lot'], 'id.asc', f), add = 0;
-    r.rows.forEach(function (x) {
-      if (!x || !x.computer) return;
-      if (x.id != null) { if (X.maxId == null || Number(x.id) > Number(X.maxId)) X.maxId = x.id; if (X.ids.has(x.id)) return; X.ids.add(x.id); }
-      var raw = String(x.part_date || ''); if (raw.slice(0, 10) !== day) return;
-      add++; if (raw > X.last) X.last = raw;
-      var pc = String(x.computer).trim().toUpperCase();
-      var c = X.pc[pc] || (X.pc[pc] = { codes: new Set(), ot: new Set(), last: '', lot: '', lots: {}, lotCodes: {} });   // v1.15 lotCodes = ชิ้นไม่ซ้ำต่อ Lot (กล่องรายชื่อ Lot)
-      var code = x.code_part || ('#' + x.id), lot = String(x.lot || '').trim();
-      if (!c.codes.has(code) && +raw.slice(11, 13) >= 17) c.ot.add(code);
-      c.codes.add(code);
-      if (raw >= c.last) { c.last = raw; if (lot) c.lot = lot; }
-      if (lot) { var T0 = c.lotT0 || (c.lotT0 = {}); if (!T0[lot] || raw < T0[lot]) T0[lot] = raw; }   // v1.38 ยิงชิ้นแรกของ Lot ที่เครื่องนี้วันนี้ (แผนรายวัน: ช่วงเวลายิงจริง)
-      if (lot) { c.lots[lot] = (c.lots[lot] || 0) + 1; (c.lotCodes[lot] || (c.lotCodes[lot] = new Set())).add(code); var K = lot.toUpperCase(), lm = X.lotMc.get(K) || new Map(); lm.set(pc, raw > (lm.get(pc) || '') ? raw : lm.get(pc)); X.lotMc.set(K, lm); }
-    });
+    r.rows.forEach(function (x) { if (cpApplyRow(X, x, day)) add++; });   // v1.56 ตัวนับตัวเดียวกับ Google Drive (cpApplyRow · ยกโค้ดเดิมไปทั้งก้อน)
     X.n += add; var was = X.err; X.err = null; X.ok = Date.now();
     return add > 0 || !!was;
   } catch (e) { console.warn('StarStock: อ่านการยิงตัด (check_part) ไม่ได้', e); var w0 = B.cp.err; B.cp.err = bdSbErr(e); return w0 !== B.cp.err; }
@@ -5035,7 +5031,7 @@ function bdBar(P) {
   var cap = function (lbl, used, max, tip, sub, parts) { var pct = max > 0 ? Math.min(100, used / max * 100) : 0, f = parts ? function (v) { return fmtN(Math.round(v)); } : bdH;
     return '<div class="cap' + (used > max ? ' over' : '') + '" title="' + esc(tip) + '"><span>' + lbl + ' <b>' + f(used) + '</b> / ' + f(max) + (parts ? ' ชิ้น' : '') + (sub ? ' <small>' + sub + '</small>' : '') + '</span><div class="cb"><i style="width:' + pct.toFixed(1) + '%"></i></div></div>'; };
   var u = P && P.unit === 'p', fu = u ? function (v) { return fmtN(Math.round(v)); } : bdH;
-  var live = 'Drive 30 วิ' + (st.spOn ? ' · สถานะ 2 นาที' : '') + (st.cutOn ? ' · เครื่อง 1 นาที' : '');
+  var live = 'Drive 30 วิ' + (st.spOn ? ' · สถานะ 2 นาที' : '') + (st.cutOn ? ' · เครื่อง 1 นาที (' + (B.cp && B.cp.src === 'drive' ? 'Drive scan/' : 'Supabase') + ')' : '');   // v1.56 บอกแหล่งการยิงตัด
   E.innerHTML = '<div class="day">' + (P ? bdTmrDay(P) + ' · สัปดาห์ ' + sqlWeek(new Date(P.tmr)) : 'คิวตัดงาน') + '<small>' + (P ? 'รอเริ่มตัด ' + P.nCand.toLocaleString('th-TH') + ' Lot · กำลังตัด ' + P.cutting.length.toLocaleString('th-TH') + ' · ระยะผลิต ' + st.lead + ' วันทำงาน' : '') + '</small></div>'
     /* v1.22 แถบกำลังเครื่องโชว์เมื่อเปิดใน ⚙ (showCap) — ค่าตั้งต้นปิด จนกว่าตัวเลขจะตรงกับหน้างาน */
     + (P && st.showCap ? cap('เลื่อย' + (u ? ' ' + P.M.length + ' เครื่อง' : ''), P.over && !u ? P.sawCarry : P.saw, P.sawCap,
@@ -7310,7 +7306,8 @@ function cphYmd(d) { var p = function (n) { return (n < 10 ? '0' : '') + n; }; r
 async function cphFetchDay(iso) {
   var nx = new Date(iso + 'T00:00:00'); nx.setDate(nx.getDate() + 1);
   var f = '&part_date=gte.' + encodeURIComponent(iso + 'T00:00:00') + '&part_date=lt.' + encodeURIComponent(cphYmd(nx) + 'T00:00:00');
-  var r = await sbAll(SB_CR, 'check_part', ['id', 'part_date', 'computer', 'code_part', 'lot'], 'id.asc', f), pc = {}, n = 0, ids = {};
+  var dr = await cphDriveRows(iso);   // v1.56 Google Drive scan/<วันที่>.csv ก่อน · ไม่มีวันนั้น = Supabase
+  var r = dr ? { rows: dr } : await sbAll(SB_CR, 'check_part', ['id', 'part_date', 'computer', 'code_part', 'lot'], 'id.asc', f), pc = {}, n = 0, ids = {};
   r.rows.forEach(function (x) {
     if (!x || !x.computer) return;
     if (x.id != null) { if (ids[x.id]) return; ids[x.id] = 1; }
@@ -7324,7 +7321,7 @@ async function cphFetchDay(iso) {
   Object.keys(pc).forEach(function (P) { var c = pc[P], l = {}; Object.keys(c.l).forEach(function (lot) { var e = c.l[lot]; l[lot] = [e.n, e.a, e.b]; }); out.pc[P] = { c: c.nc, l: l }; });
   return out;
 }
-function cphRead() { var C = lsGetJ(CPH_K, null); return C && C.v === 1 && C.days && typeof C.days === 'object' ? C : { v: 1, days: {} }; }
+function cphRead() { var C = lsGetJ(CPH_K, null); return C && C.v === 2 && C.days && typeof C.days === 'object' ? C : { v: 2, days: {} }; }   /* v1.56 v2 = อ่านใหม่จาก Google Drive (v1 มาจาก Supabase ที่หยุด 10:06) */
 function cphSave(C) {
   var cut = new Date(lotToday()); cut.setDate(cut.getDate() - CPH_KEEP); var ci = cphYmd(cut);
   Object.keys(C.days).forEach(function (k) { if (k < ci) delete C.days[k]; });
@@ -10641,7 +10638,81 @@ window.addEventListener('click', function (e) {   // ก่อนตัวขย
   var nb = document.querySelector('#bdCols .bcol[data-col="' + col + '"] [data-bmv="' + dir + '"]'); if (nb && !nb.disabled) try { nb.focus({ preventScroll: true }); } catch (x) { }   // กดซ้ำต่อได้เลย
 }, true);
 
-window.StarStock = { bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ───────── v1.56: การยิงตัด อ่านจาก Google Drive scan/ (StarSync sync-ax-scan) ก่อน Supabase check_part ─────────
+   ผู้ใช้ 21/10/2026 11:20 (รูป Cutting Center HPP 300/1 = 7 ชิ้น · StarStock Dashboard = 4 / 1,200): “ตัดจริงไป 7 แล้วนะ ทำไมยอดไม่ตาม”
+   · สาเหตุ: StarStock อ่านการยิงตัดจาก Supabase check_part (โปรแกรม StarSync-CheckPart ส่ง) — แถวล่าสุด 10:06 แล้วไม่มีเพิ่ม
+             ส่วน Cutting Center 13.35 (อีกแชท) ย้ายไปอ่าน Google Drive scan/YYYY-MM-DD.csv (StarSync sync-ax-scan.ps1 อ่าน LogAxCheckPart ทุก 1 นาที) แล้ว
+   · ตอนนี้: ใช้ scan/ บน Google Drive ก่อน (โฟลเดอร์เดียวกับ lots/ · ชื่อคอลัมน์ = check_part: part_date, computer, lot, code_part …)
+             StarSync ยังทำงาน (scan/meta.json at ≤ 30 นาที) หรือมีไฟล์ของวันนี้ = ใช้ Drive · ไม่มีโฟลเดอร์ scan / StarSync หยุดนาน = Supabase เหมือนเดิม
+             วันนี้: ไฟล์ของวันนี้เปลี่ยน (u) = อ่านทั้งไฟล์แล้วนับใหม่ (ไฟล์ไม่มี id — 1 แถว = 1 ครั้งที่ยิง แบบเดียวกับ id ไม่ซ้ำของ Supabase)
+             ย้อนหลัง (ตัดแล้ว 7 วันทำงาน): scan/<วันที่>.csv · วันที่ Drive ไม่มี = Supabase · ที่จำในเครื่องเปลี่ยนรุ่น (cpHist v2) = อ่านใหม่ 6 วันจาก Drive */
+var SCAN_DIR = 'scan';
+B.scan = { on: null, at: 0, meta: null, mu: '', alive: false, err: null };
+async function scanList() {
+  var fs = ensureFs(); if (!fs) return null;
+  var Ld = fs.L[SCAN_DIR];
+  if (!Ld || !Ld.ok || Date.now() - (Ld.at || 0) > 25000) {
+    Ld = await retryNet(async function () { try { return await fs.list(SCAN_DIR, true); } catch (e) { if (e && e.name === 'NotFoundError') return null; throw e; } }, 'รายการไฟล์ scan/');
+  }
+  return Ld && Ld.ok ? Ld : null;
+}
+/* Drive scan/ ใช้ได้ไหม (มีโฟลเดอร์ · StarSync ยังส่ง) → คืนรายการไฟล์ หรือ null = ใช้ Supabase */
+async function scanUse(day) {
+  var X = B.scan;
+  try {
+    var Ld = await scanList(); X.at = Date.now(); X.err = null;
+    if (!Ld) { X.on = false; X.alive = false; return null; }
+    var mf = Ld.files['meta.json'];
+    if (mf && mf.u !== X.mu) { try { X.meta = JSON.parse(await readText(SCAN_DIR, 'meta.json')); } catch (e) { X.meta = null; } X.mu = mf.u; }
+    var mt = X.meta && X.meta.at ? bdLocalMs(X.meta.at) : null;
+    X.alive = mt != null && Date.now() - mt <= 30 * 60000;
+    X.on = X.alive || !!(day && Ld.files[day + '.csv']);
+    return X.on ? Ld : null;
+  } catch (e) { console.warn('StarStock: อ่าน Google Drive scan/ ไม่ได้ — ใช้ Supabase check_part', e); X.err = e; X.at = Date.now(); return null; }
+}
+/* 1 แถวการยิง → นับเข้าเครื่อง/Lot ของวันนี้ (ยกจาก bdLoadCp v1.7–v1.38 ทั้งก้อน · ใช้ทั้ง Supabase และ Drive) — คืน true = นับแถวนี้ */
+function cpApplyRow(X, x, day) {
+  if (!x || !x.computer) return false;
+  if (x.id != null) { if (X.maxId == null || Number(x.id) > Number(X.maxId)) X.maxId = x.id; if (X.ids.has(x.id)) return false; X.ids.add(x.id); }
+  var raw = String(x.part_date || ''); if (raw.slice(0, 10) !== day) return false;
+  if (raw > X.last) X.last = raw;
+  var pc = String(x.computer).trim().toUpperCase();
+  var c = X.pc[pc] || (X.pc[pc] = { codes: new Set(), ot: new Set(), last: '', lot: '', lots: {}, lotCodes: {} });   // v1.15 lotCodes = ชิ้นไม่ซ้ำต่อ Lot (กล่องรายชื่อ Lot)
+  var code = x.code_part || ('#' + x.id), lot = String(x.lot || '').trim();
+  if (!c.codes.has(code) && +raw.slice(11, 13) >= 17) c.ot.add(code);
+  c.codes.add(code);
+  if (raw >= c.last) { c.last = raw; if (lot) c.lot = lot; }
+  if (lot) { var T0 = c.lotT0 || (c.lotT0 = {}); if (!T0[lot] || raw < T0[lot]) T0[lot] = raw; }   // v1.38 ยิงชิ้นแรกของ Lot ที่เครื่องนี้วันนี้ (แผนรายวัน: ช่วงเวลายิงจริง)
+  if (lot) { c.lots[lot] = (c.lots[lot] || 0) + 1; (c.lotCodes[lot] || (c.lotCodes[lot] = new Set())).add(code); var K = lot.toUpperCase(), lm = X.lotMc.get(K) || new Map(); lm.set(pc, raw > (lm.get(pc) || '') ? raw : lm.get(pc)); X.lotMc.set(K, lm); }
+  return true;
+}
+/* แถวจากไฟล์ scan/ → รูปเดียวกับ check_part (ไม่มี id · code_part ว่าง = ใช้ลำดับแถวแทน ไม่ให้รวมเป็นชิ้นเดียว) */
+function scanRows(text) {
+  var R = csvObjs(text || ''), out = [];
+  R.rows.forEach(function (o, i) { out.push({ id: null, part_date: String(o.part_date || '').trim(), computer: o.computer, code_part: String(o.code_part || '').trim() || ('#r' + i), lot: o.lot }); });
+  return out;
+}
+/* วันนี้จาก Drive · คืน null = ใช้ Supabase · true/false = เปลี่ยนไหม */
+async function cpDriveLoad(X, day) {
+  var Ld = await scanUse(day);
+  if (!Ld) return B.scan.err && X.src === 'drive' && X.dday === day ? false : null;   // เน็ตสะดุดชั่วคราว = ใช้ยอดจาก Drive ที่มีอยู่ (ไม่สลับไป Supabase ที่ค้าง)
+  var f = Ld.files[day + '.csv'], u = f ? f.u : '';
+  if (X.src === 'drive' && X.du === u && X.dday === day) return false;
+  var rows = f ? scanRows(await readText(SCAN_DIR, day + '.csv')) : [];
+  X.ids = new Set(); X.pc = {}; X.lotMc = new Map(); X.last = ''; X.maxId = null; X.n = 0;
+  rows.forEach(function (x) { if (cpApplyRow(X, x, day)) X.n++; });
+  X.src = 'drive'; X.du = u; X.dday = day;
+  return true;
+}
+/* ย้อนหลัง 1 วันจาก Drive · null = Drive ไม่มีวันนั้น (ใช้ Supabase) */
+async function cphDriveRows(iso) {   // วันที่ผ่านไปแล้วไม่เปลี่ยน — มีไฟล์ = ใช้ (ไม่ต้องดูว่า StarSync ยังทำงาน)
+  var Ld = null; try { Ld = await scanList(); } catch (e) { return null; } if (!Ld) return null;
+  var f = Ld.files[iso + '.csv']; if (!f) return null;
+  return scanRows(await readText(SCAN_DIR, iso + '.csv'));
+}
+function cpSrcTxt() { return B.cp && B.cp.src === 'drive' ? 'Google Drive (scan/ · StarSync)' : 'Supabase (check_part · CheckPart)'; }
+
+window.StarStock = { scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
