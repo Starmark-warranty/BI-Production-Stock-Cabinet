@@ -2001,6 +2001,13 @@
   #bdDash .dbsaw td.dbst{cursor:help;text-decoration:underline dotted color-mix(in srgb,currentColor 35%,transparent);text-underline-offset:3px}
   #bdDash .dbsaw td.lot > span[data-cp]{max-width:200px}
   @media (max-width: 1280px){ #bdDash .dbsaw td.lot > span[data-cp]{max-width:140px} }
+  /* v1.69 สถานะ “กำลังตัด” = วงหมุน (รู้ว่ากำลังตัด Lot นี้) · “วันนี้ยังไม่ยิงตัด” · ตัวเลขที่ชี้ดูรายละเอียดได้ = สีน้ำเงิน */
+  td.st .run.now{display:inline-flex;align-items:center;gap:6px}
+  td.st .spin{display:inline-block;flex:none;width:11px;height:11px;border:2px solid color-mix(in srgb,var(--db-a,#2f6fec) 22%,transparent);border-top-color:var(--db-a,#2f6fec);border-radius:50%;animation:dbspin .85s linear infinite}
+  @keyframes dbspin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){ td.st .spin{animation-duration:2.4s} }
+  td.st .nys{color:var(--db-dim,#6b7891)}
+  #bdDash .dbsaw td.dbst{color:var(--db-a,#2f6fec)}
 </style>
 </head>
 <body>
@@ -2011,7 +2018,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.68</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.69</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3082,10 +3089,11 @@ var GasFS = (function () {
    v1.66 (2026-10-22 11:39 ผู้ใช้: “ต่อจากวันก่อน / ตัวเทาเวลาเป้าหมาย เอาไปไว้ใน Box · เห็นคอลัมน์ครบไม่เลื่อน ”) dbSmallTips — ดู v166.js · PW = ผู้ใช้ตั้ง ⚙ ไม่รับรหัสเอง
    v1.67 (2026-10-22 11:44 ผู้ใช้: “ปรับวันนี้ให้แสดงวัตถุดิบว่าไม้ครบหรืออะไร เหมือนวันอื่น ๆ”) ตารางวันนี้ + คอลัมน์ วัตถุดิบ (tpRow · dbMatCell)
    v1.68 (2026-10-22 11:50 ผู้ใช้: “เลื่อนลงมาแล้ว อัปเดตสถานะแล้วมันเด้งขึ้นบน ปรับให้มันไม่เด้ง”) แผงรายละเอียด Lot คงตำแหน่งเลื่อน + ส่วนที่กางไว้ (bdDetail)
+   v1.69 (2026-10-22 11:57 ผู้ใช้: สถานะกำลังตัดมีอนิเมชัน · “วันนี้ยังไม่ยิงตัด” · ตัวเลขที่ชี้ดูได้สีน้ำเงิน) tpStatus · v169.css
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.68';
+var VER = '1.69';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -8670,9 +8678,9 @@ function tpStatus(g, P, nT, pc) {
   if (!g) return '<span class="muted">ไม่พบใน data 6</span>';
   if (tpDone(g, P)) return '<span class="ok">✓ ตัดครบแล้ว</span>';
   var s0 = bdMqLotNow(g, P), pr = s0 && s0.s0 ? 'ตัดแล้ว ' + fmtN(s0.s0.v) + ' / ' + fmtN(s0.s0.tt) : '';
-  if (nT) return '<span class="run">▶ กำลังตัด</span>' + (pr ? '<small>' + esc(pr) + '</small>' : '');
+  if (nT) return '<span class="run now" title="ยิงตัดวันนี้ที่เครื่องนี้"><i class="spin" aria-hidden="true"></i>กำลังตัด</span>' /* v1.69 วงหมุน (เดิม ▶ กำลังตัด) */ + (pr ? '<small>' + esc(pr) + '</small>' : '');
   var el = tpCutElse(pc, g.id); if (el.length) return '<span class="oth">ตัดที่ ' + esc(el.join(' · ')) + '</span>' + (pr ? '<small>' + esc(pr) + '</small>' : '');
-  if (P.cutting.indexOf(g) >= 0) return '<span class="run">กำลังตัด (วันนี้ยังไม่ยิง)</span>' + (pr ? '<small>' + esc(pr) + '</small>' : '');
+  if (P.cutting.indexOf(g) >= 0) return '<span class="nys">วันนี้ยังไม่ยิงตัด</span>' /* v1.69 เดิม “กำลังตัด (วันนี้ยังไม่ยิง)” */ + (pr ? '<small>' + esc(pr) + '</small>' : '');
   return '<span class="wait">ยังไม่เริ่ม</span>';
 }
 /* ───────── v1.36: คำนวณสดแผนวันนี้ (เดิมอยู่ใน dbTodaySec — แยกออกมาให้วงแหวนซ้าย dbTodayPlan ใช้ด้วย) ─────────
