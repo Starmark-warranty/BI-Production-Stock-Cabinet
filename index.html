@@ -1901,6 +1901,16 @@
   .bdtabset label{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
   #bdTabsTop .bdtmore{height:100%;box-sizing:border-box;padding:4px 8px 0}
   @media (max-width: 1440px){ #bdTabsTop .bdtab{padding:4px 7px 0} #bdTabsTop .bdtmore{padding:4px 5px 0} }   /* v1.61 แสดงครบทุกแท็บ + ปุ่ม ⋯ ที่จอ 1366 ไม่ทับปุ่มขวา */
+  /* v1.61 (ตรวจเว็บจริงจอเล็ก 1024×768): ตารางพรุ่งนี้/ไทม์ไลน์วันนี้ไม่หดจนเหลือแถวเดียว — จอเตี้ย = หน้าเลื่อนลงได้ (จอ 1080 ขึ้นไปยังพอดีจอ) */
+  @media (min-width: 1000px) and (min-height: 560px){
+    .dbfit .dbtw{min-height:230px}
+    .dbfit .dbonering .dbtlw{min-height:170px}
+  }
+  @media (min-width: 1000px) and (max-width: 1280px){
+    .dbfit .dbonering .dbring{width:clamp(110px,17vh,150px)!important;height:clamp(110px,17vh,150px)!important}
+    .dbfit .dbonering .dbring .in b{font-size:clamp(24px,3.6vh,34px)}
+    .dbosd .big{font-size:24px} .dbohd{gap:12px}
+  }
 </style>
 </head>
 <body>
@@ -4716,7 +4726,8 @@ async function bdLoadAux() {
   var Ld = fs.L[LOT_DIR];
   try {
     var bf = Ld && Ld.ok && Ld.files[BD_SETF];
-    if (bf && bf.u !== B.setU) { var so = JSON.parse(await readText(LOT_DIR, BD_SETF)); B.set = bdNormSet(so); B.setU = bf.u; B.setFrom = (so.by || '') + (so.at ? ' · ' + String(so.at).replace('T', ' ').slice(0, 16) : ''); ch = true; }
+    if (bf && bf.u !== B.setU) { var so = JSON.parse(await readText(LOT_DIR, BD_SETF)); B.set = bdNormSet(so); B.setU = bf.u; B.setFrom = (so.by || '') + (so.at ? ' · ' + String(so.at).replace('T', ' ').slice(0, 16) : ''); ch = true;
+      if (view() === 'board' && L.loaded) { try { bdRender(); } catch (e) { } } }   /* v1.61 ค่าตั้งมาแล้ววาดแผนใหม่เลย (เวลาทำงาน/เครื่องที่เปิดถูกตั้งแต่ต้น) — ไม่รอไฟล์เสริมอื่นครบ · ยังไม่บันทึกแผนวันนี้ (tpSaveMaybe รอ B.lastCheck) */
   } catch (e) { console.warn('StarStock: อ่าน lots/board.json ไม่ได้', e); }
   if (await rmLoad()) ch = true;   // v1.8 ตัวเดียวกับหน้า Lot ผลิต / STOCK
   if (await pgLoad()) ch = true;   // v1.16 ความคืบหน้าราย Lot จาก AX (StarSync · lots/progress.csv) — แทน lot_progress ที่ค้าง
