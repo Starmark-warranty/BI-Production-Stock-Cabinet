@@ -2018,7 +2018,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.71</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.72</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3092,10 +3092,11 @@ var GasFS = (function () {
    v1.69 (2026-10-22 11:57 ผู้ใช้: สถานะกำลังตัดมีอนิเมชัน · “วันนี้ยังไม่ยิงตัด” · ตัวเลขที่ชี้ดูได้สีน้ำเงิน) tpStatus · v169.css
    v1.70 (2026-10-22 11:59 ผู้ใช้: “ตาราง …ต้องตัด เลื่อนลงแล้วก็เด้ง”) กล่องที่เลื่อนใน Dashboard คงตำแหน่ง (bdDashRender · dbTpScroll — v170.js)
    v1.71 (2026-10-22 12:04 ผู้ใช้: “รอจ่ายต้องอยู่ก่อนไม้ยังไม่ครบในแผน”) ไม้ครบ → รอจ่าย → ไม้ยังไม่ครบ (% มาก → น้อย) — wdOrder · tpTier
+   v1.72 (2026-10-22 12:52 ผู้ใช้: “ไม้ยังไม่ครบ จ่ายแล้ว ต้องขึ้นก่อนรอจ่าย”) ย้อน v1.71 — เรียงตาม % จ่ายแล้วเหมือน v1.70
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.71';
+var VER = '1.72';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -11394,7 +11395,7 @@ function wdOrder(list) {
   if (!B.rj || !B.rj.map) return list;
   /* v1.60 (ผู้ใช้ 16:37 “ถ้า Board ไหนมีชิ้นส่วน part ทำสี N00S แล้วไม้ครบ ให้ดึงมาจัดแผนก่อนได้เลย”): ไม้ครบ + งานสี (BOM N00S · paintOf) ก่อนไม้ครบอื่น
      ข้อมูลสีมีระดับ Lot (BOM ของ Lot มีรหัส N00S) — ยังไม่รู้ว่าชิ้นทำสีอยู่ชั้นไม้ไหน → ดันทั้ง Lot */
-  var a = list.map(function (g, i) { var w = g.wd || (g.wd = wdOf(g)), p = w && w.k === 'part', pt = !p && paintOf(g.id) && !(paintOf(g.id).src === 'name') ? 0 : 1; return { g: g, i: i, p: p ? (wdKind(w) === 'pend' ? 1 : 2) : 0 /* v1.71 รอจ่าย = 1 ก่อนไม้ยังไม่ครบ = 2 */, pt: pt, pct: p ? w.pct : 1 }; });
+  var a = list.map(function (g, i) { var w = g.wd || (g.wd = wdOf(g)), p = w && w.k === 'part', pt = !p && paintOf(g.id) && !(paintOf(g.id).src === 'name') ? 0 : 1; return { g: g, i: i, p: p ? 1 : 0 /* v1.72 ย้อน v1.71 (รอจ่ายก่อน) — ไม้ยังไม่ครบทุกแบบเรียง % จ่ายแล้ว */, pt: pt, pct: p ? w.pct : 1 }; });
   a.sort(function (x, y) { return x.p - y.p || (x.p ? y.pct - x.pct : x.pt - y.pt) || x.i - y.i; });
   return a.map(function (x) { return x.g; });
 }
@@ -12095,7 +12096,7 @@ function sxsLotPlan() {
       ตอนนี้: Lot ใหม่ไล่ ไม้ครบ → ไม้ยังไม่ครบ (% จ่ายแล้ว มาก → น้อย) ลงเครื่องที่ว่างก่อน = ไม้ครบกระจายทุกเครื่องที่เปิด
    ⑤ ⑥ แผนวันนี้ (แผนที่บันทึกไว้ + คำนวณสด) ทุกเครื่อง:
       · เอาออก: Lot ไม้ไม่พอจ่าย (ไม่ได้ยิงวันนี้) · Lot ค้างตัดที่เหลือแต่แผ่นที่เครื่องนี้ไม่รับ (⚙ “ไม่รับรหัส” เช่น PW)
-      · เรียง: ค้างตัดก่อน แล้ว Lot ใหม่ — ในแต่ละกลุ่ม ไม้ครบ → (v1.71 รอจ่าย) → จ่ายแล้ว ≥ 70% → ที่เหลือ (% มาก → น้อย)
+      · เรียง: ค้างตัดก่อน แล้ว Lot ใหม่ — ในแต่ละกลุ่ม ไม้ครบ → จ่ายแล้ว ≥ 70% → ที่เหลือ (% มาก → น้อย · รอจ่ายที่ยังไม่จ่ายเลย = ท้าย)
       · ใช้ตัวเดียวกันทุกที่ (ซ้าย · ขวา · Daily Plan · SAW PLAN) = tpToday อ่านแผนผ่าน tpNorm · คำนวณสด / 🔄 จัดใหม่ = tpLive ใช้กติกาเดียวกัน
    ═══════════════════════════════════════════════════════════════════════ */
 function tpTier(g) {
@@ -12103,7 +12104,7 @@ function tpTier(g) {
   if (!w) return { t: 1, p: 0.5, k: '' };
   if (w.k === 'full') return { t: 0, p: 1, k: 'full' };
   if (w.k !== 'part') return { t: 1, p: 0.5, k: '' };
-  var p = +w.pct || 0, kd = wdKind(w); if (kd === 'pend') return { t: 1, p: p, k: kd };   /* v1.71 รอจ่าย (ไม่มีแผ่นขาด รอคลัง Post) = ก่อนไม้ยังไม่ครบ */
+  var p = +w.pct || 0, kd = wdKind(w);   /* v1.71 เคยให้รอจ่ายมาก่อน · v1.72 (ผู้ใช้ 12:52 “ไม้ยังไม่ครบ จ่ายแล้ว ต้องขึ้นก่อนรอจ่าย”) = กลับไปเรียงตาม % จ่ายแล้ว */
   return { t: p >= 0.7 ? 2 : 3, p: p, k: kd };
 }
 function tpShotToday(id) { var X = B.cp; return !!(X && X.lotMc && X.day === bdIsoLocal(Date.now()).slice(0, 10) && X.lotMc.get(String(id).toUpperCase())); }
