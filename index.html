@@ -2031,7 +2031,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.77</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.78</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3111,10 +3111,11 @@ var GasFS = (function () {
    v1.75 (2026-10-22 13:07 ผู้ใช้: รายละเอียด Lot ใบเบิกไม้ขึ้นแทนชิ้นที่ยังไม่ได้ตัด · “ไม้ไม่พอจ่าย ✓” / “ค้าง ✓” คนอ่านงง) rjDetailSec · rjDetailHtml · wdCodeSt — ดู v175.js
    v1.76 (2026-10-22 13:21 ผู้ใช้: 2 จอ 300/1 วันนี้ไม่เหมือนกัน) แผนวันนี้ = ค้างตัดล่าสุด + เติมจากคิวเมื่อแผนเดิมหมด (tpNorm) · tpLoad ไม่เจอไฟล์ = ขอรายการทั้งหมด · บอกเมื่ออ่านแผนไม่ได้ — ดู v176.js
    v1.77 (2026-10-22 13:36 ผู้ใช้: รอซื้อ = ไม้ยังไม่ครบกี่ % · Lot ไม้ไม่จ่ายเลยทำไมอยู่แผนวันนี้) wdShort/wdLine/tpDrop/tpDropNote — ดู v177.js
+   v1.78 (ตรวจเว็บจริง) Lot ใหม่จ่ายแล้ว 0% = ไม่อยู่ในแผนวันนี้เสมอ (tpNoWood)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.77';
+var VER = '1.78';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -12444,7 +12445,9 @@ wdLine = function (w, main) {
 function tpNoWood(g) {
   var w = null; try { w = wdOf(g); } catch (e) { w = null; } if (!w || w.k !== 'part') return false;
   var pl = null; try { pl = tpPaidLeft(g); } catch (e) { pl = null; }
-  return pl ? (pl.paid <= 0 && pl.unpaid > 0) : !((+w.pct || 0) > 0);
+  /* v1.78 (ตรวจเว็บจริง) จ่ายแล้ว 0% ของใบเบิก = ไม่มีไม้ให้ตัด เสมอ — เดิมดูแค่ชิ้นที่ยังไม่ตัด: แผ่นที่ไม่อยู่ในใบเบิก (—) ถูกนับเป็นไม้ที่ใช้ได้ (รพ.สารคาม / VBD 0% ยังเข้าแผน) */
+  if (!((+w.pct || 0) > 0)) return true;
+  return !!pl && pl.paid <= 0 && pl.unpaid > 0;
 }
 var tpDropV0 = tpDrop;
 tpDrop = function (g, mn, carry) {
