@@ -2031,7 +2031,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.79</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.80</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3113,10 +3113,11 @@ var GasFS = (function () {
    v1.77 (2026-10-22 13:36 ผู้ใช้: รอซื้อ = ไม้ยังไม่ครบกี่ % · Lot ไม้ไม่จ่ายเลยทำไมอยู่แผนวันนี้) wdShort/wdLine/tpDrop/tpDropNote — ดู v177.js
    v1.78 (ตรวจเว็บจริง) Lot ใหม่จ่ายแล้ว 0% = ไม่อยู่ในแผนวันนี้เสมอ (tpNoWood)
    v1.79 (2026-10-22 13:56 ผู้ใช้ “แก้เลย”) คิวเครื่องวันข้างหน้า: ค้างตัดที่ตัดได้จริงนับเวลาเครื่อง · ที่ตัดไม่ได้ (ไม้ไม่พอจ่าย / รอไม้ / แผ่นที่เครื่องไม่รับ) ไม่นับ (placeCut + ข้อความ “ไม่นับในแผน”)
+   v1.80 (ตรวจเว็บจริง) วันของเครื่องใน Dashboard / แผนพรุ่งนี้ (dbPackOf) ลงค้างตัดที่ตัดได้ก่อน แล้วค่อย Lot ใหม่ — เดิมจัดใหม่โดยไม่มีค้างตัด (300/1 พรุ่งนี้ ค้างตัด 4.9 ชม. + Lot ใหม่ 7 ชม.)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.79';
+var VER = '1.80';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -8377,10 +8378,13 @@ function dbPackOf(pm) {
      v1.40 ทีละชั้นไม้ (e.boards): ลงใหม่ทีละชั้นไม้ (ลำดับเดิม) แล้วรวมกลับเป็น 1 รายการต่อ Lot (brdMerge) */
   if (!pm._dbp) {
     var its = [];
+    /* v1.80 ค้างตัดที่ตัดได้ (นับเวลาแล้ว — v1.79) ลงก่อน กินเวลาวันแรก · ไม่อยู่ในผลลัพธ์ (รายการ Lot ของวัน = Lot ใหม่เหมือนเดิม) */
+    pm.q.filter(function (e) { return e.carry && !e.noT && !e.today; }).forEach(function (e) { its.push({ g: e.g, p: e.p || 0, t: e.t != null ? e.t : bdLotMin(e.g, e.p || 0), cy: true }); });
     pm.q.filter(function (e) { return !e.carry && !e.today; }).forEach(function (e) {
       if (e.boards && e.boards.length) e.boards.forEach(function (x) { its.push({ g: e.g, p: x.p, t: x.t, adj: e.adj, dmin: e.dmin, b: x.b }); });
       else { var p = e.p || 0; its.push({ g: e.g, p: p, t: e.t != null ? e.t : bdLotMin(e.g, p), adj: e.adj, dmin: e.dmin }); } });
     var pk = bdPackOne(its, pm.ppd, pm.min || 0, pm);
+    if (its.some(function (x) { return x.cy; })) { var dd0 = pk.days; pk = pk.filter(function (o) { return !its[o.i].cy; }); pk.days = dd0; }   // v1.80
     if (its.some(function (x) { return x.b; })) { pk.forEach(function (o) { o.b = its[o.i].b; }); var dd = pk.days; pk = brdMerge(pk.slice().sort(function (a, b) { return a.i - b.i; })); pk.forEach(function (o) { if (o.boards) o.d0 = o.segs[0] ? o.segs[0].d : o.d0; }); pk.sort(function (a, b) { return a.d0 - b.d0 || a.i - b.i; }); pk.days = dd; }
     pm._dbp = pk;
   }
