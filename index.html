@@ -2011,7 +2011,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.66</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.67</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3080,10 +3080,11 @@ var GasFS = (function () {
    v1.65 (2026-10-22 11:21 ผู้ใช้: ชื่อ Lot ตัดบรรทัด · กล่องชี้ไม่เหมือนกัน · 300/1 วันนี้ไม่ขึ้น · 300/1 พรุ่งนี้มีแต่ไม้รอจ่าย · ค้างตัด PW / ไม้ไม่พอจ่ายอยู่ในแผนต่อไป)
      · ชื่อ Lot บรรทัดเดียว · กล่องชี้ = #dbTip ทุกที่ · แท็บวันนี้ = ซ้ายล่าง · คิวเครื่องไม่นับค้างตัด · แผนวันนี้ tpNorm / tpDrop / tpTier — ดู v165.js
    v1.66 (2026-10-22 11:39 ผู้ใช้: “ต่อจากวันก่อน / ตัวเทาเวลาเป้าหมาย เอาไปไว้ใน Box · เห็นคอลัมน์ครบไม่เลื่อน ”) dbSmallTips — ดู v166.js · PW = ผู้ใช้ตั้ง ⚙ ไม่รับรหัสเอง
+   v1.67 (2026-10-22 11:44 ผู้ใช้: “ปรับวันนี้ให้แสดงวัตถุดิบว่าไม้ครบหรืออะไร เหมือนวันอื่น ๆ”) ตารางวันนี้ + คอลัมน์ วัตถุดิบ (tpRow · dbMatCell)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.66';
+var VER = '1.67';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -8652,9 +8653,10 @@ function tpDone(g, P) { return !!(g && (P.after.indexOf(g) >= 0 || P.fin.indexOf
 /* หัวตาราง/แถว (คอลัมน์: # · Lot · ส่ง · เลข .saw · แผน · ตัดวันนี้ · สถานะ) */
 function tpRow(i, id, g, P, plan, nT, st, cls) {
   var nos = dbSawNos(id);
-  return '<tr' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (cls ? ' class="' + cls + '"' : '') + '><td class="no">' + (i != null ? i : '') + '</td><td class="lot"><span data-cp="' + esc(id) + '" title="' + esc(id) + '\nคลิกเพื่อคัดลอกชื่อ Lot">' + esc(id) + '</span>' + poolChip(id) /* v1.52 */ + (g && !g.closed ? rjTag(g, 'dpjm') : '') /* v1.57 ไม้ยังไม่มี */ + '</td>'
+  return '<tr' + (g && !g.closed ? ' data-dbl="' + esc(g.id) + '"' : '') + (cls ? ' class="' + cls + '"' : '') + '><td class="no">' + (i != null ? i : '') + '</td><td class="lot"><span data-cp="' + esc(id) + '" title="' + esc(id) + '\nคลิกเพื่อคัดลอกชื่อ Lot">' + esc(id) + '</span>' + poolChip(id) /* v1.52 · v1.67 ป้ายไม้ (rjTag) ย้ายไปคอลัมน์ วัตถุดิบ */ + '</td>'
     + (g ? dbEndCell(g, P) : '<td class="ed"><em>—</em></td>')
     + '<td class="saw">' + (nos.length ? nos.map(function (n) { return '<span>' + esc(n) + '</span>'; }).join('') : '<em>—</em>') + '</td>'
+    + (g && !g.closed ? (dbMatCell(g) || '<td class="mt"></td>') : '<td class="mt"></td>') /* v1.67 วัตถุดิบ แบบเดียวกับวันอื่น */
     + '<td class="pc">' + plan + '</td><td class="pc tdy">' + (nT ? fmtN(nT) : '<em>—</em>') + '</td><td class="st">' + st + '</td></tr>';
 }
 function tpStatus(g, P, nT, pc) {
@@ -8701,12 +8703,12 @@ function dbTodaySec(x, P) {
   var pm = x.o.pm, c = x.o.c, snap = tpToday(P), ms = snap && snap.mcs[x.m.n], ppd = x.m.ppd || 0, mn = pm && pm.min || bdMcMin(x.m), W = 'วันนี้';
   var h = '<section class="dbc dbonetmr dbtoday"><header><h3>วันนี้ต้องตัด<small>' + esc(bdDayTxt(P.today)) + ' · '
     + (snap ? (snap.re ? 'จัดแผนใหม่ ' : 'แผนที่บันทึกไว้ ') /* v1.58 */ + esc(String(snap.at || '').replace('T', ' ').slice(0, 16)) + (snap.by ? ' (' + esc(snap.by) + ')' : '') : 'ยังไม่มีแผนที่บันทึกไว้ — คำนวณสดจากตอนนี้') + '</small></h3></header>' + dbDayTabs(P, pm, -1, x);
-  var head = '<div class="dbtw"><table class="dbsaw dbtp"><thead><tr><th>#</th><th>Lot</th><th class="ed">ส่ง (enddate)</th><th>เลข .saw</th><th class="pc">' + (snap ? 'แผน (ชิ้น)' : 'เหลือ (ชิ้น)') + '</th><th class="pc">ตัดวันนี้</th><th>สถานะ</th></tr></thead><tbody>';
+  var head = '<div class="dbtw"><table class="dbsaw dbtp"><thead><tr><th>#</th><th>Lot</th><th class="ed">ส่ง (enddate)</th><th>เลข .saw</th><th class="mt">วัตถุดิบ</th>' /* v1.67 */ + '<th class="pc">' + (snap ? 'แผน (ชิ้น)' : 'เหลือ (ชิ้น)') + '</th><th class="pc">ตัดวันนี้</th><th>สถานะ</th></tr></thead><tbody>';
   var seen = new Set(), rows = [], nDone = 0, nRun = 0, nWait = 0, nOth = 0;
   if (ms) {
     var LS0 = (ms.carry || []).filter(function (o) { return !dbTpFin(P.G.get(o.id), P); }).map(function (o) { return { id: o.id, p: o.p || 0, carry: true }; }).concat(ms.lots || []);   /* v1.65 + ค้างตัด (เดิมแสดงแต่ Lot ใหม่ — 300/1 มีแต่ค้างตัด = ตารางว่าง) */
     var LS = nsOrder(LS0, function (o) { return P.G.get(o.id); }, function (o) { var g = P.G.get(o.id); return o.carry || tpCutHere(c, o.id) > 0 || !!(g && (tpDone(g, P) || adjOf(g))); }), NS0 = LS.ns[0];   // v1.58 ไม่มี .saw = ท้าย · ปิด = ไม่นับ
-    LS.forEach(function (o, i) { if (o === NS0) rows.push('<tr class="sep ns"><td></td><td colspan="6">' + esc(nsSepTxt(LS.ns.length, LS.ns.reduce(function (a, z) { return a + (z.t || 0); }, 0))) + '</td></tr>');
+    LS.forEach(function (o, i) { if (o === NS0) rows.push('<tr class="sep ns"><td></td><td colspan="7">' + esc(nsSepTxt(LS.ns.length, LS.ns.reduce(function (a, z) { return a + (z.t || 0); }, 0))) + '</td></tr>');
       var g = P.G.get(o.id), nT = tpCutHere(c, o.id); seen.add(String(o.id).toUpperCase());
       var d = tpDone(g, P); if (d) nDone++; else if (nT) nRun++; else if (g && tpCutElse(x.m.pc, g.id).length) nOth++; else nWait++;
       rows.push(tpRow(i + 1, o.id, g, P, fmtN(o.p) + (o.carry ? '<small>ค้างตัด (เหลือ)</small>' : '') /* v1.65 */ + (o.t ? '<small>' + esc(crxDur(o.t)) + (o.all > o.p ? ' · ทั้ง Lot ' + fmtN(o.all) : '') + '</small>' : ''), nT, tpStatus(g, P, nT, x.m.pc), d ? 'done' : '')); });
@@ -8734,7 +8736,7 @@ function dbTodaySec(x, P) {
     + '<small>คำนวณสด: Lot ค้างตัดของเครื่องนี้ก่อน แล้วต่อด้วย Lot ในคิวที่ยังใส่เวลาที่เหลือได้ (Lot เหล่านี้ในแผนเดิมอยู่วันถัดไป — ถ้าตัดวันนี้ได้ แผนพรุ่งนี้จะเลื่อนขึ้นเอง)</small></div>';
   live = nsOrder(live, function (z) { return z.e.g; }, function (z) { return z.carry || z.pin || tpCutHere(c, z.e.g.id) > 0 || !!adjOf(z.e.g); }); var NSL = live.ns[0];   // v1.58
   h += live.length ? head + live.map(function (z, i) { var g = z.e.g, nT = tpCutHere(c, g.id);
-      return (z === NSL ? '<tr class="sep ns"><td></td><td colspan="6">' + esc(nsSepTxt(live.ns.length, live.ns.reduce(function (a, q) { return a + (q.t || 0); }, 0))) + '</td></tr>' : '') + tpRow(i + 1, g.id, g, P, fmtN(Math.round(z.e.p || 0)) + (z.t ? '<small>' + esc(crxDur(z.t)) + '</small>' : ''), nT, z.carry ? tpStatus(g, P, nT, x.m.pc) : '<span class="wait">ต่อคิว</span><small>แผนเดิม ' + esc(dbDayW(P, z.e.d0 || 0, true)) + '</small>', z.carry ? 'cy' : ''); }).join('') + '</tbody></table></div>'
+      return (z === NSL ? '<tr class="sep ns"><td></td><td colspan="7">' + esc(nsSepTxt(live.ns.length, live.ns.reduce(function (a, q) { return a + (q.t || 0); }, 0))) + '</td></tr>' : '') + tpRow(i + 1, g.id, g, P, fmtN(Math.round(z.e.p || 0)) + (z.t ? '<small>' + esc(crxDur(z.t)) + '</small>' : ''), nT, z.carry ? tpStatus(g, P, nT, x.m.pc) : '<span class="wait">ต่อคิว</span><small>แผนเดิม ' + esc(dbDayW(P, z.e.d0 || 0, true)) + '</small>', z.carry ? 'cy' : ''); }).join('') + '</tbody></table></div>'
     : '<p class="mqnone">ไม่มี Lot ค้างตัด และเวลาที่เหลือวันนี้ไม่พอให้ Lot ถัดไป</p>';
   return h + '</section>';
 }
@@ -11303,8 +11305,8 @@ function dbTpOuts(outs, ms, c, P, x) {
   var PS = new Set(((ms && ms.pre) || []).map(function (o) { return String(o.id).toUpperCase(); }));
   var row = function (l) { var g = P.G.get(l) || P.G.get(String(l).toUpperCase()), nT = tpCutHere(c, l); return tpRow('+', l, g, P, '<em>—</em>', nT, tpStatus(g, P, nT, x.m.pc), 'out'); };
   var a = outs.filter(function (l) { return PS.has(String(l).toUpperCase()); }), b = outs.filter(function (l) { return !PS.has(String(l).toUpperCase()); });
-  return (a.length ? '<tr class="sep"><td></td><td colspan="6">ตัดแล้ววันนี้ก่อนจัดแผนใหม่</td></tr>' + a.map(row).join('') : '')
-    + (b.length ? '<tr class="sep"><td></td><td colspan="6">ตัดนอกแผน (ยิงวันนี้ที่เครื่องนี้ ไม่อยู่ในแผน)</td></tr>' + b.map(row).join('') : '');
+  return (a.length ? '<tr class="sep"><td></td><td colspan="7">ตัดแล้ววันนี้ก่อนจัดแผนใหม่</td></tr>' + a.map(row).join('') : '')
+    + (b.length ? '<tr class="sep"><td></td><td colspan="7">ตัดนอกแผน (ยิงวันนี้ที่เครื่องนี้ ไม่อยู่ในแผน)</td></tr>' + b.map(row).join('') : '');
 }
 
 /* ───────── v1.59: สถานะไม้ 4 แบบ (เบิก ≠ จ่าย) · จัดแผนตามความพร้อมไม้ · ฟ้องที่ติด · SAW PLAN ทำคู่กัน ─────────
@@ -12157,7 +12159,8 @@ function dbSmallTips() {
     var sm = td.querySelectorAll('small'); if (!sm.length) return;
     var t = [].map.call(sm, function (x) { return x.textContent.replace(/\s+/g, ' ').trim(); }).filter(Boolean).join('\n'); if (!t) return;
     var h = td.closest('table') && td.closest('table').querySelector('thead th:nth-child(' + (td.cellIndex + 1) + ')'), hd = h ? h.textContent.trim() : '';
-    td.setAttribute('title', (hd ? hd + ': ' : '') + td.firstChild.textContent.trim() + '\n' + t); td.classList.add('dbst');
+    var ot = td.getAttribute('title') || td.getAttribute('data-tip') || '';   // v1.67 เก็บข้อความชี้เดิมไว้ด้วย (เช่น รายการ Run หลายตัว)
+    td.removeAttribute('data-tip'); td.setAttribute('title', (hd ? hd + ': ' : '') + td.firstChild.textContent.trim() + '\n' + t + (ot ? '\n' + ot : '')); td.classList.add('dbst');
   });
 }
 var bdDashRender0 = bdDashRender;
