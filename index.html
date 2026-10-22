@@ -2020,7 +2020,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.73</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.74</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3096,10 +3096,11 @@ var GasFS = (function () {
    v1.71 (2026-10-22 12:04 ผู้ใช้: “รอจ่ายต้องอยู่ก่อนไม้ยังไม่ครบในแผน”) ไม้ครบ → รอจ่าย → ไม้ยังไม่ครบ (% มาก → น้อย) — wdOrder · tpTier
    v1.72 (2026-10-22 12:52 ผู้ใช้: “ไม้ยังไม่ครบ จ่ายแล้ว ต้องขึ้นก่อนรอจ่าย”) ย้อน v1.71 — เรียงตาม % จ่ายแล้วเหมือน v1.70
    v1.73 (2026-10-22 13:00 ผู้ใช้: “รอจ่ายคือไม่มีในคลังรอซื้อ” ทำเลย · กำลังตัดต้องมี 1 Lot · ตัดจบตามไม้ที่จ่าย) wdOf0/wdKind/wdLine/tpStatus — ดู v173.js · ลำดับ wdOrder + tpTier
+   v1.74 (ตรวจเว็บจริง) บรรทัดสถานะไม้ของ รอซื้อ ไม่ขึ้น “รอคลังจ่าย” ซ้ำ (wdLine)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.73';
+var VER = '1.74';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -12246,7 +12247,6 @@ wdLine = function (w, main) {
   var r = wdLine0.apply(this, arguments); if (!w || w.k !== 'part') return r;
   r = r.replace(/ · รอจ่าย (\d+) รายการ/, function () { return w.nPo > 0 && main !== 'pend' ? ' · รอคลังจ่าย ' + w.nPo + ' รายการ' : ''; });
   if (w.nPn > 0 && main !== 'buy') r += ' · ไม่มีในคลัง ' + w.nPn + ' รายการ';
-  if (main === 'buy' && w.nPo > 0) r += ' · รอคลังจ่าย ' + w.nPo + ' รายการ';
   return r;
 };
 /* ④ ชิ้นที่ยังไม่ตัด: บนแผ่นที่จ่ายแล้ว / ยังไม่จ่าย (null = ไม่รู้) */
