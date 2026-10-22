@@ -2035,7 +2035,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.85</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.86</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3123,10 +3123,11 @@ var GasFS = (function () {
    v1.83 (2026-10-22 14:10 ผู้ใช้: เอา ≈ 3:32 / 7 ชม. และเหลือเวลาออก) กล่องเครื่อง: วันนี้ · ยิงแล้ว n ชิ้น · เฉลี่ย · กราฟ (วงแหวน % ของเวลาเหมือนเดิม)
    v1.84 (2026-10-22 14:12 ผู้ใช้: กราฟเป็นชิ้นตาม Cap ที่ตั้ง) % วันนี้ / เฉลี่ย = ชิ้นที่ยิง ÷ Cap ชิ้น/วัน (⚙) · ไม่ตั้ง Cap = % เวลาเหมือนเดิม — ดู v184.js
    v1.85 (2026-10-22 14:17 ผู้ใช้: ช่องสถานะยาวไป ให้ชี้แบบช่องเลข) บรรทัดรองของสถานะ = กล่องชี้ (dbSmallTips) — ดู v185.js
+   v1.86 (2026-10-22 14:18 ผู้ใช้: เลื่อนไปขวา เด้งกลับมาซ้าย) Dashboard วาดใหม่ คงตำแหน่งเลื่อนซ้ายขวาด้วย (เดิม v1.70 คงแค่ขึ้นลง) — ดู v186.js
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.85';
+var VER = '1.86';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -12546,6 +12547,19 @@ dbSmallTips = function () {
     var main = [].filter.call(td.childNodes, function (n) { return !(n.nodeType === 1 && n.tagName === 'SMALL'); }).map(function (n) { return n.textContent; }).join(' ').replace(/\s+/g, ' ').trim();
     td.removeAttribute('data-tip'); td.setAttribute('title', 'สถานะ: ' + main + '\n' + t + (inner.length ? '\n' + inner.join('\n') : '')); td.classList.add('dbst2');
   });
+};
+
+/* ───────── v1.86 (ผู้ใช้ 22/10/2026 14:18 · รูปตารางวันนี้ 300/2 มีแถบเลื่อนข้าง): “มันเด้งอีกแล้ว อาการเดิม เลื่อนไปขวา เด้งกลับมาซ้าย” ─────────
+   เดิม v1.70 คงแค่ตำแหน่งเลื่อนขึ้นลง (scrollTop) ของกล่องที่เลื่อนในตัวเอง → วาดใหม่ (ข้อมูลยิงตัดเข้า) = เลื่อนซ้ายขวากลับไปซ้ายสุด
+   ตอนนี้: เครื่อง + วันเดิม = คงตำแหน่งเลื่อนซ้ายขวาด้วย ทุกกล่องใน Dashboard (ตาราง · รายการซ้าย · กล่องหลัก) */
+var bdDashRenderV86 = bdDashRender;
+bdDashRender = function (P) {
+  var E = $('bdDash'), key = (DB.mc || '') + '|' + DB.day, sel = '.dbtw, .dbtlw, .dbwrap, .dbone, .dbc', keep = null;
+  if (E && DBK.keyX === key) keep = { e: E.scrollLeft, a: [].map.call(E.querySelectorAll(sel), function (w) { return w.scrollLeft; }) };
+  DBK.keyX = key;
+  var r = bdDashRenderV86.apply(this, arguments);
+  if (E && keep) { if (keep.e) E.scrollLeft = keep.e; [].forEach.call(E.querySelectorAll(sel), function (w, i) { if (keep.a[i]) w.scrollLeft = keep.a[i]; }); }
+  return r;
 };
 
 window.StarStock = { dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
