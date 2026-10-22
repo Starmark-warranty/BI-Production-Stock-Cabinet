@@ -20,7 +20,7 @@ html.sxs #spMergeBtn,html.sxs #spImpCard,html.sxs [data-act="syPick"],html.sxs [
   /* StarStock v1.44: วัตถุดิบ (แผ่นไม้ที่เบิกแล้ว) ของ Lot — ถามหน้า StarStock สด ๆ (ไม่ฝังใน A · เบิกแล้วเห็นทันทีที่วาดใหม่) */
   var RMC = { iss: ['✓ เบิกไม้แล้ว', '#047857', 'rgba(16,185,129,.12)', 'rgba(16,185,129,.35)'], wait: ['⏳ รอเบิกไม้', '#b45309', 'rgba(245,158,11,.12)', 'rgba(245,158,11,.4)'],
     short: ['✗ ไม้ไม่พอ', '#b91c1c', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.35)'], not: ['⚠ ยังไม่ Transfer', '#b91c1c', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.35)'], unk: ['? วัตถุดิบ', '#64748b', 'rgba(100,116,139,.1)', 'rgba(100,116,139,.3)'], nobom: ['⛔ ยังไม่มี BOM', '#7f1d1d', 'rgba(127,29,29,.08)', 'rgba(127,29,29,.3)'],
-    jn: ['🪵 ไม้ยังไม่มี', '#b91c1c', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.45)'] };   // v1.46 + ยังไม่มี BOM · StarStock v1.57 + ไม้ยังไม่มี (Journal แยกใบ ยังไม่ Post)
+    jn: ['🪵 ไม้ยังไม่ครบ', '#b91c1c', 'rgba(239,68,68,.1)', 'rgba(239,68,68,.45)'] };   // v1.46 + ยังไม่มี BOM · StarStock v1.57 + ไม้ยังไม่มี (Journal แยกใบ ยังไม่ Post)
   window.SXS.rm = function (id) { try { return P && P.spRm ? P.spRm(id) : null; } catch (e) { return null; } };
   window.SXS.rmPass = function (id) { try { return P && P.spRmPass ? P.spRmPass(id) : true; } catch (e) { return true; } };   // v1.45 ตัวกรองแสดง Lot (เบิกไม้แล้ว / ยังไม่เบิก) ที่แถบบนของ StarStock
 
@@ -77,7 +77,16 @@ html.sxs #spMergeBtn,html.sxs #spImpCard,html.sxs [data-act="syPick"],html.sxs [
         + '.sxs-g input{margin-top:3px;width:16px;height:16px}'
         + '.sxs-g b{font-size:13.5px} .sxs-g i{font-style:normal;font-weight:700;color:#1d4ed8;margin-left:6px}'
         + '.sxs-g small{display:block;color:#64748b;font-size:11.5px;margin-top:2px}'
-        + '.sxs-g-full b{color:#15803d} .sxs-g-part b{color:#b45309} .sxs-g-carry b{color:#1d4ed8} .sxs-g-oth b{color:#475569}';
+        + '.sxs-g-full b{color:#15803d} .sxs-g-part b{color:#b45309} .sxs-g-carry b{color:#1d4ed8} .sxs-g-oth b{color:#475569}'
+        /* v1.61 แถวเครื่องที่เปิดวัน… (กดได้ทุกเครื่อง) · ป้าย Auto · หมายเหตุเครื่องที่ใช้ค่า StarStock */
+        + '.sxs-mday .sxs-mdc{padding:4px 9px;border:1px solid #e2e8f0;border-radius:999px;background:#fff}'
+        + '.sxs-mday .sxs-mdc.on{border-color:#86efac;background:#f0fdf4;color:#166534}'
+        + '.sxs-mday .sxs-mdc.off{color:#94a3b8;background:#f8fafc}'
+        + '.sxs-mday .sxs-mdc.ov{border-style:dashed;border-color:#f59e0b}'
+        + '.sxs-mday .sxs-mdc small{font-size:10.5px;color:#64748b;font-weight:600}'
+        + '.sxs-auto{padding:5px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-weight:700}'
+        + '.sxs-auto.on{border-color:#16a34a;background:#f0fdf4;color:#15803d}'
+        + '.sxs-lk{font-size:10.5px;color:#2563eb;margin-top:2px;white-space:nowrap}';
       var st = D.createElement('style'); st.id = 'sxsUi'; st.textContent = css; (D.head || D.documentElement).appendChild(st);
     } catch (e) { }
   })();
@@ -110,14 +119,14 @@ html.sxs #spMergeBtn,html.sxs #spImpCard,html.sxs [data-act="syPick"],html.sxs [
   window.SXS.grpKeys = function () { return P && P.B && P.B.rj && P.B.rj.map ? ['full', 'part', 'carry', 'oth'] : ['full', 'part', 'carry']; };
   window.SXS.grpLbl = function () { var rj = !!(P && P.B && P.B.rj && P.B.rj.map);
     return { full: rj ? ['✓ ไม้ครบ', 'คลังจ่ายไม้ (Post) ครบแล้ว — พร้อมตัด'] : ['✓ เบิกไม้แล้ว', 'ไม่มีแผ่นค้างเบิก'],
-      part: rj ? ['◐ ไม้ยังไม่ครบ', 'รอจ่าย / ไม้ยังไม่มี / ยังไม่เบิก — ชั้นไม้ที่ไม้ยังไม่มี/ยังไม่เบิก ไม่ลงให้อยู่แล้ว (รอจ่าย = ลงได้)'] : ['⏳ ยังไม่เบิกไม้', 'ยังมีแผ่นค้างเบิก — ชั้นไม้ที่ยังไม่เบิก ไม่ลงให้อยู่แล้ว'],
+      part: rj ? ['◐ ไม้ยังไม่ครบ', 'รอจ่าย / ไม้ไม่พอจ่าย / ยังไม่เบิก — ชั้นไม้ที่ขาดไม้ / ยังไม่เบิก ไม่ลงให้อยู่แล้ว (รอจ่าย = ลงได้)'] : ['⏳ ยังไม่เบิกไม้', 'ยังมีแผ่นค้างเบิก — ชั้นไม้ที่ยังไม่เบิก ไม่ลงให้อยู่แล้ว'],
       carry: ['✂ ค้างตัด', 'Lot ที่ตัดไปแล้วบางส่วน — ตัดต่อส่วนที่เหลือ'], oth: ['อื่น ๆ', 'ยังไม่มี BOM / ยังไม่ Transfer / ไม่มีข้อมูลวัตถุดิบ'] }; };
   window.SXS.grpOf = function (id, carry) { if (carry || window.SXS.cut(id)) return 'carry'; if (!P || !P.B || !P.B.rm) return 'full'; var r = window.SXS.rm(id), c = r && P.spRmCat ? P.spRmCat(r.st) : 'iss'; return c === 'iss' ? 'full' : c === 'no' ? 'part' : 'oth'; };
   window.SXS.grpOk = function (id, carry, sel) { return !sel || !!sel[window.SXS.grpOf(id, carry)]; };
   window.SXS.grpLoad = function () { var d = { full: 1, part: 1, carry: 1, oth: 0 }; try { var v = JSON.parse(localStorage.getItem('sxlocaltrial:furnitech:spAutoGrp') || 'null'); if (v && typeof v === 'object') Object.keys(d).forEach(function (k) { if (v[k] != null) d[k] = v[k] ? 1 : 0; }); } catch (e) { } return d; };
   window.SXS.grpSave = function (o) { try { localStorage.setItem('sxlocaltrial:furnitech:spAutoGrp', JSON.stringify(o)); } catch (e) { } };
   /* v1.59 คำในข้อความ “ไม่ใส่ n ชั้นไม้” — มีข้อมูลใบเบิก (rmjn.csv) = ไม้ยังไม่ครบ (ไม้ยังไม่มี/ยังไม่เบิก) · ไม่มี = ยังไม่เบิกไม้ (แบบเดิม) */
-  window.SXS.rmWord = function () { try { return P && P.B && P.B.rj && P.B.rj.map ? 'ไม้ยังไม่ครบ (ไม้ยังไม่มี/ยังไม่เบิก)' : 'ยังไม่เบิกไม้'; } catch (e) { return 'ยังไม่เบิกไม้'; } };
+  window.SXS.rmWord = function () { try { return P && P.B && P.B.rj && P.B.rj.map ? 'ไม้ยังไม่ครบ (ไม้ไม่พอจ่าย/ยังไม่เบิก)' : 'ยังไม่เบิกไม้'; } catch (e) { return 'ยังไม่เบิกไม้'; } };
   /* v1.59 ป้ายดรอปดาวน์เรียง = ค่าจริงของ StarStock (เดิมเขียนตาย 15/21 — แก้ค่าแล้วป้ายไม่เปลี่ยน) */
   window.SXS.cdLbl = function () { var st = P && P.B ? P.B.set : null, a = st && st.cutDue != null ? st.cutDue : 15, b = st && st.cutDuePaint != null ? st.cutDuePaint : 21; return '↕ ต้องตัดก่อน (End Date − ' + a + '/' + b + ' วัน · StarStock)'; };
   window.SXS.cdCard = function () {
@@ -145,9 +154,9 @@ html.sxs #spMergeBtn,html.sxs #spImpCard,html.sxs [data-act="syPick"],html.sxs [
       if (!box) { box = D.createElement('span'); box.id = 'sxsRmF'; box.className = 'sxs-rmf np'; anc.parentNode.insertBefore(box, anc.nextSibling); }
       var has = function (v) { return P.spRmHas ? P.spRmHas(v) : P.spRmShow() === v; }, one = function (v, lbl, n, tip) { var on = has(v); return "<label class='sxs-rmc" + (on ? ' on' : '') + "' title='" + tip + "'><input type='checkbox' data-sxrm='" + v + "'" + (on ? ' checked' : '') + '> ' + lbl + ' <b>' + n + '</b></label>'; };   // v1.48 ติ๊กพร้อมกันได้
       var h = (c.rm && c.lbl ? one('iss', c.lbl.iss, c.iss, 'แสดง Lot ที่ไม้ครบ = จ่ายไม้แล้วทุกรายการ (ใบเบิก TFRM Post ครบ) · ติ๊กพร้อมกันได้ / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้')
-          + one('no', c.lbl.no, c.no, 'แสดง Lot ที่เบิกแล้วแต่ไม้ยังไม่ครบ: รอจ่าย (ใบยังไม่ Post) / ไม้ยังไม่มี (ใบแยก) / ยังไม่เบิกบางรายการ — เรียงตามต้องตัดก่อน · ป้ายแดง = ถึงวันตัดแล้ว')
+          + one('no', c.lbl.no, c.no, 'แสดง Lot ที่เบิกแล้วแต่ไม้ยังไม่ครบ: รอจ่าย (ใบยังไม่ Post) / ไม้ไม่พอจ่าย (ใบแยก) / ยังไม่เบิกบางรายการ — เรียงตามต้องตัดก่อน · ป้ายแดง = ถึงวันตัดแล้ว')
           + one('oth', c.lbl.oth, c.oth, 'แสดง Lot อื่น ๆ: ยังไม่มี BOM · ยังไม่ Transfer · ไม้ไม่พอในคลัง · ไม่มีข้อมูล')   // StarStock v1.59 เบิก ≠ จ่าย
-        : c.rm ? one('iss', '✓ เบิกไม้แล้ว', c.iss, 'แสดง Lot ที่เบิกไม้ครบแล้ว (AX ไม่มีแผ่นไม้ค้างเบิก) · ติ๊กคู่กับ ⏳ ยังไม่เบิกไม้ / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้') + one('no', '⏳ ยังไม่เบิกไม้', c.no, 'แสดง Lot ที่ยังไม่เบิกไม้ครบ (รอเบิกบางชั้น/ทั้ง Lot · ไม้ไม่พอ · ไม้ยังไม่มี (Journal แยกใบ) · ยังไม่ Transfer · ยังไม่มี BOM) · ติ๊กคู่กับ ✓ เบิกไม้แล้ว / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้') : '')
+        : c.rm ? one('iss', '✓ เบิกไม้แล้ว', c.iss, 'แสดง Lot ที่เบิกไม้ครบแล้ว (AX ไม่มีแผ่นไม้ค้างเบิก) · ติ๊กคู่กับ ⏳ ยังไม่เบิกไม้ / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้') + one('no', '⏳ ยังไม่เบิกไม้', c.no, 'แสดง Lot ที่ยังไม่เบิกไม้ครบ (รอเบิกบางชั้น/ทั้ง Lot · ไม้ไม่พอ · ไม้ไม่พอจ่าย (Journal แยกใบ) · ยังไม่ Transfer · ยังไม่มี BOM) · ติ๊กคู่กับ ✓ เบิกไม้แล้ว / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้') : '')
         + (function () { var on = P.spCutShow && P.spCutShow(); return "<label class='sxs-rmc" + (on ? ' on' : '') + "' title='แสดงเฉพาะ Lot ที่ตัดไปบางส่วนแล้ว (ค้างตัด — คิว “กำลังตัด” ของ StarStock) · ใช้คู่กับช่อง Week ได้ · ติ๊กออก = ทุก Lot'><input type='checkbox' data-sxcut" + (on ? ' checked' : '') + '> ✂ ค้างตัด <b>' + c.cut + '</b></label>'; })();   // v1.47
       if (box._h !== h) { box.innerHTML = h; box._h = h; }
     } catch (e) { if (window.console) console.warn('[SXS] rmFiltUi', e); }
@@ -252,7 +261,7 @@ html.sxs #spMergeBtn,html.sxs #spImpCard,html.sxs [data-act="syPick"],html.sxs [
     var w = window.SXS.rmBlock(id, code); if (!w) return '';
     var r = window.SXS.rm(id); if (!r || r.wide || !r.codes) return '';
     var qn = hx(Math.round((r.codes[String(code).toUpperCase()] || 0) * 100) / 100);
-    if (r.jm) return " <span class='sxs-rmb sxs-rmj' title='" + hx(w) + "' style='display:inline-block;margin-left:4px;font-size:9.5px;font-weight:800;border-radius:6px;padding:0 5px;color:#b91c1c;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.45)'>🪵 ไม้ยังไม่มี " + qn + ' แผ่น</span>';   // StarStock v1.57 Journal แยกใบ ยังไม่ Post
+    if (r.jm) return " <span class='sxs-rmb sxs-rmj' title='" + hx(w) + "' style='display:inline-block;margin-left:4px;font-size:9.5px;font-weight:800;border-radius:6px;padding:0 5px;color:#b91c1c;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.45)'>🪵 ไม้ยังไม่ครบ ขาด " + qn + ' แผ่น</span>';   // StarStock v1.57 Journal แยกใบ ยังไม่ Post
     return " <span class='sxs-rmb' title='" + hx(w) + "' style='display:inline-block;margin-left:4px;font-size:9.5px;font-weight:700;border-radius:6px;padding:0 5px;color:#b45309;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4)'>⏳ รอเบิก " + qn + ' แผ่น</span>';
   };
   window.SXS.rmChip = function (id) {
@@ -1274,11 +1283,13 @@ function prefApply(o){
     PL.opt.scope = p.scope === 'all' ? 'all' : 'new';
     var u = {}; if (p.use && typeof p.use === 'object') Object.keys(p.use).forEach(function(k){ if (typeof p.use[k] === 'boolean') u[k] = p.use[k]; });
     PL.opt.use = u;
+    var dd = {}; if (p.day && typeof p.day === 'object') Object.keys(p.day).forEach(function(k){ var e = p.day[k]; if (!isISO(k) || !e || typeof e !== 'object') return; var r = {}; Object.keys(e).forEach(function(id){ if (typeof e[id] === 'boolean') r[id] = e[id]; }); if (Object.keys(r).length) dd[k] = r; });
+    PL.opt.day = dd;   // StarStock v1.61 เครื่องรายวัน (เครื่องที่ไม่มีใน StarStock)
   }
   PF.at = +o.at || 0;
   return true;
 }
-function prefDoc(){ return { at: PF.at || 0, exp: { layout: UI.exp.layout, mode: UI.exp.mode, fmt: UI.exp.fmt, sort: UI.exp.sort, cols: clone(UI.exp.cols) }, showSel: !!UI.showSel, opt: { strategy: PL.opt.strategy, scope: PL.opt.scope, use: clone(PL.opt.use || {}) } }; }
+function prefDoc(){ return { at: PF.at || 0, exp: { layout: UI.exp.layout, mode: UI.exp.mode, fmt: UI.exp.fmt, sort: UI.exp.sort, cols: clone(UI.exp.cols) }, showSel: !!UI.showSel, opt: { strategy: PL.opt.strategy, scope: PL.opt.scope, use: clone(PL.opt.use || {}), day: clone(PL.opt.day || {}) /* StarStock v1.61 */ } }; }
 function prefWrite(){ var d = prefDoc(); d.v = 1; return lsSet(K_PREF, d); }
 /* ผู้ใช้แก้ → เวลาแก้ใหม่ (ไฟล์กลาง: ที่แก้ล่าสุดชนะ) */
 function savePref(){ PF.at = Math.max(Date.now(), (PF.at || 0) + 1); var ok = prefWrite(); sySetDirty(); return ok; }
@@ -1286,6 +1297,12 @@ function savePref(){ PF.at = Math.max(Date.now(), (PF.at || 0) + 1); var ok = pr
 function prefLoad(){ var p = lsGet(K_PREF); if (p && typeof p === 'object') prefApply(p); else { PF.at = 0; prefWrite(); } }
 function setById(id){ for (var i = 0; i < PS.sets.length; i++) if (PS.sets[i].id === id) return PS.sets[i]; return null; }
 function mById(id){ for (var i = 0; i < MS.machines.length; i++) if (MS.machines[i].id === id) return MS.machines[i]; return null; }
+/* StarStock v1.61: เครื่องเปิด / เวลาทำงาน (นาที) ของวันที่จะตัด — ชื่อตรงกับ StarStock = ค่า StarStock (ยึดเวลาเหมือนกัน) · ไม่ตรง = 🏭 + ติ๊กรายวัน */
+function mLink(m){ try { return m && (window.SXS && SXS.embed) && SXS.parent && SXS.parent.sxsMcDay ? SXS.parent.sxsMcDay(m.name, PL.date) : null; } catch (e) { return null; } }
+function mDayOv(m){ var d = PL.opt.day && PL.opt.day[PL.date]; return d && m && typeof d[m.id] === 'boolean' ? d[m.id] : null; }
+function mOn(m){ if (!m) return false; var x = mLink(m); if (x) return !!x.on; var o = mDayOv(m); if (o != null) return o; return !!m.on && (PL.opt.use || {})[m.id] !== false; }
+function mCap(m){ if (!m) return 0; var x = mLink(m); return x ? x.min : m.cap; }
+SP.mOn = mOn; SP.mCap = mCap; SP.mLink = mLink;
 function vals(setId){ var s = setById(setId) || setById('std'); return s.v; }
 function skipList(){ return String(MS.skip || '').split(/[,\s]+/).map(function(x){ return x.trim().toUpperCase(); }).filter(Boolean); }
 function isSkip(it){ var c = it.code.toUpperCase(); return skipList().some(function(x){ return c.indexOf(x) >= 0; }); }
@@ -1845,8 +1862,8 @@ function loads(){
   MS.machines.forEach(function(m){ var x = o[m.id], e = EXT[m.id];
     x.parts = Math.round(x.parts);
     if (e) { x.extN = e.n; x.extSec = e.sec; x.sec += e.sec; }              // งานวันเดียวกันจากไฟล์ SAW อื่น
-    x.cap = m.cap * 60; x.rem = x.cap - x.sec; x.pct = x.cap > 0 ? x.sec / x.cap * 100 : (x.sec > 0 ? 999 : 0); x.cost = x.sec / 3600 * vals(m.set).cost;
-    x.st = !m.on ? 'off' : (x.n + x.extN === 0 ? 'empty' : (x.sec > x.cap + 0.5 ? 'over' : (x.pct >= 90 ? 'near' : 'ok'))); x.nLots = Object.keys(x.lots).length; });
+    x.cap = mCap(m) * 60 /* StarStock v1.61 เวลาของวันที่จะตัด */; x.rem = x.cap - x.sec; x.pct = x.cap > 0 ? x.sec / x.cap * 100 : (x.sec > 0 ? 999 : 0); x.cost = x.sec / 3600 * vals(m.set).cost;
+    x.st = !mOn(m) ? 'off' : (x.n + x.extN === 0 ? 'empty' : (x.sec > x.cap + 0.5 ? 'over' : (x.pct >= 90 ? 'near' : 'ok'))); x.nLots = Object.keys(x.lots).length; });
   return o;
 }
 /* ชื่อ Lot ตามลำดับตัด + จำนวนชั้นไม้ของแต่ละ Lot: "RE-0069-0754 (3), RE-0069-0750-MC (6)" (+ งานจากไฟล์ SAW อื่น) */
@@ -1887,9 +1904,9 @@ function autoPlan(o){
   o = o || {};
   var strategy = o.strategy || PL.opt.strategy, scope = o.scope || PL.opt.scope;
   var use = o.use || PL.opt.use || {};
-  var ms = MS.machines.filter(function(m){ return m.on && m.cap > 0 && use[m.id] !== false; });
+  var ms = MS.machines.filter(function(m){ return mOn(m) && mCap(m) > 0; });   // StarStock v1.61 เครื่องที่เปิดวันนั้น (ติ๊กแถว “เครื่องที่เปิดวัน…”)
   var res = { placed: [], failed: [], cleared: 0, machines: ms.map(function(m){ return m.id; }), err: '' };
-  if (!ms.length) { res.err = MS.machines.some(function(m){ return m.on; }) ? 'ยังไม่ได้เลือกเครื่องที่จะจัดแผน (หรือเวลาทำงานเป็น 0)' : 'ไม่มีเครื่องที่เปิดใช้งาน'; return res; }
+  if (!ms.length) { res.err = MS.machines.some(function(m){ return mOn(m); }) ? 'ยังไม่ได้เลือกเครื่องที่จะจัดแผน (หรือเวลาทำงานเป็น 0)' : 'ไม่มีเครื่องที่เปิดใช้งาน'; return res; }
   var msSet = {}; ms.forEach(function(m){ msSet[m.id] = 1; });
   if (scope === 'all') {
     Object.keys(PL.asg).forEach(function(k){ var a = PL.asg[k]; if (!a.lock && msSet[a.m]) { delete PL.asg[k]; res.cleared++; } });
@@ -1908,13 +1925,13 @@ function autoPlan(o){
     if (rw) { PL.why[k] = rw; res.failed.push({ k: k, why: rw }); return; }
     todo.push(it);
   });
-  function fits(it, m){ var c = capable(it, m); if (!c.ok) return { ok: false, cap: false, why: c.why }; var t = tOn(it, m); return { ok: used[m.id] + t <= m.cap * 60 + 0.5, cap: true, t: t }; }
+  function fits(it, m){ var c = capable(it, m); if (!c.ok) return { ok: false, cap: false, why: c.why }; var t = tOn(it, m); return { ok: used[m.id] + t <= mCap(m) * 60 + 0.5, cap: true, t: t }; }
   function best(it){
     var b = null, bs = 1e18, nCap = 0, whyCap = '';
     ms.forEach(function(m){
       var f = fits(it, m); if (!f.cap) { whyCap = whyCap || f.why; return; } nCap++;
       if (!f.ok) return;
-      var s = (used[m.id] + f.t) / (m.cap * 60) + cnt[m.id] * 1e-9;
+      var s = (used[m.id] + f.t) / (mCap(m) * 60) + cnt[m.id] * 1e-9;
       if (s < bs - 1e-12) { bs = s; b = { m: m, t: f.t }; }
     });
     return { b: b, nCap: nCap, whyCap: whyCap };
@@ -1923,7 +1940,7 @@ function autoPlan(o){
   function failWhy(it, r){
     if (!r.nCap) return 'ไม่มีเครื่องที่รองรับ: ' + (r.whyCap || 'ทุกเครื่องที่เลือกไม่รับชั้นไม้นี้');
     var need = tStd(it), freeMax = 0, nm = '';
-    ms.forEach(function(m){ if (capable(it, m).ok) { var fr = m.cap * 60 - used[m.id]; if (fr > freeMax) { freeMax = fr; nm = m.name; } } });
+    ms.forEach(function(m){ if (capable(it, m).ok) { var fr = mCap(m) * 60 - used[m.id]; if (fr > freeMax) { freeMax = fr; nm = m.name; } } });
     return 'เวลาไม่พอ: ต้องใช้ ' + m1(need) + ' นาที · เครื่องที่ว่างที่สุด ' + (nm || '-') + ' เหลือ ' + m1(Math.max(0, freeMax)) + ' นาที';
   }
   function one(it){ var r = best(it); if (r.b) place(it, r.b.m, r.b.t); else { var w = failWhy(it, r); PL.why[it.k] = w; res.failed.push({ k: it.k, why: w }); } }
@@ -1941,13 +1958,13 @@ function autoPlan(o){
       ms.forEach(function(m){
         if (!g.every(function(it){ return capable(it, m).ok; })) return;
         var t = 0; g.forEach(function(it){ t += tOn(it, m); });
-        if (used[m.id] + t > m.cap * 60 + 0.5) return;
-        var s = (used[m.id] + t) / (m.cap * 60) + cnt[m.id] * 1e-9 - (hm[m.id] ? 10 + hm[m.id] : 0);
+        if (used[m.id] + t > mCap(m) * 60 + 0.5) return;
+        var s = (used[m.id] + t) / (mCap(m) * 60) + cnt[m.id] * 1e-9 - (hm[m.id] ? 10 + hm[m.id] : 0);
         if (s < bs) { bs = s; bm = m; }
       });
       if (bm) { g.forEach(function(it){ place(it, bm, tOn(it, bm)); }); return; }
       // 2) ไม่พอ → แบ่งให้น้อยเครื่องที่สุด: เติมเครื่องบ้าน → เครื่องที่ว่างมากสุด ไปทีละเครื่อง (ไม่กระจายทีละชั้นไม้)
-      var seq = ms.slice().sort(function(a, b){ return (hm[b.id] || 0) - (hm[a.id] || 0) || (b.cap * 60 - used[b.id]) - (a.cap * 60 - used[a.id]) || cnt[a.id] - cnt[b.id]; });
+      var seq = ms.slice().sort(function(a, b){ return (hm[b.id] || 0) - (hm[a.id] || 0) || (mCap(b) * 60 - used[b.id]) - (mCap(a) * 60 - used[a.id]) || cnt[a.id] - cnt[b.id]; });
       var rest = g;
       seq.forEach(function(m){
         if (!rest.length) return;
@@ -1971,8 +1988,8 @@ function setSel(keys, on){ keys.forEach(function(k){ if (on) PL.sel[k] = 1; else
 function selCap(){
   var L = loads(), pend = 0, pn = 0, tm = PL.target ? mById(PL.target) : null;
   selKeys().forEach(function(k){ if (PL.asg[k] || PL.ghost[k]) return; var it = IK[k]; if (problemOf(it)) return; pend += tm ? tOn(it, tm) : tStd(it); pn++; });
-  if (tm) { var x = L[tm.id]; return { target: tm, used: x.sec, pend: pend, pn: pn, cap: tm.cap * 60, over: x.sec + pend > tm.cap * 60 + 0.5 && pn > 0, label: tm.name }; }
-  var used = 0, cap = 0; MS.machines.forEach(function(m){ if (m.on) { used += L[m.id].sec; cap += m.cap * 60; } });
+  if (tm) { var x = L[tm.id]; return { target: tm, used: x.sec, pend: pend, pn: pn, cap: mCap(tm) * 60, over: x.sec + pend > mCap(tm) * 60 + 0.5 && pn > 0, label: tm.name }; }
+  var used = 0, cap = 0; MS.machines.forEach(function(m){ if (mOn(m)) { used += L[m.id].sec; cap += mCap(m) * 60; } });
   return { target: null, used: used, pend: pend, pn: pn, cap: cap, over: used + pend > cap + 0.5 && pn > 0, label: 'ทุกเครื่องที่เปิดใช้งาน' };
 }
 /* เลือกเพิ่ม → ถ้าเกิน cap ให้ฟ้อง ยืนยันทำต่อ / แก้ไข
@@ -2057,7 +2074,7 @@ function assignTo(keys, mId, why){
   keys.forEach(function(k){ add += tOn(IK[k], m); });
   var bad = keys.filter(function(k){ return problemOf(IK[k]); });
   var inc = keys.filter(function(k){ return !capable(IK[k], m).ok; });
-  if (!m.on) warn.push('เครื่อง <b>' + esc(m.name) + '</b> ปิดใช้งานอยู่');
+  if (!mOn(m)) warn.push('เครื่อง <b>' + esc(m.name) + '</b> ปิดอยู่วันนี้');
   if (bad.length) warn.push(bad.length + ' ชั้นไม้มีปัญหาข้อมูล: ' + esc(problemOf(IK[bad[0]])) + (bad.length > 1 ? ' …' : '') + ' (นับเวลาตามข้อมูลที่มี)');
   if (inc.length) warn.push(inc.length + ' ชั้นไม้เครื่องนี้ไม่รองรับ: ' + esc(capable(IK[inc[0]], m).why) + (inc.length > 1 ? ' …' : ''));
   var tot = x.sec + add, over = tot - x.cap;
@@ -2077,7 +2094,7 @@ function assignTo(keys, mId, why){
     + (over > 0.5 ? '<tr><td class="sp-bad">เกิน</td><td class="sp-mono sp-bad">' + hms(over) + '</td><td class="sp-mono sp-bad">' + m1(over) + ' นาที</td></tr>' : '<tr><td class="sp-ok">คงเหลือ</td><td class="sp-mono sp-ok">' + hms(-over) + '</td><td class="sp-mono sp-ok">' + m1(-over) + ' นาที</td></tr>')
     + '</table>';
   if (over > 0.5) {
-    var alt = MS.machines.filter(function(o){ return o.on && o.id !== mId && L[o.id].cap - L[o.id].sec >= add; }).sort(function(a, b){ return (L[b.id].cap - L[b.id].sec) - (L[a.id].cap - L[a.id].sec); }).slice(0, 3);
+    var alt = MS.machines.filter(function(o){ return mOn(o) && o.id !== mId && L[o.id].cap - L[o.id].sec >= add; }).sort(function(a, b){ return (L[b.id].cap - L[b.id].sec) - (L[a.id].cap - L[a.id].sec); }).slice(0, 3);
     html += '<div class="sp-muted">' + (alt.length ? 'เครื่องที่ยังว่างพอ: ' + alt.map(function(o){ return '<b>' + esc(o.name) + '</b> เหลือ ' + m1(L[o.id].cap - L[o.id].sec) + ' นาที'; }).join(' · ') : 'ไม่มีเครื่องที่ว่างพอรับทั้งชุดนี้ — ลองแบ่งชั้นไม้ไปหลายเครื่อง หรือจัดอัตโนมัติ') + '</div>';
   }
   return modal({ title: over > 0.5 ? '⚠ เกิน Capacity ของ ' + esc(m.name) + ' (' + m1(over) + ' นาที)' : '⚠ ตรวจก่อนลงเครื่อง ' + esc(m.name), tone: over > 0.5 ? 'dan' : 'warn', html: html,
@@ -2138,17 +2155,17 @@ SP.autoAsk = function(){
     before: function(k, bg){ sel = {}; $$('[data-sxg]', bg).forEach(function(i){ sel[i.getAttribute('data-sxg')] = i.checked ? 1 : 0; }); } })
     .then(function(k){ if (k !== 'go' || !sel) return null; if (!keys.some(function(x){ return sel[x]; })) { toast('ยังไม่ได้ติ๊กกลุ่มไหน — ไม่ได้จัด', 'warn'); return null; } SXS.grpSave(sel); return sel; });
 };
-SP.autoStar = function(grp){   // StarStock v1.60 grp = กลุ่มที่ติ๊ก { full, part, carry, oth } (SP.autoAsk) · ไม่ส่ง = ทุกกลุ่ม (แบบ v1.59)
+SP.autoStar = function(grp, ao){   // StarStock v1.61 ao.quiet = ไม่เปิดหน้าต่างผล (🤖 Auto บอกที่แถบข้อความ) · คืนผล r   // StarStock v1.60 grp = กลุ่มที่ติ๊ก { full, part, carry, oth } (SP.autoAsk) · ไม่ส่ง = ทุกกลุ่ม (แบบ v1.59)
   var ar = null; try { ar = window.SXS && SXS.parent && SXS.parent.spAutoRows ? SXS.parent.spAutoRows(PL.date, grp ? !!grp.carry : undefined) : null; } catch (e) { ar = null; }
   if (!ar || PL.date < todayISO()) return false;
   undoMark('จัดอัตโนมัติตามแผน StarStock');
   var use = PL.opt.use || {}, cl = 0;
-  if ((PL.opt.scope || 'new') === 'all') Object.keys(PL.asg).forEach(function(k){ var a = PL.asg[k], m = mById(a.m); if (a.lock || !m || !m.on || use[m.id] === false) return; delete PL.asg[k]; cl++; });
+  if ((PL.opt.scope || 'new') === 'all') Object.keys(PL.asg).forEach(function(k){ var a = PL.asg[k], m = mById(a.m); if (a.lock || !m || !mOn(m)) return; delete PL.asg[k]; cl++; });
   var skipL = {}, rows = (ar.rows || []).filter(function(x){ var ok = !grp || SXS.grpOk(x.lot, x.carry, grp); if (!ok) skipL[String(x.lot)] = 1; return ok; });   // v1.60 กลุ่มที่ไม่ติ๊ก = ไม่ใส่
   var st = rows.length ? SP.suggest(JSON.parse(JSON.stringify(rows)), null, { carry: ar.nCarry, inclC: ar.inclC }, { quiet: 1, noUndo: 1, use: use }) : { n: 0 };
   var r = autoPlan({ scope: 'new', grp: grp }); r.cleared += cl; r.star = st || { n: 0 }; r.star.skipG = Object.keys(skipL).length; r.starDay = ar.label || '';
-  PL.ack = false; UI.expTouched = false; refreshAll(); showAutoResult(r);
-  return true;
+  PL.ack = false; UI.expTouched = false; refreshAll(); if (!(ao && ao.quiet)) showAutoResult(r);
+  return r;
 };
 /* ───────── StarStock v1.42: ✨ ใส่แผนแนะนำ (แผนอัตโนมัติของ StarStock ของวันที่ที่ดูอยู่) ─────────
    rows = [{ lot, mc: ชื่อเครื่องใน StarStock, f: สัดส่วนของ Lot ในวันนั้น (0–1), codes: [{ c: รหัสชั้นไม้, f: สัดส่วน }] | null (= ทั้ง Lot) }]
@@ -2182,7 +2199,7 @@ SP.suggest = function(rows, label, info, opt){   // StarStock v1.59 + opt { quie
       var on = !!PL.sel[it.k], has = !!(PL.asg[it.k] || PL.ghost[it.k]);
       if (on && has) return;                                                   // อยู่ในแผนวันนี้ + ลงเครื่องแล้ว = ไม่แตะ
       /* ตรวจบัค: เครื่องปิดใช้งาน (🏭 ไม่ติ๊ก “ใช้”) / รับชั้นไม้นี้ไม่ได้ (หนาเกิน · รหัสที่ไม่รับ) = เลือกไว้ รอลงเครื่อง (เดิมลงให้เลย) */
-      var ok = !!m && m.on && capable(it, m).ok && !(opt && opt.use && opt.use[m.id] === false);   // v1.59 🤖 = เฉพาะเครื่องที่ติ๊ก “เครื่องที่ใช้จัดอัตโนมัติ”
+      var ok = !!m && mOn(m) && capable(it, m).ok;   // StarStock v1.61 เครื่องที่เปิดวันนั้น (เดิม m.on + ติ๊กใช้)   // v1.59 🤖 = เฉพาะเครื่องที่ติ๊ก “เครื่องที่ใช้จัดอัตโนมัติ”
       if (on && !ok) return;                                                   // เลือกไว้แล้ว ยังไม่มีเครื่องที่ลงได้ = ไม่มีอะไรเพิ่ม
       var n = null;
       if (!on && f < 1) {
@@ -2198,7 +2215,7 @@ SP.suggest = function(rows, label, info, opt){   // StarStock v1.59 + opt { quie
       keys.push(it.k); lots[Lt.d.id] = 1; if (r.carry) cLots[Lt.d.id] = 1;
       if (n != null) nn[it.k] = n;
       if (ok) { asg[it.k] = m.id; mUse[m.name] = (mUse[m.name] || 0) + 1; }
-      else if (!m) noM++; else if (!m.on) mOff++; else mCan++;
+      else if (!m) noM++; else if (!mOn(m)) mOff++; else mCan++;
     });
   });
   if (!keys.length) return { n: 0, miss: miss, full: nFull, rm: rmSkip.length, rmB: nRmB, est: estSkip.length };
@@ -2350,6 +2367,7 @@ function showTab(id){
   $$('.sp-pane').forEach(function(p){ p.classList.toggle('on', p.id === 'spPane-' + id); });
   D.body.classList.toggle('sp-wide', id !== 'lots');
   try { renderTab(id); } catch (e) { if (window.console) console.error('[SAWPLAN] render ' + id, e); }
+  if (id === 'plan' && SP.autoRun) setTimeout(function(){ if (UI.tab === 'plan') SP.autoRun('tab'); }, 0);   // StarStock v1.61 🤖 Auto
   renderBar(); renderBadges(); renderDataBanner(); renderDateBar(); if ((window.SXS && SXS.embed) && SXS.alertUi) SXS.alertUi();   // StarStock v1.59 ฟ้องทุกแท็บ
   saveUi();
   if (cv && UI.lotFilt !== 'closed') setLotFilt('closed', true);          // ล้างตัวกรองอื่น / คำค้น ให้เห็นงานจบแล้วครบ (เหมือนปุ่ม "ดู / เปิดคืน")
@@ -2712,7 +2730,7 @@ function renderBar(){
   if (!show) { bar.innerHTML = ''; return; }
   var st = selCap();
   bar.classList.toggle('over', st.over);
-  var opts = '<option value="">— ทุกเครื่อง (จัดอัตโนมัติ) —</option>' + MS.machines.map(function(m){ return '<option value="' + esc(m.id) + '"' + (PL.target === m.id ? ' selected' : '') + '>' + esc(m.name) + (m.on ? '' : ' (ปิด)') + '</option>'; }).join('');
+  var opts = '<option value="">— ทุกเครื่อง (จัดอัตโนมัติ) —</option>' + MS.machines.map(function(m){ return '<option value="' + esc(m.id) + '"' + (PL.target === m.id ? ' selected' : '') + '>' + esc(m.name) + (mOn(m) ? '' : ' (ปิดวันนี้)') + '</option>'; }).join('');
   var pct = st.cap > 0 ? (st.used + st.pend) / st.cap * 100 : 0;
   bar.innerHTML = '<div class="in">'
     + '<span class="sp-bdate" title="แผนของวันที่ตัด ' + esc(dateTH(PL.date)) + ' (' + esc(relCut(PL.date)) + ') — ติ๊กชั้นไม้ = ใส่แผนของวันที่ตัดนี้ (เปลี่ยนวันที่แถบ 📅 ด้านบน)">📅 ตัด ' + esc(dShort(PL.date)) + '</span>'
@@ -3353,13 +3371,53 @@ function meter(x){
   return '<div class="sp-meter" title="' + m1(x.sec) + ' / ' + m1(x.cap) + ' นาที"><i class="' + cls + '" style="width:' + w.toFixed(1) + '%"></i>' + (pct > 100 ? '<s style="left:' + (100 / pct * 100).toFixed(1) + '%"></s>' : '') + '</div>';
 }
 function mOptions(sel, withNone){
-  return (withNone ? '<option value="">' + withNone + '</option>' : '') + MS.machines.map(function(m){ return '<option value="' + esc(m.id) + '"' + (sel === m.id ? ' selected' : '') + '>' + esc(m.name) + (m.on ? '' : ' (ปิด)') + '</option>'; }).join('');
+  return (withNone ? '<option value="">' + withNone + '</option>' : '') + MS.machines.map(function(m){ return '<option value="' + esc(m.id) + '"' + (sel === m.id ? ' selected' : '') + '>' + esc(m.name) + (mOn(m) ? '' : ' (ปิดวันนี้)') + '</option>'; }).join('');
 }
+/* StarStock v1.61 ติ๊กเครื่องของวัน: ชื่อตรงกับ StarStock = เครื่องรายวันของ StarStock (board.json · Dashboard เห็นตรงกัน) · ไม่ตรง = PL.opt.day (ไฟล์กลาง) */
+function mDayPrune(){ var d = PL.opt.day || {}, t = todayISO(); Object.keys(d).forEach(function(k){ if (k < t || !d[k] || !Object.keys(d[k]).length) delete d[k]; }); PL.opt.day = d; }
+function mDaySet(m, on, el){
+  if (!m) return;
+  var lk = mLink(m);
+  if (lk && SXS.parent.mcDaySet) {
+    if (el) el.disabled = true;
+    Promise.resolve(SXS.parent.mcDaySet(PL.date, lk.n, { on: !!on })).then(function(ok){ refreshAll(); if (ok) toast((on ? '✓ เปิด ' : '⏸ ปิด ') + esc(m.name) + ' วันที่ ' + esc(dShort(PL.date)) + ' — ค่าเดียวกับ StarStock (Dashboard เห็นด้วย)', 'ok'); }, function(){ refreshAll(); });
+    return;
+  }
+  var d = PL.opt.day || (PL.opt.day = {}), e = d[PL.date] || (d[PL.date] = {}), def = !!m.on && (PL.opt.use || {})[m.id] !== false;
+  if (!!on === def) delete e[m.id]; else e[m.id] = !!on;
+  mDayPrune(); savePlan(); savePref(); refreshAll();
+  toast((on ? '✓ เปิด ' : '⏸ ปิด ') + esc(m.name) + ' เฉพาะวันที่ ' + esc(dShort(PL.date)), 'ok');
+}
+function mDayClr(){
+  var ps = [];
+  MS.machines.forEach(function(m){ var lk = mLink(m); if (lk && lk.ov) ps.push(lk.n); });
+  if (PL.opt.day && PL.opt.day[PL.date]) { delete PL.opt.day[PL.date]; mDayPrune(); savePlan(); savePref(); }
+  var done = function(){ refreshAll(); toast('↺ วันที่ ' + esc(dShort(PL.date)) + ' ใช้ค่าเครื่องปกติแล้ว', 'ok'); };
+  if (ps.length && SXS.parent && SXS.parent.mcDaySet) Promise.resolve(SXS.parent.mcDaySet(PL.date, '', 'clear')).then(done, done); else done();
+}
+/* StarStock v1.61 🤖 Auto: เปิดแท็บจัดแผนเครื่องตัด / เปลี่ยนวันที่ = จัดให้เอง (ค่าในเครื่องนี้) */
+var K_AUTO = 'sxlocaltrial:furnitech:spAuto';
+function autoOnGet(){ try { return localStorage.getItem(K_AUTO) === '1'; } catch (e) { return false; } }
+function autoOnSet(v){ try { localStorage.setItem(K_AUTO, v ? '1' : '0'); } catch (e) {} }
+SP.autoRun = function(why){
+  if (!(window.SXS && SXS.embed) || !autoOnGet() || PL.date < todayISO() || SP.autoBusy) return null;
+  SP.autoBusy = true;
+  try {
+    var grp = SXS.grpLoad ? SXS.grpLoad() : null, r = SP.autoStar ? SP.autoStar(grp, { quiet: 1 }) : null;
+    if (!r) { undoMark('🤖 Auto จัดลงเครื่อง'); r = autoPlan({ grp: grp }); PL.ack = false; UI.expTouched = false; refreshAll(); }
+    if (r.err) { toast('🤖 Auto: ' + esc(r.err), 'warn', 5000); return r; }
+    var n = (r.placed ? r.placed.length : 0) + (r.star && r.star.n ? r.star.n : 0), f = r.failed ? r.failed.length : 0;
+    SP.autoLast = { why: why, date: PL.date, n: n, f: f, at: Date.now() };
+    if (n || f || why === 'on') toast('🤖 Auto' + (why === 'date' ? ' (' + esc(dShort(PL.date)) + ')' : '') + ': ' + (n || f ? 'ลงเครื่องเพิ่ม ' + n + ' ชั้นไม้' : 'ไม่มีชั้นไม้ให้ลงเพิ่ม (ลงครบแล้ว / Lot ยังไม่มี .saw)') + (f ? ' · ยังลงไม่ได้ ' + f + ' ชั้นไม้ (ดู “ยังไม่ได้ลงเครื่อง”)' : '') + (n && UNDO ? ' · ↩ ย้อนกลับได้' : ''), f ? 'warn' : 'ok', 5000);   // ไม่มีอะไรเปลี่ยน = ไม่ต้องขึ้นข้อความทุกครั้งที่เข้าแท็บ
+    return r;
+  } catch (e) { if (window.console) console.error('[SAWPLAN] auto', e); return null; }
+  finally { SP.autoBusy = false; }
+};
 function renderPlan(){
   var pane = $('#spPane-plan'); if (!pane) return;
   var L = loads(), ks = selKeys(), nAsg = Object.keys(PL.asg).length, pend = ks.filter(function(k){ return !PL.asg[k]; });
   var tSel = 0; ks.forEach(function(k){ var it = IK[k], a = PL.asg[k]; tSel += a ? tOn(it, mById(a.m)) : tStd(it); });
-  var capOn = 0, nOn = 0; MS.machines.forEach(function(m){ if (m.on) { capOn += m.cap * 60; nOn++; } });
+  var capOn = 0, nOn = 0; MS.machines.forEach(function(m){ if (mOn(m)) { capOn += mCap(m) * 60; nOn++; } });
   var use = PL.opt.use || {};
   var h = '<div class="sp-card"><div class="sp-row">'
     + '<span class="sp-mini" title="เปลี่ยนวันที่ที่แถบ 📅 ด้านบน">วันที่จะตัด <b>' + esc(dateTH(PL.date)) + '</b> <span class="sp-db-r ' + relCls(PL.date) + '">' + esc(relCut(PL.date)) + '</span></span>'
@@ -3367,12 +3425,15 @@ function renderPlan(){
     + '<label class="sp-mini">ขอบเขต <select class="sp-sel" id="spOptScope"><option value="new"' + (PL.opt.scope === 'new' ? ' selected' : '') + '>จัดเฉพาะที่ยังไม่ลงเครื่อง</option><option value="all"' + (PL.opt.scope === 'all' ? ' selected' : '') + '>จัดใหม่ทั้งหมด (ยกเว้น 📌 ลงเอง)</option></select></label>'
     + '<span class="sp-sp"></span>'
     + '<button type="button" class="sp-btn ok" data-act="gen">🤖 จัดอัตโนมัติเกลี่ยลงเครื่อง</button>'
+    + ((window.SXS && SXS.embed) ? '<label class="sp-chk sxs-auto' + (autoOnGet() ? ' on' : '') + '" title="เปิด = เข้าแท็บนี้ / เปลี่ยนวันที่ แล้วจัดอัตโนมัติให้เอง (ตามวิธีจัด · ขอบเขต · กลุ่มที่ติ๊กครั้งก่อน · ↩ ย้อนกลับได้) · ปิด = กดปุ่ม 🤖 เอง · จำในเครื่องนี้"><input type="checkbox" id="spAutoOn"' + (autoOnGet() ? ' checked' : '') + '> Auto</label>' : '')   /* StarStock v1.61 */
     + '<button type="button" class="sp-btn" data-act="recalc">🔄 คำนวณใหม่ (Recalculate)</button>'
     + '<button type="button" class="sp-btn dan" data-act="clearPlan">🧹 ล้างแผน</button>'
     + '<button type="button" class="sp-btn ok" data-act="xlAll" title="Excel ไฟล์เดียว: ชีตสรุปเครื่อง + ชีตละเครื่อง (ทุกเครื่องที่มีงานในแผนวันนี้) — แบบเดียวกับ 📤 ส่งออกทุกเครื่อง ในแท็บสรุป / ออกแผน">📊 Excel ทุกเครื่อง</button>'   /* StarStock v1.60 */
     + '<button type="button" class="sp-btn" data-act="copyPlan" title="คัดลอกสรุปแผนวันนี้ (เครื่อง · เวลา · Lot) เป็นข้อความ ไปวางใน LINE / อีเมล">📋 คัดลอกสรุป (LINE)</button>'
-    + '</div><div class="sp-row" style="margin-top:8px"><span class="sp-mini"><b>เครื่องที่ใช้จัดอัตโนมัติ:</b></span>'
-    + MS.machines.map(function(m){ return '<label class="sp-chk" style="' + (m.on ? '' : 'opacity:.5') + '"><input type="checkbox" class="sp-usem" data-m="' + esc(m.id) + '"' + (m.on && use[m.id] !== false ? ' checked' : '') + (m.on ? '' : ' disabled') + '> ' + esc(m.name) + '</label>'; }).join('')
+    + '</div><div class="sp-row sxs-mday" style="margin-top:8px"><span class="sp-mini"><b>เครื่องที่เปิดวัน ' + esc(dateTH(PL.date)) + ':</b></span>'   /* StarStock v1.61 กดได้ทุกเครื่อง · เฉพาะวันนี้ */
+    + MS.machines.map(function(m){ var on = mOn(m), lk = mLink(m), ov = lk ? lk.ov : mDayOv(m) != null, hh = Math.round(mCap(m) / 6) / 10;
+        return '<label class="sp-chk sxs-mdc' + (on ? ' on' : ' off') + (ov ? ' ov' : '') + '" title="' + esc(m.name + ' · ' + dateTH(PL.date) + ' · ' + (on ? 'เปิด' : 'ปิด') + ' · ' + hh + ' ชม.' + (lk ? ' (ค่าเดียวกับ StarStock ' + lk.n + (ov ? ' — ปรับเฉพาะวันนี้' : ' — ค่าปกติ ⚙') + ')' : (ov ? ' (ปรับเฉพาะวันนี้)' : ' (ค่าปกติ 🏭)')) + '\nติ๊ก = เปิดเครื่องวันนี้ (ใช้จัดอัตโนมัติ) · เอาติ๊กออก = ปิดวันนี้ · วันอื่นไม่เปลี่ยน') + '"><input type="checkbox" class="sp-usem" data-m="' + esc(m.id) + '"' + (on ? ' checked' : '') + '> ' + esc(m.name) + ' <small>' + hh + ' ชม.' + (ov ? ' ⚙' : '') + '</small></label>'; }).join('')
+    + (MS.machines.some(function(m){ var lk = mLink(m); return lk ? lk.ov : mDayOv(m) != null; }) ? '<button type="button" class="sp-btn sm" data-act="mdayClr" title="ล้างค่าที่ปรับเฉพาะวันนี้ (กลับไปใช้ค่าปกติ)">↺ ค่าปกติ</button>' : '')
     + '</div><div class="sp-note" style="margin-top:6px">จัดอัตโนมัติ = ไม่ให้เกิน Capacity ของแต่ละเครื่อง · เครื่องปิดใช้งานไม่รับงาน · ชั้นไม้ที่ลงไม่ได้จะค้างใน "ยังไม่ได้ลงเครื่อง" พร้อมเหตุผล (ไม่บังคับใส่เกินเวลา) · ย้ายเครื่องเองได้ที่ช่อง ⇄ ในแต่ละแถว (เกิน cap จะถามก่อน)</div></div>';
   h += '<div class="sp-kpis">'
     + kpi('เลือกทั้งหมด', n0(ks.length), 'ชั้นไม้', '#2563eb')
@@ -3432,7 +3493,7 @@ function showAutoResult(r){
   var grp = {};
   r.failed.forEach(function(f){ var key = f.why.split(':')[0]; (grp[key] = grp[key] || []).push(f); });
   var L = loads();
-  var html = (r.star ? '<div>📋 <b>ตามแผน StarStock ' + esc(r.starDay || '') + '</b>: เลือก + ลงเครื่องให้ <b class="sp-ok">' + (r.star.n || 0) + '</b> ชั้นไม้' + (r.star.lots ? ' (' + r.star.lots + ' Lot)' : '') + (r.star.full ? ' · เต็มเวลาเครื่อง ไม่ใส่ ' + r.star.full : '') + (r.star.rmB ? ' · ไม้ยังไม่ครบ (ไม้ยังไม่มี/ยังไม่เบิก) ไม่ใส่ ' + r.star.rmB + ' ชั้นไม้' : '') + (r.star.est ? ' · ยังไม่มี .saw ไม่จัดให้ ' + r.star.est + ' Lot (ติ๊ก/เลือกเครื่องเองได้)' : '') + (r.star.skipG ? ' · กลุ่มที่ไม่ได้ติ๊ก ไม่จัด ' + r.star.skipG + ' Lot' : '') + (r.star.noM || r.star.mOff || r.star.mCan ? ' · ไม่ได้ลงเครื่องตามแผน ' + ((r.star.noM || 0) + (r.star.mOff || 0) + (r.star.mCan || 0)) + ' ชั้นไม้ (เกลี่ยต่อด้านล่าง)' : '') + '</div>' : '') + '<div>' + (r.star ? 'เกลี่ยที่เหลือ: ' : '') + 'ลงเครื่องได้ <b class="sp-ok">' + r.placed.length + '</b> ชั้นไม้' + (r.cleared ? ' (ล้างที่จัดอัตโนมัติไว้เดิม ' + r.cleared + ')' : '') + ' · ยังลงไม่ได้ <b class="' + (r.failed.length ? 'sp-bad' : '') + '">' + r.failed.length + '</b></div>'
+  var html = (r.star ? '<div>📋 <b>ตามแผน StarStock ' + esc(r.starDay || '') + '</b>: เลือก + ลงเครื่องให้ <b class="sp-ok">' + (r.star.n || 0) + '</b> ชั้นไม้' + (r.star.lots ? ' (' + r.star.lots + ' Lot)' : '') + (r.star.full ? ' · เต็มเวลาเครื่อง ไม่ใส่ ' + r.star.full : '') + (r.star.rmB ? ' · ไม้ยังไม่ครบ (ไม้ไม่พอจ่าย/ยังไม่เบิก) ไม่ใส่ ' + r.star.rmB + ' ชั้นไม้' : '') + (r.star.est ? ' · ยังไม่มี .saw ไม่จัดให้ ' + r.star.est + ' Lot (ติ๊ก/เลือกเครื่องเองได้)' : '') + (r.star.skipG ? ' · กลุ่มที่ไม่ได้ติ๊ก ไม่จัด ' + r.star.skipG + ' Lot' : '') + (r.star.noM || r.star.mOff || r.star.mCan ? ' · ไม่ได้ลงเครื่องตามแผน ' + ((r.star.noM || 0) + (r.star.mOff || 0) + (r.star.mCan || 0)) + ' ชั้นไม้ (เกลี่ยต่อด้านล่าง)' : '') + '</div>' : '') + '<div>' + (r.star ? 'เกลี่ยที่เหลือ: ' : '') + 'ลงเครื่องได้ <b class="sp-ok">' + r.placed.length + '</b> ชั้นไม้' + (r.cleared ? ' (ล้างที่จัดอัตโนมัติไว้เดิม ' + r.cleared + ')' : '') + ' · ยังลงไม่ได้ <b class="' + (r.failed.length ? 'sp-bad' : '') + '">' + r.failed.length + '</b></div>'
     + '<table><tr><th>เครื่อง</th><th>ชั้นไม้</th><th>เวลารวม</th><th>Capacity</th><th>คงเหลือ</th><th>สถานะ</th></tr>'
     + MS.machines.filter(function(m){ return r.machines.indexOf(m.id) >= 0 || L[m.id].n; }).map(function(m){ var x = L[m.id]; return '<tr><td><b>' + esc(m.name) + '</b></td><td>' + x.n + '</td><td class="sp-mono">' + hms(x.sec) + '</td><td class="sp-mono">' + m1(x.cap) + '</td><td class="sp-mono ' + (x.rem < 0 ? 'sp-bad' : '') + '">' + m1(x.rem) + '</td><td>' + stChip(x.st) + '</td></tr>'; }).join('') + '</table>'
     + (r.skipG ? '<div class="sp-muted">ข้ามกลุ่มที่ไม่ได้ติ๊ก ' + r.skipG + ' ชั้นไม้ (ยังอยู่ในแผน “ยังไม่ได้ลงเครื่อง” · เลือกเครื่องเองได้)</div>' : '')   /* StarStock v1.60 */
@@ -3478,7 +3539,7 @@ function expNoteHtml(L){
 }
 function issues(){
   var L = loads(), out = { over: [], bad: [], pend: [], incap: [], off: [], est: 0, part: [], sheetOver: [], rev: [] };
-  MS.machines.forEach(function(m){ var x = L[m.id]; if (x.st === 'over') out.over.push(m); if (!m.on && x.n) out.off.push(m); if (x.est) out.est++; });
+  MS.machines.forEach(function(m){ var x = L[m.id]; if (x.st === 'over') out.over.push(m); if (!mOn(m) && x.n) out.off.push(m); if (x.est) out.est++; });
   selKeys().forEach(function(k){ var it = IK[k], a = PL.asg[k]; if (problemOf(it)) out.bad.push(it); if (!a) out.pend.push(it); else { var m = mById(a.m); if (m && !capable(it, m).ok) out.incap.push(it); }
     if (it.q > 0 && !it.bad && (isPart(it) || OTH[k])) { var ss = sheetState(it); if (ss.today < ss.Q) out.part.push({ it: it, s: ss }); if (ss.over) out.sheetOver.push({ it: it, s: ss }); if (ss.q0 != null) out.rev.push({ it: it, s: ss }); }
     else if (it.q > 0 && !it.bad) { var s0 = sheetState(it); if (s0.q0 != null) out.rev.push({ it: it, s: s0 }); } });
@@ -3501,7 +3562,7 @@ function renderSum(){
   var pane = $('#spPane-sum'); if (!pane) return;
   var L = loads(), ks = selKeys(), nAsg = Object.keys(PL.asg).length, is = issues();
   var tSel = 0; ks.forEach(function(k){ var a = PL.asg[k]; tSel += a ? tOn(IK[k], mById(a.m)) : tStd(IK[k]); });
-  var capOn = 0, nOn = 0, nPlanOk = 0; MS.machines.forEach(function(m){ if (m.on) { capOn += m.cap * 60; nOn++; } if (L[m.id].n && L[m.id].st !== 'over' && m.on) nPlanOk++; });
+  var capOn = 0, nOn = 0, nPlanOk = 0; MS.machines.forEach(function(m){ if (mOn(m)) { capOn += mCap(m) * 60; nOn++; } if (L[m.id].n && L[m.id].st !== 'over' && mOn(m)) nPlanOk++; });
   var h = '<div class="sp-kpis">'
     + kpi('Board ที่เลือกทั้งหมด', n0(ks.length), 'ชั้นไม้', '#2563eb')
     + kpi('จัดสรรแล้ว', n0(nAsg), 'ชั้นไม้', '#15803d')
@@ -3516,8 +3577,8 @@ function renderSum(){
   var tot = { n: 0, q: 0, parts: 0, pu: 0, sec: 0, cap: 0, lots: {} };
   h += '<div class="sp-card"><h3>🏭 สรุปแผนรายเครื่อง <small>วันที่ตัด ' + esc(dateTH(PL.date)) + ' · เวลาแผน = ตัด + โหลดกองไม้ + ติด Label (+ ตั้งผัง / เปลี่ยนใบเลื่อย / เผื่อเวลา ตามชุดค่าเครื่อง)</small></h3>'
     + '<div class="sp-tblw" style="max-height:none"><table class="sp-tbl"><thead><tr><th>เครื่องตัด</th><th class="r">จำนวน Board</th><th class="r">Lot</th><th>ไฟล์ .saw · Lot (ชั้นไม้)</th><th class="r">แผ่น</th><th class="r">ชิ้น</th><th class="r">เวลารวม</th><th class="r">นาที</th><th class="r">Capacity</th><th class="r">เวลาคงเหลือ</th><th style="min-width:150px">ใช้ไป</th><th>สถานะ</th></tr></thead><tbody>'
-    + MS.machines.map(function(m){ var x = L[m.id]; tot.n += x.n; tot.q += x.q; tot.parts += x.parts; tot.pu += x.pUnk; tot.sec += x.sec; if (m.on) tot.cap += x.cap;
-        return '<tr><td><b style="color:#1e2438">' + esc(m.name) + '</b>' + (m.on ? '' : ' <span class="sp-muted">(ปิด)</span>') + '</td><td class="r mn">' + x.n + '</td><td class="r mn">' + x.nLots + '</td><td class="sp-lots">' + (x.n || x.extN ? lotNamesTxt(cutOrder(x.keys), x).split('\n').map(function(l){ return '<div>' + esc(l) + '</div>'; }).join('') : '<span class="sp-muted">—</span>') + '</td><td class="q">' + n0(x.q) + '</td><td class="pc">' + (x.pUnk && !x.parts ? '—' : n0(x.parts) + (x.pUnk ? '+' : '')) + '</td>'
+    + MS.machines.map(function(m){ var x = L[m.id]; tot.n += x.n; tot.q += x.q; tot.parts += x.parts; tot.pu += x.pUnk; tot.sec += x.sec; if (mOn(m)) tot.cap += x.cap;
+        return '<tr><td><b style="color:#1e2438">' + esc(m.name) + '</b>' + (mOn(m) ? '' : ' <span class="sp-muted">(ปิด)</span>') + '</td><td class="r mn">' + x.n + '</td><td class="r mn">' + x.nLots + '</td><td class="sp-lots">' + (x.n || x.extN ? lotNamesTxt(cutOrder(x.keys), x).split('\n').map(function(l){ return '<div>' + esc(l) + '</div>'; }).join('') : '<span class="sp-muted">—</span>') + '</td><td class="q">' + n0(x.q) + '</td><td class="pc">' + (x.pUnk && !x.parts ? '—' : n0(x.parts) + (x.pUnk ? '+' : '')) + '</td>'
           + '<td class="t">' + hms(x.sec) + (x.est ? '<span class="sp-est" title="มีค่าประมาณ"> ≈</span>' : '') + '</td><td class="r mn">' + m1(x.sec) + '</td><td class="r mn">' + m1(x.cap) + ' นาที</td>'
           + '<td class="r mn ' + (x.rem < 0 ? 'sp-bad' : 'sp-ok') + '">' + (x.rem < 0 ? '−' : '') + m1(Math.abs(x.rem)) + ' นาที</td><td>' + meter(x) + '<div class="sp-mono" style="font-size:10px;color:#64748b">' + Math.round(x.pct) + '%</div></td><td>' + stChip(x.st) + '</td></tr>'; }).join('')
     + '</tbody><tfoot><tr><td>รวม</td><td class="r mn">' + tot.n + '</td><td></td><td></td><td class="q">' + n0(tot.q) + '</td><td class="pc">' + (tot.pu && !tot.parts ? '—' : n0(tot.parts) + (tot.pu ? '+' : '')) + '</td><td class="t">' + hms(tot.sec) + '</td><td class="r mn">' + m1(tot.sec) + '</td><td class="r mn">' + m1(tot.cap) + ' นาที</td><td class="r mn">' + m1(tot.cap - tot.sec) + ' นาที</td><td colspan="2"></td></tr></tfoot></table></div></div>';
@@ -3582,7 +3643,7 @@ function renderSum(){
 function planText(){
   var L = loads(), out = ['📅 แผนตัดวันที่ ' + dateTH(PL.date) + (weekTitle() ? ' · ' + weekTitle() : '')], tot = 0, cap = 0, nJob = 0;
   MS.machines.forEach(function(m){
-    var x = L[m.id]; if (!x.n && !x.extN) return; nJob++; tot += x.sec; if (m.on) cap += x.cap;
+    var x = L[m.id]; if (!x.n && !x.extN) return; nJob++; tot += x.sec; if (mOn(m)) cap += x.cap;
     out.push('');
     out.push('🏭 ' + m.name + ' · ' + hms(x.sec) + ' / ' + m1(x.cap).replace(/\.0$/, '') + ' นาที (' + (x.cap > 0 ? Math.round(x.pct) + '%' : '—') + ')' + (x.st === 'over' ? ' ⚠ เกิน ' + m1(x.sec - x.cap) + ' นาที' : ''));
     out.push('   ' + x.n + ' ชั้นไม้ · ' + x.nLots + ' Lot · ' + n0(x.q) + ' แผ่น' + (x.parts ? ' · ' + n0(x.parts) + (x.pUnk ? '+' : '') + ' ชิ้น' : '') + (x.nPart ? ' · ✂ ตัดบางแผ่น ' + x.nPart : ''));
@@ -3658,9 +3719,9 @@ function renderMach(){
     + MS.machines.map(function(m, i){ var x = L[m.id];
         return '<tr data-m="' + esc(m.id) + '"><td class="mn">' + (i + 1) + '</td>'
           + '<td><input class="sp-in" data-mf="name" data-m="' + esc(m.id) + '" value="' + esc(m.name) + '" maxlength="40" style="width:130px;font-weight:700"></td>'
-          + '<td class="r"><input class="sp-in num" type="number" min="0" max="1440" step="5" data-mf="cap" data-m="' + esc(m.id) + '" value="' + m.cap + '"> <span class="sp-muted">นาที</span></td>'
-          + '<td class="r mn">' + (m.cap / 60).toFixed(2).replace(/\.?0+$/, '') + '</td>'
-          + '<td class="c"><input type="checkbox" class="sp-chk-in" data-mf="on" data-m="' + esc(m.id) + '"' + (m.on ? ' checked' : '') + ' style="width:17px;height:17px;accent-color:#16a34a"></td>'
+          + '<td class="r"><input class="sp-in num" type="number" min="0" max="1440" step="5" data-mf="cap" data-m="' + esc(m.id) + '" value="' + m.cap + '"' + (mLink(m) ? ' disabled title="ใช้เวลาทำงานต่อวันของ StarStock (⚙ ตั้งค่า) — แก้ที่ StarStock"' : '') + '> <span class="sp-muted">นาที</span>' + (mLink(m) ? '<div class="sxs-lk">= StarStock ' + esc(mLink(m).n) + ' · ' + m1(mCap(m) * 60) + ' นาที</div>' : '') + '</td>'   /* StarStock v1.61 */
+          + '<td class="r mn">' + (mCap(m) / 60).toFixed(2).replace(/\.?0+$/, '') + '</td>'
+          + '<td class="c"><input type="checkbox" class="sp-chk-in" data-mf="on" data-m="' + esc(m.id) + '"' + (m.on ? ' checked' : '') + (mLink(m) ? ' disabled title="เปิด/ปิดตาม StarStock (⚙ / Dashboard) · ปรับรายวันที่แถว “เครื่องที่เปิดวัน…” แท็บจัดแผน"' : '') + ' style="width:17px;height:17px;accent-color:#16a34a">' + (mLink(m) ? '<div class="sxs-lk">' + (mOn(m) ? 'เปิด' : 'ปิด') + 'วันนี้</div>' : '') + '</td>'   /* StarStock v1.61 */
           + '<td><select class="sp-sel" data-mf="set" data-m="' + esc(m.id) + '">' + setOpts(m.set) + '</select></td>'
           + '<td class="r"><input class="sp-in num" type="number" min="0" step="1" data-mf="maxThk" data-m="' + esc(m.id) + '" value="' + (m.maxThk || 0) + '" title="0 = ไม่จำกัด"> <span class="sp-muted">มม.</span></td>'
           + '<td><input class="sp-in" data-mf="deny" data-m="' + esc(m.id) + '" value="' + esc(m.deny) + '" placeholder="เช่น FJ, HZ" style="width:110px" title="รหัสไม้ขึ้นต้นด้วยคำเหล่านี้ เครื่องนี้ไม่รับ (คั่นด้วย ,)"></td>'
@@ -3939,7 +4000,7 @@ function preExportCheck(mIds, ctx){
   data.forEach(function(g){
     nRows += g.rows.length;
     if (g.x.st === 'over') w.push('<b>' + esc(g.m.name) + '</b> เกิน Capacity ' + m1(g.x.sec - g.x.cap) + ' นาที');
-    if (!g.m.on && g.rows.length) w.push('<b>' + esc(g.m.name) + '</b> ปิดใช้งานอยู่ แต่ยังมีงาน ' + g.rows.length + ' ชั้นไม้');
+    if (!mOn(g.m) && g.rows.length) w.push('<b>' + esc(g.m.name) + '</b> ปิดใช้งานอยู่ แต่ยังมีงาน ' + g.rows.length + ' ชั้นไม้');
     var bad = g.rows.filter(function(r){ return problemOf(r.it); }); if (bad.length) w.push(esc(g.m.name) + ': ' + bad.length + ' ชั้นไม้ข้อมูลเวลามีปัญหา (' + esc(problemOf(bad[0].it)) + ')');
     var inc = g.rows.filter(function(r){ return !capable(r.it, g.m).ok; }); if (inc.length) w.push(esc(g.m.name) + ': ' + inc.length + ' ชั้นไม้เครื่องไม่รองรับ (' + esc(capable(inc[0].it, g.m).why) + ')');
     if (g.x.est) w.push(esc(g.m.name) + ': เวลาบางชั้นไม้เป็นค่าประมาณ (≈)');
@@ -4134,9 +4195,9 @@ function specSummaryC(data){
     col('sec', 'เวลารวม', 8, 't', 'r', 1), col('rem', 'คงเหลือ (นาที)', 8, 'd', 'r', 1), col('pct', '% ใช้', 6, 'd', 'r', 1), col('st', 'สถานะ', 10, 's', 'l', 1)];
   var T0 = { cap: 0, n: 0, q: 0, p: 0, pu: 0, sec: 0 }, body = [], lines = 0;
   data.forEach(function(g){ var x = g.x, lots = lotsCap(lotNamesTxt(g.rows.map(function(r){ return r.it; }), x));
-    T0.cap += g.m.on ? x.cap : 0; T0.n += x.n; T0.q += x.q; T0.p += x.parts; T0.pu += x.pUnk; T0.sec += x.sec;
+    T0.cap += mOn(g.m) ? x.cap : 0; T0.n += x.n; T0.q += x.q; T0.p += x.parts; T0.pu += x.pUnk; T0.sec += x.sec;
     lines += Math.max(2, lots ? lots.split('\n').length : 1);
-    var v = { mach: g.m.name + '\n' + m1(x.cap).replace(/\.0$/, '') + ' นาที' + (g.set && g.set.id !== 'std' ? ' · ' + g.set.name : '') + (g.m.on ? '' : ' · ปิด'), lots: lots || '—', n: x.n, q: x.q, p: x.pUnk && !x.parts ? '' : x.parts, sec: x.sec, rem: Math.round(x.rem / 6) / 10, pct: pctOf(x), st: statusTxt(x) + (x.pUnk && x.n ? ' · ไม่มีจำนวนชิ้น ' + x.pUnk : '') };
+    var v = { mach: g.m.name + '\n' + m1(x.cap).replace(/\.0$/, '') + ' นาที' + (g.set && g.set.id !== 'std' ? ' · ' + g.set.name : '') + (mOn(g.m) ? '' : ' · ปิด'), lots: lots || '—', n: x.n, q: x.q, p: x.pUnk && !x.parts ? '' : x.parts, sec: x.sec, rem: Math.round(x.rem / 6) / 10, pct: pctOf(x), st: statusTxt(x) + (x.pUnk && x.n ? ' · ไม่มีจำนวนชิ้น ' + x.pUnk : '') };
     body.push(cols.map(function(c){ return v[c.k]; })); });
   var vt = { mach: 'รวม', n: T0.n, q: T0.q, p: T0.pu && !T0.p ? '' : T0.p, sec: T0.sec, rem: Math.round((T0.cap - T0.sec) / 6) / 10 };
   body.push(cols.map(function(c){ return vt[c.k] != null ? vt[c.k] : ''; }));
@@ -4152,8 +4213,8 @@ function specSummary(data){
     col('sec', 'เวลารวม', 10, 't', 'r'), col('min', 'เวลารวม (นาที)', 9, 'd', 'r'), col('rem', 'เวลาคงเหลือ (นาที)', 9, 'd', 'r'), col('pct', '% ใช้', 7, 'd', 'r'), col('st', 'สถานะ', 16, 's', 'l', 1));
   if (!a4) cols.push(col('cost', 'ค่าเครื่อง (บาท)', 10, 'd', 'r'));
   var T0 = { cap: 0, n: 0, q: 0, p: 0, pu: 0, sec: 0, cost: 0 }, body = [];
-  data.forEach(function(g){ var x = g.x; T0.cap += g.m.on ? x.cap : 0; T0.n += x.n; T0.q += x.q; T0.p += x.parts; T0.pu += x.pUnk; T0.sec += x.sec; T0.cost += x.cost;
-    var v = { mach: g.m.name, on: g.m.on ? 'ใช่' : 'ไม่', set: g.set ? g.set.name : '', cap: x.cap / 60, n: x.n, nl: x.nLots, lots: lotsCap(lotNamesTxt(g.rows.map(function(r){ return r.it; }), x)), q: x.q, p: x.pUnk && !x.parts ? '' : x.parts, sec: x.sec, min: Math.round(x.sec / 6) / 10, rem: Math.round(x.rem / 6) / 10, pct: pctOf(x), st: statusTxt(x) + (x.pUnk && x.n ? ' · ไม่มีจำนวนชิ้น ' + x.pUnk + ' ชั้นไม้' : ''), cost: Math.round(x.cost * 100) / 100 };
+  data.forEach(function(g){ var x = g.x; T0.cap += mOn(g.m) ? x.cap : 0; T0.n += x.n; T0.q += x.q; T0.p += x.parts; T0.pu += x.pUnk; T0.sec += x.sec; T0.cost += x.cost;
+    var v = { mach: g.m.name, on: mOn(g.m) ? 'ใช่' : 'ไม่', set: g.set ? g.set.name : '', cap: x.cap / 60, n: x.n, nl: x.nLots, lots: lotsCap(lotNamesTxt(g.rows.map(function(r){ return r.it; }), x)), q: x.q, p: x.pUnk && !x.parts ? '' : x.parts, sec: x.sec, min: Math.round(x.sec / 6) / 10, rem: Math.round(x.rem / 6) / 10, pct: pctOf(x), st: statusTxt(x) + (x.pUnk && x.n ? ' · ไม่มีจำนวนชิ้น ' + x.pUnk + ' ชั้นไม้' : ''), cost: Math.round(x.cost * 100) / 100 };
     body.push(cols.map(function(c){ return v[c.k]; })); });
   var vt = { mach: 'รวม', cap: T0.cap / 60, n: T0.n, q: T0.q, p: T0.pu && !T0.p ? '' : T0.p, sec: T0.sec, min: Math.round(T0.sec / 6) / 10, rem: Math.round((T0.cap - T0.sec) / 6) / 10, cost: Math.round(T0.cost * 100) / 100 };
   body.push(cols.map(function(c){ return vt[c.k] != null ? vt[c.k] : ''; }));
@@ -6325,6 +6386,8 @@ function onAct(act, el){
       undoMark('จัดอัตโนมัติเกลี่ยลงเครื่อง'); var r = autoPlan({}); PL.ack = false; UI.expTouched = false; refreshAll(); showAutoResult(r); return;
     }
     case 'gotoPlan': showTab('plan'); return;
+    case 'mdayClr': mDayClr(); return;   // StarStock v1.61
+    case 'autoOn': return;
     case 'barClear': { var pk2 = pendingKeys(); if (!pk2.length) return; undoMark('ล้างรายการที่รอลงเครื่อง ' + pk2.length + ' ชั้นไม้', pk2); setSel(pk2, false); PL.ack = false; refreshAll(); toast('ล้างรายการที่รอลงเครื่อง ' + pk2.length + ' ชั้นไม้ (ที่ลงเครื่องแล้วยังอยู่)' + undoBtn(), 'ok', 9000); return; }
     case 'dhHide': UI.dhHide = true; saveUi(); renderDateBar(); return;   // v1.7.0: ซ่อนคำแนะนำ "เลือกวันที่เครื่องจะตัด" (จำไว้)
     case 'tipHide': case 'tipShow': { UI.tipHide = act === 'tipHide'; saveUi(); var tp = $('#spLotTip'), tb = $('#spTipBtn'); if (tp) tp.style.display = UI.tipHide ? 'none' : ''; if (tb) tb.style.display = UI.tipHide ? '' : 'none'; if (!UI.tipHide && tp && tp.scrollIntoView) tp.scrollIntoView({ block: 'nearest' }); return; }
@@ -6423,6 +6486,7 @@ function okDate(d){ if (!isISO(d)) return false; var y = +d.slice(0, 4); return 
 function goDate(d, quiet){
   if (!okDate(d) || d === PL.date) { renderDateBar(); return; }
   setPlanDate(d); UI.expTouched = false; saveUi(); refreshAll();
+  if (UI.tab === 'plan' && SP.autoRun) SP.autoRun('date');   // StarStock v1.61 🤖 Auto
   if (UI.lotFilt || UI.lotSort === 'plan') { try { window.render(); } catch (e) {} }   // v1.6.7: ตัวกรอง/เรียงตามแผน ใช้แผนวันใหม่ทันที (เดิมค้างของวันก่อน)
   if (quiet) return;                                                       // เปลี่ยนจากแถบวันที่ → แถบบอกอยู่แล้ว
   var n = selKeys().length, na = Object.keys(PL.asg).length;
@@ -6517,7 +6581,8 @@ function bindEvents(){
       if (!ks.length) { refreshLotsDom([li]); return; }
       toggleKeys(ks, on2); return; }
     if (cl.contains('sp-allcb')) { onAct(t.checked ? 'selAllVis' : 'selNoneVis', t); return; }
-    if (cl.contains('sp-usem')) { PL.opt.use[t.getAttribute('data-m')] = t.checked; savePlan(); savePref(); return; }
+    if (t.id === 'spAutoOn') { autoOnSet(t.checked); var al = t.closest('label'); if (al) al.classList.toggle('on', t.checked); toast(t.checked ? '🤖 Auto เปิด — เข้าแท็บนี้ / เปลี่ยนวันที่ = จัดให้เอง' : 'Auto ปิด — กด 🤖 เอง', 'ok'); if (t.checked) SP.autoRun('on'); return; }   // StarStock v1.61
+    if (cl.contains('sp-usem')) { mDaySet(mById(t.getAttribute('data-m')), t.checked, t); return; }   // StarStock v1.61 เฉพาะวันที่จะตัด (เดิม PL.opt.use ทุกวัน)
     if (cl.contains('sp-mv')) { var k2 = t.getAttribute('data-k'), v = t.value, cur = mOf(k2);
       if (!v) { if (cur) { unassign([k2]); PL.why[k2] = 'ถอดออกจากเครื่องเอง'; savePlan(); refreshAll(); } return; }
       assignTo([k2], v).then(function(ok){ if (ok) toast('ย้าย ' + esc(IK[k2].code) + ' → ' + esc(mById(v).name), 'ok'); refreshAll(); }); return; }
