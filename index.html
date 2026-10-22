@@ -2038,7 +2038,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.88</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.89</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3129,10 +3129,11 @@ var GasFS = (function () {
    v1.86 (2026-10-22 14:18 ผู้ใช้: เลื่อนไปขวา เด้งกลับมาซ้าย) Dashboard วาดใหม่ คงตำแหน่งเลื่อนซ้ายขวาด้วย (เดิม v1.70 คงแค่ขึ้นลง) — ดู v186.js
    v1.87 (2026-10-22 14:30 ผู้ใช้: เพิ่มรวมวันนี้ · ใส่ตัดครบฝั่งขวาด้วย) ตารางวันนี้: Lot ที่ยิงวันนี้แต่ไม่อยู่ในตาราง (ตัดครบแล้ว) ขึ้นบนสุด ✓ + แถวรวมวันนี้ — ดู v187.js
    v1.88 (2026-10-22 14:36 ผู้ใช้: ยอดยิงไม่เรียลไทม์เท่า Cutting Center) อ่านการยิงตัดทุก 20 วิ แยกรอบ · มีชิ้นใหม่ = วาดจอทันที — ดู v188.js
+   v1.89 (2026-10-22 14:41 ผู้ใช้: BO69-0873 แผนวันนี้ 300/1 แต่ขึ้นเครื่อง พรุ่งนี้ 300/4) ค้างตัดที่ไม่รู้เครื่อง = เครื่องตามแผนวันนี้ที่บันทึกไว้ก่อน (bdPlan loose)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.88';
+var VER = '1.89';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -5186,7 +5187,9 @@ function bdPlan() {
       var ms = []; g.mcs.forEach(function (x) { var m = byPc[String(x.pc).toUpperCase()]; if (m && ms.indexOf(m) < 0) ms.push(m); });
       if (ms.length) placeCut(g, ms); else loose.push(g);
     });
-    loose.forEach(function (g) { placeCut(g, [least()]); });
+    /* v1.89 ค้างตัดที่ไม่รู้เครื่อง (ยังไม่ยิงวันนี้/เมื่อวาน) = เครื่องตามแผนวันนี้ที่บันทึกไว้ (lots/plan/<วันนี้>.json) ก่อน — เดิมลงเครื่องที่ว่างที่สุดทุกรอบ (BO69-0873 แผนวันนี้ 300/1 → เครื่อง พรุ่งนี้ 300/4) */
+    var tpM = {}; try { var SN = B.tp && B.tp.snap; if (SN && SN.mcs && SN.date === tpKey(today)) Object.keys(SN.mcs).forEach(function (n) { var o = SN.mcs[n] || {}; (o.carry || []).concat(o.lots || []).forEach(function (z) { var K = String(z.id).toUpperCase(); if (!tpM[K]) tpM[K] = n; }); }); } catch (e) { tpM = {}; }
+    loose.forEach(function (g) { var n = tpM[String(g.id).toUpperCase()], m = n ? M.filter(function (x) { return x.n === n; })[0] : null; placeCut(g, [m || least()]); });
     var m0p = function (m, d) { var S = m.days[d]; return S ? S.p : 0; };
     /* v1.39 ปรับแผนเอง: ตัดก่อน = ขึ้นหน้าคิว · ย้ายเครื่อง = ลงเครื่องนั้นเท่านั้น · ตัดวัน = เริ่มไม่ก่อนวันนั้น (“วันนี้” = แผนวันนี้ของเครื่องนั้น — e.today) */
     var todayK = tpKey(today);
