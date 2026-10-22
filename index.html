@@ -2011,7 +2011,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.67</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.68</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3081,10 +3081,11 @@ var GasFS = (function () {
      · ชื่อ Lot บรรทัดเดียว · กล่องชี้ = #dbTip ทุกที่ · แท็บวันนี้ = ซ้ายล่าง · คิวเครื่องไม่นับค้างตัด · แผนวันนี้ tpNorm / tpDrop / tpTier — ดู v165.js
    v1.66 (2026-10-22 11:39 ผู้ใช้: “ต่อจากวันก่อน / ตัวเทาเวลาเป้าหมาย เอาไปไว้ใน Box · เห็นคอลัมน์ครบไม่เลื่อน ”) dbSmallTips — ดู v166.js · PW = ผู้ใช้ตั้ง ⚙ ไม่รับรหัสเอง
    v1.67 (2026-10-22 11:44 ผู้ใช้: “ปรับวันนี้ให้แสดงวัตถุดิบว่าไม้ครบหรืออะไร เหมือนวันอื่น ๆ”) ตารางวันนี้ + คอลัมน์ วัตถุดิบ (tpRow · dbMatCell)
+   v1.68 (2026-10-22 11:50 ผู้ใช้: “เลื่อนลงมาแล้ว อัปเดตสถานะแล้วมันเด้งขึ้นบน ปรับให้มันไม่เด้ง”) แผงรายละเอียด Lot คงตำแหน่งเลื่อน + ส่วนที่กางไว้ (bdDetail)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.67';
+var VER = '1.68';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -3590,7 +3591,8 @@ function showDetail(code) {
     /* v1.8: แยกยอดต้องใช้ราย Lot (ค้างเบิก PD) เรียง enddate — ผู้ใช้ 15/10/2026 “หน้า Stock มี PD ของแต่ละ Lot มาไหม เช่นรหัสเดือย” */
     + '<div class="sec" id="dLots">' + rmItemSecHtml(code) + '</div>'
     + '<div class="sec"><h3>หมายเหตุ</h3><textarea class="note" id="dNote" placeholder="เช่น ผู้ขายหลัก · ขนาดบรรจุ · ใช้แทนรหัสไหน">' + esc(e.note || '') + '</textarea></div>';
-  D.innerHTML = h; D.scrollTop = 0;
+  var same = showDetail.cur === code, keep = same ? D.scrollTop : 0, opn = same ? [].map.call(D.querySelectorAll('details'), function (d) { return d.open; }) : null;   /* v1.68 วาดใหม่ตัวเดิม = ไม่เด้งกลับบนสุด */
+  D.innerHTML = h; if (opn) [].forEach.call(D.querySelectorAll('details'), function (d, i) { if (opn[i] != null) d.open = opn[i]; }); D.scrollTop = keep; showDetail.cur = code;
   $('dX').onclick = closeDetail;
   $('dUp').onclick = function () { $('dFile').click(); };
   $('dFile').onchange = function (ev) { var f = ev.target.files[0]; if (f) uploadImage(code, f); ev.target.value = ''; };
@@ -3620,7 +3622,7 @@ function stockTable(x) {
     + (x.stock.length > 1 ? '<tr class="tot"><td>รวม</td><td>' + fmtN(t.onhand, 3) + '</td><td>' + fmtN(t.res_phys, 3) + '</td><td class="' + (t.avail < 0 ? 'neg' : '') + '">' + fmtN(t.avail, 3) + '</td><td>' + (t.ordered ? fmtN(t.ordered, 3) : '') + '</td></tr>' : '') + '</table>'
     + '<div class="muted" style="margin-top:4px">จองสั่ง (ยังไม่ตัดของ) รวม ' + fmtN(t.res_ord, 3) + (t.on_order ? ' · ขายค้างส่ง ' + fmtN(t.on_order, 3) : '') + '</div>';
 }
-function closeDetail() { S.sel = null; $('detail').classList.add('hide'); document.body.classList.remove('detOpen'); layout(); }
+function closeDetail() { S.sel = null; showDetail.cur = null; /* v1.68 */ $('detail').classList.add('hide'); document.body.classList.remove('detOpen'); layout(); }
 async function loadBigImage(code) {
   var pic = $('dPic'); if (!pic) return;
   try {
@@ -4326,14 +4328,15 @@ function lotShowDetail(key) {
     + '<div class="sec"><h3>เปลี่ยนระหว่างเปิดหน้านี้</h3>' + (hist.length ? hist.map(function (e) { return '<div class="hist"><div class="t">' + esc(new Date(e.at).toLocaleTimeString('th-TH')) + '</div>' + e.ch.map(function (c) { return '<div><b>' + esc(c[0]) + '</b> <s>' + esc(c[1] || 'ว่าง') + '</s> → ' + esc(c[2] || 'ว่าง') + '</div>'; }).join('') + '</div>'; }).join('')
       : '<div class="muted">' + (fl && fl.kind === 'new' ? 'Lot นี้เพิ่งเข้ามาในรอบอัปเดต ' + esc(new Date(fl.at).toLocaleTimeString('th-TH')) : 'ยังไม่มี — ถ้าข้อมูล Lot นี้เปลี่ยนระหว่างที่เปิดหน้านี้ จะขึ้นตรงนี้ว่าช่องไหนเปลี่ยนจากอะไรเป็นอะไร') + '</div>') + '</div>'
     + '<details class="raw"><summary>ค่าในไฟล์ (ดิบ)</summary><div class="kv">' + L.hdr.map(function (hn, i) { return '<span class="k">' + esc(hn) + '</span><span class="v">' + esc(x.a[i] == null ? '' : x.a[i]) + '</span>'; }).join('') + '</div></details>';
-  D.innerHTML = h; D.scrollTop = 0;
+  var same = lotShowDetail.cur === key, keep = same ? D.scrollTop : 0, opn = same ? [].map.call(D.querySelectorAll('details'), function (d) { return d.open; }) : null;   /* v1.68 วาดใหม่ตัวเดิม = ไม่เด้งกลับบนสุด */
+  D.innerHTML = h; if (opn) [].forEach.call(D.querySelectorAll('details'), function (d, i) { if (opn[i] != null) d.open = opn[i]; }); D.scrollTop = keep; lotShowDetail.cur = key;
   $('ldX').onclick = lotCloseDetail;
   $('ldCopy').onclick = function () { try { navigator.clipboard.writeText(x.id).then(function () { toast('คัดลอก ' + x.id + ' แล้ว'); }, function () { toast(x.id); }); } catch (e) { toast(x.id); } };
   D.querySelectorAll('[data-lsel]').forEach(function (a) { a.onclick = function (ev) { ev.preventDefault(); lotShowDetail(a.dataset.lsel); lotDraw(); }; });
   if (was) lotDraw(); else lotLayout();
   rmLotFill(x.id);   // v1.8
 }
-function lotCloseDetail() { L.sel = null; var D = $('lotDetail'); if (D) D.classList.add('hide'); document.body.classList.remove('lotDet'); if (view() === 'lots') lotLayout(); }
+function lotCloseDetail() { L.sel = null; lotShowDetail.cur = null; /* v1.68 */ var D = $('lotDetail'); if (D) D.classList.add('hide'); document.body.classList.remove('lotDet'); if (view() === 'lots') lotLayout(); }
 
 /* ─── นำเข้า CSV (ชั่วคราว ระหว่าง StarSync ยังไม่มี SQL) ─── */
 function csvCell(v) { v = v == null ? '' : String(v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
@@ -5510,9 +5513,13 @@ function bdDetail(id) {
     + (g.rmSrc !== 'x' ? rxBox(g.id) : '');   // v1.13 ดูว่า Lot นี้ใช้ของอะไร (Smart Production lot_rm / ขอดึงจาก AX)
   h += rmDoneHtml(g.rmAll) + rjDetailHtml(g.id) /* v1.57 ใบเบิกไม้ราย Lot */ + '</div>';   // v1.8 รายการที่เบิกครบแล้ว (StarSync v1.2)
   if (x) h += '<div class="sec"><h3>ข้อมูลเพิ่ม</h3><div class="kv">' + kv('ส่งโดย', esc(x.by || '')) + kv('เมื่อ', esc(String(x.at || '').replace('T', ' ').slice(0, 16))) + (x.note ? kv('หมายเหตุ', esc(x.note)) : '') + '</div></div>';
-  D.innerHTML = h; D.scrollTop = 0;
+  /* v1.68 วาดใหม่ Lot เดิม (ข้อมูลอัปเดต) = ไม่เด้งกลับบนสุด · ส่วนที่กางไว้ (<details>) กางต่อ — เดิม D.scrollTop = 0 ทุกครั้ง */
+  var same = bdDetail.cur === id, keep = same ? D.scrollTop : 0, opn = same ? [].map.call(D.querySelectorAll('details'), function (d) { return d.open; }) : null;
+  D.innerHTML = h;
+  if (opn) [].forEach.call(D.querySelectorAll('details'), function (d, i) { if (opn[i] != null) d.open = opn[i]; });
+  D.scrollTop = keep; bdDetail.cur = id;
 }
-function bdCloseDetail() { B.sel = null; var D = $('bdDetail'); if (D) D.classList.add('hide'); var c = $('bdCols'); if (c) c.querySelectorAll('.bcard.sel').forEach(function (e) { e.classList.remove('sel'); });
+function bdCloseDetail() { B.sel = null; bdDetail.cur = null; /* v1.68 เปิดใหม่ = เริ่มบนสุด */ var D = $('bdDetail'); if (D) D.classList.add('hide'); var c = $('bdCols'); if (c) c.querySelectorAll('.bcard.sel').forEach(function (e) { e.classList.remove('sel'); });
   var q = $('bdMq'); if (q) q.querySelectorAll('.mqrow.sel').forEach(function (e) { e.classList.remove('sel'); }); }   // v1.21
 function bdSettings() {
   var s = B.set, wd = [1, 2, 3, 4, 5, 6, 0];
