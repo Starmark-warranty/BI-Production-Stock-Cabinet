@@ -3909,8 +3909,10 @@ function mDaySet(m, on, el){
   if (!m) return;
   var lk = mLink(m);
   if (lk && SXS.parent.mcDaySet) {
-    if (el) el.disabled = true;
-    Promise.resolve(SXS.parent.mcDaySet(PL.date, lk.n, { on: !!on })).then(function(ok){ refreshAll(); if (ok) { toast((on ? '✓ เปิด ' : '⏸ ปิด ') + esc(m.name) + ' วันที่ ' + esc(dShort(PL.date)) + ' — ค่าเดียวกับ StarStock (Dashboard เห็นด้วย)', 'ok'); sxAfterMday(on ? 'on' : 'off'); /* v1.63 จัดใหม่ */ } }, function(){ refreshAll(); });
+    var pr = SXS.parent.mcDaySet(PL.date, lk.n, { on: !!on });   /* StarStock v1.96 ค่าเปลี่ยนทันที (บันทึก Drive รวมครั้งเดียว) — เดิมรอเขียนเสร็จทีละครั้ง ติ๊กซ้อน = ถูกทิ้ง */
+    refreshAll();
+    var Q = SP.mdq || (SP.mdq = { n: [], t: 0, w: '' }); Q.n.push((on ? '✓ เปิด ' : '⏸ ปิด ') + m.name); Q.w = on ? 'on' : 'off';
+    Promise.resolve(pr).then(function(ok){ clearTimeout(Q.t); Q.t = setTimeout(function(){ var a = Q.n; Q.n = []; refreshAll(); if (ok) { toast(esc(a.join(' · ')) + ' วันที่ ' + esc(dShort(PL.date)) + ' — ค่าเดียวกับ StarStock (Dashboard เห็นด้วย)', 'ok'); sxAfterMday(Q.w); /* v1.63 จัดใหม่ · v1.96 ครั้งเดียวต่อชุด */ } }, 30); }, function(){ Q.n = []; refreshAll(); });
     return;
   }
   var d = PL.opt.day || (PL.opt.day = {}), e = d[PL.date] || (d[PL.date] = {}), def = !!m.on && (PL.opt.use || {})[m.id] !== false;
