@@ -595,4 +595,17 @@ window.onload=function(){setView("all");applyFilter();showPasses();applyTips(doc
   var _ol = window.onload; window.onload = function (ev) { if (typeof _ol === 'function') _ol.call(window, ev); try { SXD.apply(); } catch (e) { if (window.console) console.error('[SXD] apply', e); SXD.ready = true; } };
   window.addEventListener('pagehide', function () { SXD.changed(); });
 })();
-</script></body></html>
+</script><script id="sxdNoWork">
+/* StarStock v1.92: Lot ที่ไม่มีงานเจาะ (รูเจาะ 0 · CNC 0 · LED 0) = ท้ายตารางเสมอ (เดิมแทรกอยู่ตามลำดับไฟล์/ที่เรียง — ดูแล้วงง) */
+(function () {
+  if (typeof renderTable !== 'function') return;
+  var has = function (ld) { var c = ld && ld.calc; return !!c && ((+c.totalHoles || 0) + (+c.totalCNC || 0) + (+c.totalLED || 0)) > 0; };
+  var rt0 = renderTable;
+  renderTable = function () {
+    try { if (vis && vis.length > 1) { var a = [], b = []; vis.forEach(function (ld) { (has(ld) ? a : b).push(ld); }); if (b.length && a.length) vis = a.concat(b); } } catch (e) { }
+    return rt0.apply(this, arguments);
+  };
+  try { if (vis && vis.length) renderTable(); } catch (e) { }
+})();
+</script>
+</body></html>
