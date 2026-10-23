@@ -235,18 +235,18 @@ tr.sx-hit > td{animation:sxhit 1s ease-in-out 0s 3;background:color-mix(in srgb,
       var at = D.getElementById('spNdOnly'), anc = at ? at.closest('label') : D.getElementById('spLotSort'); if (!anc || !anc.parentNode) return;
       if (!box) { box = D.createElement('span'); box.id = 'sxsRmF'; box.className = 'sxs-rmf np'; anc.parentNode.insertBefore(box, anc.nextSibling); }
       var has = function (v) { return P.spRmHas ? P.spRmHas(v) : P.spRmShow() === v; }, one = function (v, lbl, n, tip) { var on = has(v); return "<label class='sxs-rmc" + (on ? ' on' : '') + "' title='" + tip + "'><input type='checkbox' data-sxrm='" + v + "'" + (on ? ' checked' : '') + '> ' + lbl + ' <b>' + n + '</b></label>'; };   // v1.48 ติ๊กพร้อมกันได้
-      var h = (c.rm && c.lbl ? one('iss', c.lbl.iss, c.iss, 'แสดง Lot ที่ไม้ครบ = จ่ายไม้แล้วทุกรายการ (ใบเบิก TFRM Post ครบ) · ติ๊กพร้อมกันได้ / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้')
+      var h = (c.rm && c.lbl ? one('iss', c.lbl.iss, c.iss, 'แสดง Lot ที่ไม้ครบ = จ่ายไม้แล้วทุกรายการ (ใบเบิก TFRM Post ครบ) · ติ๊กพร้อมกันได้ / ติ๊ก = แสดง · ติ๊กออก = ซ่อน (เปิดมาติ๊กครบทุกสถานะ = ทุก Lot)')
           + one('no', c.lbl.no, c.no, 'แสดง Lot ที่เบิกแล้วแต่ไม้ยังไม่ครบ: รอจ่าย (ใบยังไม่ Post) / ไม้ไม่พอจ่าย (ใบแยก) / ยังไม่เบิกบางรายการ — เรียงตามต้องตัดก่อน · ป้ายแดง = ถึงวันตัดแล้ว')
           + one('oth', c.lbl.oth, c.oth, 'แสดง Lot อื่น ๆ: ยังไม่มี BOM · ยังไม่ Transfer · ไม้ไม่พอในคลัง · ไม่มีข้อมูล')   // StarStock v1.59 เบิก ≠ จ่าย
-        : c.rm ? one('iss', '✓ เบิกไม้แล้ว', c.iss, 'แสดง Lot ที่เบิกไม้ครบแล้ว (AX ไม่มีแผ่นไม้ค้างเบิก) · ติ๊กคู่กับ ⏳ ยังไม่เบิกไม้ / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้') + one('no', '⏳ ยังไม่เบิกไม้', c.no, 'แสดง Lot ที่ยังไม่เบิกไม้ครบ (รอเบิกบางชั้น/ทั้ง Lot · ไม้ไม่พอ · ไม้ไม่พอจ่าย (Journal แยกใบ) · ยังไม่ Transfer · ยังไม่มี BOM) · ติ๊กคู่กับ ✓ เบิกไม้แล้ว / ไม่ติ๊ก = ทุก Lot · ติ๊ก ✂ ค้างตัดด้วย = เฉพาะ Lot ค้างตัดในกลุ่มนี้') : '')
-        + (function () { var on = P.spCutShow && P.spCutShow(); return "<label class='sxs-rmc" + (on ? ' on' : '') + "' title='แสดงเฉพาะ Lot ที่ตัดไปบางส่วนแล้ว (ค้างตัด — คิว “กำลังตัด” ของ StarStock) · ใช้คู่กับช่อง Week ได้ · ติ๊กออก = ทุก Lot'><input type='checkbox' data-sxcut" + (on ? ' checked' : '') + '> ✂ ค้างตัด <b>' + c.cut + '</b></label>'; })();   // v1.47
+        : c.rm ? one('iss', '✓ เบิกไม้แล้ว', c.iss, 'แสดง Lot ที่เบิกไม้ครบแล้ว (AX ไม่มีแผ่นไม้ค้างเบิก) · ติ๊กคู่กับ ⏳ ยังไม่เบิกไม้ / ติ๊ก = แสดง · ติ๊กออก = ซ่อน (เปิดมาติ๊กครบทุกสถานะ = ทุก Lot)') + one('no', '⏳ ยังไม่เบิกไม้', c.no, 'แสดง Lot ที่ยังไม่เบิกไม้ครบ (รอเบิกบางชั้น/ทั้ง Lot · ไม้ไม่พอ · ไม้ไม่พอจ่าย (Journal แยกใบ) · ยังไม่ Transfer · ยังไม่มี BOM) · ติ๊กคู่กับ ✓ เบิกไม้แล้ว / ติ๊ก = แสดง · ติ๊กออก = ซ่อน (เปิดมาติ๊กครบทุกสถานะ = ทุก Lot)') : '')
+        + (function () { var on = P.spCutOn ? P.spCutOn() : (P.spCutShow && P.spCutShow());   /* v1.93 ติ๊ก = แสดง Lot ค้างตัด */ return "<label class='sxs-rmc" + (on ? ' on' : '') + "' title='แสดง Lot ค้างตัด (ตัดไปบางส่วนแล้ว — คิว “กำลังตัด” ของ StarStock) · ติ๊กออก = ซ่อน Lot ค้างตัด'><input type='checkbox' data-sxcut" + (on ? ' checked' : '') + '> ✂ ค้างตัด <b>' + c.cut + '</b></label>'; })();   // v1.47
       if (box._h !== h) { box.innerHTML = h; box._h = h; }
     } catch (e) { if (window.console) console.warn('[SXS] rmFiltUi', e); }
   };
   D.addEventListener('change', function (e) {
     var t = e.target; if (!t || !t.getAttribute) return;
     var bx = D.getElementById('sxsRmF'); if (bx) bx._h = null;   // v1.47 (ตรวจบัค) วาดติ๊กใหม่เสมอ (เขียนค่าไม่ได้ = ติ๊กไม่ค้างหลอก)
-    if (t.getAttribute('data-sxcut') != null) { try { P.spCutShowSet(t.checked); } catch (er) {} }   // v1.47 ✂ ค้างตัด
+    if (t.getAttribute('data-sxcut') != null) { try { (P.spCutOnSet ? P.spCutOnSet(t.checked) : P.spCutShowSet(t.checked)); } catch (er) {} }   // v1.47 ✂ ค้างตัด
     else if (t.getAttribute('data-sxrm') != null) { try { if (P.spRmToggle) P.spRmToggle(t.getAttribute('data-sxrm'), t.checked); else P.spRmShowSet(t.checked ? t.getAttribute('data-sxrm') : ''); } catch (er) {} }   // v1.48 ติ๊กพร้อมกันได้
     else return;
     if (typeof window.render === 'function') { try { window.render(); } catch (er) {} }
@@ -6043,7 +6043,8 @@ function clearLotFilters(){
   if (UI.ndOnly) { UI.ndOnly = false; var nd = $('#spNdOnly'); if (nd) nd.checked = false; ch.push('ไม่มีข้อมูล'); }
   if (UI.revOnly) { UI.revOnly = false; var ro = $('#spRevOnly'); if (ro) ro.checked = false; ch.push('🆕'); }
   if ((window.SXS && SXS.embed) && SXS.parent && SXS.parent.spRmShow && SXS.parent.spRmShow()) { SXS.parent.spRmShowSet(''); ch.push('เบิกไม้'); }   // StarStock v1.46 ไปที่ Lot = ล้างติ๊กเบิกไม้ด้วย
-  if ((window.SXS && SXS.embed) && SXS.parent && SXS.parent.spCutShow && SXS.parent.spCutShow()) { SXS.parent.spCutShowSet(false); ch.push('ค้างตัด'); }   // v1.47
+  if ((window.SXS && SXS.embed) && SXS.parent && SXS.parent.spCutShow && SXS.parent.spCutShow()) { SXS.parent.spCutShowSet(false); ch.push('ค้างตัด'); }
+  if ((window.SXS && SXS.embed) && SXS.parent && SXS.parent.spCutOn && !SXS.parent.spCutOn()) { SXS.parent.spCutOnSet(true); ch.push('ค้างตัด'); }   // v1.93 ไปที่ Lot = แสดง Lot ค้างตัดด้วย   // v1.47
   if (UI.lotFilt) { UI.lotFilt = ''; var lf = $('#spLotFilt'); if (lf) lf.value = ''; ch.push('สถานะแผน'); }
   return ch;
 }
