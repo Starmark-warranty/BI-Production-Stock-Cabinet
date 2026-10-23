@@ -1606,5 +1606,18 @@ window.addEventListener('load', function(){ _sortMark(); xsSync(); });
   window.addEventListener('pagehide', function () { SXE.changed(); });
 })();
 </script>
+<script id="sxeNoWork">
+/* StarStock v1.92: Lot ที่ไม่มีงานปิดขอบ (ชิ้นปิดขอบ 0 · เวลารวม 0) = ท้ายตารางเสมอ (เดิมแทรกอยู่ตามลำดับไฟล์/ที่เรียง — ดูแล้วงง) */
+(function () {
+  if (typeof renderTable !== 'function') return;
+  var has = function (ld) { var c = ld && ld.calc; return !!c && ((+c.totalEdgePieces || 0) > 0 || (+c.totalActualSec || 0) > 0); };
+  var rt0 = renderTable;
+  renderTable = function () {
+    try { if (vis && vis.length > 1) { var a = [], b = []; vis.forEach(function (ld) { (has(ld) ? a : b).push(ld); }); if (b.length && a.length) vis = a.concat(b); } } catch (e) { }
+    return rt0.apply(this, arguments);
+  };
+  try { if (typeof applyFilter === 'function' && vis && vis.length) renderTable(); } catch (e) { }
+})();
+</script>
 </body>
 </html>
