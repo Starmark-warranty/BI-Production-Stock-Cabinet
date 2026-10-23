@@ -2038,7 +2038,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.90</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.91</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3131,10 +3131,11 @@ var GasFS = (function () {
    v1.88 (2026-10-22 14:36 ผู้ใช้: ยอดยิงไม่เรียลไทม์เท่า Cutting Center) อ่านการยิงตัดทุก 20 วิ แยกรอบ · มีชิ้นใหม่ = วาดจอทันที — ดู v188.js
    v1.89 (2026-10-22 14:41 ผู้ใช้: BO69-0873 แผนวันนี้ 300/1 แต่ขึ้นเครื่อง พรุ่งนี้ 300/4) ค้างตัดที่ไม่รู้เครื่อง = เครื่องตามแผนวันนี้ที่บันทึกไว้ก่อน (bdPlan loose)
    v1.90 (2026-10-22 14:47 ผู้ใช้: SAW PLAN ล้อข้อมูล StarStock ทั้งหมด) สถานะ Lot / ชิ้น / ค้างตัด / ไม้ยังไม่จ่าย / อยู่แผนไหน ส่งให้ SAW (หัวแถว Lot · รอลงเครื่อง · Excel) · แผนวันข้างหน้าส่ง SAW รวมค้างตัด — ดู v190.js / saw190.js
+   v1.91 (2026-10-23 08:50 ผู้ใช้: ไม่ได้ติ๊กแสดง Machine Queue แต่เปิดมาเจอ) แท็บที่ซ่อนไว้ไม่เปิดจากที่อยู่หน้าเว็บ (#board-mc …) = Dashboard · จอทีวียังเปิดได้ (bdShow)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.90';
+var VER = '1.91';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -5263,6 +5264,8 @@ function bdPlan() {
 function bdShow() {
   document.body.classList.toggle('tv', /tv$/i.test(location.hash));
   B.tab = /^#?\/?board-dash/i.test(location.hash) ? 'dash' : /^#?\/?board-mc/i.test(location.hash) ? 'mc' : /^#?\/?board-day/i.test(location.hash) ? 'day' /* v1.38 */ : /^#?\/?board-edge/i.test(location.hash) ? 'edge' : /^#?\/?board-drill/i.test(location.hash) ? 'drill' : /^#?\/?board-saw/i.test(location.hash) ? 'saw' /* v1.42 */ : /^#?\/?board-plan/i.test(location.hash) || !bdTabHid('plan') ? 'plan' : 'dash' /* v1.61 Master Plan ซ่อน = #board เปิด Dashboard · #board-plan = Master Plan */;   // v1.21 แท็บ: #board = Master Plan · #board-mc = Machine Queue (จอทีวี #board-mc-tv) · v1.26 #board-dash = Dashboard
+  /* v1.91 แท็บที่ซ่อนไว้ (⋯ ไม่ติ๊ก) ไม่เปิดจากที่อยู่หน้าเว็บ — เดิม v1.61 #board-mc ยังเปิดได้ (ที่อยู่ค้างจากครั้งก่อน = เปิดมาเจอ Machine Queue) · จอทีวี (-tv) เปิดได้ */
+  if (bdTabHid(B.tab) && !document.body.classList.contains('tv')) { B.tab = 'dash'; try { history.replaceState(null, '', '#' + bdTabHash('dash')); } catch (e) { } }
   bqSave();   // v1.22 จำแท็บล่าสุด (HOME → คิวตัดงาน เปิดแท็บนี้)
   bdRender();
   if (!ensureFs()) return;
