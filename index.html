@@ -2038,7 +2038,7 @@
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v1.96</span>
+    <span class="bname">StarStock</span> <span class="ver">v1.97</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3137,10 +3137,11 @@ var GasFS = (function () {
    v1.94 (2026-10-23 10:06 ผู้ใช้: Lot ถัดไปยังไม่ยิง = รอตัด · ชี้ชื่อ Lot ให้เห็น Project · SAW PLAN เปิดในมือถือ) tpStatus / dbTodayPlan ป้าย รอตัด · bdLotPjTip · saw194.css — ดู v194.js
    v1.95 (2026-10-23 10:43 ผู้ใช้: งาน 14 วัน นับถอยจาก Enddate 10 วันแล้วจัดแผนตัด) ⚙ แถวงาน 14 วัน (cutDue14) · bdCutDueDays · คิวตัดเรียงตามกำหนดตัด (bdOrdKey) — ดู v195.js
    v1.96 (2026-10-23 11:00 ผู้ใช้: วันนี้ยังไม่ยิงตัด = ค้างตัด · ติ๊กเครื่องใน SAW PLAN ไม่ลิงก์ / ช้า) ป้าย ✂ ค้างตัด · mcDaySet เห็นผลทันที + รวมเขียน Drive — ดู v196.js
+   v1.97 (2026-10-23 11:24 ผู้ใช้: จัดแผนเองไปแล้ว เผลอติ๊ก Auto ต้องฟ้อง ให้ยืนยันก่อน ไม่งั้นห้ามทับ) SAW PLAN: ติ๊ก 🤖 Auto ตอนมีแผนที่จัดไว้แล้ว (วันนี้ขึ้นไป · ไม่ใช่ 📌) = หน้าต่างถามก่อน — ยกเลิก (Auto ยังปิด แผนไม่เปลี่ยน) / 📌 เก็บแผนเดิม แล้วเปิด Auto (ปักหมุดงานที่ลงเครื่องแล้ว Auto เติมเฉพาะ Lot ใหม่) / ยืนยัน จัดใหม่ตาม StarStock (sawplan.html)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '1.96';
+var VER = '1.97';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];

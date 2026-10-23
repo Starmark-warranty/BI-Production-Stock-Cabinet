@@ -1832,6 +1832,65 @@ sxPlanDeco = function(){
 function sxLstCell(it){ if (!it || !it.d) return ''; var o = sxInfo(it.d.id); return o ? sxLstTxt(o.lst) : ''; }
 var sxWdLot190 = sxWdLot;
 sxWdLot = function(id){ var o = sxInfo(id), s = o ? sxLstTxt(o.lst) : ''; return sxWdLot190.apply(this, arguments) + (s ? ' · ' + s : ''); };
+/* ───────── StarStock v1.97 (ผู้ใช้ 23/10/2026 11:24 “ถ้าผมออกแผนแบบไม่ติ๊ก auto ไปแล้ว เผลอไปกดติ๊ก auto ต้องให้ฟ้องด้วยนะ
+     ว่ามีการจัดแผนแบบ manual ไปแล้ว ให้ยืนยันก่อน ไม่งั้นห้ามทับ auto”) ─────────
+   เดิม: ติ๊ก 🤖 Auto = เปิดทันที แล้วจัดใหม่ตามแผน StarStock เลย (sxAutoSync → sxCascade ทุกวัน) — แผนที่จัดเองไว้ (วันนี้ + วันข้างหน้า)
+     ถูกย้ายวัน / ย้ายเครื่อง / ถอดงานที่เกินเวลา / เติม Lot ใหม่ โดยไม่ถาม · ↩ ย้อนกลับได้แค่วันที่ดูอยู่ (วันอื่นคืนไม่ได้)
+   ตอนนี้: ติ๊ก Auto แล้วมีแผนที่จัดไว้แล้ว (สมุดแผน วันนี้ขึ้นไป · ไม่นับงาน 📌 ที่ Auto ไม่ย้ายอยู่แล้ว) → หน้าต่างถามก่อน · ยังไม่เปิด Auto
+     · ยกเลิก (ค่าเริ่ม · Esc) = Auto ยังปิด แผนเดิมไม่เปลี่ยน
+     · 📌 เก็บแผนเดิม แล้วเปิด Auto = ปักหมุดงานที่ลงเครื่องไว้แล้วทุกวัน (Auto ไม่ย้าย) → Auto เติมเฉพาะ Lot ใหม่ในเวลาที่ว่าง
+     · 🤖 ยืนยัน จัดใหม่ตาม StarStock = แบบเดิม
+     ไม่มีงานลงเครื่องไว้ / มีแต่งาน 📌 / มีแค่ชั้นไม้ที่รอลงเครื่อง = เปิดทันทีเหมือนเดิม (ไม่ถาม) */
+function sxManPlan(){
+  var t = todayISO(), by = {}, seen = {};
+  var add = function(iso, k, m, lock){ var id = iso + '|' + k; if (seen[id]) return; seen[id] = 1; var o = by[iso] || (by[iso] = { iso: iso, n: 0, mc: 0, pin: 0 }); o.n++; if (m) o.mc++; if (m && lock) o.pin++; };
+  Object.keys(BOOK).forEach(function(sk){ var e = BOOK[sk]; if (!Array.isArray(e) || !isISO(e[0]) || e[0] < t || e[0] === PL.date) return; var it = itOfKey(sk); if (!it) return; add(e[0], it.k, e[1], e[2]); });
+  if (PL.date >= t) Object.keys(PL.sel).forEach(function(k){ if (!IK[k]) return; var a = PL.asg[k] || PL.ghost[k]; add(PL.date, k, a && a.m, a && a.lock); });
+  var days = Object.keys(by).sort().map(function(d){ return by[d]; }), r = { days: days, n: 0, mc: 0, pin: 0, stale: 0 };
+  days.forEach(function(d){ r.n += d.n; r.mc += d.mc; r.pin += d.pin; });
+  r.free = r.mc - r.pin;   // งานที่ลงเครื่องไว้แล้ว ไม่ใช่ 📌 (Auto ย้าย/ถอดได้) · ชั้นไม้ที่เลือกไว้แต่ยังไม่ลงเครื่อง = ให้ Auto ลงให้ ไม่นับว่าจัดเอง
+  try { var sc = sxScan(sxPlanMap()); r.stale = sc && sc.sig ? sc.sig.split('\n').length : 0; } catch (e) { r.stale = 0; }
+  return r;
+}
+/* 📌 ปักหมุดงานที่ลงเครื่องไว้แล้วทุกวัน (วันนี้ขึ้นไป) — วิธีเดียวกับ sxCascade (สลับวันที่ บันทึก แล้วกลับวันเดิม) */
+function sxPinAll(mp){
+  var orig = PL.date, n = 0;
+  SX163.batch = 1;
+  try {
+    mp.days.forEach(function(d){
+      if (!(d.mc > d.pin)) return;
+      if (PL.date !== d.iso) setPlanDate(d.iso);
+      var c = 0;
+      [PL.asg, PL.ghost].forEach(function(o){ Object.keys(o).forEach(function(k){ var a = o[k]; if (a && a.m && !a.lock) { a.lock = 1; c++; } }); });
+      if (c) { n += c; savePlanNow(); }
+    });
+  } catch (e) { if (window.console) console.error('[SAWPLAN] v1.97 pin', e); }
+  finally { if (PL.date !== orig) setPlanDate(orig); SX163.batch = 0; refreshAll(); }
+  return n;
+}
+function sxAutoBox(v){ $$('#spAutoOn', D).forEach(function(i){ i.checked = !!v; var l = i.closest('label'); if (l) l.classList.toggle('on', !!v); }); }
+SP.autoOnAsk = function(){
+  var on = function(pre){ autoOnSet(true); sxAutoBox(true); toast((pre || '') + '🤖 Auto เปิด — เข้าแท็บนี้ / เปลี่ยนวันที่ = จัดให้เอง', 'ok', pre ? 6000 : 3800); SP.autoRun('on'); };
+  var mp = null; try { mp = sxManPlan(); } catch (e) { mp = null; if (window.console) console.error('[SAWPLAN] v1.97 manplan', e); }
+  if (!mp || !(mp.free > 0)) { on(); return; }
+  autoOnSet(false); sxAutoBox(false);   // ยังไม่เปิด จนกว่าจะยืนยัน (ปิดหน้าต่าง / Esc = ไม่เปิด)
+  var td = todayISO(), shown = mp.days.slice(0, 8);
+  var html = '<div style="margin-bottom:8px">มีแผนตัดที่<b>จัดไว้แล้ว</b> (ตอนไม่ได้เปิด Auto) — <b>' + mp.n + ' ชั้นไม้</b>' + (mp.pin ? ' (📌 ' + mp.pin + ')' : '') + ':</div>'
+    + '<ul style="margin:0 0 10px 18px;padding:0">' + shown.map(function(d){ return '<li><b>' + esc(dShort(d.iso)) + (d.iso === td ? ' (วันนี้)' : '') + '</b> — ' + d.n + ' ชั้นไม้' + (d.mc ? ' · ลงเครื่องแล้ว ' + d.mc : '') + (d.pin ? ' · 📌 ' + d.pin : '') + (d.n > d.mc ? ' · รอลงเครื่อง ' + (d.n - d.mc) : '') + '</li>'; }).join('') + (mp.days.length > shown.length ? '<li>… อีก ' + (mp.days.length - shown.length) + ' วัน</li>' : '') + '</ul>'
+    + '<div style="margin-bottom:6px">ถ้าเปิด Auto ตอนนี้ โปรแกรมจะ<b>จัดใหม่ตามแผน StarStock ทันที</b>: '
+    + (mp.stale ? '<b>ย้ายวัน / ย้ายเครื่อง ' + mp.stale + ' ชั้นไม้</b> ที่ไม่ตรงกับ StarStock · ' : '')
+    + 'ถอดงานที่เกินเวลาเครื่อง · เติม Lot ใหม่ลงเครื่องที่ยังว่าง</div>'
+    + '<div class="sp-muted">↩ ย้อนกลับได้แค่วันที่ดูอยู่ — วันอื่นคืนเองไม่ได้ · 📌 เก็บแผนเดิม = ปักหมุดงานที่ลงเครื่องไว้แล้วทุกวัน (Auto ไม่ย้ายวัน / ไม่ย้ายเครื่อง) แล้วให้ Auto เติมเฉพาะ Lot ใหม่ · ถอดหมุดทีละชั้นไม้ได้ที่ปุ่ม 📌</div>';
+  modal({ title: '⚠ มีแผนที่จัดเองไว้แล้ว — ยืนยันก่อนเปิด Auto', tone: 'warn', html: html, esc: 'no', focus: 'no',
+    buttons: [{ k: 'no', t: 'ยกเลิก — ไม่เปิด Auto (แผนเดิมไม่เปลี่ยน)' }, { k: 'pin', t: '📌 เก็บแผนเดิม แล้วเปิด Auto' }, { k: 'go', t: '🤖 ยืนยัน จัดใหม่ตาม StarStock', cls: 'warn' }] })
+    .then(function(k){
+      if (k === 'go') { on(); return; }
+      if (k === 'pin') { var n = sxPinAll(mp); on('📌 เก็บแผนเดิม (ปักหมุด ' + n + ' ชั้นไม้) · '); return; }
+      autoOnSet(false); sxAutoBox(false);
+      toast('Auto ยังปิดอยู่ — แผนที่จัดไว้ไม่เปลี่ยน', 'ok', 4000);
+    });
+};
+SP.manPlan = sxManPlan;
 
 function vals(setId){ var s = setById(setId) || setById('std'); return s.v; }
 function skipList(){ return String(MS.skip || '').split(/[,\s]+/).map(function(x){ return x.trim().toUpperCase(); }).filter(Boolean); }
@@ -7123,6 +7182,7 @@ function bindEvents(){
       if (!ks.length) { refreshLotsDom([li]); return; }
       toggleKeys(ks, on2); return; }
     if (cl.contains('sp-allcb')) { onAct(t.checked ? 'selAllVis' : 'selNoneVis', t); return; }
+    if (t.id === 'spAutoOn' && t.checked && SP.autoOnAsk) { SP.autoOnAsk(); return; }   // StarStock v1.97 มีแผนจัดเองแล้ว = ถามก่อน (ไม่ทับเงียบ ๆ)
     if (t.id === 'spAutoOn') { autoOnSet(t.checked); var al = t.closest('label'); if (al) al.classList.toggle('on', t.checked); toast(t.checked ? '🤖 Auto เปิด — เข้าแท็บนี้ / เปลี่ยนวันที่ = จัดให้เอง' : 'Auto ปิด — กด 🤖 เอง', 'ok'); if (t.checked) SP.autoRun('on'); return; }   // StarStock v1.61
     if (cl.contains('sp-usem')) { mDaySet(mById(t.getAttribute('data-m')), t.checked, t); return; }   // StarStock v1.61 เฉพาะวันที่จะตัด (เดิม PL.opt.use ทุกวัน)
     if (cl.contains('sp-mv')) { var k2 = t.getAttribute('data-k'), v = t.value, cur = mOf(k2);
