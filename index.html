@@ -2044,7 +2044,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.01</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.02</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3148,10 +3148,11 @@ var GasFS = (function () {
    v1.99 (2026-10-23 13:09 ตรวจเว็บจริงหลัง v1.98) แผนวันนี้: เติมจากคิวข้าม Lot ที่อยู่ในแผนวันนี้ของเครื่องอื่น “ก่อน” ลงเวลา (เดิมจองเวลาแล้วตัดทิ้ง เวลาว่างเปล่า) · Excel ใบสั่งตัด: ชื่อไม้ของรหัส Cut Rite หาจากรหัส AX ที่ตรงกัน · Dashboard: แถว 🗓 เปิด/ปิดเครื่องรายวันใต้แท็บวัน (ซ่อน/แสดงที่ ⋯ · จำในเครื่องนี้) · ปิดเครื่องวันนี้ = แผนวันนี้ของเครื่องนั้นว่าง
    v2.00 (2026-10-23 13:17 ผู้ใช้: Excel ข้อมูลเยอะ ดูจนงง อยากได้ง่าย ๆ แบบตารางบนจอ + มีแผ่นไม้ / สถานะวัตถุดิบละเอียด) Excel A4 (Dashboard): ใบสั่งตัด = ตารางแบบหน้าจอ แถวละ Lot (# · Lot · ส่ง · เลข .saw · วัตถุดิบ · ชิ้น · เวลาเป้าหมาย · ✓) · ชีตรายละเอียดไม้ (แผ่นไม้ · ชื่อ · หนา · แผ่น · ชิ้น · สถานะไม้) · ไม้ที่ยังไม่ครบ · Part ค้างตัด · ไม่มีชีตสรุปอื่นแล้ว · Daily Plan ชีตเครื่องแบบเดียวกัน
    v2.01 (2026-10-23 13:23 ผู้ใช้: Excel A4 มีไฟล์รวมเครื่อง แยกเครื่อง · Lot Project Pool enddate .saw วัตถุดิบ ชื่อวัตถุดิบ รายการวัตถุดิบ ครบ ไม่ครบ จำนวนชิ้น เวลา · ปริ้น A4 แนวตั้ง) Excel A4: ชีตรวมทุกเครื่อง + เครื่องละชีต (เลือกเครื่อง = ขึ้นก่อน) · แถวละ Lot: Lot · Project · Pool · enddate · .saw · วัตถุดิบ (ครบกี่รายการ) · รายการวัตถุดิบ (ชื่อไม้ ×แผ่น ✗ ไม่ครบก่อน / ✓ ครบ) · ชิ้น · เวลา · ไม้ที่ยังไม่ครบ แนวตั้ง
+   v2.02 (2026-10-23 13:27 ตรวจเว็บจริง) Excel: ช่องวัตถุดิบบอก “ไม่ครบ n จาก m รายการ” / “ครบ m รายการ” (เดิม ครบ 2/12 ขัดกับ จ่ายแล้ว 88%) · • = แผ่นที่ไม่อยู่ในใบเบิกไม้
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.01';
+var VER = '2.02';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -13354,7 +13355,7 @@ function w2Mats(g, r) {
   var out = list.map(function (b) { var x = woBoardSt(g, b.c), bad = woBad(x), ok = !!x && x.c === 'ok', nm = w2Nm(woName(g, b.c)) || b.c;
     return { bad: bad, ok: ok, x: x, c: b.c, name: woName(g, b.c), t: (bad ? '✗ ' : ok ? '✓ ' : '• ') + nm + (b.q ? ' ×' + fmtN(+b.q, 1) : '') + (b.left ? ' (ค้าง ' + fmtN(b.left) + ' ชิ้น)' : '') + (bad ? ' — ' + w2St(x) : '') }; });
   out.sort(function (p, q) { return (q.bad ? 1 : 0) - (p.bad ? 1 : 0); });
-  return { list: out, ok: out.filter(function (z) { return z.ok; }).length, n: out.length, txt: out.map(function (z) { return z.t; }).join('\n') };
+  return { list: out, ok: out.filter(function (z) { return z.ok; }).length, bad: out.filter(function (z) { return z.bad; }).length, n: out.length, txt: out.map(function (z) { return z.t; }).join('\n') };
 }
 /* แถวของเครื่อง x วัน k */
 function w2Mc(x, P, k) {
@@ -13362,11 +13363,11 @@ function w2Mc(x, P, k) {
   var N = w2Cols().length, body = [], roles = [], bad = [], i = 0, sp = 0, stt = 0, nL = 0, sawN = 0;
   var blank = function () { return new Array(N).fill(''); };
   var lotRow = function (no, g, id, r, p, t, sub) {
-    var M = g ? w2Mats(g, r) : { list: [], ok: 0, n: 0, txt: '' }, wd = g ? wsWd(g) : '';
+    var M = g ? w2Mats(g, r) : { list: [], ok: 0, bad: 0, n: 0, txt: '' }, wd = g ? wsWd(g) : '';
     M.list.forEach(function (z) { if (z.bad) bad.push({ g: g, code: z.c, name: z.name, x: z.x, mc: x.m.n, no: no }); });
     var L0 = g ? bdDashLate(g, P) : null, ed = g ? fD(g.end) + '\n' + (L0 != null && L0 >= 1 ? 'เลย ' + L0 + ' วัน' : L0 === 0 ? 'ตัดวันนี้' : 'ตัดก่อน ' + fD(bdDashDue(g))) : '';
     return [no, String(id) + (sub ? '\n' + sub : ''), g && g.remark ? String(g.remark).slice(0, 90) : '', poolOf(id, g && g.pool) || '', ed, xlSaw(id) || '—',
-      wd + (M.n ? '\nครบ ' + M.ok + '/' + M.n + ' รายการ' : ''), M.txt || '—', p, t, '☐'];
+      wd + (M.bad ? '\nไม่ครบ ' + M.bad + ' จาก ' + M.n + ' รายการ' : M.n && M.ok === M.n ? '\nครบ ' + M.n + ' รายการ' : ''),   /* v2.02 เดิม “ครบ a/b” นับ • (ไม่อยู่ในใบเบิก) เป็นไม่ครบ → ขัดกับ % จ่ายแล้ว */ M.txt || '—', p, t, '☐'];
   };
   if (k >= 0 && x.carry && x.carry.length) {
     var cg = blank(); cg[0] = '✂ ค้างตัดที่เครื่องนี้ ' + x.carry.length + ' Lot (ตัดก่อน Lot ใหม่)'; body.push(cg); roles.push('g');
@@ -13389,7 +13390,7 @@ function w2Mc(x, P, k) {
     head: '🏭 ' + x.m.n + ' · ' + day + ' · ' + nL + ' Lot · มีเลข .saw ' + sawN + '/' + nL + ' · ' + fmtN(Math.round(sp)) + ' ชิ้น · เวลา ' + tgHms(stt * 60) + (mn ? ' / ' + (mn / 60) + ' ชม.' : ''),
     sum: { m: x.m, n: i, carry: (k >= 0 && x.carry ? x.carry.length : 0) + R.rows.filter(function (r) { return r.carry; }).length, pc: 0, p: sp, t: stt, mn: mn, ppd: x.m.ppd || 0, s: '', e: '', src: R.src } };
 }
-function w2Info(day) { return [day + ' · ' + xlDueRule() + ' · ✗ = ไม้ยังไม่ครบ (ตัดแผ่นนั้นไม่ได้) · ✓ = คลังจ่ายแล้ว · ×n = จำนวนแผ่น · พิมพ์ ' + fD(Date.now()) + ' ' + bdHM(Date.now()) + ' · StarStock v' + VER]; }
+function w2Info(day) { return [day + ' · ' + xlDueRule() + ' · ✗ = ไม้ยังไม่ครบ (ตัดแผ่นนั้นไม่ได้) · ✓ = คลังจ่ายแล้ว · • = ไม่อยู่ในใบเบิกไม้ · ×n = จำนวนแผ่น · พิมพ์ ' + fD(Date.now()) + ' ' + bdHM(Date.now()) + ' · StarStock v' + VER]; }
 function w2McSheet(x, W) {
   var h = new Array(w2Cols().length).fill(''); h[0] = W.head;
   return { name: x.m.n, spec: { title: 'ใบสั่งตัด · ' + x.m.n + ' · ' + W.day, orient: 'portrait', cols: w2Cols(), body: [h].concat(W.body), roles: ['g'].concat(W.roles), info: w2Info(W.day), tail: [WO_SIG] } };
