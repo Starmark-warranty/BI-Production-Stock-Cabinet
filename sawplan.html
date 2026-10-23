@@ -230,13 +230,14 @@ tr.sx-hit > td{animation:sxhit 1s ease-in-out 0s 3;background:color-mix(in srgb,
   /* v1.59 คำในข้อความ “ไม่ใส่ n ชั้นไม้” — มีข้อมูลใบเบิก (rmjn.csv) = ไม้ยังไม่ครบ (ไม้ยังไม่มี/ยังไม่เบิก) · ไม่มี = ยังไม่เบิกไม้ (แบบเดิม) */
   window.SXS.rmWord = function () { try { return P && P.B && P.B.rj && P.B.rj.map ? 'ไม้ยังไม่ครบ (ไม้ไม่พอจ่าย/ยังไม่เบิก)' : 'ยังไม่เบิกไม้'; } catch (e) { return 'ยังไม่เบิกไม้'; } };
   /* v1.59 ป้ายดรอปดาวน์เรียง = ค่าจริงของ StarStock (เดิมเขียนตาย 15/21 — แก้ค่าแล้วป้ายไม่เปลี่ยน) */
-  window.SXS.cdLbl = function () { var st = P && P.B ? P.B.set : null, a = st && st.cutDue != null ? st.cutDue : 15, b = st && st.cutDuePaint != null ? st.cutDuePaint : 21; return '↕ ต้องตัดก่อน (End Date − ' + a + '/' + b + ' วัน · StarStock)'; };
+  window.SXS.cdLbl = function () { var st = P && P.B ? P.B.set : null, a = st && st.cutDue != null ? st.cutDue : 15, b = st && st.cutDuePaint != null ? st.cutDuePaint : 21; return '↕ ต้องตัดก่อน (End Date − ' + a + '/' + b + '/' + (st && st.cutDue14 != null ? st.cutDue14 : 10) + ' วัน · StarStock)'; }   /* v1.95 ทั่วไป/สี/งาน 14 วัน */;
   window.SXS.cdCard = function () {
     var st = P && P.B ? P.B.set : null; if (!st) return '';
     var a = st.cutDue != null ? st.cutDue : 15, b = st.cutDuePaint != null ? st.cutDuePaint : 21;
     return "<div class='sp-card' id='sxsCd'><h3>📅 วันต้องตัดเสร็จก่อน End Date <small>ค่าเดียวกับ StarStock (⚙ ตั้งค่า → Dashboard) · แก้ที่นี่ = ทุกเครื่องใช้ค่านี้</small></h3>"
       + "<div class='sp-row' style='gap:14px;flex-wrap:wrap'><label class='sp-mini'>Lot ทั่วไป <input class='sp-in num' type='number' min='0' max='120' step='1' data-sxcd='cutDue' value='" + a + "' style='width:70px'> วัน</label>"
       + "<label class='sp-mini'>งานสี (BOM N00S / ชื่อ HG·MU) <input class='sp-in num' type='number' min='0' max='120' step='1' data-sxcd='cutDuePaint' value='" + b + "' style='width:70px'> วัน</label>"
+      + "<label class='sp-mini'>งาน 14 วัน (ชื่อ Lot มี “14 วัน”) <input class='sp-in num' type='number' min='0' max='120' step='1' data-sxcd='cutDue14' value='" + (st.cutDue14 != null ? st.cutDue14 : 10) + "' style='width:70px'> วัน</label>"
       + "<button type='button' class='sp-btn ok' data-sxcdsave>💾 บันทึก (ทุกเครื่อง)</button><span class='sp-note' id='sxsCdMsg'></span></div>"
       + "<div class='sp-note' style='margin-top:6px'>ต้องตัดก่อน = End Date − จำนวนวัน · การ์ด Lot (แท็บรายการ Lot) เรียงตามวันนี้ ใกล้ก่อน + ป้าย ✂ ตัดก่อน / เลยกำหนดตัด · ถึงวันแล้วยังติด = แถบแดงด้านบน</div></div>";
   };
@@ -244,7 +245,7 @@ tr.sx-hit > td{animation:sxhit 1s ease-in-out 0s 3;background:color-mix(in srgb,
     var b = e.target && e.target.closest ? e.target.closest('[data-sxcdsave]') : null; if (!b || b.disabled) return;
     var v = {}; Array.prototype.forEach.call(D.querySelectorAll('[data-sxcd]'), function (i) { v[i.getAttribute('data-sxcd')] = i.value; });
     var msg = D.getElementById('sxsCdMsg'); b.disabled = true; if (msg) msg.textContent = 'กำลังบันทึกขึ้น Google Drive…';
-    Promise.resolve().then(function () { return P.cutDueSave(v); }).then(function (r) { b.disabled = false; if (msg) msg.textContent = '✓ บันทึกแล้ว — ทั่วไป ' + r.cutDue + ' วัน · งานสี ' + r.cutDuePaint + ' วัน (กด 🔄 โหลดข้อมูลใหม่ ด้านบน ให้การ์ดเรียงใหม่)'; var so = D.querySelector('#spLotSort option[value=""]'); if (so) so.textContent = window.SXS.cdLbl(); },
+    Promise.resolve().then(function () { return P.cutDueSave(v); }).then(function (r) { b.disabled = false; if (msg) msg.textContent = '✓ บันทึกแล้ว — ทั่วไป ' + r.cutDue + ' วัน · งานสี ' + r.cutDuePaint + ' วัน · งาน 14 วัน ' + (r.cutDue14 != null ? r.cutDue14 : 10) + ' วัน (กด 🔄 โหลดข้อมูลใหม่ ด้านบน ให้การ์ดเรียงใหม่)'; var so = D.querySelector('#spLotSort option[value=""]'); if (so) so.textContent = window.SXS.cdLbl(); },
       function (er) { b.disabled = false; if (msg) msg.textContent = '✗ บันทึกไม่สำเร็จ: ' + ((er && er.message) || er); });
   });
   /* v1.46 ติ๊กแสดง Lot ตามการเบิกไม้ — อยู่ในแถบตัวกรองของหน้านี้ (ข้าง ⚠ ไม่มีข้อมูล) · ค่าเก็บที่ StarStock (จำในเครื่องนี้) */
