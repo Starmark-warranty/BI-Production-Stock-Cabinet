@@ -1922,6 +1922,27 @@ sxMdayDeco = function(pane){
   var nt = row.querySelector('.sx-mdnote'); if (nt && PL.date === todayISO()) nt.insertAdjacentHTML('beforeend', ' · <b>วันนี้: ไม่จัดเอง — ปรับครบแล้วกด 🤖</b>');
 };
 D.addEventListener('click', function(e){ var b = e.target.closest && e.target.closest('[data-sxday]'); if (!b) return; e.preventDefault(); e.stopPropagation(); goDate(b.getAttribute('data-sxday'), true); }, true);
+/* ───────── StarStock v2.04 SAW PLAN Excel (ผู้ใช้ 23/10/2026 14:22 “ข้อมูลสถานะ Lot กับหมายเหตุก็ดูงง ๆ ปรับให้เข้าใจง่ายที”) ─────────
+   เดิม: ใบงาน A4 กระชับ มีช่อง “สถานะ Lot” ทุกแถวชั้นไม้ (ข้อความเดียวกันซ้ำ “รอตัด (ในคิว) · ตัดแล้ว 0 / เหลือ 210 / 210”) · หมายเหตุ “✂ 5/9”
+   ตอนนี้: สถานะ Lot อยู่ที่แถวหัว Lot ครั้งเดียว (ไม่มีช่องสถานะ Lot ในแถวชั้นไม้) · คำอ่านง่าย: ยังไม่เริ่มตัด · ทั้ง Lot 210 ชิ้น / ตัดแล้ว 80 จาก 210 ชิ้น
+     · หมายเหตุ = “แบ่งตัด 5 จาก 9 แผ่น” (แผนวันนี้ตัดบางแผ่นของชั้นไม้นั้น) */
+var sxLstTxt0 = sxLstTxt;
+sxLstTxt = function(L){
+  if (!L) return '';
+  var t = String(L.t || '').replace(/^รอตัด \(ในคิว\)$|^ยังไม่เริ่ม$|^⏳ รอตัด$/, 'ยังไม่เริ่มตัด').replace(/^✂ /, ''), a = [];
+  if (t) a.push(t);
+  if (L.all) a.push(L.cut != null && L.cut > 0 ? 'ตัดแล้ว ' + sxN(L.cut) + ' จาก ' + sxN(L.all) + ' ชิ้น' : 'ทั้ง Lot ' + sxN(L.all) + ' ชิ้น');
+  if (L.carry && !/ค้างตัด/.test(t)) a.push('ค้างตัด');
+  if (L.noWood) a.push('⛔ ไม้ยังไม่จ่าย ตัดไม่ได้');
+  return a.join(' · ');
+};
+/* v2.04 วันข้างหน้า: 🤖 ลงชั้นไม้ตามแผน StarStock แม้ไม้ยังไม่ครบ (StarStock วางแผนไว้แล้ว — วันนั้นไม้อาจมาแล้ว · สถานะไม้บอกในใบงาน)
+   เดิม: ชั้นไม้ที่ยังไม่เบิก / ไม้ไม่พอจ่าย = 🤖 ไม่ลงเครื่องทุกวัน → SAW PLAN วันข้างหน้ามี Lot น้อยกว่า StarStock · วันนี้ = เหมือนเดิม (ไม่ลงให้) */
+var SXR = { fut: 0 };
+if (window.SXS && SXS.rmBlock) { var sxRmBlock0 = SXS.rmBlock; SXS.rmBlock = function(id, code){ if (SXR.fut) return ''; return sxRmBlock0.apply(this, arguments); }; }
+var sxFut = function(fn){ return function(){ var f = PL.date > todayISO(); if (f) SXR.fut++; try { return fn.apply(this, arguments); } finally { if (f) SXR.fut--; } }; };
+setTimeout(function(){ if (SP.suggest && !SP.suggest._fut) { SP.suggest = sxFut(SP.suggest); SP.suggest._fut = 1; } }, 0);   /* SP.suggest ประกาศทีหลัง (ท้ายสคริปต์) */
+autoPlan = sxFut(autoPlan);
 
 function vals(setId){ var s = setById(setId) || setById('std'); return s.v; }
 function skipList(){ return String(MS.skip || '').split(/[,\s]+/).map(function(x){ return x.trim().toUpperCase(); }).filter(Boolean); }
@@ -4717,7 +4738,7 @@ function machKeys(withMach, a4){
 function anyLoss(){ return PS.sets.some(function(x){ return x.v && x.v.lossPct > 0; }); }
 function noteOf(r, g, ctx){
   var it = r.it, n = [];
-  if (isPart(it)) n.push((ctx.compact ? '✂ ' : 'ตัดบางแผ่น ') + nOf(it) + '/' + it.q);   // ใบงานกระชับ: ช่องหมายเหตุแคบ → ย่อ
+  if (isPart(it)) n.push('แบ่งตัด ' + nOf(it) + ' จาก ' + it.q + ' แผ่น');   /* v2.04 เดิมใบงานกระชับ “✂ 5/9” อ่านไม่ออก */   // ใบงานกระชับ: ช่องหมายเหตุแคบ → ย่อ
   if (problemOf(it)) n.push(problemOf(it));
   if (!capable(it, g.m).ok) n.push(capable(it, g.m).why);
   if (r.c.est) n.push('เวลาประมาณ');
@@ -4772,11 +4793,11 @@ function specMachine(g, withMach, a4, compact){
 }
 function extTxt(x){ return x.extN ? ' (รวมงานจากไฟล์ SAW อื่น ' + x.extN + ' ชั้นไม้ ' + hms(x.extSec) + ')' : ''; }
 /* A4 กระชับ (แนวตั้ง · 1 บรรทัด/ชั้นไม้ · หัวกลุ่มตาม Lot — เรียงตามรหัสไม้ → หัวกลุ่มตามรหัสไม้) */
-var CW = { i: 4, code: 23, desc: 26, xf: 8, lot: 25, ed: 9, q: 5, parts: 6, 't:total': 7, 't:each': 7, 't:cum': 7, wd: 13 /* v1.64 */, lst: 15 /* v1.90 */, chk: 3, note: 9 };
+var CW = { i: 4, code: 23, desc: 26, xf: 8, lot: 25, ed: 9, q: 5, parts: 6, 't:total': 7, 't:each': 7, 't:cum': 7, wd: 13 /* v1.64 */, lst: 15 /* v1.90 */, chk: 3, note: 16 /* v2.04 คำเต็ม (เดิม 9) */ };
 var FIT1_ROWS = 80;      // แถวในตาราง ≤ นี้ → Excel ย่อให้พอดี 1 หน้า (ปกติ 1 หน้าลง ~64 แถว → ย่อไม่ต่ำกว่า ~80%)
 function specMachineC(g){
   var byCode = UI.exp.sort === 'code', x = g.x;
-  var keys = byCode ? ['i', 'xf', 'lot', 'ed', 'q', 'parts', 't:total', 't:each', 't:cum', 'wd', 'lst', 'chk', 'note'] : ['i', 'code', 'desc', 'q', 'parts', 't:total', 't:each', 't:cum', 'wd', 'lst', 'chk', 'note'];   /* v1.90 + สถานะ Lot */   // v1.64 + วัตถุดิบ
+  var keys = byCode ? ['i', 'xf', 'lot', 'ed', 'q', 'parts', 't:total', 't:each', 't:cum', 'wd', 'lst', 'chk', 'note'] : ['i', 'code', 'desc', 'q', 'parts', 't:total', 't:each', 't:cum', 'wd', 'chk', 'note'];   /* v2.04 เรียงตาม Lot: สถานะ Lot อยู่หัว Lot แล้ว (ไม่ซ้ำทุกแถว) */   /* v1.90 + สถานะ Lot */   // v1.64 + วัตถุดิบ
   var cols = keys.map(function(k){ var c = col(k, null, CW[k]); c.x = false; return c; });
   if (byCode) cols[cols.length - 1].w = 15;
   var noP = g.rows.filter(function(r){ return r.it.parts == null; }).length, someParts = noP < g.rows.length, ctx = { a4: true, compact: true, someParts: someParts };
