@@ -2127,7 +2127,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.26</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.27</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3256,10 +3256,11 @@ var GasFS = (function () {
    v2.24 (2026-10-24 09:13 ผู้ใช้: “ส่วนตรงสถานะ อื่น ๆ ให้แตกออกให้คลิกกรองแยกได้ด้วยนะ เช่น ไม่มี saw … แจ้งจำนวนให้ด้วย”) SAW PLAN ตัวกรอง: ข้าง “อื่น ๆ” มีติ๊กย่อยพร้อมจำนวน — ตามเหตุ (⛔ ยังไม่แตก BOM · ⛔ ยังไม่มี BOM · ⚠ ยังไม่ Transfer · ✗ ไม้ไม่พอในคลัง · ? ไม่มีข้อมูล) และตาม .saw (📄 ไม่มี .saw · มี .saw) · ค่า/การกรองฝั่ง StarStock (spOth · spOthSet · spOthCnt · spRmPass) · หน้าจอติ๊กย่อย = ก้อนแยกท้าย sawplan.html (sxOthV224) — สคริปต์หลัก SAW PLAN ไม่ได้แก้
    v2.25 (2026-10-24 09:19 ผู้ใช้: “ตรงอื่น ๆ แตกเป็นแบบดรอปดาวไม่ได้หรอ”) SAW PLAN: ติ๊กย่อยของ “อื่น ๆ” เป็นดรอปดาวน์ — ปุ่ม “▾ ทุกเหตุ · ทุก .saw” ข้าง “อื่น ๆ” (บอกว่ากรองอะไรอยู่ · กรองอยู่ = สีส้ม) กดเปิดกล่องติ๊กตามเหตุ / ตามไฟล์ .saw พร้อมจำนวน · ✔ ทั้งหมด · คลิกนอกกล่อง / Esc = ปิด · ก้อนแยกท้าย sawplan.html (sxOthDdV225) · (ยอดจริง 09:19: ยังไม่แตก BOM 5 · ยังไม่มี BOM 97 · ยังไม่ Transfer 18 · ไม่มี .saw 114 — คอมเมนต์ v2.24 เขียนสลับ)
    v2.26 (2026-10-24 09:25–09:26 ผู้ใช้: “กรองแล้วไม่มีอะไร แล้วยังไม่มี BOM ไม่เลือก .saw คืออะไร งง · มี saw แล้วทำไมมันต้องไปอยู่ในอื่น ๆ ด้วยละ มันต้องบอกว่ายังไม่ทรานเฟอร์มากกว่า”) SAW PLAN ดรอปดาวน์ “อื่น ๆ” = ตามเหตุอย่างเดียว (ยังไม่มี BOM · ยังไม่แตก BOM · ยังไม่ Transfer …) แต่ละเหตุบอก “ไม่มี .saw n” ไว้ดู · เอาชุด .saw ออก (เดิมติ๊กออกทั้ง 2 = ซ่อนทุก Lot) · ติ๊กออกครบทุกเหตุ = ปิด “อื่น ๆ” · ค่าเก่าที่ติ๊ก .saw ออกไว้ไม่มีผลแล้ว
+   v2.27 (2026-10-24 09:32 ผู้ใช้: “ย่อกรอบ Export Excel แล้วขยับไปด้านบนให้ที มันเกิดช่องว่าง … ดูไม่สวย”) SAW PLAN: ปุ่ม Export Excel เล็กลง “📊 Excel” ย้ายขึ้นไปหัวหน้าสีฟ้า ข้าง “🖨 พิมพ์” (เดิมล้นลงแถว 3 ของแถบตัวกรอง อยู่ตัวเดียว · ความกว้างจอต่างกัน = ล้นต่างกัน) · ปุ่มเดิม ย้ายที่ กดแล้วเหมือนเดิม · ก้อนแยกท้าย sawplan.html (sxXlsV227)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.26';
+var VER = '2.27';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
