@@ -11,6 +11,8 @@
   ข้อมูลอยู่บน Google Drive (Apps Script ตัวเดียวกับ StarNexus / Production V2) · รายละเอียดรูปแบบไฟล์ดูหัว stock_app ข้างล่าง
   สร้างจาก build_stock.py (stock.css + gasfs.js + stock_app.js) — แก้ที่ไฟล์ต้นทางแล้ว build ใหม่
   v1.4 (2026-10-14): แก้ที่ไฟล์ HTML นี้ตรง ๆ (หน้า HOME + Lot ผลิต data 6) — ไฟล์ต้นทางชุดเดิมไม่ได้ตามมาด้วย
+  v2.46 (2026-10-24): หน้า Lot ผลิต (โครงหน้า + CSS + ตัววาด) อยู่ในไฟล์ lots.html — วางคู่กับไฟล์นี้ (แบบ sawplan.html · edgeplan.html · drillplan.html)
+                     แก้หน้า Lot ผลิต = แก้/อัป lots.html ไฟล์เดียว · ไฟล์นี้โหลดเองตอนเปิดหน้า — ดูหัวบล็อก v2.45 (ค้น “v2.45: หน้าแยกไฟล์”)
 -->
 <style>
   :root{
@@ -324,24 +326,8 @@
 
   /* ── Lot ผลิต (data 6) ── */
   #lots{position:absolute;top:52px;left:0;right:0;bottom:0;display:flex}
-  #lotSide{width:256px;flex:none;overflow:auto;padding:12px;border-right:.5px solid var(--line-strong);background:var(--bg2)}
-  #lotCenter{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
-  #lotDetail{width:380px;flex:none;overflow:auto;border-left:.5px solid var(--line-strong);background:var(--solid);padding:14px 16px 30px}
-  #lotBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:.5px solid var(--line-strong);background:var(--solid);flex-wrap:wrap}
-  #lotBar select{border:.5px solid var(--line-strong);border-radius:7px;padding:4px 6px;background:var(--solid);font-size:12px}
-  #lotCount{font-size:12.5px;color:var(--ink-dim)} #lotCount b{color:var(--ink);font-size:14px}
-  #lotLive{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-dim);white-space:nowrap}
-  #lotBanner{margin:8px 12px 0;padding:8px 12px;border-radius:9px;font-size:12.5px;line-height:1.55;background:var(--accent-soft);border:1px solid var(--line)}
-  #lotBanner.warn{background:rgba(232,144,31,.14);border-color:rgba(232,144,31,.35)}
-  #lotBanner b{color:var(--ink)}
-  #lotWrap{flex:1;overflow:auto;position:relative}
-  #lotSpacer{width:1px}
-  #lotRows{position:absolute;left:0;right:0;top:0}
   #lotFresh{font-size:11.5px;color:var(--ink-dim);background:var(--bg2);border-radius:20px;padding:4px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:440px}
   #lotFresh.warn{color:var(--warn)}
-  .lcols{grid-template-columns:minmax(132px,1.05fr) minmax(200px,2.5fr) 92px 60px 60px 78px 44px 78px 114px 76px 58px 96px 118px}
-  .row.lcols{height:44px}
-  .row.lcols > .code{font-size:11.5px}
   .seg button .c{font-family:var(--mono);font-size:10.5px;opacity:.7;margin-left:3px}
   .seg button.on .c{opacity:.9}
   .stg{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 8px 2px 7px;border-radius:20px;white-space:nowrap;
@@ -356,59 +342,22 @@
   .nb.new{background:var(--good)} .nb.chg{background:var(--orange)}
   .row.flash{animation:lflash 2.6s ease-out 1}
   @keyframes lflash{0%{background:rgba(232,144,31,.42)}100%{background:var(--card)}}
-  .m-only{display:none!important}
-  #lotDrop{position:absolute;inset:8px;border:2px dashed var(--accent);border-radius:14px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;
-    font-size:15px;font-weight:700;color:var(--accent);z-index:30;pointer-events:none;text-align:center;padding:20px}
   .lempty{max-width:560px;margin:56px auto;padding:26px 24px;text-align:center;border:1.5px dashed var(--line-strong);border-radius:16px;background:var(--card);font-size:13px;line-height:1.7;color:var(--ink-dim)}
   .lempty h3{font-size:16px;color:var(--ink);margin-bottom:6px}
   .lempty .tbtn{margin-top:12px}
-  #lotDetail h2{font-family:var(--mono);font-size:16px;display:flex;align-items:center;gap:8px;word-break:break-all}
-  #lotDetail h2 button{margin-left:auto;flex:none}
-  #lotDetail .nm1{font-size:14.5px;font-weight:700;margin:6px 0 8px;line-height:1.45}
   .hist{font-size:12px;line-height:1.55;border-left:3px solid var(--orange);padding:4px 0 4px 10px;margin:6px 0}
   .hist .t{color:var(--ink-faint);font-size:11px}
   .hist s{color:var(--ink-faint)}
   details.raw{margin-top:14px;font-size:12px}
   details.raw summary{cursor:pointer;color:var(--ink-dim);font-weight:600}
   details.raw .kv{margin-top:6px}
-  @media (max-width: 1500px){
-    .lcols{grid-template-columns:minmax(132px,1.05fr) minmax(200px,2.5fr) 92px 60px 60px 78px 78px 114px 76px 58px 96px}
-    .c-rq,.c-wk{display:none!important}
-  }
-  @media (max-width: 1320px){
-    #lotDetail{position:fixed;inset:52px 0 0 auto;width:min(420px,100vw);z-index:40;box-shadow:var(--shadow)}
-    .lcols{grid-template-columns:minmax(126px,1fr) minmax(190px,2.4fr) 90px 60px 60px 78px 114px 76px 58px 92px}
-    .c-pl{display:none!important}
-  }
-  @media (max-width: 1160px){
-    .lcols{grid-template-columns:minmax(120px,1fr) minmax(170px,2.2fr) 88px 58px 58px 78px 76px 90px}
-    .c-cr,.c-sh{display:none!important}
-  }
   @media (max-width: 980px){
     #lotFresh{display:none}
-    .lcols{grid-template-columns:minmax(112px,1fr) minmax(150px,2fr) 86px 78px 86px}
-    .c-bu,.c-pool,.c-pt{display:none!important}
-    .m-only{display:block!important}
-    .row.lcols .nm .n1{-webkit-line-clamp:1}
   }
   @media (max-width: 760px){
-    #lotSide{position:fixed;inset:52px auto 0 0;z-index:41;width:min(300px,86vw);box-shadow:var(--shadow);transform:translateX(-105%);transition:transform .2s}
-    body.sideOpen #lotSide{transform:none}
-    .lcols{grid-template-columns:minmax(96px,.9fr) minmax(0,1.6fr) 74px 70px}
-    .c-am{display:none!important}
-    #lotBar .lbl{display:none}
     .stg{padding:2px 6px;font-size:10.5px}
   }
   /* เปิดรายละเอียด Lot บนจอกว้าง: ช่องกลางแคบลง → ซ่อนคอลัมน์รอง (ดูในรายละเอียดแทน) */
-  @media (min-width: 1701px){
-    body.lotDet .lcols{grid-template-columns:minmax(126px,1fr) minmax(190px,2.4fr) 90px 60px 60px 78px 114px 76px 58px 92px}
-    body.lotDet .c-rq,body.lotDet .c-wk,body.lotDet .c-pl{display:none!important}
-  }
-  @media (min-width: 1321px) and (max-width: 1700px){
-    body.lotDet .lcols{grid-template-columns:minmax(120px,1fr) minmax(170px,2.2fr) 88px 58px 58px 78px 76px 90px}
-    body.lotDet .c-rq,body.lotDet .c-wk,body.lotDet .c-pl,body.lotDet .c-cr,body.lotDet .c-sh{display:none!important}
-  }
-
 
   /* ═════════ v1.5: คิวตัดงาน (แบบจอครัว KFC) — body[data-view="board"] ═════════ */
   body:not([data-view="board"]) #board,
@@ -556,46 +505,6 @@
   table.rmit td,table.rmit th{padding-left:4px;padding-right:4px}
   table.rmit td:nth-child(2) small{max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   @media (max-width:520px){ table.rmit td:nth-child(2) small{max-width:128px} }
-  /* v1.9 ตัวกรองรายคอลัมน์ (Lot ผลิต) */
-  #lotHdr span{position:relative;padding-right:17px}
-  #lotHdr .cfb{position:absolute;right:2px;top:50%;transform:translateY(-50%);width:16px;height:18px;display:flex;align-items:center;justify-content:center;border-radius:4px;cursor:pointer;opacity:0;transition:opacity .12s}
-  #lotHdr .cfb svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round}
-  #lotHdr span:hover .cfb,#lotHdr .cfb:focus{opacity:.75}
-  #lotHdr .cfb:hover{opacity:1;background:var(--line)}
-  #lotHdr span.fon{color:var(--accent)}
-  #lotHdr span.fon .cfb{opacity:1;background:var(--accent);color:#fff}
-  #lotHdr span.fon .cfb svg{fill:currentColor}
-  @media (hover:none){ #lotHdr .cfb{opacity:.6} }
-  #lotCfBar{display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:.5px solid var(--line-strong);background:var(--solid);flex-wrap:wrap}
-  #lotCfBar .lbl{font-size:11px;font-weight:700;color:var(--ink-faint);letter-spacing:.3px}
-  .lcfchips{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}
-  .lcfchip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;background:var(--accent-soft);color:var(--ink);border:.5px solid var(--line-strong);border-radius:999px;padding:2px 4px 2px 9px;cursor:pointer;max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lcfchip b{font-weight:700;color:var(--accent);font-size:11px}
-  .lcfchip i{font-style:normal;width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink-dim);flex:none}
-  .lcfchip i:hover{background:var(--bad);color:#fff}
-  .lcfchips a{font-size:11.5px;color:var(--ink-dim);align-self:center;margin-left:2px}
-  .lcfpop{position:fixed;z-index:60;background:var(--solid);border:.5px solid var(--line-strong);border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;padding:10px 12px 12px;font-size:12.5px;overflow:hidden}
-  .lcfpop .h{display:flex;align-items:center;gap:8px}
-  .lcfpop .h b{font-size:13px}
-  .lcfpop .h .tbtn{margin-left:auto;padding:2px 8px}
-  .lcfpop .srt{display:flex;gap:6px}
-  .lcfpop .srt .tbtn{flex:1;justify-content:center;font-size:12px;padding:4px 6px}
-  .lcfpop .rng{display:flex;gap:6px}
-  .lcfpop .rng label{flex:1;display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--ink-dim);min-width:0}
-  .lcfpop .rng input{border:.5px solid var(--line-strong);border-radius:7px;padding:4px 6px;background:var(--solid);color:var(--ink);font-size:12px;min-width:0;width:100%}
-  .lcfpop input.q{border:.5px solid var(--line-strong);border-radius:8px;padding:6px 9px;background:var(--bg2);color:var(--ink);font-size:12.5px}
-  .lcfpop label.all{display:flex;align-items:center;gap:7px;font-weight:700;padding:2px 2px 4px;border-bottom:.5px solid var(--line)}
-  .lcfpop .c{margin-left:auto;color:var(--ink-faint);font-family:var(--mono);font-size:11px;font-weight:400}
-  .lcfpop .lst{overflow:auto;min-height:60px;max-height:300px;display:flex;flex-direction:column}
-  .lcfpop .lst label{display:flex;align-items:center;gap:7px;padding:3px 2px;border-radius:5px;cursor:pointer}
-  .lcfpop .lst label:hover{background:var(--bg2)}
-  .lcfpop .lst label .v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-  .lcfpop .lst label.emp .v{color:var(--ink-faint);font-style:italic}
-  .lcfpop .more{font-size:11px}
-  .lcfpop .more:empty{display:none}
-  .lcfpop .ft{display:flex;gap:6px;align-items:center;padding-top:6px;border-top:.5px solid var(--line)}
-  .lcfpop .ft .sp{flex:1}
-  .lcfpop .ft .tbtn{padding:4px 10px;font-size:12px}
   /* v1.10 ปิด Lot ว่าจบแล้ว */
   .ldb{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;color:var(--good);border:1px solid var(--good);border-radius:20px;padding:0 6px;margin-left:4px;white-space:nowrap;vertical-align:middle}
   .bcard .bh .bdone{flex:none;align-self:center;width:18px;height:18px;border:1.5px solid var(--line-strong);border-radius:5px;background:var(--solid);cursor:pointer;padding:0;position:relative;margin-left:2px}
@@ -2136,7 +2045,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.45</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.46 · lots.html กำลังโหลด">v2.46</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -2195,44 +2104,8 @@ body.tv #bdDash details.dbmcd{display:none!important}
 <!-- v1.4: หน้า HOME -->
 <section id="home"></section>
 
-<!-- v1.4: Lot ผลิต (data 6) -->
-<div id="lots">
-  <aside id="lotSide"></aside>
-  <section id="lotCenter">
-    <div id="lotBar">
-      <span id="lotCount"></span>
-      <span class="sp"></span>
-      <span id="lotLive"></span>
-      <select id="lotSort" title="เรียงตาม">
-        <option value="create:-1">LotCreate ใหม่→เก่า</option>
-        <option value="create:1">LotCreate เก่า→ใหม่</option>
-        <option value="end:1">enddate ก่อน→หลัง</option>
-        <option value="end:-1">enddate หลัง→ก่อน</option>
-        <option value="plan:1">แผน45 ก่อน→หลัง</option>
-        <option value="plan:-1">แผน45 หลัง→ก่อน</option>
-        <option value="stage:1">Stage 0→3</option>
-        <option value="stage:-1">Stage 3→0</option>
-        <option value="lot:1">LotId A→Z</option>
-        <option value="lot:-1">LotId Z→A</option>
-        <option value="amount:-1">Amount มาก→น้อย</option>
-        <option value="amount:1">Amount น้อย→มาก</option>
-        <option value="parts:-1">TotalPart มาก→น้อย</option>
-        <option value="parts:1">TotalPart น้อย→มาก</option>
-      </select>
-      <button class="tbtn" id="lotExp" title="ส่งออกแถวที่กรองอยู่เป็น CSV (เปิดใน Excel ได้)">⬇<span class="lbl"> CSV</span></button>
-      <button class="tbtn" id="lotImp" title="นำเข้าไฟล์ CSV จาก BI ขึ้น Google Drive — ทุกเครื่องเห็นภายใน 30 วิ">⬆<span class="lbl"> นำเข้า CSV</span></button>
-      <input type="file" id="lotFile" accept=".csv,.txt,.tsv,text/csv" class="hide">
-    </div>
-    <div id="lotBanner" class="hide"></div>
-    <div id="lotWrap">
-      <div id="lotHdr" class="hdr lcols"></div>
-      <div id="lotSpacer"></div>
-      <div id="lotRows"></div>
-    </div>
-    <div id="lotDrop" class="hide">วางไฟล์ CSV (data 6) ตรงนี้<br>เพื่อส่งขึ้น Google Drive ให้ทุกเครื่องเห็น</div>
-  </section>
-  <aside id="lotDetail" class="hide"></aside>
-</div>
+<!-- v1.4: Lot ผลิต (data 6) · v2.45: โครงหน้าอยู่ใน lots.html (template id="sxmHtml") — ตัวโหลด SXM ใส่ให้ตอนโหลดเสร็จ -->
+<div id="lots"></div>
 
 <!-- v1.5: คิวตัดงาน (แบบจอครัว KFC) -->
 <div id="board"></div>
@@ -3284,10 +3157,11 @@ var GasFS = (function () {
    v2.43 (2026-10-24 15:24 / 15:27 ผู้ใช้: “หน่วยแผ่นให้ใส่ต่อท้ายจำนวน … ค้าง 4 แผ่นจาก 4 ชิ้นหรือเปล่า” · “ใส่ชื่อลูกค้ากับชื่อโปรเจ็คตัวเล็ก ๆ ข้าง ๆ lot · ใส่ pool ถัดจากเลข .saw”) สถานะไม้รายแผ่นมีหน่วย (รอปิดผิว 2 แผ่น · รอคลังจ่าย 3 แผ่น) · รอปิดผิวบอกใบสั่ง SP302 · Excel ทุกชีต “x ชิ้น จาก y ชิ้น” · หน้าเว็บ ✂ ค้าง x ชิ้น จาก y ชิ้น · Excel ใบงาน (StarStock + SAW PLAN): ชื่อ Lot + Project ตัวเล็กสีเทา · แถวเขียว .Saw … · Pool · Enddate
    v2.44 (2026-10-24 16:02 ผู้ใช้: “หน้า sawplan ให้ปรับโทนสีได้ด้วย ขาว ดำ เทา”) SAW PLAN (sawplan.html): ปุ่ม ◐ โทนสี บนหัวสีน้ำเงิน กดวน ตาม StarStock → ขาว → เทา → ดำ (จำในเครื่องนี้) · ค่าเริ่ม = ตามปุ่ม ◐ ของ StarStock (เปลี่ยนตามทันที) · พิมพ์ / Excel สีปกติเสมอ
    v2.45 (2026-10-24 16:32 + 16:36 ผู้ใช้: “ทำไมบางเครื่องเปิดปิดเครื่องตัดไม่ได้ … พอดีผมไปเปิดเครื่องอื่น” · รูปคอมอีกเครื่องไม่มีแถวเปิด/ปิดเครื่อง) Dashboard: แถว 🗓 เปิด/ปิดเครื่องรายวัน แสดงทุกคอมเป็นค่าเริ่ม (เดิมซ่อน ต้องติ๊กเปิดทีละคอมที่ ⋯) · ซ่อนได้เฉพาะคอมที่เอาติ๊กออกเอง · จอทีวีไม่แสดง
+   v2.46 (2026-10-24 16:29 ผู้ใช้: “แยก HTML ปุ่ม lot ผลิตได้ปะครับ”) REFACTOR หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME) แยกเป็นไฟล์ lots.html — โครงหน้า + CSS + ตัววาด/ตัวกรอง/แผงรายละเอียด/นำเข้า-ส่งออก CSV (43 ชิ้น · lots.html v1.0) หน้าตาเหมือน v2.45 ทุกอย่าง · ข้อมูล data 6 (L · lotLoad · lotApply) + ปิด Lot เอง (LD) ยังอยู่ index · ตัวโหลด SXM (โหลดตอนเปิดหน้า · รันในสโคปเดียวกัน · ใช้กับ Dashboard ต่อได้) — ดูหัวบล็อก v2.46 (ค้น “หน้าแยกไฟล์ (SXM)”)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.45';
+var VER = '2.46';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -4350,198 +4224,157 @@ function lotStartPoll() {
     if (!document.hidden && view() === 'lots') { lotRenderFresh(); if (ch) lotDraw(); }
   }, 15000);
 }
-
-/* ═════════ Lot ผลิต: หน้าจอ ═════════ */
-function lotShow() {
-  if (!$('lq')) lotRenderSide();
-  lotRenderFresh(); lotBanner(); lotRefresh(false);
-  if (ensureFs()) lotLoad({ quiet: L.loaded });
+/* ── v2.46 ย้ายไป lots.html: lotShow · lotRenderFresh · lotBanner · lotSeg · lotRenderSide · lotSegOn · lotMatch · LOT_SORTV · lotSorted · lotRefresh · lotSideCounts · LCOLS · LCOL_TIP · lotLayout · lotDrawHdr ── */
+/* ═══════════════════════════════════════════════════════════════════════
+   v2.46: หน้าแยกไฟล์ (SXM) — หน้า “Lot ผลิต” อยู่ในไฟล์ lots.html (วางคู่กับ index.html แบบ sawplan.html / edgeplan.html / drillplan.html)
+   ผู้ใช้ 24/10/2026 16:29 (รูปหน้า HOME 4 ปุ่ม): “แยก HTML ปุ่ม lot ผลิตได้ปะครับ”
+     (เหตุผลเดียวกับ 22/10 10:21: “เวลาแก้ผมได้แก้แค่ Tab … แล้วอัพ เพราะตอนนี้ทำร่วม 2 คน ได้ไม่ต้องรอแชทเดียวกัน”)
+   เดิม: หน้าตา + CSS + ตัววาดของหน้า Lot ผลิต อยู่ในไฟล์นี้ทั้งหมด → แก้หน้า Lot ผลิตต้องแก้/อัป index.html ทั้งไฟล์ (2 MB) · สองคนแก้พร้อมกันไม่ได้
+   ตอนนี้:
+     · lots.html = หน้า Lot ผลิตทั้งหน้า: โครงหน้า (แถบเครื่องมือ · ตาราง · แผงรายละเอียด) · CSS · แถบซ้าย/ตัวกรอง/เรียง · ตัวกรองรายคอลัมน์ (v1.9)
+       · แผงรายละเอียด Lot · ⬇ CSV · ⬆ นำเข้า CSV · ปุ่ม ✓ ปิดว่าจบ… · คีย์ลัด — แก้หน้า Lot ผลิต = แก้/อัป lots.html ไฟล์เดียว
+     · index.html (ไฟล์นี้) = ข้อมูล data 6 ทั้งหมด (L · lotLoad · lotBuild · lotApply · รอบอัปเดต 30 วิ · lotCounts ของ HOME) · ปิด Lot เอง (LD · ldAsk)
+       · ตัวโหลดข้างล่าง · แท็บอื่นยังเรียกชื่อเดิมได้ (lotShowDetail · lotRefresh · lotDraw …) ผ่านตัวแทน (stub) ที่ส่งต่อให้ lots.html
+     · ตัวโหลด: เปิดหน้าไหนก็ได้ = โหลด lots.html ทันที (ไม่รอเข้าหน้า) → ใส่ CSS ต่อท้าย <head> → รันโค้ดด้วย eval “ในสโคปของไฟล์นี้” (sxmEval)
+       = โค้ดใน lots.html เรียก L · B · esc · fD · ldBadge … ของไฟล์นี้ได้ตรง ๆ เหมือนอยู่ไฟล์เดียวกัน → โค้ดเรียก sxmRegister('lots', { … })
+       → ตัวโหลดเรียก init() (ใส่โครงหน้าใน #lots + ผูกปุ่ม) → อยู่หน้า Lot ผลิต = วาดเลย
+     · ยังโหลดไม่เสร็จ = หน้า Lot ผลิตขึ้น “กำลังโหลด…” แล้ววาดเองเมื่อเสร็จ · กด Lot จากหน้าอื่นระหว่างนั้น = จำไว้ เปิดรายละเอียดให้หลังโหลดเสร็จ
+     · โหลดไม่ได้ (ไม่มีไฟล์ / เน็ตหลุด) = บอกที่หน้า + ปุ่มลองใหม่ · โค้ดใน lots.html พัง = บอกข้อความ error · หน้าอื่นทำงานปกติ
+     · เลขบรรทัดใน error (console) = เลขบรรทัดของไฟล์ lots.html · เปิดจากไฟล์ตรง ๆ (file://) = เปิดในกรอบซ่อนแล้วรับโค้ดทาง postMessage
+     · เวอร์ชัน: index (VER) กับ lots.html (ver ในไฟล์) นับแยกกัน · ชี้ที่ “v…” มุมบนซ้าย = เห็นทุกไฟล์
+     · ใช้กับหน้าอื่นได้ (เช่น Dashboard) — เพิ่มชื่อใน SXM_PAGES + ตัวแทนชื่อเดิม แบบของ lots ข้างล่าง
+   ⚠ ชื่อในไฟล์นี้ที่ lots.html เรียกใช้อยู่ = รายการ NEED บนหัวโค้ดใน lots.html — เปลี่ยนชื่อ/ลบตัวไหน ต้องแก้ lots.html ด้วย
+     (lots.html ตรวจรายการนี้ตอนโหลด: ขาดตัวไหน = เตือนใน console + ข้อความมุมจอ)
+   ═══════════════════════════════════════════════════════════════════════ */
+var SXM_PAGES = { lots: { page: 'lots.html', name: 'Lot ผลิต', view: 'lots', box: 'lots' } };
+var SXM = {};   // key → { api, ver, err, loading, failAt, ran, miss }
+Object.keys(SXM_PAGES).forEach(function (k) { SXM[k] = { api: null, ver: '', err: '', loading: null, failAt: 0, ran: false, miss: [] }; });
+/* eval ตรง (direct eval) ในฟังก์ชันที่อยู่ในสโคปของไฟล์นี้ → โค้ดของหน้าแยกเห็นตัวแปร/ฟังก์ชันทั้งหมดของ StarStock (strict เหมือนเดิม)
+   ชื่อที่ประกาศในหน้าแยก อยู่ในสโคปของ eval เอง (ไม่ทับชื่อของไฟล์นี้) — ส่งของกลับมาทาง sxmRegister เท่านั้น */
+function sxmEval(__sxmSrc) { return eval(__sxmSrc); }
+/* หน้าแยกเรียกตอนท้ายโค้ด: api = { ver, miss:[ชื่อที่หาไม่เจอ], init(), <ชื่อฟังก์ชันที่ index เรียก>…, exports:{ชื่อ: ฟังก์ชัน} } */
+function sxmRegister(key, api) {
+  var M = SXM[key]; if (!M) throw Error('ไม่รู้จักหน้า ' + key);
+  M.api = api || {}; M.ver = String(M.api.ver || '?'); M.miss = M.api.miss || [];
+  try { if (M.api.exports) Object.keys(M.api.exports).forEach(function (k) { window.StarStock[k] = M.api.exports[k]; }); } catch (e) { }   // ไว้ทดสอบ/เรียกจาก console เหมือนเดิม
 }
-function lotRenderFresh() {
-  var e = $('lotFresh'), s = lotSrcTxt(), ago = function (t) { var m = Math.round((Date.now() - t) / 1000); return m < 60 ? m + ' วิที่แล้ว' : durTh(m / 60) + 'ที่แล้ว'; };   // v1.7.1 เกินชั่วโมง = ชม. + นาที
-  if (e) { e.textContent = L.none ? 'data 6 · ยังไม่มีไฟล์บน Drive' : L.loaded ? 'data 6 · ' + L.rows.length.toLocaleString('th-TH') + ' แถว' + (s.at ? ' · อัปเดต ' + s.short : '') + (s.src ? ' · ' + s.src : '') : 'กำลังอ่าน data 6…';
-    if (s.checked) e.title = 'StarSync ตรวจ AX ล่าสุด ' + s.checked + ' (ข้อมูลไม่เปลี่ยนตั้งแต่ ' + s.short + ')';
-    e.classList.toggle('warn', !!L.err || (!s.imp && s.age != null && s.age > 40)); }
-  var lv = $('lotLive');
-  if (lv) lv.innerHTML = '<span class="live' + (L.err ? ' bad' : '') + '"></span><span class="lbl">' + (L.err ? 'ติดต่อ Drive ไม่ได้ — ลองใหม่เอง' : 'อัปเดตเองทุก 30 วิ') + (L.lastCheck ? ' · ตรวจ ' + ago(L.lastCheck) : '') + '</span>';
+/* ข้อความในไฟล์ → { js, css, html, line } · line = จำนวนบรรทัดก่อนโค้ด (เลขบรรทัดใน error ตรงกับไฟล์) */
+function sxmParse(t, page) {
+  var doc = new DOMParser().parseFromString(t, 'text/html'), js = doc.getElementById('sxmJs'), css = doc.getElementById('sxmCss'), ht = doc.getElementById('sxmHtml');
+  if (!js) throw Error('ไม่พบโค้ด (script id="sxmJs") ใน ' + page);
+  var i = t.indexOf('id="sxmJs"'), line = i >= 0 ? t.slice(0, t.indexOf('>', i) + 1).split('\n').length - 1 : 0;
+  return { js: js.textContent, css: css ? css.textContent : '', html: ht ? ht.innerHTML : '', line: line };
 }
-function lotBanner() {
-  var bn = $('lotBanner'), s = lotSrcTxt(); if (!bn) return;
-  var h = '', warn = false;
-  if (L.err && L.rows.length) { h = '<b>อ่าน data 6 จาก Google Drive ไม่ได้</b> — ' + esc(netMsg(L.err)) + ' · ใช้ข้อมูลเดิมไปก่อน จะลองใหม่เองทุก 30 วิ'; warn = true; }
-  else if (L.err) { h = '<b>อ่าน data 6 จาก Google Drive ไม่ได้</b> — ' + esc(netMsg(L.err)) + ' · <a href="#" data-act="retry">ลองเลย</a>'; warn = true; }
-  else if (L.loaded && !L.none && s.imp) h = '<b>ข้อมูลชุดนี้นำเข้าจากไฟล์ CSV</b>' + (L.meta && L.meta.file ? ' (' + esc(L.meta.file) + ')' : '') + (L.meta && L.meta.by ? ' โดย ' + esc(L.meta.by) : '') + (s.at ? ' เมื่อ ' + esc(s.short) : '')
-    + ' — ยังไม่ได้ดึงจาก AX อัตโนมัติ · ตารางเปลี่ยนเมื่อมีคนนำเข้าไฟล์ใหม่ หรือเมื่อ StarSync เริ่มส่ง (sync-ax-lots.ps1 + lots.sql)';
-  else if (L.loaded && !L.none && s.age != null && s.age > 40) { h = '<b>StarSync ไม่ได้ส่งข้อมูล Lot มา ' + durTh(s.age) + 'แล้ว</b> — ดูหน้าต่าง StarSync ที่เครื่องออฟฟิศ (ปกติส่งทุก 10 นาทีเมื่อมีอะไรเปลี่ยน)'; warn = s.age > 120; }
-  /* v1.7: ข้อมูลจาก AX — บอกว่าช่องที่ AX ไม่มีเติมจาก BI ได้กี่ Lot */
-  if (!h && L.loaded && !L.none && L.meta && /StarSync/i.test(L.meta.src || ''))
-    h = '<b>ข้อมูลจาก AX (StarSync ทุก 10 นาที)</b> · ' + (L.bi ? 'Bu · Amount · แผน45 เติมจากไฟล์ BI ที่นำเข้าไว้ ' + L.biUsed.toLocaleString('th-TH') + ' Lot · Lot ที่ไม่มีในไฟล์ BI ช่องพวกนี้ว่าง (นำเข้าไฟล์ใหม่เมื่อไหร่ก็เติมให้)'
-      : 'ช่อง Bu · Amount · แผน45 · ReqBom · PeConfirm ไม่มีใน AX — ลากไฟล์ data 6 จาก BI มาวางเพื่อเติม (ไม่ทับตาราง)');
-  bn.classList.toggle('hide', !h); bn.classList.toggle('warn', warn); bn.innerHTML = h;
+async function sxmFetch(page) {
+  var r = await fetch(page, { cache: 'no-cache' });   // no-cache = ถามเซิร์ฟเวอร์ทุกครั้ง (ไม่เปลี่ยน = 304 เร็ว) → อัปไฟล์ใหม่แล้ว F5 เห็นทันที
+  if (!r.ok) throw Error('HTTP ' + r.status + (r.status === 404 ? ' — ยังไม่มีไฟล์ ' + page + ' วางคู่กับ index.html' : ''));
+  return sxmParse(await r.text(), page);
 }
-function lotSeg(key, opts) { return '<div class="seg">' + opts.map(function (o) { return '<button data-lseg="' + key + '" data-v="' + o[0] + '" class="' + (L.f[key] === o[0] ? 'on' : '') + '">' + esc(o[1]) + '<span class="c" data-lc="' + key + ':' + o[0] + '"></span></button>'; }).join('') + '</div>'; }
-function lotRenderSide() {
-  var h = '<div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="lq" type="search" placeholder="ค้นหา Lot / remark / Shelf" value="' + esc(L.f.q) + '" autocomplete="off"></div>';
-  h += '<div class="fgrp"><h4>Stage</h4>' + lotSeg('stage', [['all', 'ทั้งหมด'], ['open', 'ยังไม่จบ'], ['0', '0 NoBom'], ['1', '1 Open'], ['2', '2 PD'], ['3', '3 Finish'], ['closed', '✓ ปิดเอง']])   /* v1.10 ปิดเอง */ + '</div>';
-  var wk = weekNow();
-  h += '<div class="fgrp"><h4 title="เทียบ enddate กับวันนี้ · เลยกำหนด = enddate ผ่านไปแล้วแต่ยังไม่ Finish · ' + esc(WEEK_TIP) + '">enddate</h4>' + lotSeg('due', [['all', 'ทั้งหมด'], ['late', 'เลยกำหนด'], ['wk0', 'สัปดาห์นี้ W' + wk.w0], ['wk1', 'สัปดาห์หน้า W' + wk.w1], ['30', '30 วันข้างหน้า']]) + '</div>';
-  h += '<div class="fgrp"><h4>Bu</h4><div class="flist" id="lfBu"></div></div>';
-  h += '<div class="fgrp"><h4>prodpoolid</h4><div class="flist" id="lfPool"></div></div>';
-  h += '<div class="fgrp"><button class="tbtn" id="lfClear" style="width:100%;justify-content:center">ล้างตัวกรองทั้งหมด</button></div>';
-  h += '<div class="fnote" style="margin-top:4px">ที่มา: lots/lots.csv บน Google Drive — StarSync ดึงจาก AX ทุก 10 นาที (lots.sql) หรือไฟล์ data 6 ที่นำเข้า · ช่อง Bu/Amount/แผน45 ของข้อมูล AX เติมจากไฟล์ BI ล่าสุด (lots/bi.csv)</div>';   // v1.7
-  $('lotSide').innerHTML = h;
-  var qi = $('lq'); qi.oninput = function () { clearTimeout(qi._t); qi._t = setTimeout(function () { L.f.q = qi.value; lotRefresh(true); }, 120); };
-  $('lotSide').querySelectorAll('[data-lseg]').forEach(function (b) { b.onclick = function () { L.f[b.dataset.lseg] = b.dataset.v; if (b.dataset.lseg === 'stage') lotSavePref(); lotSegOn(); lotRefresh(true); }; });
-  $('lfClear').onclick = function () { L.f = { q: '', stage: 'all', due: 'all', bu: null, pool: null }; L.cf = {}; lotCfClose(); lotSavePref(); lotRenderSide(); lotRefresh(true); };   // v1.9 ล้างตัวกรองรายคอลัมน์ด้วย
+/* เปิดจากไฟล์ (file://): fetch อ่านไฟล์ข้างเคียงไม่ได้ → กรอบซ่อน + postMessage (หน้าแยกส่งโค้ดของตัวเองมา) */
+function sxmViaFrame(page) {
+  return new Promise(function (res, rej) {
+    var f = document.createElement('iframe'), done = false, to = 0;
+    function fin(v, e) { if (done) return; done = true; clearTimeout(to); window.removeEventListener('message', onMsg); try { f.remove(); } catch (x) { } if (e) rej(e); else res(v); }
+    function onMsg(e) { var d = e.data; if (e.source !== f.contentWindow || !d || d.starstockPage !== 1) return; fin({ js: String(d.js || ''), css: String(d.css || ''), html: String(d.html || ''), line: 0 }); }
+    window.addEventListener('message', onMsg);
+    to = setTimeout(function () { fin(null, Error('เปิด ' + page + ' ไม่ได้ (ไม่มีไฟล์วางคู่กับ index.html?)')); }, 15000);
+    f.style.display = 'none'; f.setAttribute('aria-hidden', 'true'); f.title = page; f.src = page + '?t=' + Date.now();
+    document.body.appendChild(f);
+  });
 }
-function lotSegOn() { $('lotSide').querySelectorAll('[data-lseg]').forEach(function (b) { b.classList.toggle('on', L.f[b.dataset.lseg] === b.dataset.v); }); }
-function lotMatch(x, F, skip) {
-  /* v1.10: ยังไม่จบ = ไม่ Finish และไม่ได้ปิดเอง · ✓ ปิดเอง = เฉพาะที่ปิดเอง · Stage 0–3 = ตาม AX ที่ยังไม่ได้ปิดเอง */
-  if (skip !== 'stage' && F.stage !== 'all') { var cl = !!ldOf(x.id); if (F.stage === 'open') { if (x.st === 3 || cl) return false; } else if (F.stage === 'closed') { if (!cl) return false; } else if (cl || String(x.st) !== F.stage) return false; }
-  if (skip !== 'due' && F.due !== 'all') { var t = lotToday();
-    if (F.due === 'late') { if (!(!lotFin(x) && x.end != null && x.end < t)) return false; }
-    else if (F.due === 'wk0' || F.due === 'wk1') { var wk = L._wk || weekNow(); if (F.due === 'wk0' ? (x.ew !== wk.w0 || x.ey !== wk.y0) : (x.ew !== wk.w1 || x.ey !== wk.y1)) return false; }
-    else if (x.end == null || x.end < t || x.end > t + (+F.due) * DAY) return false; }
-  if (skip !== 'bu' && F.bu != null && x.bu !== F.bu) return false;
-  if (skip !== 'pool' && F.pool != null && x.pool !== poolNorm(F.pool)) return false;   // v1.52 ค่าที่จำไว้ก่อนหน้านี้ (mp323) = ตรงกับ MP323
-  /* v1.9 ตัวกรองรายคอลัมน์ (skip 'cf:<คอลัมน์>' = นับค่าของคอลัมน์นั้นในกล่องกรอง แบบ Excel) */
-  if (!lotCfOk(x, skip && skip.indexOf('cf:') === 0 ? skip.slice(3) : null)) return false;
-  if (L._tok) for (var i = 0; i < L._tok.length; i++) if (x.s.indexOf(L._tok[i]) < 0) return false;
-  return true;
+function sxmApply(key, pk) {
+  var M = SXM[key], P = SXM_PAGES[key], id = 'sxmCss-' + key, st = document.getElementById(id);
+  if (!st) { st = document.createElement('style'); st.id = id; document.head.appendChild(st); }   // ต่อท้าย <head> = หลัง CSS ของไฟล์นี้
+  st.textContent = pk.css;
+  var box = $(P.box); if (box && pk.html) box.innerHTML = pk.html;   // โครงหน้า (template id="sxmHtml") ใส่ก่อนรันโค้ด — เหมือนเดิมที่อยู่ใน <body> ตั้งแต่เปิดหน้า
+  M.ran = true;   // รันแล้ว = ไม่โหลดซ้ำ (ตัวรับคลิก/คีย์จะซ้อนกัน) — แก้ไฟล์แล้วต้อง F5
+  sxmEval(new Array((pk.line || 0) + 1).join('\n') + pk.js + '\n//# sourceURL=' + P.page);
+  if (!M.api) throw Error(P.page + ' ไม่ได้เรียก sxmRegister(…) ท้ายโค้ด');
+  if (M.api.init) M.api.init();   // ผูกปุ่ม (เดิม lotBindUi ตอนเปิดโปรแกรม)
 }
-var LOT_SORTV = { create: 'create', end: 'end', plan: 'plan', week: 'week', parts: 'parts', amount: 'amount', stage: 'st' };
-function lotSorted(a) {
-  var k = L.sort.k, d = L.sort.d;
-  if (k === 'lot' || k === 'remark' || k === 'bu' || k === 'pool' || k === 'shelf') {
-    var f = { lot: 'id', remark: 'remark', bu: 'bu', pool: 'pool', shelf: 'shelf' }[k];
-    return a.sort(function (p, q) { var x = p[f] || '', y = q[f] || ''; if (!x !== !y) return x ? -1 : 1; return coll.compare(x, y) * d || (p.id < q.id ? -1 : 1); });
-  }
-  var g = LOT_SORTV[k] || 'create';
-  return a.sort(function (p, q) { var x = p[g], y = q[g]; if (x == null || x < 0 && g === 'st') x = null; if (y == null || y < 0 && g === 'st') y = null;
-    if (x == null || y == null) return x == null && y == null ? 0 : x == null ? 1 : -1;      // ว่างอยู่ท้ายเสมอ
-    return x === y ? ((q.create || 0) - (p.create || 0)) : (x < y ? -d : d); });
+function sxmLoad(key) {
+  var M = SXM[key], P = SXM_PAGES[key];
+  if (!M || M.loading || M.api || M.ran) return M && M.loading;
+  M.err = '';
+  M.loading = (async function () {
+    var pk;
+    if (location.protocol === 'file:') { try { pk = await sxmFetch(P.page); } catch (e) { pk = await sxmViaFrame(P.page); } }
+    else pk = await sxmFetch(P.page);
+    sxmApply(key, pk);
+  })().then(function () {
+    M.loading = null; M.failAt = 0;
+    if (M.miss.length) { console.error('StarStock: ' + P.page + ' ต้องใช้ชื่อเหล่านี้จาก index.html แต่ไม่มี — ', M.miss.join(', ')); toast('⚠ ' + P.page + ' ต้องใช้ ' + M.miss.slice(0, 4).join(', ') + (M.miss.length > 4 ? ' …' : '') + ' จาก index.html (ไม่มี) — ดู console', 9000); }
+    sxmAfter(key);
+  }, function (e) {
+    M.loading = null; M.failAt = Date.now(); M.err = (e && e.message) || String(e);
+    console.error('StarStock: โหลด ' + P.page + ' ไม่ได้', e);
+    sxmAfter(key);
+  });
+  return M.loading;
 }
-function lotRefresh(resetScroll) {
-  var q = L.f.q.trim().toLowerCase(); L._tok = q ? q.split(/\s+/) : null; L._wk = weekNow();
-  var out = []; for (var i = 0; i < L.rows.length; i++) if (lotMatch(L.rows[i], L.f)) out.push(L.rows[i]);
-  L.shown = lotSorted(out);
-  var sum = 0, nAm = 0; out.forEach(function (x) { if (x.amount != null) { sum += x.amount; nAm++; } });
-  $('lotCount').innerHTML = '<b>' + out.length.toLocaleString('th-TH') + '</b> แถว' + (out.length !== L.rows.length ? ' จาก ' + L.rows.length.toLocaleString('th-TH') : '')
-    + (nAm ? ' · <span title="รวม Amount ของแถวที่กรองอยู่">Amount รวม <b class="mono" style="font-size:12.5px">' + fmtN(sum) + '</b></span>' : '');
-  lotCfBarDraw();   // v1.9 ป้ายตัวกรองรายคอลัมน์ (แถวของตัวเองใต้แถบเครื่องมือ — ไม่ดันปุ่ม CSV ตกบรรทัด)
-  var ss = $('lotSort'), sv = L.sort.k + ':' + L.sort.d; if (ss.value !== sv) { ss.value = sv; if (ss.value !== sv) ss.selectedIndex = -1; }
-  if (resetScroll) $('lotWrap').scrollTop = 0;
-  lotLayout(); lotSideCounts();
+function sxmVerTip() {
+  var v = document.querySelector('#top .ver'); if (!v) return;
+  v.title = 'index.html v' + VER + Object.keys(SXM_PAGES).map(function (k) { var M = SXM[k]; return ' · ' + SXM_PAGES[k].page + ' ' + (M.api ? 'v' + M.ver : M.err ? '✗ โหลดไม่ได้' : 'กำลังโหลด'); }).join('');
 }
-function lotSideCounts() {
-  if (!$('lfBu')) return;
-  var F = L.f, cSt = { all: 0, open: 0, 0: 0, 1: 0, 2: 0, 3: 0, closed: 0 }, cDue = { all: 0, late: 0, wk0: 0, wk1: 0, 30: 0 }, bu = {}, pool = {}, t = lotToday(), wk = L._wk || weekNow();
-  for (var i = 0; i < L.rows.length; i++) { var x = L.rows[i];
-    if (lotMatch(x, F, 'stage')) { cSt.all++; if (ldOf(x.id)) cSt.closed++; else { if (x.st !== 3) cSt.open++; if (x.st >= 0 && x.st <= 3) cSt[x.st]++; } }   // v1.10
-    if (lotMatch(x, F, 'due')) { cDue.all++; if (x.end != null) { if (!lotFin(x) && x.end < t) cDue.late++; if (x.ew === wk.w0 && x.ey === wk.y0) cDue.wk0++; if (x.ew === wk.w1 && x.ey === wk.y1) cDue.wk1++; if (x.end >= t && x.end <= t + 30 * DAY) cDue[30]++; } }
-    if (lotMatch(x, F, 'bu')) bu[x.bu] = (bu[x.bu] || 0) + 1;
-    if (lotMatch(x, F, 'pool')) pool[x.pool] = (pool[x.pool] || 0) + 1; }
-  $('lotSide').querySelectorAll('[data-lc]').forEach(function (e) { var p = e.dataset.lc.split(':'), v = (p[0] === 'stage' ? cSt : cDue)[p[1]]; e.textContent = v == null ? '' : v.toLocaleString('th-TH'); });
-  var all = {}; L.rows.forEach(function (x) { all['b' + x.bu] = 1; all['p' + x.pool] = 1; });
-  function list(el, key, cnt, pre, emptyName) {
-    var ks = Object.keys(all).filter(function (k) { return k[0] === pre; }).map(function (k) { return k.slice(1); }).sort(function (a, b) { if (!a !== !b) return a ? -1 : 1; return coll.compare(a, b); });
-    el.innerHTML = it(key, null, 'ทั้งหมด', null) + ks.map(function (v) { return it(key, v, v || emptyName, cnt[v] || 0); }).join('');
-    el.querySelectorAll('.fitem').forEach(function (e) { e.onclick = function () { L.f[key] = e.dataset.null === '1' ? null : e.dataset.v; lotRefresh(true); }; });
-  }
-  function it(k, v, n, c) { return '<div class="fitem' + (L.f[k] === v ? ' on' : '') + '" data-v="' + (v == null ? '' : esc(v)) + '" data-null="' + (v == null ? 1 : 0) + '"><span class="n">' + esc(n) + '</span>' + (c == null ? '' : '<span class="c">' + c.toLocaleString('th-TH') + '</span>') + '</div>'; }
-  list($('lfBu'), 'bu', bu, 'b', 'ไม่มี Bu (None)'); list($('lfPool'), 'pool', pool, 'p', 'ไม่มี pool');
+function sxmAfter(key) {
+  sxmVerTip();
+  var M = SXM[key], P = SXM_PAGES[key];
+  if (view() !== P.view) return;
+  if (M.api && M.api.show) { try { M.api.show(); } catch (e) { sxmFail(key, 'show', e); } }
+  else sxmWait(key);
 }
-var LCOLS = [['lot', 'LotId', ''], ['remark', 'remark', ''], ['stage', 'Stage', ''], ['bu', 'Bu', 'c-bu'], ['pool', 'Pool', 'c-pool'], ['end', 'enddate', ''], ['week', 'Wk', 'c-wk'],
-  ['plan', 'แผน45', 'c-pl'], ['create', 'LotCreate', 'c-cr'], ['parts', 'TotalPart', 'c-pt'], ['shelf', 'Shelf', 'c-sh'], ['amount', 'Amount', 'c-am'], ['', 'ReqBom / PeConf', 'c-rq']];
-var LCOL_TIP = { '': 'R = ReqBom · P = PeConfirm', create: 'เวลาสร้าง Lot · AX เก็บเป็นเวลา UTC — แสดงเป็นเวลาไทย (+7 ชม.)', end: 'แดง = เลยกำหนดแต่ยังไม่ Finish · ส้ม = ครบกำหนดใน 7 วัน', pool: 'prodpoolid', week: 'Week' };
-function lotLayout() { $('lotSpacer').style.height = (L.shown.length * LROW + 8) + 'px'; lotDrawHdr(); lotDraw(); }
-function lotDrawHdr() {
-  var E = $('lotHdr'); E.classList.toggle('hide', L.none || (!L.loaded && !L.rows.length));
-  /* v1.9: ปุ่มกรอง ⏷ ทุกคอลัมน์ (คอลัมน์ ReqBom/PeConf ไม่มีคีย์เรียง → ใช้ 'rq') · กรองอยู่ = class fon */
-  E.innerHTML = LCOLS.map(function (c) { var on = c[0] && L.sort.k === c[0], fk = c[0] || 'rq', fo = lcfOn(fk);
-    return '<span class="' + c[2] + (on ? ' sorted' : '') + (fo ? ' fon' : '') + '"' + (c[0] ? ' data-lsort="' + c[0] + '"' : ' style="cursor:default"') + (LCOL_TIP[c[0]] ? ' title="' + esc(LCOL_TIP[c[0]]) + '"' : '') + (c[0] === 'amount' || c[0] === 'parts' ? ' style="text-align:right"' : '') + '>'
-      + esc(c[1]) + (on ? (L.sort.d > 0 ? ' ▲' : ' ▼') : '')
-      + '<i class="cfb" data-lcf="' + fk + '" title="' + (fo ? 'กรองอยู่: ' + esc(lcfLabel(fk)) + ' — กดเพื่อแก้' : 'กรองคอลัมน์ ' + esc(c[1])) + '"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></i></span>'; }).join('');
+/* ข้อความในหน้าตอนยังไม่มีโค้ด */
+function sxmWait(key) {
+  var M = SXM[key], P = SXM_PAGES[key], E = $(P.box); if (!E) return;
+  if (!M.loading && !M.ran && (!M.failAt || Date.now() - M.failAt > 30000)) sxmLoad(key);
+  var why = M.ran && !M.api ? 'โค้ดใน ' + P.page + ' ทำงานไม่จบ — ' + M.err + ' (แก้ไฟล์แล้วกด F5)'
+    : M.err ? 'โหลด ' + P.page + ' ไม่ได้ — ' + M.err : 'กำลังโหลดหน้า ' + P.name + ' (' + P.page + ')…';
+  E.innerHTML = '<div class="muted sxmwait" style="flex:1;padding:40px 16px;text-align:center;line-height:1.7">' + (M.err ? '✗ ' : '') + esc(why)
+    + (M.err && !M.ran ? '<br><button type="button" class="tbtn" data-sxmretry="' + esc(key) + '" style="margin-top:10px">⟳ ลองใหม่</button>' : '') + '</div>';
+}
+function sxmFail(key, fn, e) {
+  var P = SXM_PAGES[key], M = SXM[key];
+  console.error('StarStock: ' + P.page + ' (' + fn + ') ผิดพลาด', e);
+  clearTimeout(sxmFail._t); sxmFail._t = setTimeout(function () { toast('✗ หน้า ' + P.name + ' (' + P.page + ' v' + M.ver + ') ทำงานผิดพลาด: ' + ((e && e.message) || e) + ' — ดู console (F12) · หน้าอื่นใช้ได้ตามปกติ', 9000); }, 50);
+}
+/* เรียกฟังก์ชันของหน้าแยก (ยังไม่โหลด = คืน dflt) */
+function sxmCall(key, fn, args, dflt) {
+  var M = SXM[key];
+  if (M && M.api && typeof M.api[fn] === 'function') { try { return M.api[fn].apply(null, args); } catch (e) { sxmFail(key, fn, e); return dflt; } }
+  return dflt;
+}
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('[data-sxmretry]'); if (!a) return;
+  e.preventDefault(); var k = a.dataset.sxmretry, M = SXM[k]; if (!M) return; M.failAt = 0; M.err = ''; sxmLoad(k); sxmWait(k);
+});
+/* ── ตัวแทนชื่อเดิมของหน้า Lot ผลิต (ตัวจริงอยู่ lots.html) — index เรียกที่ route · tickClock · lotAfterLoad · lotApply · lotStartPoll
+   · openLot · ldRerender · ปุ่ม “↗ Lot ผลิต” ของคิวตัดงาน · ปุ่มดูรายการปิดเอง · คีย์ลัด (bindUi) · ตอนเปิดโปรแกรม (lotBindUi) ── */
+function lotShow() { if (SXM.lots.api) return sxmCall('lots', 'lotShow', arguments); sxmWait('lots'); }
+function lotRenderFresh() { return sxmCall('lots', 'lotRenderFresh', arguments); }
+function lotBanner() { return sxmCall('lots', 'lotBanner', arguments); }
+function lotRenderSide() { return sxmCall('lots', 'lotRenderSide', arguments); }
+function lotSegOn() { return sxmCall('lots', 'lotSegOn', arguments); }
+function lotRefresh() { return sxmCall('lots', 'lotRefresh', arguments); }
+function lotDraw() { return sxmCall('lots', 'lotDraw', arguments); }
+function lotShowDetail(key) { if (!SXM.lots.api) { L.sel = key; return; } return sxmCall('lots', 'lotShowDetail', arguments); }   // ยังไม่โหลด = จำไว้ (เปิดให้ตอนวาดหน้า)
+function lotCloseDetail() { if (!SXM.lots.api) { L.sel = null; return; } return sxmCall('lots', 'lotCloseDetail', arguments); }
+function lotKey() { return sxmCall('lots', 'lotKey', arguments); }
+/* lotBindUi เดิม (v1.4) ผูกทั้งของหน้า Lot ผลิต และของทั้งโปรแกรม (เปลี่ยนหน้าตาม # · ปุ่ม ⌂ · การ์ด HOME · นาฬิกา) ในตัวเดียว
+   v2.46: ส่วนของทั้งโปรแกรมอยู่ที่นี่ (เรียกตอนเปิดโปรแกรมเหมือนเดิม — ไม่รอ lots.html: โหลดไม่ได้ก็ยังเปลี่ยนหน้าได้)
+   · ส่วนของหน้า Lot ผลิต (ตาราง · ปุ่มบนแถบ · ลากไฟล์มาวาง) = lotBindUi ใน lots.html เรียกตอนโหลดเสร็จ (init) */
+function lotBindUi() {
+  window.addEventListener('hashchange', route);
+  $('btnHome').onclick = function () { go('home'); };
+  document.querySelector('#top .brand').onclick = function () { go('home'); };
+  $('home').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]'); if (t) { go(t.dataset.go); return; }
+    var a = e.target.closest('[data-act]'); if (!a) return;
+    if (a.dataset.act === 'drive') connectDialog(); else if (a.dataset.act === 'user') { $('btnUser').click(); renderHome(); } else if (a.dataset.act === 'theme') { $('btnTheme').click(); }
+  });
+  setInterval(tickClock, 1000);
 }
 function stgHtml(x) { return '<span class="stg' + (x.st >= 0 && x.st <= 3 ? ' s' + x.st : '') + '"><i></i>' + esc(x.stT || '—') + '</span>' + ldBadge(x.id); }   // v1.10 + ป้าย “✓ ปิดเอง”
-function lotRowHtml(x, y) {
-  var fl = L.flash.get(x.id), t = lotToday(), fin = lotFin(x), late = !fin && x.end != null && x.end < t, soon = !late && !fin && x.end != null && x.end <= t + 7 * DAY;   // v1.10 ปิดเอง = ไม่แดง
-  return '<div class="row lcols' + (L.sel === x.key ? ' sel' : '') + (fl && fl.anim ? ' flash' : '') + '" style="top:' + y + 'px" data-lot="' + esc(x.key) + '">'
-    + '<div class="code" title="' + esc(x.id) + '">' + esc(x.id) + (fl ? '<span class="nb ' + fl.kind + '" title="' + (fl.kind === 'new' ? 'Lot ใหม่' : 'ข้อมูลเปลี่ยน') + ' ' + esc(new Date(fl.at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })) + '">' + (fl.kind === 'new' ? 'ใหม่' : 'เปลี่ยน') + '</span>' : '') + (x.dupOf ? '<span class="src" title="LotId นี้มี ' + x.dupOf + ' แถวในไฟล์"> ×' + x.dupOf + '</span>' : '') + '</div>'
-    + '<div class="nm" title="' + esc(x.remark) + '"><span class="n1">' + esc(x.remark || '—') + '</span><small class="m-only">' + esc([x.bu, x.pool, x.shelf ? 'Shelf ' + x.shelf : ''].filter(Boolean).join(' · ')) + '</small></div>'
-    + '<div>' + stgHtml(x) + '</div>'
-    + '<div class="c-bu">' + (x.bu ? esc(x.bu) : '<span class="muted">—</span>') + '</div>'
-    + '<div class="c-pool mono" style="font-size:11.5px">' + esc(x.pool || '') + '</div>'
-    + '<div class="dt' + (late ? ' late' : soon ? ' soon' : '') + '">' + (fD(x.end) || '<span class="muted">—</span>') + '<small class="m-only">' + (x.week != null ? 'W' + x.week + (L._wk && x.ew === L._wk.w0 && x.ey === L._wk.y0 ? ' · สัปดาห์นี้' : '') : '') + '</small></div>'
-    + '<div class="c-wk mono' + (x.ew != null && L._wk && x.ew === L._wk.w0 && x.ey === L._wk.y0 ? ' cw' : '') + '" style="font-size:11.5px"' + (x.ew != null && L._wk && x.ew === L._wk.w0 && x.ey === L._wk.y0 ? ' title="สัปดาห์นี้"' : '') + '>' + (x.week == null ? '' : x.week) + '</div>'
-    + '<div class="c-pl dt">' + (fD(x.plan) || '<span class="muted">—</span>') + '</div>'
-    + '<div class="c-cr dt">' + (fDT(x.create) || '<span class="muted">—</span>') + '</div>'
-    + '<div class="c-pt num">' + (x.parts == null ? '' : fmtN(x.parts)) + '</div>'
-    + '<div class="c-sh mono" style="font-size:11.5px" title="' + esc(x.shelf) + '">' + esc(x.shelf) + '</div>'
-    + '<div class="c-am num">' + (x.amount == null ? '<span class="muted">—</span>' : fmtN(x.amount)) + '</div>'
-    + '<div class="c-rq rq">' + (x.reqbom ? 'R ' + fD(x.reqbom) : '') + (x.reqbom && x.pecf ? '<br>' : '') + (x.pecf ? 'P ' + fD(x.pecf) : '') + '</div>'
-    + '</div>';
-}
-function lotDraw() {
-  var W = $('lotWrap'), R = $('lotRows'), html = '';
-  if (L.none) html = '<div class="lempty"><h3>ยังไม่มีข้อมูล Lot ผลิต (data 6) บน Google Drive</h3>ลากไฟล์ CSV ที่ส่งออกจาก BI (เช่น data_6.csv) มาวางที่หน้านี้ หรือกดปุ่มด้านล่าง<br>ส่งขึ้น Drive แล้วทุกเครื่องเห็นภายใน 30 วิ<br><span class="muted">เมื่อ StarSync มีคำสั่ง SQL (lots.sql) แล้ว จะดึงจาก AX ส่งขึ้นมาเองทุก 10 นาที</span><br><button class="tbtn pri" data-act="imp">⬆ เลือกไฟล์ CSV</button></div>';
-  else if (!L.loaded && !L.rows.length) html = '<div class="muted" style="position:absolute;top:60px;left:0;right:0;text-align:center">กำลังอ่าน data 6 จาก Google Drive…</div>';
-  else if (!L.shown.length) html = '<div class="muted" style="position:absolute;top:60px;left:0;right:0;text-align:center">' + (L.rows.length ? 'ไม่มี Lot ที่ตรงกับตัวกรอง' : L.err ? 'อ่านข้อมูลไม่ได้' : 'ไฟล์ไม่มีแถวข้อมูล') + '</div>';
-  else {
-    var top = W.scrollTop, h = W.clientHeight, a = Math.max(0, Math.floor(top / LROW) - 6), b = Math.min(L.shown.length, Math.ceil((top + h) / LROW) + 6);
-    for (var i = a; i < b; i++) html += lotRowHtml(L.shown[i], 32 + i * LROW);
-  }
-  R.innerHTML = html;
-}
-
-/* ─── รายละเอียด Lot ─── */
-function lotShowDetail(key) {
-  var x = L.byKey.get(key); if (!x) return;
-  L.sel = key; var D = $('lotDetail'), was = !D.classList.contains('hide'); D.classList.remove('hide'); document.body.classList.add('lotDet');
-  var t = lotToday(), late = !lotFin(x) && x.end != null && x.end < t, dl = x.end != null ? Math.round((x.end - t) / DAY) : null;
-  var kv = function (k, v, raw) { return '<span class="k">' + esc(k) + '</span><span class="v"' + (raw != null && raw !== v ? ' title="ในไฟล์: ' + esc(raw) + '"' : '') + '>' + (v === '' || v == null ? '<span class="muted">—</span>' : v) + '</span>'; };
-  var raw = function (k) { var i = L.map[k]; return i == null || x.a[i] == null ? '' : String(x.a[i]); };
-  var sib = L.rows.filter(function (y) { return y.id === x.id && y !== x; });
-  var hist = L.hist.get(x.id) || [], fl = L.flash.get(x.id);
-  var h = '<h2>' + esc(x.id) + poolChip(x.id, x.pool) /* v1.52 */ + '<button class="tbtn" id="ldCopy" title="คัดลอก LotId">📋</button><button class="tbtn" id="ldX" title="ปิด (Esc)">✕</button></h2>'
-    + '<div class="nm1">' + esc(x.remark || '—') + '</div>'
-    + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' + stgHtml(x)
-    + (!lotFin(x) && dl != null ? '<span class="' + (late ? 'neg' : dl <= 7 ? 'lo' : 'muted') + '" style="font-size:12.5px;font-weight:700">' + (late ? 'เลย enddate มา ' + (-dl) + ' วัน' : dl === 0 ? 'ครบ enddate วันนี้' : 'อีก ' + dl + ' วันถึง enddate') + '</span>' : '')
-    + (fl ? '<span class="nb ' + fl.kind + '">' + (fl.kind === 'new' ? 'ใหม่' : 'เปลี่ยน') + ' ' + esc(new Date(fl.at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })) + '</span>' : '') + '</div>'
-    + (sib.length ? '<div class="muted" style="margin-top:8px">LotId นี้มี ' + (sib.length + 1) + ' แถวในไฟล์ · แถวอื่น: ' + sib.map(function (y) { return '<a href="#" data-lsel="' + esc(y.key) + '">' + esc(y.stT || 'แถว ' + y.dup) + (y.amount != null ? ' · ' + fmtN(y.amount) : '') + '</a>'; }).join(' · ') + '</div>' : '')
-    /* v1.10 ปิดเองว่าจบแล้ว / ยกเลิก (ldSecHtml ใน v110) */
-    + '<div id="ldDone">' + ldSecHtml(x.id) + '</div>'
-    + '<div class="sec"><h3>ข้อมูล Lot</h3><div class="kv">'
-    + kv('enddate', fD(x.end) + (x.week != null ? ' <span class="muted">(Week ' + x.week + ')</span>' : ''), raw('enddate'))
-    + kv('แผน45', fD(x.plan), raw('แผน45'))
-    + kv('LotCreate (เวลาไทย)', fDT(x.create), raw('LotCreate'))
-    + kv('ReqBom', fD(x.reqbom), raw('ReqBom'))
-    + kv('PeConfirm', fD(x.pecf), raw('PeConfirm'))
-    + kv('TotalPart', x.parts == null ? '' : fmtN(x.parts))
-    + kv('Shelf', esc(x.shelf))
-    + kv('Amount', x.amount == null ? '' : fmtN(x.amount))
-    + kv('Bu', esc(x.bu || (raw('Bu') ? raw('Bu') : '')))
-    + kv('prodpoolid', esc(x.pool))
-    + (L.extra || []).map(function (i) { return kv(L.hdr[i], esc(x.a[i] == null ? '' : x.a[i])); }).join('')
-    + '</div></div>'
-    /* v1.8 (ผู้ใช้ 15/10/2026 08:31 “เจาะรายการวัตถุดิบของ Lot นั้น ๆ มาได้ไหม”): เดิมรายละเอียด Lot ไม่มีวัตถุดิบเลย
-       → รายการวัตถุดิบทั้งหมดของ Lot จาก lots/rm.csv (StarSync) เติมทีหลังเมื่อโหลดเสร็จ — rmLotSecHtml / rmLotFill (v18) */
-    + '<div class="sec" id="ldRm">' + rmLotSecHtml(x.id) + '</div>'
-    + '<div class="sec"><h3>เปลี่ยนระหว่างเปิดหน้านี้</h3>' + (hist.length ? hist.map(function (e) { return '<div class="hist"><div class="t">' + esc(new Date(e.at).toLocaleTimeString('th-TH')) + '</div>' + e.ch.map(function (c) { return '<div><b>' + esc(c[0]) + '</b> <s>' + esc(c[1] || 'ว่าง') + '</s> → ' + esc(c[2] || 'ว่าง') + '</div>'; }).join('') + '</div>'; }).join('')
-      : '<div class="muted">' + (fl && fl.kind === 'new' ? 'Lot นี้เพิ่งเข้ามาในรอบอัปเดต ' + esc(new Date(fl.at).toLocaleTimeString('th-TH')) : 'ยังไม่มี — ถ้าข้อมูล Lot นี้เปลี่ยนระหว่างที่เปิดหน้านี้ จะขึ้นตรงนี้ว่าช่องไหนเปลี่ยนจากอะไรเป็นอะไร') + '</div>') + '</div>'
-    + '<details class="raw"><summary>ค่าในไฟล์ (ดิบ)</summary><div class="kv">' + L.hdr.map(function (hn, i) { return '<span class="k">' + esc(hn) + '</span><span class="v">' + esc(x.a[i] == null ? '' : x.a[i]) + '</span>'; }).join('') + '</div></details>';
-  var same = lotShowDetail.cur === key, keep = same ? D.scrollTop : 0, opn = same ? [].map.call(D.querySelectorAll('details'), function (d) { return d.open; }) : null;   /* v1.68 วาดใหม่ตัวเดิม = ไม่เด้งกลับบนสุด */
-  D.innerHTML = h; if (opn) [].forEach.call(D.querySelectorAll('details'), function (d, i) { if (opn[i] != null) d.open = opn[i]; }); D.scrollTop = keep; lotShowDetail.cur = key;
-  $('ldX').onclick = lotCloseDetail;
-  $('ldCopy').onclick = function () { try { navigator.clipboard.writeText(x.id).then(function () { toast('คัดลอก ' + x.id + ' แล้ว'); }, function () { toast(x.id); }); } catch (e) { toast(x.id); } };
-  D.querySelectorAll('[data-lsel]').forEach(function (a) { a.onclick = function (ev) { ev.preventDefault(); lotShowDetail(a.dataset.lsel); lotDraw(); }; });
-  if (was) lotDraw(); else lotLayout();
-  rmLotFill(x.id);   // v1.8
-}
-function lotCloseDetail() { L.sel = null; lotShowDetail.cur = null; /* v1.68 */ var D = $('lotDetail'); if (D) D.classList.add('hide'); document.body.classList.remove('lotDet'); if (view() === 'lots') lotLayout(); }
-
-/* ─── นำเข้า CSV (ชั่วคราว ระหว่าง StarSync ยังไม่มี SQL) ─── */
-function csvCell(v) { v = v == null ? '' : String(v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+/* ── v2.46 ย้ายไป lots.html: lotRowHtml · lotDraw · lotShowDetail · lotCloseDetail · csvCell ── */
 /* v1.7: LotId → { Bu, Amount, แผน45, ReqBom, PeConfirm } จากไฟล์ BI (แถวซ้ำ = ใช้แถวแรกที่มีค่า) */
 function lotBiMap(t) {
   var b = lotBuild(t), m = new Map();
@@ -4553,105 +4386,7 @@ function lotBiMap(t) {
   m.forEach(function (o) { o.Amount = o._am == null ? '' : String(Math.round(o._am * 100) / 100); delete o._am; });
   return m;
 }
-async function lotImport(file) {
-  if (!file) return;
-  if (!ensureFs()) { connectDialog('เชื่อมต่อ Google Drive ก่อน แล้วค่อยนำเข้าไฟล์'); return; }
-  if (!/\.(csv|txt|tsv)$/i.test(file.name || '') && !/csv|text/.test(file.type || '')) { toast('ต้องเป็นไฟล์ CSV (ส่งออกจาก BI) ครับ — ไฟล์ Excel ให้ Save As เป็น CSV UTF-8 ก่อน', 5000); return; }
-  var buf = new Uint8Array(await file.arrayBuffer()), text, enc = 'UTF-8';
-  try { text = new TextDecoder('utf-8', { fatal: true }).decode(buf); }
-  catch (e) { try { text = new TextDecoder('windows-874').decode(buf); enc = 'ภาษาไทย (Windows-874)'; } catch (e2) { text = new TextDecoder().decode(buf); } }
-  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-  var fl = text.split(/\r?\n/, 1)[0] || '', dc = 44;
-  if (fl.indexOf(',') < 0) { if (fl.indexOf('\t') >= 0) dc = 9; else if (fl.indexOf(';') >= 0) dc = 59; }
-  var R = parseCsv(text, dc).filter(function (r) { return !(r.length === 1 && r[0] === ''); });
-  var canon = R.map(function (r) { return r.map(csvCell).join(','); }).join('\n'), b;
-  try { b = lotBuild(canon); } catch (e) { openBox('<h2>นำเข้าไม่ได้</h2><p>' + esc(file.name) + ': ' + esc(e.message || e) + '</p><div class="btns"><button class="tbtn pri" id="ix">ปิด</button></div>', function (box, close) { box.querySelector('#ix').onclick = close; }); return; }
-  var miss = ['Stage', 'enddate', 'remark'].filter(function (k) { return b.map[k] == null; });
-  var nNew = 0, nChg = 0, nGone = 0, have = L.loaded && L.rows.length, axSrc = !!(L.meta && /StarSync/i.test(L.meta.src || ''));   // v1.7
-  if (have) { b.idSig.forEach(function (s, id) { var o = L.idSig.get(id); if (o == null) nNew++; else if (o !== s) nChg++; }); L.idSig.forEach(function (s, id) { if (!b.idSig.has(id)) nGone++; }); }
-  openBox('<h2>⬆ นำเข้า data 6 ขึ้น Google Drive</h2>'
-    + '<p><b>' + esc(file.name) + '</b> · ' + b.rows.length.toLocaleString('th-TH') + ' แถว · ' + b.hdr.length + ' คอลัมน์ · ' + esc(enc) + (dc !== 44 ? ' · คั่นด้วย ' + (dc === 9 ? 'Tab' : ';') : '') + '</p>'
-    + (have && axSrc ? '<p>ตรงกับ Lot ในชุด AX <b>' + L.rows.filter(function (x) { return b.idSig.has(x.id); }).length.toLocaleString('th-TH') + '</b> จาก ' + L.rows.length.toLocaleString('th-TH') + ' Lot — จะเติม Bu · Amount · แผน45 ให้ Lot เหล่านี้</p>' : '')
-    + (have ? (axSrc ? '' : '<p>เทียบกับชุดบน Drive ตอนนี้ (' + L.rows.length.toLocaleString('th-TH') + ' แถว): Lot ใหม่ <b>' + nNew + '</b> · เปลี่ยน <b>' + nChg + '</b> · หายไป <b>' + nGone + '</b></p>') : '<p>ยังไม่มีชุดเดิมบน Drive — ไฟล์นี้จะเป็นชุดแรก</p>')
-    + (miss.length ? '<p class="neg">ไม่มีคอลัมน์ ' + esc(miss.join(', ')) + ' — ตารางจะว่างช่องนั้น</p>' : '')
-    + (axSrc ? '<p class="lo"><b>ชุดบน Drive มาจาก StarSync (AX) อัปเดตทุก 10 นาทีอยู่แล้ว</b> — ไฟล์นี้จะเก็บไว้เติมช่องที่ AX ไม่มี (Bu · Amount · แผน45 · ReqBom · PeConfirm) ตาม LotId ไม่เขียนทับตาราง</p>' : '')
-    + (L.meta && L.meta.src && !/นำเข้า/.test(L.meta.src) && !axSrc ? '<p class="lo">ชุดบน Drive ตอนนี้มาจาก ' + esc(L.meta.src) + ' — รอบหน้าที่ StarSync ส่ง จะเขียนทับไฟล์ที่นำเข้านี้</p>' : '')
-    + (axSrc ? '' : '<p class="muted">เขียนทับ lots/lots.csv ทั้งไฟล์ · ทุกเครื่องที่เปิดหน้า Lot ผลิตเห็นภายใน 30 วิ</p>')
-    + '<div class="msg" id="iM"></div><div class="btns"><button class="tbtn" id="iX">ยกเลิก</button><button class="tbtn pri" id="iGo">ส่งขึ้น Google Drive</button></div>', function (box, close) {
-    box.querySelector('#iX').onclick = close;
-    box.querySelector('#iGo').onclick = async function () {
-      var btn = this; btn.disabled = true; box.querySelector('#iX').disabled = true; box.querySelector('#iM').textContent = 'กำลังส่ง…';
-      try {
-        try { await S.fs.call({ a: 'fsMkdir', p: LOT_DIR }); S.fs._dirAdd(LOT_DIR); } catch (e) { }          // โฟลเดอร์ lots ยังไม่มี (สร้างซ้ำได้)
-        /* v1.7 รีวิว: ตัดสินจาก meta.json ล่าสุดตอนกดส่ง ไม่ใช่ตอนเปิดกล่อง (รอบโหลดแรกยังไม่จบ / meta อ่านพัง = เขียน BI ทับข้อมูล AX ได้) */
-        var axNow = axSrc;
-        try { if (L.loading) await L.loading; } catch (e) { }
-        var Lf = await S.fs.list(LOT_DIR, true), mfx = Lf && Lf.files[LOT_META];
-        if (mfx) { var mm = null; try { mm = JSON.parse(await readText(LOT_DIR, LOT_META)); } catch (e) { throw new Error('อ่าน lots/meta.json ไม่ได้ — ยังไม่รู้ว่าข้อมูลบน Drive มาจาก AX หรือไม่ จึงยังไม่ส่ง (ลองใหม่อีกครั้ง)'); } axNow = /StarSync/i.test(mm && mm.src || ''); }
-        else axNow = false;
-        var fb = await S.fs.write(LOT_DIR, LOT_BI, new TextEncoder().encode(canon + '\n'));   // v1.7 เก็บไว้เติมช่องที่ AX ไม่มี
-        if (axNow) {
-          L.bi = lotBiMap(canon); L.biU = fb.u; L.fileU = 0;                // บังคับให้รอบอ่านถัดไปเติมใหม่
-          close(); await lotLoad({ quiet: true });
-          toast('✓ เก็บข้อมูล BI แล้ว · เติม Bu/Amount ให้ ' + L.biUsed.toLocaleString('th-TH') + ' Lot (ตารางยังมาจาก AX)', 5000);
-          return;
-        }
-        var f = await S.fs.write(LOT_DIR, LOT_FILE, new TextEncoder().encode(canon + '\n'));
-        var meta = { v: 1, at: nowIso(), src: 'นำเข้า CSV', file: file.name, by: me(), rows: b.rows.length, cols: b.hdr };
-        var fm = await S.fs.write(LOT_DIR, LOT_META, new TextEncoder().encode(JSON.stringify(meta)));
-        L.meta = meta; L.metaU = fm.u;
-        lotApply(b, f.u, { mine: true }); L.err = null;
-        close(); lotAfterLoad();
-        toast('✓ ส่ง data 6 ขึ้น Google Drive แล้ว · ' + b.rows.length.toLocaleString('th-TH') + ' แถว' + (have ? ' · ใหม่ ' + nNew + ' · เปลี่ยน ' + nChg : ''), 5000);
-      } catch (e) { console.error(e); btn.disabled = false; box.querySelector('#iX').disabled = false; box.querySelector('#iM').textContent = '✗ ส่งไม่สำเร็จ: ' + netMsg(e); }
-    };
-  });
-}
-function lotExport() {
-  if (!L.shown.length) { toast('ไม่มีแถวให้ส่งออก'); return; }
-  var lines = [L.hdr.map(csvCell).join(',')];
-  L.shown.forEach(function (x) { lines.push(L.hdr.map(function (h, i) { return csvCell(x.a[i]); }).join(',')); });
-  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
-  a.download = 'Lot_data6_' + new Date().toISOString().slice(0, 10) + '.csv'; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
-  toast('ส่งออก ' + L.shown.length.toLocaleString('th-TH') + ' แถว (ตามตัวกรอง)');
-}
-function lotBindUi() {
-  var W = $('lotWrap');
-  W.addEventListener('scroll', function () { if (!lotDraw._r) lotDraw._r = requestAnimationFrame(function () { lotDraw._r = 0; lotDraw(); }); });
-  W.addEventListener('click', function (e) {
-    var cf = e.target.closest('[data-lcf]'); if (cf) { lotCfOpen(cf.dataset.lcf, cf.parentNode); return; }   // v1.9 ปุ่มกรองบนหัวคอลัมน์ (ก่อนเรียง)
-    var hs = e.target.closest('[data-lsort]'); if (hs) { var k = hs.dataset.lsort; L.sort = { k: k, d: L.sort.k === k ? -L.sort.d : ((k === 'lot' || k === 'remark' || k === 'bu' || k === 'pool' || k === 'shelf' || k === 'end' || k === 'plan' || k === 'stage') ? 1 : -1) }; lotSavePref(); lotRefresh(true); return; }
-    if (e.target.closest('[data-act="imp"]')) { $('lotFile').click(); return; }
-    var r = e.target.closest('[data-lot]'); if (r) lotShowDetail(r.dataset.lot);
-  });
-  $('lotSort').onchange = function () { var v = this.value.split(':'); L.sort = { k: v[0], d: +v[1] }; lotSavePref(); lotRefresh(true); };
-  $('lotExp').onclick = lotExport;
-  $('lotImp').onclick = function () { $('lotFile').click(); };
-  $('lotFile').onchange = function (ev) { var f = ev.target.files[0]; ev.target.value = ''; if (f) lotImport(f); };
-  $('lotBanner').addEventListener('click', function (e) { if (e.target.closest('[data-act="retry"]')) { e.preventDefault(); lotLoad({}); } });
-  var lv = $('lots'), dz = $('lotDrop'), depth = 0, hasFile = function (e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0; };
-  lv.addEventListener('dragenter', function (e) { if (!hasFile(e)) return; e.preventDefault(); depth++; dz.classList.remove('hide'); });
-  lv.addEventListener('dragover', function (e) { if (!hasFile(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
-  lv.addEventListener('dragleave', function (e) { if (!hasFile(e)) return; depth = Math.max(0, depth - 1); if (!depth) dz.classList.add('hide'); });
-  lv.addEventListener('drop', function (e) { if (!hasFile(e)) return; e.preventDefault(); depth = 0; dz.classList.add('hide'); var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) lotImport(f); });
-  window.addEventListener('resize', function () { if (view() === 'lots') lotLayout(); });
-  window.addEventListener('hashchange', route);
-  $('btnHome').onclick = function () { go('home'); };
-  document.querySelector('#top .brand').onclick = function () { go('home'); };
-  $('home').addEventListener('click', function (e) {
-    var t = e.target.closest('[data-go]'); if (t) { go(t.dataset.go); return; }
-    var a = e.target.closest('[data-act]'); if (!a) return;
-    if (a.dataset.act === 'drive') connectDialog(); else if (a.dataset.act === 'user') { $('btnUser').click(); renderHome(); } else if (a.dataset.act === 'theme') { $('btnTheme').click(); }
-  });
-  setInterval(tickClock, 1000);
-}
-function lotKey(e) {
-  if (e.key === 'Escape') { if (!$('ov').classList.contains('hide')) return; if (L.sel) lotCloseDetail(); else if (document.body.classList.contains('sideOpen')) document.body.classList.remove('sideOpen'); return; }
-  if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && L.shown.length) {
-    e.preventDefault(); var i = L.shown.findIndex(function (x) { return x.key === L.sel; }); i = Math.max(0, Math.min(L.shown.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)));
-    lotShowDetail(L.shown[i].key); var y = 32 + i * LROW, W = $('lotWrap'); if (y < W.scrollTop + 32) W.scrollTop = y - 32; else if (y + LROW > W.scrollTop + W.clientHeight) W.scrollTop = y + LROW - W.clientHeight;
-  }
-}
+/* ── v2.46 ย้ายไป lots.html: lotImport · lotExport · lotBindUi · lotKey ── */
 
 /* ═══════════════════════════════════════════════════════════════════════
    v1.5: คิวตัดงาน (แบบจอครัว KFC) — #board · #board-tv (จอทีวีในโรงงาน)
@@ -6053,159 +5788,9 @@ setInterval(function () {
   if (v === 'lots' && L.sel) { var id = (L.byKey.get(L.sel) || {}).id; if (id) Promise.all([rmLoad(), bdLoadStock()]).then(function (c) { if (c[0] || c[1]) rmLotRender(id); }); }
   else if (v === 'stock' && S.sel) { var code = S.sel; rmLoad().then(function (c) { if (c) rmItemRender(code); }); }
 }, 60000);
-
-/* ═══════════════════════════════════════════════════════════════════════
-   v1.9: ตัวกรองรายคอลัมน์ของตาราง Lot ผลิต (แบบ Excel)
-   ผู้ใช้ 15/10/2026 09:09 ส่งรูปหัวตาราง Lot ผลิต (LOTID · REMARK · STAGE ▼ · BU · POOL · ENDDATE · WK · แผน45 · LOTCREATE · …)
-     “เพิ่มให้กรองได้หน่อยครับ”
-   เดิม: กรองได้แค่ที่แถบซ้าย (Stage · enddate · Bu · prodpoolid) + ช่องค้นหา · หัวตารางกดได้แค่เรียง
-   ตอนนี้: ทุกหัวคอลัมน์มีปุ่มกรอง ⏷ (ชี้ที่หัวคอลัมน์แล้วเห็น · กรองอยู่ = สีฟ้าค้างไว้)
-     · กดแล้วได้กล่องแบบ Excel: เรียง · ค้นหาในคอลัมน์ · ติ๊กเลือกค่า (บอกจำนวนแถวของแต่ละค่า ตามตัวกรองอื่นที่ใช้อยู่)
-       วันที่/ตัวเลข: ใส่ช่วง ตั้งแต่–ถึง ได้ · พิมพ์ค้นหาแล้วกดตกลงโดยไม่แตะรายการ = “มีคำว่า …” (Lot ใหม่ที่เข้ามาทีหลังก็ติดตัวกรอง)
-     · ตัวกรองที่ใช้อยู่ขึ้นเป็นป้ายข้างจำนวนแถว (กดป้าย = แก้ · ✕ = เอาออก · ล้างทั้งหมด) · ใช้ร่วมกับแถบซ้าย (ต้องตรงทุกข้อ)
-     · จำไว้ในเครื่อง (เปิดหน้าใหม่ยังอยู่) · ส่งออก CSV = ตามที่กรอง · ล้างตัวกรองทั้งหมดที่แถบซ้ายล้างอันนี้ด้วย
-   ═══════════════════════════════════════════════════════════════════════ */
-function lcfDay(ms) { if (ms == null) return null; var d = new Date(ms); d.setHours(0, 0, 0, 0); return d.getTime(); }
-var LCF = {
-  lot: { n: 'LotId', t: 'txt', v: function (x) { return x.id || ''; } },
-  remark: { n: 'remark', t: 'txt', v: function (x) { return x.remark || ''; } },
-  stage: { n: 'Stage', t: 'cat', v: function (x) { return x.stT || ''; }, o: function (x) { return x.st == null || x.st < 0 ? 99 : x.st; } },
-  bu: { n: 'Bu', t: 'cat', v: function (x) { return x.bu || ''; } },
-  pool: { n: 'Pool', t: 'cat', v: function (x) { return x.pool || ''; } },
-  end: { n: 'enddate', t: 'date', v: function (x) { return lcfDay(x.end); } },
-  week: { n: 'Wk', t: 'num', v: function (x) { return x.week; } },
-  plan: { n: 'แผน45', t: 'date', v: function (x) { return lcfDay(x.plan); } },
-  create: { n: 'LotCreate', t: 'date', v: function (x) { return lcfDay(x.create); } },
-  parts: { n: 'TotalPart', t: 'num', v: function (x) { return x.parts; } },
-  shelf: { n: 'Shelf', t: 'cat', v: function (x) { return x.shelf || ''; } },
-  amount: { n: 'Amount', t: 'num', v: function (x) { return x.amount; } },
-  rq: { n: 'ReqBom / PeConf', t: 'cat', v: function (x) { return x.reqbom && x.pecf ? 'มีทั้ง ReqBom และ PeConfirm' : x.reqbom ? 'มี ReqBom' : x.pecf ? 'มี PeConfirm' : ''; } }
-};
-/* ค่าที่ใช้เทียบ (สตริง) + ข้อความที่โชว์ */
-function lcfKey(c, x) { var d = LCF[c], v = d.v(x); return v == null || v === '' ? '' : String(v); }
-function lcfShow(c, k) {
-  if (k === '') return '(ว่าง)';
-  var t = LCF[c].t; if (t === 'date') return fD(+k); if (t === 'num') return fmtN(+k); return k;
-}
-function lcfOn(c) { return !!(L.cf && L.cf[c]); }
-/* แถวผ่านตัวกรองรายคอลัมน์ทุกตัว (ยกเว้น skip = คอลัมน์ที่กำลังเปิดกล่อง เพื่อนับค่าแบบ Excel) */
-function lotCfOk(x, skip) {
-  var cf = L.cf; if (!cf) return true;
-  for (var c in cf) {
-    if (c === skip || !LCF[c]) continue; var s = cf[c]; if (!s) continue;
-    if (s.k === 'set') { if (!s._s) s._s = new Set(s.v || []); if (!s._s.has(lcfKey(c, x))) return false; }
-    else if (s.k === 'q') { var q = String(s.q || '').toLowerCase(); if (q && lcfShow(c, lcfKey(c, x)).toLowerCase().indexOf(q) < 0) return false; }
-    else if (s.k === 'rng') { var v = LCF[c].v(x); if (v == null) return false; if (s.a != null && v < s.a) return false; if (s.b != null && v > s.b) return false; }
-  }
-  return true;
-}
+/* ── v2.46 ย้ายไป lots.html: lcfDay · LCF · lcfKey · lcfShow · lcfOn · lotCfOk ── */
 function lotCfSer() { var o = {}; Object.keys(L.cf || {}).forEach(function (c) { var s = L.cf[c]; if (!s) return; o[c] = s.k === 'set' ? { k: 'set', v: s.v } : s.k === 'q' ? { k: 'q', q: s.q } : { k: 'rng', a: s.a, b: s.b }; }); return o; }
-function lcfLabel(c) {
-  var s = L.cf[c], t = LCF[c].t; if (!s) return '';
-  if (s.k === 'q') return 'มีคำว่า “' + s.q + '”';
-  if (s.k === 'rng') { var f = function (v) { return t === 'date' ? fD(v) : fmtN(v); }; return s.a != null && s.b != null ? f(s.a) + ' – ' + f(s.b) : s.a != null ? 'ตั้งแต่ ' + f(s.a) : 'ถึง ' + f(s.b); }
-  var v = s.v || []; return v.slice(0, 2).map(function (k) { return lcfShow(c, k); }).join(', ') + (v.length > 2 ? ' +' + (v.length - 2) : '');
-}
-/* ป้ายตัวกรองข้างจำนวนแถว */
-function lotCfChips() {
-  var ks = Object.keys(L.cf || {}).filter(function (c) { return L.cf[c] && LCF[c]; }); if (!ks.length) return '';
-  return '<span class="lcfchips">' + ks.map(function (c) { return '<span class="lcfchip" data-lcfe="' + c + '" title="กดเพื่อแก้ตัวกรอง"><b>' + esc(LCF[c].n) + ':</b> ' + esc(lcfLabel(c)) + '<i data-lcfx="' + c + '" title="เอาตัวกรองนี้ออก">✕</i></span>'; }).join('')
-    + '<a href="#" data-lcfall>' + (ks.length > 1 ? 'ล้างทั้งหมด' : 'ล้าง') + '</a></span>';
-}
-function lotCfBarDraw() {
-  var E = $('lotCfBar');
-  if (!E) { var bar = $('lotBar'); if (!bar) return; E = document.createElement('div'); E.id = 'lotCfBar'; bar.parentNode.insertBefore(E, bar.nextSibling); }
-  var h = lotCfChips(); E.innerHTML = h ? '<span class="lbl">กรองคอลัมน์</span>' + h : ''; E.classList.toggle('hide', !h);
-}
-function lotCfSet(c, spec) { if (!L.cf) L.cf = {}; if (spec) L.cf[c] = spec; else delete L.cf[c]; lotSavePref(); lotRefresh(true); }
-
-/* ─── กล่องกรอง ─── */
-var LCFP = null, LCF_MAX = 400;
-function lotCfClose() { if (LCFP) { LCFP.el.remove(); LCFP = null; } }
-function lotCfOpen(c, anchor) {
-  if (LCFP && LCFP.c === c) { lotCfClose(); return; }   // กดปุ่มเดิมซ้ำ = ปิด
-  lotCfClose(); if (!LCF[c]) return;
-  var d = LCF[c], t = d.t, s = L.cf && L.cf[c];
-  /* ค่าทั้งหมดของคอลัมน์ ในแถวที่ผ่านตัวกรองอื่น (แถบซ้าย + คอลัมน์อื่น + ช่องค้นหา) */
-  var cnt = new Map(), ord = new Map();
-  for (var i = 0; i < L.rows.length; i++) { var x = L.rows[i]; if (!lotMatch(x, L.f, 'cf:' + c)) continue; var k = lcfKey(c, x); cnt.set(k, (cnt.get(k) || 0) + 1); if (d.o && !ord.has(k)) ord.set(k, d.o(x)); }
-  if (s && s.k === 'set') (s.v || []).forEach(function (k) { if (!cnt.has(k)) cnt.set(k, 0); });   // ค่าที่เลือกไว้แต่ตอนนี้ไม่มีแถว ยังเห็นในรายการ
-  var keys = Array.from(cnt.keys()).sort(function (a, b) {
-    if (a === '' || b === '') return a === '' ? (b === '' ? 0 : 1) : -1;
-    if (d.o) return (ord.get(a) - ord.get(b)) || coll.compare(a, b);
-    if (t === 'date' || t === 'num') return +a - +b;
-    return coll.compare(a, b); });
-  var chk = new Set();
-  keys.forEach(function (k) {
-    if (!s) chk.add(k);
-    else if (s.k === 'set') { if ((s.v || []).indexOf(k) >= 0) chk.add(k); }
-    else if (s.k === 'q') { if (lcfShow(c, k).toLowerCase().indexOf(String(s.q).toLowerCase()) >= 0) chk.add(k); }
-    else if (s.k === 'rng') { if (k !== '' && (s.a == null || +k >= s.a) && (s.b == null || +k <= s.b)) chk.add(k); }
-  });
-  var sortable = !!(LCOLS.find(function (x) { return x[0] === c; })), isRng = t === 'date' || t === 'num';
-  var dIn = function (v) { if (v == null) return ''; var z = new Date(v), p = function (n) { return (n < 10 ? '0' : '') + n; }; return z.getFullYear() + '-' + p(z.getMonth() + 1) + '-' + p(z.getDate()); };
-  var el = document.createElement('div'); el.className = 'lcfpop'; el.id = 'lcfPop';
-  el.innerHTML = '<div class="h"><b>' + esc(d.n) + '</b><span class="muted">' + keys.length.toLocaleString('th-TH') + ' ค่า</span><button class="tbtn" data-p="x" title="ปิด (Esc)">✕</button></div>'
-    + (sortable ? '<div class="srt"><button class="tbtn" data-p="s1">' + (t === 'date' ? 'เก่า → ใหม่' : t === 'num' ? 'น้อย → มาก' : 'A → Z') + '</button><button class="tbtn" data-p="s-1">' + (t === 'date' ? 'ใหม่ → เก่า' : t === 'num' ? 'มาก → น้อย' : 'Z → A') + '</button></div>' : '')
-    + (isRng ? '<div class="rng"><label>ตั้งแต่<input data-p="a" type="' + (t === 'date' ? 'date' : 'number') + '" value="' + (s && s.k === 'rng' && s.a != null ? (t === 'date' ? dIn(s.a) : s.a) : '') + '"></label><label>ถึง<input data-p="b" type="' + (t === 'date' ? 'date' : 'number') + '" value="' + (s && s.k === 'rng' && s.b != null ? (t === 'date' ? dIn(s.b) : s.b) : '') + '"></label></div>' : '')
-    + '<input class="q" data-p="q" type="search" placeholder="ค้นหาในคอลัมน์นี้" autocomplete="off" value="' + (s && s.k === 'q' ? esc(s.q) : '') + '">'
-    + '<label class="all"><input type="checkbox" data-p="all"><span>เลือกทั้งหมด</span><span class="c" data-p="n"></span></label>'
-    + '<div class="lst" data-p="lst"></div><div class="more muted" data-p="more"></div>'
-    + '<div class="ft"><button class="tbtn" data-p="clr"' + (s ? '' : ' disabled') + '>ล้างคอลัมน์นี้</button><span class="sp"></span><button class="tbtn" data-p="x">ยกเลิก</button><button class="tbtn pri" data-p="ok">ตกลง</button></div>';
-  document.body.appendChild(el);
-  var q = function (p) { return el.querySelector('[data-p="' + p + '"]'); }, qi = q('q'), lst = q('lst'), all = q('all');
-  var vis = function () { var w = qi.value.trim().toLowerCase(); return w ? keys.filter(function (k) { return lcfShow(c, k).toLowerCase().indexOf(w) >= 0; }) : keys; };
-  var draw = function () {
-    var v = vis(), n = 0; v.forEach(function (k) { if (chk.has(k)) n++; });
-    all.checked = v.length > 0 && n === v.length; all.indeterminate = n > 0 && n < v.length;
-    q('n').textContent = v.length.toLocaleString('th-TH');
-    lst.innerHTML = v.slice(0, LCF_MAX).map(function (k, i) { return '<label' + (k === '' ? ' class="emp"' : '') + '><input type="checkbox" data-i="' + i + '"' + (chk.has(k) ? ' checked' : '') + '><span class="v">' + esc(lcfShow(c, k)) + '</span><span class="c">' + (cnt.get(k) || 0).toLocaleString('th-TH') + '</span></label>'; }).join('')
-      || '<div class="muted" style="padding:8px">ไม่มีค่าที่ตรงกับคำค้น</div>';
-    lst._v = v;
-    q('more').textContent = v.length > LCF_MAX ? 'แสดง ' + LCF_MAX + ' จาก ' + v.length.toLocaleString('th-TH') + ' ค่า — พิมพ์ค้นหาเพื่อหาค่าที่เหลือ (เลือกทั้งหมด = รวมที่ไม่ได้แสดงด้วย)' : '';
-  };
-  draw();
-  qi.oninput = function () { clearTimeout(qi._t); qi._t = setTimeout(draw, 90); };
-  all.onchange = function () { vis().forEach(function (k) { if (all.checked) chk.add(k); else chk.delete(k); }); draw(); };
-  lst.onchange = function (e) { var i = e.target && e.target.dataset.i; if (i == null) return; var k = lst._v[+i]; if (e.target.checked) chk.add(k); else chk.delete(k); var v = lst._v, n = 0; v.forEach(function (z) { if (chk.has(z)) n++; }); all.checked = n === v.length; all.indeterminate = n > 0 && n < v.length; };
-  var apply = function () {
-    if (isRng) {
-      var rv = function (inp) { var z = inp.value; if (z === '') return null; if (t === 'date') { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(z); return m ? new Date(+m[1], +m[2] - 1, +m[3]).getTime() : null; } var n = +z; return isFinite(n) ? n : null; };
-      var a = rv(q('a')), b = rv(q('b'));
-      if (a != null || b != null) { if (a != null && b != null && a > b) { var tt = a; a = b; b = tt; } lotCfClose(); lotCfSet(c, { k: 'rng', a: a, b: b }); return; }
-    }
-    var w = qi.value.trim(), v = vis(), sel = v.filter(function (k) { return chk.has(k); });
-    if (!sel.length) { toast('เลือกอย่างน้อย 1 ค่า'); return; }
-    lotCfClose();
-    if (w) { lotCfSet(c, sel.length === v.length ? { k: 'q', q: w } : { k: 'set', v: sel }); return; }
-    lotCfSet(c, sel.length === keys.length ? null : { k: 'set', v: sel });   // ติ๊กครบทุกค่า = ไม่กรอง
-  };
-  el.addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-p]'); if (!b) return; var p = b.dataset.p;
-    if (p === 'x') lotCfClose();
-    else if (p === 'ok') apply();
-    else if (p === 'clr') { lotCfClose(); lotCfSet(c, null); }
-    else if (p === 's1' || p === 's-1') { L.sort = { k: c, d: p === 's1' ? 1 : -1 }; lotCfClose(); lotSavePref(); lotRefresh(true); }
-  });
-  el.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); apply(); } });
-  /* วางใต้หัวคอลัมน์ · ไม่ล้นจอ (มือถือ = เต็มความกว้าง) */
-  var r = (anchor || $('lotHdr')).getBoundingClientRect(), W = Math.min(320, window.innerWidth - 16);
-  el.style.width = W + 'px'; el.style.left = Math.max(8, Math.min(r.left, window.innerWidth - W - 8)) + 'px';
-  var top = Math.min(r.bottom + 4, window.innerHeight - 240); el.style.top = top + 'px'; el.style.maxHeight = (window.innerHeight - top - 10) + 'px';
-  LCFP = { el: el, c: c };
-  setTimeout(function () { (isRng ? q('a') : qi).focus(); }, 0);
-}
-/* ปิดเมื่อกดนอกกล่อง · Esc · เลื่อนหน้า/ย่อขยายหน้าต่าง */
-document.addEventListener('mousedown', function (e) { if (LCFP && !LCFP.el.contains(e.target) && !(e.target.closest && e.target.closest('[data-lcf],[data-lcfe]'))) lotCfClose(); }, true);
-document.addEventListener('keydown', function (e) { if (LCFP && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); lotCfClose(); } }, true);
-window.addEventListener('resize', lotCfClose);
-window.addEventListener('hashchange', lotCfClose);
-/* ป้ายตัวกรอง (อยู่ใน #lotCount ซึ่งวาดใหม่ทุกครั้ง → ผูกที่ document) */
-document.addEventListener('click', function (e) {
-  var x = e.target.closest && e.target.closest('[data-lcfx]'); if (x) { e.preventDefault(); lotCfClose(); lotCfSet(x.dataset.lcfx, null); return; }
-  var a = e.target.closest && e.target.closest('[data-lcfall]'); if (a) { e.preventDefault(); lotCfClose(); L.cf = {}; lotSavePref(); lotRefresh(true); return; }
-  var ed = e.target.closest && e.target.closest('[data-lcfe]'); if (ed) { e.preventDefault(); var c = ed.dataset.lcfe, h = document.querySelector('#lotHdr [data-lcf="' + c + '"]'); lotCfOpen(c, h && h.offsetParent ? h.parentNode : ed); }
-});
+/* ── v2.46 ย้ายไป lots.html: lcfLabel · lotCfChips · lotCfBarDraw · lotCfSet · LCFP · lotCfClose · lotCfOpen · document mousedown · document keydown · window resize · window hashchange · document click ── */
 
 /* ═══════════════════════════════════════════════════════════════════════
    v1.10: ปิด Lot ว่าจบแล้ว (Approval)
@@ -6356,13 +5941,7 @@ document.addEventListener('click', function (e) {
   else if (t.dataset.ldlist != null) { L.f.stage = 'closed'; lotSavePref(); go('lots'); setTimeout(function () { if ($('lq')) { lotSegOn(); lotRefresh(true); } }, 50); }
   else ldAskId(t.dataset.ldid || t.dataset.bdone, t.dataset.from || (view() === 'board' ? 'คิวตัดงาน' : 'Lot ผลิต'));
 }, true);
-/* ปุ่มปิดหลาย Lot บนแถบเครื่องมือหน้า Lot ผลิต */
-(function () {
-  var ex = $('lotExp'); if (!ex || $('lotDoneBtn')) return;
-  var b = document.createElement('button'); b.className = 'tbtn'; b.id = 'lotDoneBtn';
-  b.title = 'ทำเครื่องหมายว่า Lot ที่กรองอยู่จบแล้ว (ไม่มี BOM · แจ้งซ่อมที่ทำแล้ว ฯลฯ) — ออกจากคิวตัดงาน · ยกเลิกได้';
-  b.innerHTML = '✓<span class="lbl"> ปิดว่าจบ…</span>'; ex.parentNode.insertBefore(b, ex);
-})();
+/* ── v2.46 ย้ายไป lots.html: ปุ่ม ✓ ปิดว่าจบ… (#lotDoneBtn) ── */
 
 /* ═══════════════════════════════════════════════════════════════════════
    v1.12: กรองคิวตัดงาน + ติ๊กเลือกหลาย Lot แล้วปิดว่าจบแล้วทีเดียว
@@ -16025,10 +15604,11 @@ bdTabsBox = function () {
   return r;
 };
 
-window.StarStock = { qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
-  L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
-  B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
+window.StarStock = { /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+  L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
+  B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
+sxmLoad('lots');   // v2.46 หน้า Lot ผลิต (lots.html) — โหลดทันทีทุกหน้า · เสร็จแล้ววาดเองถ้าอยู่หน้านั้น (lotBindUi ข้างบน = ตัวแทน ผูกปุ่มตอนโหลดเสร็จ)
 })();
 
 </script>
