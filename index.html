@@ -2119,6 +2119,10 @@ body.tv #bdDash details.dbmcd{display:none!important}
   #bdDash .dbcyd .dbcyw thead th{position:sticky;top:0;z-index:2}
   /* v2.29 ช่องค้างตัด (ตารางวันนี้) */
   #bdDash .dbsaw td.cyl.on{color:#d97706;font-weight:700}
+  /* v2.31 ใบเบิกไม้: ชั้นไม้ที่ไม่อยู่ในใบเบิก */
+  .rjt tr.rjno td{background:rgba(245,158,11,.08)} .rjt td.rjst.wd-no{color:#b45309} .rjt td small.rjcr{color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace}
+  .rjinf{margin:4px 0 6px;padding:6px 9px;border:1px solid var(--line,#d4d9ee);border-radius:8px;background:rgba(37,99,235,.05);font-size:12px;line-height:1.5} .wdsum small{display:block;font-weight:400;opacity:.85;margin-top:2px;font-family:inherit;font-size:11.5px}
+  .rjnonote{margin:4px 0 6px;padding:5px 9px;border:1px solid rgba(245,158,11,.45);border-radius:8px;background:rgba(245,158,11,.08);color:#b45309;font-size:12px;font-weight:600}
 </style>
 </head>
 <body>
@@ -2129,7 +2133,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.30</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.31</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3262,10 +3266,11 @@ var GasFS = (function () {
    v2.28 (2026-10-24 10:25 ผู้ใช้: “ทำไมสถานะวัตถุดิบออก Excel ยังเป็นจ่ายแล้วอยู่”) SAW PLAN สถานะไม้รายแผ่น (ช่องวัตถุดิบใน Excel · ป้ายในการ์ดเครื่อง) แผ่นที่จ่ายแล้ว = “✓ ไม้ครบ” คำเดียวกับ StarStock (เดิม “✓ จ่ายแล้ว”) · แก้ที่ sxsBoardSt ฝั่ง StarStock — sawplan.html ไม่ได้แก้
    v2.29 (2026-10-24 10:25–10:27 ผู้ใช้: “ถ้าผมไม่ติ๊ก auto ไม่ต้องขึ้นเครื่องจักรตาม starstock นะ ไม่งั้นมันงง” (เลือก ซ่อนทั้ง 2 แบบ) · “มันขึ้นยอดทั้ง lot จริง ๆ มันค้างตัดอีกแค่ 26 ให้มันขึ้น 26 อีกช่องเป็นค้างตัดดีกว่า”) ① Dashboard ตารางวันนี้: ช่องใหม่ “ค้างตัด” ถัดจาก “ชิ้น (ทั้ง Lot)” = ชิ้นที่ยังไม่ได้ตัดตอนนี้ (— = ยังไม่เริ่ม · 0 = ตัดครบ · แถวรวม = ค้างตัดรวม) ② SAW PLAN (sawplan.html): ไม่ติ๊ก 🤖 Auto = ไม่ขึ้นป้ายเครื่องตามแผน StarStock (หัว Lot) และแผนของวันที่ผ่านมาแล้วไม่ล็อกชั้นไม้ / ไม่ขึ้นป้าย 🔒 เครื่อง (ติ๊กจัดวันนี้ได้) · ติ๊ก Auto = เหมือนเดิม · เปลี่ยน Auto = คิดใหม่ทันที · แผนที่บันทึกไว้ไม่ได้ลบ
    v2.30 (2026-10-24 10:40 ผู้ใช้: “ให้เพิ่มเวลาชิ้นส่วนที่ค้างตัดให้เห็นด้วยที เอาไว้ด้านล่างเวลาแผนหรือข้าง ๆ กันก็ได้”) SAW PLAN การ์ด Lot ค้างตัด: “✂ ค้างตัด: h:mm:ss · n ชิ้น” ข้าง ⏱ เวลาแผน · แถวชั้นไม้ที่ค้าง “✂ ค้าง h:mm:ss” ใต้เวลาแผน · ท้ายการ์ด ✂ ค้างตัด รวม — เวลา = เวลาแผนทั้งชั้นไม้ (ชุดมาตรฐาน) × ชิ้นที่ค้าง ÷ ชิ้นทั้งชั้นไม้ · ชี้ = ที่มารายชั้นไม้ (sawplan.html refreshLotsDom · sxCyOf)
+   v2.31 (2026-10-24 10:43 ผู้ใช้: “ทำไมรายการบอกไม้ว่าครบไม่ครบ ขึ้นข้อมูลไม่ครบกับชั้นไม้” → เลือกแสดงอย่างเดียว) แผงรายละเอียด Lot “ไม้ของ Lot นี้ · คลังจ่ายหรือยัง”: ชั้นไม้ที่ไม่อยู่ในใบเบิก AX = แถว “⚠ ไม่อยู่ในใบเบิก” (ต้องใช้กี่แผ่น) + บรรทัดเตือนใต้ป้าย (เช่น BO69-0910: ME30 1 แผ่น ไม่มีในใบเบิก) · ใต้รหัส AX = รหัสชั้นไม้ Cut Rite ที่ตรงกัน · สถานะไม้ครบ / ไม่ครบ และแผนตัดไม่เปลี่ยน · (10:46 “ทำไมผมหาใบเบิกไม่เจอ แต่บอกมีไม้ครบแล้ว”) ✓ ไม้ครบ ที่ไม่มีใบเบิกใน rmjn.csv (StarSync ดึงเฉพาะ Lot ที่ยังมีใบไม่ Post — Lot ในคิว ✓ ไม้ครบ 71 Lot ไม่มีเลขใบเลย) = คำอธิบายบอกตรง ๆ “ไม่มีใบค้าง Post + BOM ใส่ใบเบิกครบ · ไม่มีเลขใบ” + แผงรายละเอียดขึ้นตารางแผ่นจาก BOM (BOM · ใส่ใบเบิกแล้ว) + วิธีหาใบใน AX (ตัวกรอง Show = All) · สถานะไม่เปลี่ยน
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.30';
+var VER = '2.31';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -15072,7 +15077,123 @@ dbTodaySec = function (x, P) {
   return h;
 };
 
-window.StarStock = { dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ───────── v2.31: “ไม้ของ Lot นี้ · คลังจ่ายหรือยัง” แสดงครบทุกชั้นไม้ (ผู้ใช้ 24/10 10:43 รูปแผงรายละเอียด BO69-0910) ─────────
+   “ทำไมรายการบอกไม้ว่าครบไม่ครบ ขึ้นข้อมูลไม่ครบกับชั้นไม้” → เลือก “แสดงอย่างเดียว” (สถานะไม้ครบ / ไม่ครบ และแผนตัดไม่เปลี่ยน)
+   ตรวจเว็บจริง: BO69-0910 ชั้นไม้ (Cut Rite / BOM) 5 ชั้น ME15 8 · PB19 4 · ME09 3 · PE16 1 · ME30 1 แผ่น
+     แต่ใบเบิกไม้ AX (Journal TFRM) มี 4 รายการ — ไม่มี ME30 เลย (BOM ของ ME30 ไม่มีขนาดแผ่นต่อท้ายเหมือนรายการอื่น)
+     ตารางเดิมแสดงเฉพาะรายการในใบเบิก · ป้าย “ครบ 3/4 รายการ” นับเฉพาะใบเบิก → ดูเหมือนข้อมูลหาย · รหัส AX 25 ตัว (…SNP48) กับ Cut Rite 22 ตัว เทียบกันยาก
+   ตอนนี้: ① ชั้นไม้ที่ไม่อยู่ในใบเบิก = แถว “⚠ ไม่อยู่ในใบเบิก” ท้ายตาราง (ต้องใช้กี่แผ่น · รหัส AX / Cut Rite) + บรรทัดเตือนใต้ป้ายสถานะ
+          ② ใต้รหัส AX แต่ละแถว = รหัสชั้นไม้ของ Cut Rite ที่ตรงกัน (เทียบกับรายการชั้นไม้ได้)
+          · ไม่นับในสถานะ (ไม้ครบ / ไม่ครบ คิดจากใบเบิกเหมือนเดิม) — แสดงอย่างเดียว */
+function rjNoReq(id) {
+  var a = rjOf(id) || [], ks = {}; a.forEach(function (r) { ks[rjKey(r.code)] = 1; });
+  var cx = null; try { cx = crxOf(id); } catch (e) { cx = null; }
+  var mats = cx && cx[0] && cx[0].mats ? cx[0].mats : [], rc = [];
+  try { rc = (rcOf(id) || []).filter(function (r) { return isBoardCode(r.code); }); } catch (e) { rc = []; }
+  var out = [], seen = {};
+  mats.forEach(function (m) { if (!isBoardCode(m.c)) return; var K = rjKey(m.c); if (!K || ks[K] || seen[K]) return; seen[K] = 1;
+    var b = rc.filter(function (r) { return rjKey(r.code) === K; })[0]; out.push({ c: String(m.c), ax: b ? String(b.code) : '', q: +m.q || 0, bom: b ? +b.bom || 0 : null }); });
+  rc.forEach(function (r) { var K = rjKey(r.code); if (!K || ks[K] || seen[K]) return; seen[K] = 1; out.push({ c: '', ax: String(r.code), q: null, bom: +r.bom || 0 }); });
+  return out;
+}
+function rjCrCode(id, code) {
+  var cx = null; try { cx = crxOf(id); } catch (e) { cx = null; }
+  var K = rjKey(code), m = (cx && cx[0] && cx[0].mats || []).filter(function (x) { return rjKey(x.c) === K; })[0];
+  return m && String(m.c).toUpperCase() !== String(code).toUpperCase() ? String(m.c) : '';
+}
+var rjDetailHtmlV231 = rjDetailHtml;
+rjDetailHtml = function (id) {
+  try {
+    var a = rjOf(id); if (!a || !a.length) return rjDetailHtmlV231.apply(this, arguments);
+    var nr = rjNoReq(id);
+    return '<table class="mqrmt rct rjt"><thead><tr><th>รหัสแผ่น</th><th title="คลังจ่ายไม้ (Post ใบเบิก) แล้ว">คลังจ่ายแล้ว</th><th title="ใบเบิกที่คลังยังไม่จ่าย">ยังไม่จ่าย</th><th>สถานะ</th></tr></thead><tbody>' + a.map(function (r) {
+      var nm = rmNameOf(r.code), st = rjRowSt(r), un = (r.pend > 1e-9 ? r.pend : 0) + (r.miss > 1e-9 ? r.miss : 0), cr = rjCrCode(id, r.code);
+      return '<tr class="' + (st.c === 'miss' ? 'short' : st.c === 'wait' ? 'rjw' : '') + '"><td>' + rmCodeLink(r.code) + (nm && nm.name ? '<small>' + esc(nm.name) + '</small>' : '') + (cr ? '<small class="rjcr" title="รหัสชั้นไม้ของ Cut Rite (รายการชั้นไม้ / ชิ้นที่ยังไม่ได้ตัด)">ชั้นไม้ ' + esc(cr) + '</small>' : '') + '</td>'
+        + '<td>' + (r.posted > 1e-9 ? fmtN(r.posted, 3) + (r.pat ? '<small>' + esc(r.pat.replace('T', ' ').slice(5, 16)) + '</small>' : '') : '—') + '</td>'
+        + '<td>' + (un > 1e-9 ? fmtN(un, 3) : '—') + '</td>'
+        + '<td class="rjst wd-' + (st.c || 'none') + '">' + st.h + '</td></tr>';
+    }).join('') + nr.map(function (x) {
+      var code = x.ax || x.c, nm = rmNameOf(code), n = x.bom != null && x.bom > 0 ? x.bom : x.q;
+      return '<tr class="rjno"><td>' + rmCodeLink(code) + (nm && nm.name ? '<small>' + esc(nm.name) + '</small>' : '') + (x.c && x.c !== code ? '<small class="rjcr">ชั้นไม้ ' + esc(x.c) + '</small>' : '') + '</td><td>—</td><td>—</td>'
+        + '<td class="rjst wd-no">⚠ ไม่อยู่ในใบเบิก<small>' + esc((n ? 'ต้องใช้ ' + fmtN(n, 3) + ' แผ่น' + (x.bom != null && x.bom > 0 ? ' (BOM)' : ' (Cut Rite)') + ' — ' : '') + 'ไม่มีรายการนี้ในใบเบิกไม้ของ AX · ไม่นับในสถานะไม้ครบ / ไม่ครบ (ตรวจใบเบิกใน AX)') + '</small></td></tr>';
+    }).join('') + '</tbody></table>';
+  } catch (e) { console.warn('StarStock v2.31: ตารางใบเบิกไม้', e); return rjDetailHtmlV231.apply(this, arguments); }
+};
+var rjDetailSecV231 = rjDetailSec;
+rjDetailSec = function (g) {
+  var h = rjDetailSecV231.apply(this, arguments);
+  try {
+    if (!h || !g) return h; var nr = rjNoReq(g.id); if (!nr.length) return h;
+    var cs = nr.map(function (x) { return x.c || x.ax; }), note = '<div class="rjnonote">⚠ ชั้นไม้ที่ไม่อยู่ในใบเบิก ' + nr.length + ' รายการ: ' + esc(cs.slice(0, 4).join(', ') + (cs.length > 4 ? ' …' : '')) + ' — ไม่นับในสถานะข้างบน (ดูแถวท้ายตาราง · ตรวจใบเบิกใน AX)</div>';
+    return h.replace('<p class="rjkey">', note + '<p class="rjkey">');
+  } catch (e) { return h; }
+};
+/* ── v2.31 ② (ผู้ใช้ 24/10 10:46 “ทำไมผมหาใบเบิกไม่เจอ แต่ทางคุณบอกมีไม้ครบแล้ว”) ──
+   ตรวจข้อมูลจริง 10:4x: lots/rmjn.csv (StarSync v1.14) มี 170 Lot — ทุก Lot มีใบที่ยังไม่ Post อย่างน้อย 1 ใบ (Post ครบทั้ง Lot = 0 Lot)
+     = StarSync ดึงเฉพาะ Lot ที่ยังมีใบเบิกไม่ Post · Lot ที่ Post ครบแล้วไม่อยู่ในไฟล์ → โปรแกรมไม่มีเลขใบของ Lot นั้นเลย
+   ✓ ไม้ครบ ของ Lot ในคิว 71 Lot ตอนนี้ = ทุก Lot มาจาก “ไม่มีใบค้าง Post ใน rmjn.csv + BOM ใน AX (STMSMARTPDRMSTM) ใส่ใบเบิกครบทุกแผ่น (ISSUEQTY = BOM)”
+     ไม่ได้เห็นใบที่ Post จริง — คำเดิม “ใบเบิก … จ่ายแล้วทั้งหมด (Post ครบ)” ทำให้เข้าใจว่าโปรแกรมเห็นใบ
+   ตอนนี้ (แสดงอย่างเดียว · สถานะ / การจัดแผนไม่เปลี่ยน):
+     · คำอธิบายสถานะ (ป้าย · ชี้ · SAW PLAN · กล่องสรุปวัตถุดิบ) บอกตรง ๆ ว่า “ไม่มีใบค้าง Post + BOM ใส่ใบเบิกครบ · ไม่มีเลขใบ”
+     · แผงรายละเอียด Lot “ไม้ของ Lot นี้ · คลังจ่ายหรือยัง” ขึ้นด้วย (เดิมว่าง) = ตารางแผ่นจาก BOM: ต้องใช้ · ใส่ใบเบิกแล้ว + วิธีหาใบใน AX
+       + ชั้นไม้ Cut Rite ที่ไม่อยู่ใน BOM = “⚠ ไม่อยู่ใน BOM / ใบเบิก”
+   ถ้าอยากเห็นเลขใบที่ Post แล้ว = StarSync ต้องดึงใบ TFRM ที่ Post แล้วด้วย (แก้สคริปต์ที่ออฟฟิศ — ไม่อยู่ใน repo นี้) */
+var wdOf0V231 = wdOf0;
+wdOf0 = function (g, K) {
+  var w = wdOf0V231.apply(this, arguments);
+  try { if (w && w.k === 'full' && !w.n) w = Object.assign({}, w, { inf: 1, t: 'ไม้ครบ — AX ไม่มีใบเบิกไม้ (Journal TFRM) ของ Lot นี้ที่ยังไม่ Post และ BOM ใส่ใบเบิกครบทุกแผ่น · ไม่มีเลขใบในโปรแกรม (StarSync ดึงเฉพาะใบที่ยังไม่ Post)' }); } catch (e) { }
+  return w;
+};
+function wdInf(g) { var w = null; try { w = g && wdOf(g); } catch (e) { w = null; } return !!(w && w.inf); }
+var wdSumBoxV231 = wdSumBox;
+wdSumBox = function (g) {
+  var h = wdSumBoxV231.apply(this, arguments);
+  try { if (h && wdInf(g)) h = '<div class="wdsum ok"><b>✓ ไม้ครบ</b> — AX ไม่มีใบเบิกไม้ค้าง Post · BOM ใส่ใบเบิกครบทุกแผ่น · พร้อมตัด<small>ไม่มีเลขใบเบิกในโปรแกรม — StarSync ดึงเฉพาะใบที่ยังไม่ Post · หาใบที่ Post แล้วใน AX: หน้า Journal ตั้งตัวกรอง Show เป็น All / Posted แล้วค้นชื่อ Lot</small></div>'; } catch (e) { }
+  return h;
+};
+var wdCodeStV231 = wdCodeSt;
+wdCodeSt = function (g, code) {
+  var x = wdCodeStV231.apply(this, arguments);
+  try { if (x && x.c === 'ok' && !x.s && wdInf(g)) { x = Object.assign({}, x); x.tip = 'ไม่มีใบเบิกไม้ค้าง Post ใน AX และ BOM ใส่ใบเบิกครบ — ไม่มีเลขใบในโปรแกรม (StarSync ดึงเฉพาะใบที่ยังไม่ Post)'; } } catch (e) { }
+  return x;
+};
+/* แผ่นจาก BOM ของ Lot (rmcut.csv) + ชั้นไม้ Cut Rite ที่ไม่อยู่ใน BOM */
+function rjInfRows(id) {
+  var rc = []; try { rc = (rcOf(id) || []).filter(function (r) { return isBoardCode(r.code); }); } catch (e) { rc = []; }
+  var cx = null; try { cx = crxOf(id); } catch (e) { cx = null; }
+  var mats = cx && cx[0] && cx[0].mats ? cx[0].mats : [], ks = {}, rows = [];
+  rc.forEach(function (r) { var K = rjKey(r.code), m = mats.filter(function (x) { return rjKey(x.c) === K; })[0];
+    if (ks[K]) { var o = rows.filter(function (y) { return y.K === K; })[0]; if (o) { o.bom += +r.bom || 0; o.iss += +r.issued || 0; o.out += +r.qty || 0; } return; }
+    ks[K] = 1; rows.push({ K: K, code: String(r.code), cr: m && String(m.c).toUpperCase() !== String(r.code).toUpperCase() ? String(m.c) : '', bom: +r.bom || 0, iss: +r.issued || 0, out: +r.qty || 0 }); });
+  var extra = [], seen = {};
+  mats.forEach(function (m) { if (!isBoardCode(m.c)) return; var K = rjKey(m.c); if (ks[K] || seen[K]) return; seen[K] = 1; extra.push({ code: String(m.c), q: +m.q || 0 }); });
+  return { rows: rows, extra: extra };
+}
+function rjInfSec(g) {
+  var w = g && wdOf(g); if (!w || !w.inf) return '';
+  var x = rjInfRows(g.id), at = rjWhen(), s = null; try { s = wdShort(w); } catch (e) { s = null; }
+  var tb = x.rows.length || x.extra.length ? '<table class="mqrmt rct rjt"><thead><tr><th>รหัสแผ่น</th><th title="จำนวนแผ่นตาม BOM ของ Lot ใน AX">BOM</th><th title="ใส่ในใบเบิกแล้ว (ISSUEQTY ใน AX) — ไม่ใช่เลขใบ">ใส่ใบเบิกแล้ว</th><th>สถานะ</th></tr></thead><tbody>'
+    + x.rows.map(function (r) { var nm = rmNameOf(r.code), ok = !(r.out > 0 && spRmOut({ qty: r.out, issued: r.iss }));
+      return '<tr><td>' + rmCodeLink(r.code) + (nm && nm.name ? '<small>' + esc(nm.name) + '</small>' : '') + (r.cr ? '<small class="rjcr">ชั้นไม้ ' + esc(r.cr) + '</small>' : '') + '</td><td>' + fmtN(r.bom, 3) + '</td><td>' + fmtN(r.iss, 3) + '</td>'
+        + '<td class="rjst wd-' + (ok ? 'ok' : 'wait') + '">' + (ok ? '✓ ไม้ครบ<small>ใส่ใบเบิกครบ · ไม่มีใบค้าง Post</small>' : '⏳ ยังไม่เบิก ' + fmtN(r.out, 3) + '<small>ยังไม่อยู่ในใบเบิก</small>') + '</td></tr>'; }).join('')
+    + x.extra.map(function (r) { var nm = rmNameOf(r.code);
+      return '<tr class="rjno"><td>' + rmCodeLink(r.code) + (nm && nm.name ? '<small>' + esc(nm.name) + '</small>' : '') + '</td><td>—</td><td>—</td><td class="rjst wd-no">⚠ ไม่อยู่ใน BOM / ใบเบิก<small>' + esc((r.q ? 'ต้องใช้ ' + fmtN(r.q, 3) + ' แผ่น (Cut Rite) — ' : '') + 'ไม่มีชั้นไม้นี้ใน BOM ของ AX · ไม่นับในสถานะ (ตรวจใน AX)') + '</small></td></tr>'; }).join('')
+    + '</tbody></table>' : '';
+  return '<div class="sec rjsec"><h3>ไม้ของ Lot นี้ · คลังจ่ายหรือยัง<span class="r muted">ใบเบิกไม้ AX' + (at ? ' · ดึงเมื่อ ' + esc(at) : '') + '</span></h3>'
+    + (s ? '<div class="rjbadge wd-' + s.c + '">' + esc(s.t) + '</div>' : '')
+    + '<div class="rjinf"><b>ℹ ไม่มีเลขใบเบิกในโปรแกรม</b> — AX ไม่มีใบเบิกไม้ (Journal TFRM) ของ Lot นี้ที่ยังไม่ Post · StarSync ดึงเฉพาะ Lot ที่ยังมีใบไม่ Post (ใบที่ Post ครบแล้วไม่ได้ดึงมา)'
+    + '<br>“✓ ไม้ครบ” ดูจาก BOM ของ Lot ใน AX: แผ่นไม้ทุกรายการ “ใส่ใบเบิกแล้ว” ครบตาม BOM (ตารางล่าง) และไม่มีใบค้าง Post'
+    + '<br>หาใบใน AX: หน้า Journal ปกติแสดงเฉพาะใบที่ยังไม่ Post — ตั้งตัวกรอง Show เป็น All / Posted แล้วค้นชื่อ Lot · ถ้ายังไม่เจอ = ตรวจ BOM ของ Lot ใน AX (ช่องจำนวนที่ใส่ใบเบิก)</div>'
+    + tb + '</div>';
+}
+var rjDetailSecV231b = rjDetailSec;
+rjDetailSec = function (g) {
+  var h = rjDetailSecV231b.apply(this, arguments);
+  if (h) return h;
+  try { return rjInfSec(g); } catch (e) { console.warn('StarStock v2.31: ไม้ครบไม่มีเลขใบ', e); return h; }
+};
+
+window.StarStock = { rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotImport: lotImport, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
