@@ -2127,7 +2127,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.24</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.25</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3254,10 +3254,11 @@ var GasFS = (function () {
    v2.22 (2026-10-24 09:06 ผู้ใช้: “ถ้าติ๊กค้างตัด แล้วมีทั้งไม้ครบและไม่ครบ ก็ให้มันติ๊ก auto 2 สถานะมาเลย”) SAW PLAN ตัวกรอง: ติ๊ก ✂ ค้างตัด = ติ๊กกลุ่มไม้ (✓ ไม้ครบ / ◐ ไม้ยังไม่ครบ / อื่น ๆ) ที่มี Lot ค้างตัดอยู่ให้เอง (เดิมติ๊กค้างตัดอย่างเดียว = ไม่เห็น Lot เลย) · ติ๊กออกไม่แตะกลุ่มไม้ · แก้ฝั่ง StarStock (spCutOnSet) — sawplan.html ไม่ได้แก้
    v2.23 (2026-10-24 09:08 ผู้ใช้: “พวกสถานะต่าง ๆ หรือข้อมูลต่าง ๆ พวกจำนวนไม้ที่ค้าง … ตรง sawplan ถ้าผมเอาเมาส์ไปชี้ตรงไหน ให้มีคำอธิบายทั้งหมดเลยนะ”) sawplan.html: ก้อนสคริปต์แยกท้ายไฟล์ (sxTipsV223) — ชี้จุดที่ยังไม่มีคำอธิบาย = เติมให้ตอนชี้ (หัวการ์ด Lot W · ส่ง · SAW · #n ชั้น part แผ่น · กล่องตัวเลขบนสุด · ทุกคอลัมน์ตาราง Board Qty / Waste % / Total Time / Dividing / Machining ฯลฯ · N00S · รอจ่าย / ค้าง n แผ่น · เวลาตัดรวม · Cutting time · ตัวเลขการ์ดเครื่อง ใช้ / เหลือ / ชุดค่า / Σ / ชิ้นละ) · จุดที่มีคำอธิบายอยู่แล้วไม่ทับ · ไม่แตะแผน / ค่าตั้ง · สคริปต์หลักของ SAW PLAN ไม่ได้แก้
    v2.24 (2026-10-24 09:13 ผู้ใช้: “ส่วนตรงสถานะ อื่น ๆ ให้แตกออกให้คลิกกรองแยกได้ด้วยนะ เช่น ไม่มี saw … แจ้งจำนวนให้ด้วย”) SAW PLAN ตัวกรอง: ข้าง “อื่น ๆ” มีติ๊กย่อยพร้อมจำนวน — ตามเหตุ (⛔ ยังไม่แตก BOM · ⛔ ยังไม่มี BOM · ⚠ ยังไม่ Transfer · ✗ ไม้ไม่พอในคลัง · ? ไม่มีข้อมูล) และตาม .saw (📄 ไม่มี .saw · มี .saw) · ค่า/การกรองฝั่ง StarStock (spOth · spOthSet · spOthCnt · spRmPass) · หน้าจอติ๊กย่อย = ก้อนแยกท้าย sawplan.html (sxOthV224) — สคริปต์หลัก SAW PLAN ไม่ได้แก้
+   v2.25 (2026-10-24 09:19 ผู้ใช้: “ตรงอื่น ๆ แตกเป็นแบบดรอปดาวไม่ได้หรอ”) SAW PLAN: ติ๊กย่อยของ “อื่น ๆ” เป็นดรอปดาวน์ — ปุ่ม “▾ ทุกเหตุ · ทุก .saw” ข้าง “อื่น ๆ” (บอกว่ากรองอะไรอยู่ · กรองอยู่ = สีส้ม) กดเปิดกล่องติ๊กตามเหตุ / ตามไฟล์ .saw พร้อมจำนวน · ✔ ทั้งหมด · คลิกนอกกล่อง / Esc = ปิด · ก้อนแยกท้าย sawplan.html (sxOthDdV225) · (ยอดจริง 09:19: ยังไม่แตก BOM 5 · ยังไม่มี BOM 97 · ยังไม่ Transfer 18 · ไม่มี .saw 114 — คอมเมนต์ v2.24 เขียนสลับ)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.24';
+var VER = '2.25';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
