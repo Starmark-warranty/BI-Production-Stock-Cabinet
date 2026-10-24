@@ -2129,7 +2129,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.29</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.30</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3261,10 +3261,11 @@ var GasFS = (function () {
    v2.27 (2026-10-24 09:32 ผู้ใช้: “ย่อกรอบ Export Excel แล้วขยับไปด้านบนให้ที มันเกิดช่องว่าง … ดูไม่สวย”) SAW PLAN: ปุ่ม Export Excel เล็กลง “📊 Excel” ย้ายขึ้นไปหัวหน้าสีฟ้า ข้าง “🖨 พิมพ์” (เดิมล้นลงแถว 3 ของแถบตัวกรอง อยู่ตัวเดียว · ความกว้างจอต่างกัน = ล้นต่างกัน) · ปุ่มเดิม ย้ายที่ กดแล้วเหมือนเดิม · ก้อนแยกท้าย sawplan.html (sxXlsV227)
    v2.28 (2026-10-24 10:25 ผู้ใช้: “ทำไมสถานะวัตถุดิบออก Excel ยังเป็นจ่ายแล้วอยู่”) SAW PLAN สถานะไม้รายแผ่น (ช่องวัตถุดิบใน Excel · ป้ายในการ์ดเครื่อง) แผ่นที่จ่ายแล้ว = “✓ ไม้ครบ” คำเดียวกับ StarStock (เดิม “✓ จ่ายแล้ว”) · แก้ที่ sxsBoardSt ฝั่ง StarStock — sawplan.html ไม่ได้แก้
    v2.29 (2026-10-24 10:25–10:27 ผู้ใช้: “ถ้าผมไม่ติ๊ก auto ไม่ต้องขึ้นเครื่องจักรตาม starstock นะ ไม่งั้นมันงง” (เลือก ซ่อนทั้ง 2 แบบ) · “มันขึ้นยอดทั้ง lot จริง ๆ มันค้างตัดอีกแค่ 26 ให้มันขึ้น 26 อีกช่องเป็นค้างตัดดีกว่า”) ① Dashboard ตารางวันนี้: ช่องใหม่ “ค้างตัด” ถัดจาก “ชิ้น (ทั้ง Lot)” = ชิ้นที่ยังไม่ได้ตัดตอนนี้ (— = ยังไม่เริ่ม · 0 = ตัดครบ · แถวรวม = ค้างตัดรวม) ② SAW PLAN (sawplan.html): ไม่ติ๊ก 🤖 Auto = ไม่ขึ้นป้ายเครื่องตามแผน StarStock (หัว Lot) และแผนของวันที่ผ่านมาแล้วไม่ล็อกชั้นไม้ / ไม่ขึ้นป้าย 🔒 เครื่อง (ติ๊กจัดวันนี้ได้) · ติ๊ก Auto = เหมือนเดิม · เปลี่ยน Auto = คิดใหม่ทันที · แผนที่บันทึกไว้ไม่ได้ลบ
+   v2.30 (2026-10-24 10:40 ผู้ใช้: “ให้เพิ่มเวลาชิ้นส่วนที่ค้างตัดให้เห็นด้วยที เอาไว้ด้านล่างเวลาแผนหรือข้าง ๆ กันก็ได้”) SAW PLAN การ์ด Lot ค้างตัด: “✂ ค้างตัด: h:mm:ss · n ชิ้น” ข้าง ⏱ เวลาแผน · แถวชั้นไม้ที่ค้าง “✂ ค้าง h:mm:ss” ใต้เวลาแผน · ท้ายการ์ด ✂ ค้างตัด รวม — เวลา = เวลาแผนทั้งชั้นไม้ (ชุดมาตรฐาน) × ชิ้นที่ค้าง ÷ ชิ้นทั้งชั้นไม้ · ชี้ = ที่มารายชั้นไม้ (sawplan.html refreshLotsDom · sxCyOf)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.29';
+var VER = '2.30';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
