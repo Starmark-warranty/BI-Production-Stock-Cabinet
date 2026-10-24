@@ -2135,7 +2135,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.37</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.38</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3275,10 +3275,11 @@ var GasFS = (function () {
    v2.35 (2026-10-24 13:05 ผู้ใช้: “ทำไมมันโหลดชื่อรายละเอียดไม้ มีบ้างไม่มีบ้าง บางทีก็ขึ้นช้า”) ชื่อไม้: อ่าน lots/bnames.csv (StarSync v1.16 · ชื่อไม้ทุกแผ่นของทุก Lot + ไม้ปิดผิว) พร้อมข้อมูล Lot — ไม่ต้องรอรายการสินค้าหน้า STOCK · ไม้ที่เบิกครบแล้ว / ไม้ปิดผิวเองมีชื่อ (รหัส Cut Rite เทียบด้วย rjKey)
    v2.36 (2026-10-24 13:11 ผู้ใช้: “จัดการให้จบเลย ทุกหัวข้อที่ค้างไว้”) ① ตารางวันนี้: ใต้เวลาเป้าหมาย (ตามแผน) มี “เหลือ ≈ เวลา” ของชิ้นที่ค้างตัดตอนนี้ ② SAW PLAN: ไม้ปิดผิวที่ไม่อยู่ในผังตัด Cut Rite ไม่กันทั้ง Lot ③ ชื่อไม้: ยังไม่มี bnames.csv = อ่านชื่อจาก items/info.csv เอง (ไม่ต้องเปิดหน้า STOCK) ④ เลขใบเบิกที่ Post แล้ว (StarSync v1.16 rmjn.csv คอลัมน์ poj) ขึ้นในช่อง “คลังจ่ายแล้ว” ของแผงรายละเอียด Lot
    v2.37 (2026-10-24 13:31–13:36 ผู้ใช้: รูป Excel ที่แก้เอง “ออก Excel ทั้ง StarStock กับ SAW PLAN ให้เป็นรูปแบบนี้ · สถานะงานตัดจริงไว้ท้ายสุด” + “ทำไมค้างตัดแค่ 272”) ใบงาน Excel A4 (StarStock + SAW PLAN A4 กระชับ): แถวเขียว .Saw · Enddate · ตัดแล้ว/ค้างตัด ต่อ Lot + แถวฟ้าชื่อ Lot · คอลัมน์ ลำดับ/Board Code/รายละเอียด/ขนาดไม้/แผ่น/ชิ้น/เวลาเป้าหมาย/วัตถุดิบ/หมายเหตุ/สถานะงานตัดจริง · ค้างตัดที่ยิงหลายเครื่อง แบ่งตามชิ้นที่ยิงวันนี้ ไม่ลงเครื่องที่ปิดวันนี้ (เดิมแบ่งเท่า ๆ กัน → 300/3 ได้ 272 จาก 544) · ค้างรายชั้นไม้หักที่ยิงวันนี้ (Part ทุกชิ้น × Barcode)
+   v2.38 (2026-10-24 13:50 ผู้ใช้: “ช่อง Excel มันย่อไม่พอดี” · รูปรายละเอียด / วัตถุดิบโดนตัด) Excel A4 ใบงาน: ความสูงแถวเผื่อข้อความไทย (ตัวอักษรต่อบรรทัดน้อยลง · บรรทัดละ 13.5 pt) · แถวฟ้านับตัวหนา · Board Code 24 / รายละเอียด 26 · ไม่ซ้ำ “หนา n มม.” เมื่อชื่อไม้มีความหนาแล้ว · SAW PLAN ใบงานแบบย่อ: ช่องข้อความตัดบรรทัดในช่อง + ความสูงแถวตามข้อความ (เดิมโดนตัดที่ขอบช่อง)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.37';
+var VER = '2.38';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -15767,6 +15768,44 @@ xlWs = function (XL, sp) {
     if (!o.ws['!rows']) o.ws['!rows'] = []; if (!o.ws['!merges']) o.ws['!merges'] = [];
     m.role.forEach(function (rl, r) { if (rl !== 'l7g') return; o.ws['!merges'].push({ s: { r: r, c: 0 }, e: { r: r, c: m.n - 1 } }); o.ws['!rows'][r] = { hpt: 22 }; });
   } catch (e) { console.warn('StarStock v2.37: แถวเขียว Lot', e); }
+  return o;
+};
+
+/* ───────── v2.38: Excel A4 ใบงาน — ข้อความไม่ล้นช่อง (ผู้ใช้ 24/10/2026 13:50 รูป HPP 300/3 กรอบแดง “ช่อง Excel มันย่อไม่พอดี”) ─────────
+   เดิม: ความสูงแถวประมาณจาก “ตัวอักษรต่อบรรทัด = ความกว้างช่อง × 1.1” (v1.98 woLines) · บรรทัดละ 12 pt
+     → ช่องรายละเอียด (กว้าง 22 · ไทยปนอังกฤษ 4 บรรทัด) แถวสูงแค่ 3 บรรทัด = ข้อความโดนตัดบน-ล่าง
+     → แถวฟ้า “✓ ไม้ครบทุกรายการ” (ตัวหนา 11 ในช่อง 19) นับได้ 1 บรรทัด แต่ Excel ตัดเป็น 2 บรรทัด = โดนตัด
+   ตอนนี้: ① ประมาณตัวอักษรต่อบรรทัดเผื่อขึ้น (ตัวปกติ × 0.92 · ตัวหนา 11 × 0.62) · บรรทัดละ 13.5 pt (ไทยมีสระบน-ล่าง)
+          ② Board Code กว้าง 24 (รหัส 22 ตัวไม่ตัดบรรทัด) · รายละเอียด 26
+          ③ รายละเอียดไม่ซ้ำ “หนา n มม.” เมื่อชื่อไม้มีความหนาอยู่แล้ว (เช่น “MDF-HMR 15 mm. …”) — บรรทัดน้อยลง */
+woLines = function (v, w) { if (v == null || v === '') return 1; var cap = Math.max(4, w * 0.92 - 1), n = 0; String(v).split('\n').forEach(function (ln) { n += Math.max(1, Math.ceil(woTxtLen(ln) / cap)); }); return n; };
+var w7ColsV238 = w7Cols;
+w7Cols = function () {
+  var c = w7ColsV238.apply(this, arguments);
+  try { if (c.length === 10) { c[W7N.code] = Object.assign({}, c[W7N.code], { w: 24 }); c[W7N.desc] = Object.assign({}, c[W7N.desc], { w: 26 }); } } catch (e) { }
+  return c;
+};
+var w7SplitV238 = w7Split;
+w7Split = function (W) {
+  var o = w7SplitV238.apply(this, arguments);
+  try { (o.body || []).forEach(function (r, i) { var rl = o.roles[i]; if (rl !== 'b' && rl !== 'br') return; var d = String(r[W7N.desc] || '');
+    if (/ · หนา [\d.,]+ มม\.$/.test(d) && /\d\s*(mm|มม)/i.test(d.replace(/ · หนา [\d.,]+ มม\.$/, ''))) r[W7N.desc] = d.replace(/ · หนา [\d.,]+ มม\.$/, ''); }); } catch (e) { }
+  return o;
+};
+var xlWsV238 = xlWs;
+xlWs = function (XL, sp) {
+  var o = xlWsV238.apply(this, arguments);
+  try {
+    var m = o.meta; if (m.role.indexOf('l7g') < 0) return o;   // เฉพาะใบงานเครื่อง (v2.37)
+    var cw = m.cols.map(function (c) { return c.w || 10; }), rows = o.ws['!rows'] || (o.ws['!rows'] = []);
+    var lines = function (v, w, f) { if (v == null || v === '' || typeof v !== 'string') return 1; var cap = Math.max(3, w * f - 1), n = 0; v.split('\n').forEach(function (ln) { n += Math.max(1, Math.ceil(woTxtLen(ln) / cap)); }); return n; };
+    var iw = w7ColIx(m.cols, 'วัตถุดิบ'), inote = w7ColIx(m.cols, 'หมายเหตุ');
+    m.role.forEach(function (rl, r) {
+      var v = sp.body[r - m.head - 1]; if (!v) return;
+      if (rl === 'b' || rl === 'br') { var n = 1; v.forEach(function (x, c) { n = Math.max(n, lines(x, cw[c], 0.92)); }); rows[r] = { hpt: Math.max(15, n * 13.5 + 4) }; }
+      else if (rl === 'l7') { var k = 1; [iw, inote].forEach(function (c) { if (c >= 0) k = Math.max(k, lines(v[c], cw[c], 0.62)); }); k = Math.max(k, lines(v[0], cw.slice(0, sp.l7span || 4).reduce(function (a, b) { return a + b; }, 0), 0.62)); rows[r] = { hpt: Math.max(20, k * 16 + 4) }; }
+    });
+  } catch (e) { console.warn('StarStock v2.38: ความสูงแถวใบงาน', e); }
   return o;
 };
 
