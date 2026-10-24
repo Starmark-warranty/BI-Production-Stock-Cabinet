@@ -2127,7 +2127,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver">v2.19</span>
+    <span class="bname">StarStock</span> <span class="ver">v2.20</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3249,10 +3249,11 @@ var GasFS = (function () {
    v2.17 (2026-10-23 17:05 ผู้ใช้: “ติ๊ก auto ให้ลอกเลียนกันมาให้หมด · ส่วนพวกการตั้งค่า ก็ให้ล้อเลียนกันทั้ง 2 โปรแกรมเลย”) ค่าตั้งล้อกัน: StarStock ⚙ = ค่าหลัก · SAW PLAN อ่านเครื่องตัด (เปิดใช้ · เวลาทำงาน/วัน · หนาสุด · ไม่รับรหัส · เพิ่มเครื่องที่ยังไม่มี) + สูตรเวลาชุดค่ามาตรฐาน (โหลดกองไม้ · ติด Label · ตั้งผัง · เผื่อ % · กองไม้) จาก StarStock ทุก 5 วิ · แก้ในแท็บตั้งค่าของ SAW PLAN = เขียนกลับ board.json (sxsSetPatch · คิวเดียวกับเครื่องรายวัน) · SAW PLAN รายการ Part (Lot ที่มีแค่ CSV ของ Cut Rite) = สถานะจากยอด AX ราย “ชั้นไม้” แบบ v2.13 (แดง ยังไม่ตัด · จาง ตัดแล้ว · ส้ม ค้าง n จาก m)
    v2.18 (2026-10-23 17:56 ผู้ใช้: “ให้ใช้ของ sawplan”) Excel A4 ของ StarStock (Dashboard 📊 + Daily Plan) = แบบใบงานของ SAW PLAN: ลำดับ · Board Code · รายละเอียด · ขนาดไม้ (มม.) · แผ่น · ชิ้น · เวลาแผน · เฉลี่ย/ชิ้น · สะสม · วัตถุดิบ · ✓ · หมายเหตุ · หัว Lot พื้นฟ้า หนา 12 สามบรรทัด (ชื่อ Lot / .saw · ส่ง · ชิ้น · แผ่น · ชั้นไม้ / สถานะไม้ · สถานะ Lot) · หัวใบ Capacity · ใช้ · เหลือ · ชุดค่า — ข้อมูลยังเป็นแผน StarStock (ลำดับ = Dashboard) · ไม้ยังไม่มี/ยังไม่จ่าย = แถวตัวแดง · ไม่มีบรรทัดลายเซ็นท้ายใบ (แบบ SAW PLAN)
    v2.19 (2026-10-24 08:44–08:45 ผู้ใช้: “เวลาเป้าหมายไม่เห็นตรงกันเลย ผมออก Excel ออกมาไม่ตรงกับโปรแกรม กับสถานะวัตถุดิบ … ผมอยากได้ Excel ออกเหมือนโปรแกรมนะ · ใน Excel ขนาดไม้ก็ไม่ออก”) Excel A4 = ตัวเลขเดียวกับหน้า Dashboard: กด Excel = วาด Dashboard ใหม่ก่อน (จอกับไฟล์ชุดเดียวกัน) · ครบรอบ 5 นาที Dashboard วาดใหม่เอง · หัว Lot ชิ้นเท่าจอ (ชิ้นรายชั้นไม้ปันให้รวมเท่า) · ช่องวัตถุดิบของหัว Lot = คำเดียวกับ Dashboard (ไม่ครบ = แดง) · แถวไม้จ่ายแล้ว = “✓ ไม้ครบ” · หัวคอลัมน์ “เวลาเป้าหมาย” · หัวใบบอก “ตัวเลข ณ hh:mm” · ขนาดไม้: กด Excel อ่านผังตัด Cut Rite (crdetail.csv) ก่อนทำไฟล์ (เดิมอ่านเฉพาะตอนเปิดแท็บ SAW PLAN) · ตาราง Dashboard วันข้างหน้า: Lot ที่แบ่งตัดข้ามวัน = ชิ้น / เวลาของวันนั้น (เดิมทั้ง Lot · ทั้ง Lot อยู่ในกล่องชี้)
+   v2.20 (2026-10-24 08:54 ผู้ใช้: “งง สถานะจัดแผนของ saw plan ผมหายไปไหนหมด”) SAW PLAN เปิดไม่ขึ้นแท็บจัดแผนตั้งแต่ v2.16 (sawplan.html ตั้งคอลัมน์ขนาดไม้ XC.sz / CW.sz ก่อนบรรทัดที่สร้าง XC / CW → สคริปต์ SAW PLAN หยุดตอนโหลด · เหลือแต่รายงาน SAW W43) — ย้ายไปไว้หลังสร้างแล้ว · แผนที่บันทึกไว้ (localStorage / ไฟล์กลาง) ไม่ได้หาย · ทดสอบโหลด sawplan.html แบบ headless ไม่มี error แล้ว
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.19';
+var VER = '2.20';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
