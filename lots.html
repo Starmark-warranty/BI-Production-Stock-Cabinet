@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.48 (2026-10-26 19:37 ผู้ใช้ รูปเกจ FOREST-2026-0017 (Site 12/169): “เพิ่มห่อ ตรงเกจ site หน่อยครับ มีกี่ห่อ”)
+        UX เกจ Site บอกจำนวนห่อ “ห่อ x/ทั้งหมด” — ห่อ = Code Pack ที่ไม่ซ้ำของรายชิ้น (ไม่นับว่าง / Manual) · x = ห่อที่ตรวจรับใน Scan-Link แล้ว (sitePk)
+           (มีชิ้นขาด = “ห่อ x/ทั้งหมด · ขาด n” ชิ้น) · หลาย Lot = รวมทุก Lot · Scan-Link แผงห่อบอก “ห่อของ Lot ตรวจรับแล้ว x / ทั้งหมด” เหมือนกัน
     1.47 (2026-10-26 18:43 ผู้ใช้ รูป FOREST-2026-0017 (remark “เคลือบ PP77” · Pack 169/169 · Finish 0/0 · ป้าย “เมลามีน?”):
          “ถ้ามัน pack แล้ว แสดงว่างานทำสีหรือเคลือบมันต้อง 100 แล้ว และนับชิ้นสีหรือเคลือบให้ด้วย ทำไมยัง 0/0 แต่เครื่องผมปิด sync ไปแล้ว”)
         FIX Lot ที่ไม่มี FrontStyle (Lot จบแล้ว — StarSync อ่าน CSV เฉพาะ Lot ที่ยังไม่จบ · หรือ CSV ไม่มีคอลัมน์) = ขั้นสี·เคลือบ 0/0
@@ -1000,7 +1003,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.47';
+var LOTS_VER = '1.48';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1925,6 +1928,7 @@ function pstSum(x, rows) {
       if (pstScanOf(x.id, 'si') && ta) o.si = { d: ta, n: ta }; }   // lots 1.6
   }
   o.scan = { edge: pstScanOf(x.id, 'edge'), drill: pstScanOf(x.id, 'drill'), si: pstScanOf(x.id, 'si'), fin: pstScanOf(x.id, 'paint') || pstScanOf(x.id, 'coat') };   // lots 1.2 · 1.6 + si · 1.43 + fin
+  if (rows) { var pk = pstPackCnt(x.id, rows); o.pkN = pk.n; o.pkC = pk.c; o.pkM = pk.m; }   // lots 1.48 ห่อ (Site)
   return o;
 }
 /* lots 1.2: รวมยอดหลาย Lot */
@@ -1933,7 +1937,8 @@ function pstSumAll(list) {
   var o = { scanN: { edge: 0, drill: 0, si: 0, fin: 0 }, n: list.length };   // lots 1.43 + fin
   list.forEach(function (it) { var s = pstSum(it.x, it.rows);
     PST_STEPS.forEach(function (S0) { var z = s[S0.k]; if (!z) return; var a = o[S0.k] || (o[S0.k] = { d: 0, n: 0 }); a.d += z.d; a.n += z.n; if (z.ms) a.ms = (a.ms || 0) + z.ms; });   // lots 1.46 + ms
-    if (s.scan.edge) o.scanN.edge++; if (s.scan.drill) o.scanN.drill++; if (s.scan.si) o.scanN.si++; if (s.scan.fin) o.scanN.fin++; });
+    if (s.scan.edge) o.scanN.edge++; if (s.scan.drill) o.scanN.drill++; if (s.scan.si) o.scanN.si++; if (s.scan.fin) o.scanN.fin++;
+    if (s.pkN) { o.pkN = (o.pkN || 0) + s.pkN; o.pkC = (o.pkC || 0) + s.pkC; o.pkM = (o.pkM || 0) + s.pkM; } });   // lots 1.48 ห่อ
   return o;
 }
 /* ───────── lots 1.46: Site ราย Pack (Scan-Link ยิงบาร์โค้ดห่อ → ติ๊กชิ้นที่ได้รับ → ยืนยัน) ─────────
@@ -1954,6 +1959,13 @@ function pstSitePk(p) {
   var e = PST.steps && PST.steps.get(String(p.lot || '').toUpperCase()), pk = String(p.pack || '').trim().toUpperCase();
   var r = e && e.sitePk && pk && pk !== 'MANUAL' ? e.sitePk[pk] : null; if (!r) return null;
   return { r: r, miss: Array.isArray(r.miss) && r.miss.indexOf(pstSiteKey(p)) >= 0 };
+}
+/* lots 1.48: ห่อของ Lot (Code Pack ไม่ซ้ำของรายชิ้น) · c = ตรวจรับใน Scan-Link แล้ว · m = ตรวจแล้วแต่ไม่ครบ */
+function pstPackCnt(id, rows) {
+  var e = PST.steps && PST.steps.get(String(id).toUpperCase()), sp = e && e.sitePk, seen = {}, n = 0, c = 0, m = 0;
+  (rows || []).forEach(function (p) { var k = String(p.pack || '').trim().toUpperCase(); if (!k || k === 'MANUAL' || seen[k]) return; seen[k] = 1; n++;
+    var r = sp && sp[k]; if (r) { c++; if (Array.isArray(r.miss) && r.miss.length) m++; } });
+  return { n: n, c: c, m: m };
 }
 function pstPkTip(r, miss) {
   return (miss ? '✗ ขาด — ตรวจรับที่ไซต์ไม่พบชิ้นนี้ในห่อ ' : 'ตรวจรับที่ไซต์ (ห่อ ') + (r.pk || '') + (miss ? '' : ')') + ' · ' + (fDT(lotDate(r.at)) || r.at) + (r.by ? ' โดย ' + r.by : '')
@@ -2529,6 +2541,7 @@ function pstRender(keep) {
     }
     var subOf = function (k) {
       var S0 = PST_STEPS.filter(function (s) { return s.k === k; })[0];
+      if (k === 'si' && sum.pkN) return 'ห่อ ' + fmtN(sum.pkC || 0) + '/' + fmtN(sum.pkN) + (sum.si && sum.si.ms ? ' · ขาด ' + fmtN(sum.si.ms) : '');   // lots 1.48 ห่อ ตรวจรับแล้ว / ทั้งหมด (+ ชิ้นขาด) — สั้นให้พอกล่องเกจ
       if (sum[k] && sum[k].ms) return '✗ ขาด ' + fmtN(sum[k].ms) + ' ชิ้น';   // lots 1.46 ตรวจห่อที่ไซต์แล้วไม่พบ
       if (k === 'fin' && one && !(sum.fin && sum.fin.n)) return pstLotHasFs(x.id) ? 'ไม่มีชิ้นสี·เคลือบ' : PST.fsm ? 'ไม่มี FrontStyle' : '';   // lots 1.47 บอกเหตุ 0/0
       if (one) { var z = sum.scan && sum.scan[k]; return z ? 'ยิง ' + pstShortT(z.at) : ''; }   // lots 1.8 สั้นลง (วันนี้ = เวลา) ให้กล่องแคบ
