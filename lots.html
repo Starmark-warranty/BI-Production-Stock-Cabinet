@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.13 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.14 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.14: หน้าเลือก Lot (แท็บสถานะ) มีหัวตาราง (Lot · Stage · remark · สถานะ · enddate · รายชิ้น) + คอลัมน์สถานะของ Lot
       · lots 1.13: คอมก็เปิดหน้าเกจก่อน (กดเกจ = ตารางชิ้น) · แถบซ้ายกรอง Lot ตามสถานะ (Part · Edge · Drill · Pack · Pick …)
       · lots 1.12: มือถือ = หน้าเกจสถานะ (ยอดทุกขั้น) แตะเกจ = รายการชิ้นของขั้นนั้น
       · lots 1.11: คอลัมน์ State รวม ย้ายไปหลัง Site (ก่อนคอลัมน์ข้อมูล) · ชื่อบนจอเปลี่ยนเป็น “สถานะ”
@@ -55,6 +56,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.14 (2026-10-26 11:30 ผู้ใช้ รูปหน้าเลือก Lot: “ไม่มีหัวตารางบอกหรอครับ ว่ามันคือวันที่ของอะไร”)
+        UI รายการในหน้าเลือก Lot (เต็มหน้า + กล่องลอย ➕ เลือก Lot) มีแถวหัวติดบน: Lot · Stage · remark · สถานะ · enddate · รายชิ้น
+           (เดิม 1.2 ไม่มีหัว — วันที่ = enddate) · ช่องกว้างคงที่ให้ตรงหัว (ชื่อ Lot ยาว = … + ชี้ดูเต็ม)
+        FEAT คอลัมน์สถานะของ Lot (ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง · ตัวเดียวกับแถบซ้าย “สถานะ” 1.13) · ไม่มีรายชิ้น = ว่าง
     1.13 (2026-10-26 11:21 ผู้ใช้: “ในคอมด้วยสิครับ” (หน้าเกจของ 1.12) · 11:23 รูปแถบซ้าย Stage: “เพิ่มให้ตรงนี้ มีกรอง Lot ที่กำลัง Part Edge Drill Pack Pick อื่น ๆ ได้หน่อยครับ”)
         UX คอมก็เปิด Lot มา = หน้าเกจ (กล่องสถานะ + ขาดส่ง + เกจ 8 ขั้นตัวใหญ่ 4 คอลัมน์) · กดเกจ = ตารางชิ้นที่ยังไม่ผ่านขั้นนั้น (ขั้นที่ครบ = ทุกชิ้น)
            · กดกล่องสถานะ = ชิ้นที่อยู่ขั้นนั้น · 📋 ดูรายการชิ้นทั้งหมด · พิมพ์ค้นหา = ตาราง · ในตารางมีปุ่ม ← เกจสถานะ · Esc ในตาราง = กลับหน้าเกจ (Esc อีกที = ตาราง Lot)
@@ -340,6 +345,17 @@
   .pst-pkr .pc{min-width:70px;text-align:right}
   .pst-pkr .pc.no{color:var(--ink-faint)}
   .pst-pkr .sc{flex:none;font-size:12px}
+  /* ───────── lots 1.14: หัวตารางหน้าเลือก Lot · ช่องกว้างคงที่ ───────── */
+  .pst-pkr > b{flex:none;width:205px;overflow:hidden;text-overflow:ellipsis}
+  .pst-pkr .sg{flex:none;width:92px;overflow:hidden;white-space:nowrap}
+  .pst-pkr .sc{width:16px;text-align:center}
+  .pst-pkr .cu{flex:none;width:64px;text-align:center}
+  .pst-pkr .dt{width:74px}
+  .pst-pkr.hd{position:sticky;top:0;z-index:1;cursor:default;background:var(--card2);padding-top:5px;padding-bottom:5px}
+  .pst-pkr.hd:hover{background:var(--card2)}
+  .pst-pkr.hd > *{font-size:11.5px!important;font-weight:700!important;font-family:inherit!important;color:var(--ink-dim)!important}
+  .pst-pkr.hd .ck{border-color:transparent}
+  @media (max-width: 760px){ .pst-pkr > b{flex:1 1 auto;width:auto;min-width:0} .pst-pkr .sg{width:auto} .pst-pkr .cu{width:56px} }
   .pst-pkmore{padding:10px 12px;font-size:12.5px;color:var(--ink-dim)}
   @media (max-width: 760px){
     .pst-sums > .pst-tools{width:100%;flex-wrap:wrap}
@@ -550,7 +566,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.13';
+var LOTS_VER = '1.14';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1594,11 +1610,15 @@ function pstPickHtml(inline) {
     + '<div class="pst-pkl">';
   if (!L.loaded && !L.rows.length) h += '<div class="pst-pkmore">กำลังอ่าน data 6…</div>';
   else if (!list.length) h += '<div class="pst-pkmore">ไม่มี Lot ที่ตรง — ลองล้างตัวกรองแถบซ้าย หรือพิมพ์คำอื่น</div>';
+  /* lots 1.14 (ผู้ใช้ 11:30 “ไม่มีหัวตารางบอกหรอว่ามันคือวันที่ของอะไร”): แถวหัว + คอลัมน์สถานะของ Lot */
+  if (list.length) h += '<div class="pst-pkr hd" aria-hidden="true"><span class="ck"></span><b>Lot</b><span class="sg">Stage</span><span class="rm">remark</span><span class="sc"></span>'
+    + '<span class="cu" title="ขั้นที่ Lot อยู่ตอนนี้ (ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง)">สถานะ</span><span class="dt" title="enddate ของ Lot (data 6)">enddate</span><span class="pc" title="จำนวนชิ้นในไฟล์รายชิ้นของ StarSync">รายชิ้น</span></div>';
   list.slice(0, PST_PKLIM).forEach(function (x) {
     var rows = pstRowsOf(x), on = !!selK[x.key], sc = pstScanOf(x.id, 'edge') || pstScanOf(x.id, 'drill') || pstScanOf(x.id, 'si');
     h += '<div class="pst-pkr' + (on ? ' on' : '') + '" data-pstpick="' + esc(x.id) + '" role="checkbox" aria-checked="' + on + '"><span class="ck">' + (on ? '✓' : '') + '</span>'
-      + '<b>' + esc(x.id) + '</b>' + stgHtml(x) + '<span class="rm">' + esc(x.remark || '') + '</span>'
-      + (sc ? '<span class="sc" title="ยิง Edge/Drill/Site แล้ว (Scan-Link)">⚡</span>' : '')
+      + '<b title="' + esc(x.id) + '">' + esc(x.id) + '</b><span class="sg">' + stgHtml(x) + '</span><span class="rm" title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</span>'   // lots 1.14: ช่องกว้างคงที่ (ตรงหัว)
+      + '<span class="sc">' + (sc ? '<span title="ยิง Edge/Drill/Site แล้ว (Scan-Link)">⚡</span>' : '') + '</span>'
+      + (function () { var c0 = rows ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; return '<span class="cu">' + (i0 < 0 ? '' : '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : '') + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : pstStepNm(PST_STEPS[i0])) + '">' + esc(pstCurLbl(i0)) + '</span>') + '</span>'; })()   // lots 1.14
       + '<span class="dt">' + (x.end != null ? esc(fD(x.end)) : '') + '</span>'
       + '<span class="pc' + (rows ? '' : ' no') + '">' + (rows ? fmtN(rows.length) + ' ชิ้น' : PST.lots ? 'ไม่มีรายชิ้น' : '') + '</span></div>';
   });
