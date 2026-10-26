@@ -75,6 +75,12 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.41 (2026-10-26 15:12 ผู้ใช้ รูป PTY_B_WC_FL24-25 (0 NoBom · enddate 22/01/70) ขึ้น “ไม่มีรายชิ้นในไฟล์หลัก … กด ⬇ ดึงข้อมูลย้อนหลัง”:
+         “Lot ที่ NoBom มันคือไม่ใช่ดึงข้อมูลย้อนหลังนิครับ”)
+        FIX เหตุที่ Lot ไม่มีรายชิ้นแยกตามจริง (pstNoRowWhy) — ปุ่ม ⬇ ดึงข้อมูลย้อนหลัง ขึ้นเฉพาะ Lot ที่ enddate เก่ากว่าช่วงไฟล์หลัก
+           · 0 NoBom = “ยังไม่มี BOM — AX ยังไม่มีรายชิ้น (ขึ้นเองเมื่อแตก BOM)” · enddate อยู่ในช่วงแต่ไม่มีรายชิ้น = ยังไม่มีชิ้นงานในตาราง Part ของ AX
+           · enddate เลยช่วงล่วงหน้า = รอเข้าช่วง (stateDaysAhead) · ไม่มี enddate = StarSync ไม่ส่ง · เก่ากว่าช่วง = ปุ่มดึงย้อนหลัง (เหมือน 1.35)
+           เดิม (1.35): ทุก Lot ที่ไม่มีรายชิ้น = “Lot เก่ากว่านั้นกดดึงข้อมูลย้อนหลัง” + ปุ่ม
     1.40 (2026-10-26 15:04 ผู้ใช้ รูปกล่องรายละเอียด RE-0069-0786-MU… “กำลังตัด · ยิงตัดแล้ว 619/639 · ไม้ไม่พอจ่าย 3 รายการ”:
          “เช็คกับข้อมูลจริงด้วยครับ ผมเห็น Lot นี้มันไม่ใช่กำลังตัด มันคือค้างตัดครับ”)
         FIX ขั้นตัดแยก 3 แบบตามกติกา Dashboard (tpStatus v1.69/v1.96 ของ index): กำลังตัด = วันนี้มีการยิงตัด Lot นี้ (B.cp การยิงวันนี้ · g.scanN)
@@ -934,7 +940,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.40';
+var LOTS_VER = '1.41';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1648,7 +1654,17 @@ function pstAxGo(ids) {
     .then(function () { PST_AX.busy = null; if (view() === 'lots') lotRefresh(false); pstRender(true); });
   pstRender(true);
 }
-/* ข้อความ + ปุ่มใต้ “ไม่มีรายชิ้น” (noRows = LotId ที่ยังไม่มีรายชิ้น) · ax = LotId ที่ใช้ข้อมูลย้อนหลังอยู่ */
+/* lots 1.41: ทำไม Lot นี้ไม่มีรายชิ้น — nobom (0 NoBom) · noend (ไม่มี enddate) · old (enddate เก่ากว่าช่วงไฟล์หลัก = ดึงย้อนหลังได้)
+   · ahead (enddate เลยช่วงล่วงหน้า) · inwin (อยู่ในช่วงแต่ AX ยังไม่มีชิ้นงาน) · ไม่รู้ช่วง (ยังไม่มี pstate.meta.json) = old */
+function pstNoRowWhy(x) {
+  if (x.st === 0) return 'nobom';
+  if (x.end == null) return 'noend';
+  var m = PST.meta, f = m && m.from ? lotDate(m.from) : null, t = m && m.to ? lotDate(m.to) : null;
+  if (f == null || x.end < f) return 'old';
+  if (t != null && x.end >= t) return 'ahead';
+  return 'inwin';
+}
+/* ข้อความ + ปุ่มใต้ “ไม่มีรายชิ้น” (noRows = LotId ที่ยังไม่มีรายชิ้น · 1.41 เฉพาะที่ enddate เก่ากว่าช่วง) · ax = LotId ที่ใช้ข้อมูลย้อนหลังอยู่ */
 function pstAxHtml(noRows) {
   if (!noRows.length) return '';
   if (PST_AX.busy) return '<div class="pst-axb"><span class="pst-axw">⏳ กำลังดึงข้อมูลย้อนหลังจาก Google Drive…</span></div>';
@@ -2363,8 +2379,18 @@ function pstRender(keep) {
     if (PST.loading && !PST.lots) note = '⏳ กำลังโหลดสถานะรายชิ้นจาก Google Drive…';
     else if (PST.err && !PST.lots) note = '✗ อ่านสถานะรายชิ้นไม่ได้ — ' + netMsg(PST.err) + ' (ลองใหม่เองทุก 30 วิ)';
     else if (PST.none) note = 'ยังไม่มีไฟล์สถานะรายชิ้นบน Drive (lots/pinfo.csv · pstate.csv) — อัปเดต StarSync เป็น sync-ax-lots.ps1 v1.16 (ส่งทุก 5 นาที) · ยอดข้างบนเป็นยอดรวมราย Lot จาก progress.csv';
-    else if (PST.lots && noRows.length) note = (one ? 'Lot นี้' : 'Lot ' + noRows.join(', ')) + ' ไม่มีรายชิ้นในไฟล์หลักของ StarSync (ไฟล์หลักมีเฉพาะ Lot ที่ enddate อยู่ในช่วง ' + rng + ') — Lot เก่ากว่านั้นกด ⬇ ดึงข้อมูลย้อนหลัง' + (one && sum.src === 'lot' ? ' · ยอดข้างบนเป็นยอดรวมราย Lot จาก progress.csv' : '');   // lots 1.35
-    var axH = PST.lots && !PST.none && noRows.length ? pstAxHtml(noRows) : '', axN = PST.lots ? pstAxNote(sel) : '';   // lots 1.35
+    /* lots 1.41: เหตุตามจริงของแต่ละ Lot (เดิม 1.35 = “Lot เก่ากว่านั้นกดดึงย้อนหลัง” ทุก Lot แม้ 0 NoBom) */
+    var nrW = {}, nrO = [];
+    list.forEach(function (it) { if (it.rows) return; var w = pstNoRowWhy(it.x); (nrW[w] = nrW[w] || []).push(it.x.id); if (w === 'old') nrO.push(it.x.id); });
+    var nrTxt = { nobom: 'ยังไม่มี BOM (Stage 0 NoBom) — AX ยังไม่มีรายชิ้น · ขึ้นเองเมื่อแตก BOM แล้ว (StarSync ส่งทุก 5 นาที)',
+      inwin: 'ยังไม่มีชิ้นงานในตาราง Part ของ AX (enddate อยู่ในช่วงไฟล์หลัก ' + rng + ') · ขึ้นเองเมื่อ AX มีชิ้นงาน',
+      ahead: 'enddate เลยช่วงไฟล์หลัก (ถึง ' + (PST.meta && PST.meta.to ? fD(lotDate(PST.meta.to) - DAY) : '?') + ') — StarSync ยังไม่ส่ง · ขึ้นเองเมื่อเข้าช่วง (ตั้ง stateDaysAhead ได้)',
+      noend: 'ไม่มี enddate — StarSync ส่งรายชิ้นเฉพาะ Lot ที่มี enddate',
+      old: 'enddate เก่ากว่าช่วงไฟล์หลัก (' + rng + ') — กด ⬇ ดึงข้อมูลย้อนหลัง' };
+    if (!note && PST.lots && noRows.length) note = ['nobom', 'inwin', 'ahead', 'noend', 'old'].filter(function (w) { return nrW[w]; }).map(function (w) {
+        return (one ? 'Lot นี้ไม่มีรายชิ้น: ' : 'ไม่มีรายชิ้น ' + nrW[w].join(', ') + ': ') + nrTxt[w]; }).join(' · ')
+      + (one && sum.src === 'lot' ? ' · ยอดข้างบนเป็นยอดรวมราย Lot จาก progress.csv' : '');   // lots 1.35 · 1.41 แยกเหตุ
+    var axH = PST.lots && !PST.none && nrO.length ? pstAxHtml(nrO) : '', axN = PST.lots ? pstAxNote(sel) : '';   // lots 1.35 · 1.41 ปุ่มเฉพาะ Lot เก่า
     if (PST.meta && PST.meta.full) note = (note ? note + ' · ' : '') + '⚠ ไฟล์ครบเพดาน ' + fmtN(PST.meta.max) + ' แถว (stateMax) — Lot เก่าบางส่วนถูกตัด';
     if (all.length) {
       if (note) h += '<div class="pst-note">' + esc(note) + axH + '</div>';   // lots 1.35 + ปุ่มดึงย้อนหลัง
@@ -2541,7 +2567,7 @@ document.addEventListener('click', function (e) {
     pstSelSet(pstSelHas(id) ? L.stSel.filter(function (s) { return String(s).toUpperCase() !== String(id).toUpperCase(); }) : L.stSel.concat([id]));
     /* lots 1.38: โหมดหลาย Lot = ติ๊กสะสมทั้งหน้าแรกและหน้าเลือก (เดิม หน้าแรก: ติ๊กแรก = เข้าตารางเลย) */
     pstRender(true); return; }
-  if (t.hasAttribute('data-pstax')) { e.preventDefault(); var axIds = pstSelRows().filter(function (x) { return !pstRowsOf(x); }).map(function (x) { return x.id; }); if (axIds.length) pstAxGo(axIds); return; }   // lots 1.35
+  if (t.hasAttribute('data-pstax')) { e.preventDefault(); var axIds = pstSelRows().filter(function (x) { return !pstRowsOf(x) && pstNoRowWhy(x) === 'old'; }).map(function (x) { return x.id; });   /* 1.41 เฉพาะ Lot เก่า */ if (axIds.length) pstAxGo(axIds); return; }   // lots 1.35
   if (t.dataset.pstst) { e.preventDefault(); if (t.disabled) return; L.f.pst = t.dataset.pstst; pstFSave(); pstDashLot(); if ($('lotSide') && $('lotSide').querySelector('[data-lseg]')) lotSegOn(); lotRefresh(true); pstRender(true); return; }   // lots 1.39 มือถือ: ปุ่มสถานะ
   if (t.hasAttribute('data-pstmulti')) { e.preventDefault(); L.stPk.multi = !L.stPk.multi; pstRender(true); return; }   // lots 1.38
   if (t.hasAttribute('data-pstall')) { e.preventDefault(); if (t.disabled) return; pstSelSet(pstCands().map(function (x) { return x.id; })); L.stPk.open = false; L.stPk.multi = false; pstRender(); return; }
