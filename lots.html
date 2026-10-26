@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.27 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.28 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.28: คอลัมน์ State ที่ติ๊กครบทุกชิ้น = พื้นเขียวทั้งคอลัมน์ · ยังไม่ครบ = ไม่มีพื้นเขียว
       · lots 1.27: ช่อง State ที่ติ๊กแล้ว = พื้นเขียวทุกขั้น (หัวคอลัมน์ยังสีของขั้น)
       · lots 1.26: หน้าเลือก Lot คอลัมน์สถานะ = สีของขั้น + ชื่อไทย (Edge/ปิดขอบ …)
       · lots 1.25: หลอดสถานะ (8 ช่อง · % ในหลอด) · เกจ / ช่อง State / กล่องสถานะ ใช้สีของขั้น — ขั้นที่ยังไม่ถึง = เทา
@@ -69,6 +70,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.28 (2026-10-26 13:37 ผู้ใช้: “หมายถึงติ๊กครบน่ะครับ ให้คอลัมน์นั้น ๆ พื้นเขียว ติ๊กไม่ครบก็ไม่ต้องพื้นเขียวครับ”)
+        UI คอลัมน์ State (Part…Site) ที่ทุกชิ้นใน Lot ที่เลือกผ่านแล้ว (ยอดขั้นนั้นครบ เช่น Part 60/60) = พื้นเขียวทั้งคอลัมน์ (td.cok)
+           · คอลัมน์ที่ยังไม่ครบ = ไม่มีพื้น (ทั้งช่อง ✓ และช่องว่าง — ยกเลิกพื้นเขียวรายช่องของ 1.27 และพื้นเทาช่องที่ยังไม่ผ่านของ 1.25) · ✓ ยังเป็นสีเขียว
+           · หัวคอลัมน์ยังสีของขั้น (1.23) · ชี้แถว = ไฮไลต์ทั้งแถวเหมือนเดิม
     1.27 (2026-10-26 13:36 ผู้ใช้ รูปคอลัมน์ State: “เฉพาะตรงที่ติ๊กถูก ถ้าครบให้พื้นหลังเขียวครับ ไม่ต้องแยกตามสี” · “แต่หัวคอลัมน์ให้เป็นสีถูกแล้ว”)
         UI ช่อง State ที่ ✓ = พื้นเขียว + ✓ เขียวทุกขั้น (ยกเลิกสีของขั้นในช่อง ✓ ของ 1.25) · ยังไม่ผ่าน = เทาอ่อนเหมือน 1.25 · หัวคอลัมน์ Part…Site ยังสีของขั้น (1.23)
            · ✓ ที่ถือว่าผ่าน (Pack แล้ว · กรอบประ) = เขียวอ่อนกว่า · มือถือ (แตกทีละขั้น) เขียวเหมือนกัน
@@ -624,10 +629,13 @@
   .pst-sum.unr[data-pstf] .pst-ring .fg{stroke:var(--ink-faint)}
   .pst-sum.pst-cur[class*=" cs"]{background:color-mix(in srgb,var(--stc) 72%,#0b1220);border-color:color-mix(in srgb,var(--stc) 72%,#0b1220);box-shadow:0 4px 14px color-mix(in srgb,var(--stc) 35%,transparent)}
   /* lots 1.27 (ผู้ใช้ 13:36 “ตรงที่ติ๊กถูก ให้พื้นหลังเขียว ไม่ต้องแยกตามสี”): ช่อง ✓ = เขียวทุกขั้น (1.25 เคยเป็นสีของขั้น) */
-  #lotSt .pst-t tbody td.pck[class*=" cs"].on{background:color-mix(in srgb,var(--good) 18%,var(--solid))}
-  #lotSt .pst-t tbody td.pck[class*=" cs"].on.inf{background:color-mix(in srgb,var(--good) 9%,var(--solid))}
+  /* lots 1.28 (ผู้ใช้ 13:37 “ติ๊กครบให้คอลัมน์นั้นพื้นเขียว ไม่ครบก็ไม่ต้อง”): พื้นรายช่องออก · คอลัมน์ครบ (td.cok) = เขียวทั้งคอลัมน์ */
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on,#lotSt .pst-t tbody td.pck[class*=" cs"].on.inf{background:var(--solid)}
+  #lotSt .pst-t tbody tr:hover td.pck[class*=" cs"]{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--solid)}
+  #lotSt .pst-t tbody td.pck.cok,#lotSt .pst-t tbody td.pck.cok.on,#lotSt .pst-t tbody td.pck.cok.on.inf{background:color-mix(in srgb,var(--good) 18%,var(--solid))}
+  #lotSt .pst-t tbody tr:hover td.pck.cok{background:color-mix(in srgb,var(--good) 26%,var(--solid))}
   #lotSt .pst-t tbody td.pck[class*=" cs"].on .cb{border-color:var(--good);color:var(--good)}
-  #lotSt .pst-t tbody td.pck[class*=" cs"]:not(.on):not(.nc):not(.nd):not(.na){background:color-mix(in srgb,var(--ink-faint) 9%,var(--solid))}
+  #lotSt .pst-t tbody td.pck[class*=" cs"]:not(.on):not(.nc):not(.nd):not(.na):not(.cok){background:var(--solid)}   /* lots 1.28: ไม่มีพื้นเทาแล้ว (1.25) */
   .pst-msteps .ms.on[class*=" cs"],.pst-msteps .ms[class*="cs"].on{background:color-mix(in srgb,var(--good) 14%,var(--solid))}   /* lots 1.27 เขียว */
   .pst-msteps .ms[class*="cs"].on i{border-color:var(--good);color:var(--good)}
   .pst-msteps .ms[class*="cs"].no{background:color-mix(in srgb,var(--ink-faint) 9%,var(--solid))}
@@ -748,7 +756,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.27';
+var LOTS_VER = '1.28';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1917,6 +1925,7 @@ function pstRender(keep) {
     /* lots 1.25: ขั้นที่ “ไปถึงแล้ว” = ≤ ขั้นปัจจุบันของ Lot (agg.min) หรือมีชิ้นผ่านแล้ว — สีของขั้น · ไม่ถึง = เทา */
     var pstReach = function (i) { var z = sum[PST_STEPS[i].k]; return (agg.min != null && i <= agg.min) || !!(z && z.d > 0); };
     var pstRc = function (i) { return ' cs' + i + (pstReach(i) ? ' rch' : ' unr'); };
+    var colOk = PST_STEPS.map(function (S0) { var z = sum[S0.k]; return !!(z && z.n > 0 && z.d >= z.n); });   // lots 1.28: ขั้นที่ครบทุกชิ้น = คอลัมน์เขียว
     /* lots 1.21: ขั้นตัด = กำลังตัด / รอตัด (+ เหตุจาก Dashboard ตอนรอตัด · Lot เดียว) */
     var cx = null, dsh = '';
     if (agg.min === 0) { var zc = sum.cut || { d: 0, n: 0 }; cx = { cutD: zc.d, cutN: zc.n, why: '' };
@@ -1977,7 +1986,7 @@ function pstRender(keep) {
           var p = it.p, s = it.s;
           var ci = it.cu.i >= 0 && it.cu.i < PST_DONE ? ' csx cs' + it.cu.i : '';   // lots 1.23: สีแถวตามขั้นที่อยู่
           return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : ci ? ' class="' + ci.slice(1) + '" title="' + esc(pstCurTip(it.cu)) + '"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
-            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0).replace('class="pck stk', 'class="pck stk cs' + k); }).join('')   /* lots 1.25 สีของขั้น */   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
+            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0).replace('class="pck stk', 'class="pck stk cs' + k + (colOk[k] ? ' cok' : '')); }).join('')   /* lots 1.25 สีของขั้น */   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + (PST.anNone && !PST.an ? ' · ' + esc('Product Name เป็นชื่อไทยเมื่ออัปเดต StarSync เป็น v1.19 (ตั้ง lots.artName ใน config.json)') : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
