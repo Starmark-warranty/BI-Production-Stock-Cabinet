@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.29 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.30 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.30: เลิกใช้ 8 สีของขั้น — ขั้นไหนครบ = เขียว (หลอด · เกจ · หัวคอลัมน์ · คอลัมน์ State) · ไม่ครบ = ปกติ · ยังไม่ถึง = เทา
       · lots 1.29: ชื่อ Lot บนหัวหน้าสถานะ = ช่องพิมพ์ — พิมพ์ชื่อ Lot อื่น (มีรายการให้เลือก) = เปลี่ยนไปดู Lot นั้นเลย
       · lots 1.28: คอลัมน์ State ที่ติ๊กครบทุกชิ้น = พื้นเขียวทั้งคอลัมน์ · ยังไม่ครบ = ไม่มีพื้นเขียว
       · lots 1.27: ช่อง State ที่ติ๊กแล้ว = พื้นเขียวทุกขั้น (หัวคอลัมน์ยังสีของขั้น)
@@ -71,6 +72,13 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.30 (2026-10-26 13:48 ผู้ใช้ รูปคอลัมน์ State ที่ครบเป็นพื้นเขียว: “เปลี่ยน ไม่เอา 8 สีล่ะ สถานะไหนครบ เขียวเดียวกับตัวนี้ดีกว่าครับ”)
+        CHANGE เลิกสีของขั้น 8 สี (1.23 · 1.25 · 1.26) ทุกจุด — เหลือกติกาเดียว: ขั้นไหนครบ = เขียว (สีเดียวกับคอลัมน์ State ที่ครบ 1.28)
+           · หลอดสถานะ: ช่องที่ครบ = เขียว · ไม่ครบ = เติมสีน้ำเงินอ่อนตาม % · ยังไม่ถึง = เทา · ขั้นปัจจุบัน = กรอบ
+           · เกจ: ครบ = เขียว (แบบ 1.8) · ไม่ครบ = ปกติ · ยังไม่ถึง = เทา (1.25) · กล่องสถานะ = น้ำเงินเข้มเดิม (ครบทุกขั้น = เขียว)
+           · หัวคอลัมน์ Part…Site: ครบ = เขียว · ไม่ครบ = ปกติ (เลิกสีของขั้น 1.23) · สีพื้นแถวตามขั้น (1.23) ออก · ป้ายสถานะหน้าเลือก Lot = สีปกติ (ชื่อไทยยังอยู่)
+        UI 13:49 รูปแถวเกจ + หลอด: “ปรับหลอดสถานะเริ่มที่ตัดครับ ขยับสถานะปุ่มแรกใหญ่ลงมาแทนหลอด”
+           → คอม: กล่องสถานะ (+ ขาดส่ง) อยู่ซ้าย สูงสองชั้น (แถวเกจ + แถวหลอด) · เกจ 8 ขั้นกับหลอด 8 ช่องใช้ตาราง 8 คอลัมน์เดียวกัน = ช่องหลอดอยู่ใต้เกจของขั้นนั้นพอดี เริ่มที่ตัด (.pst-board)
     1.29 (2026-10-26 13:42 ผู้ใช้ รูปหัวหน้าสถานะ PTY_P_FL24-25: “อยากให้ตรงชื่อ Lot เหมือนเราพิมพ์เปลี่ยนได้เลย แล้วพอพิมพ์เปลี่ยนก็คือเปลี่ยน Lot ไม่ได้ไปกดติ๊กออกอีกรอบ”)
         FEAT ชื่อ Lot บนหัว (ดู Lot เดียว) = ช่องพิมพ์หน้าตาเหมือนหัวเรื่อง · พิมพ์ = รายการ Lot ที่ตรง (ขึ้นต้นก่อน แล้วมีคำนี้ในชื่อ / remark · 12 รายการ)
            · Enter / คลิกรายการ = เปลี่ยนไปดู Lot นั้นแทน (ไม่ต้องเข้าหน้าเลือกแล้วติ๊กออก) · ↑↓ เลือกในรายการ · Esc = คืนชื่อเดิม
@@ -631,24 +639,36 @@
   .pst-lsug .none{padding:9px 12px;color:var(--ink-dim);font-size:12.5px}
   /* ───────── lots 1.25: หลอดสถานะ · สีของขั้นบนเกจ / ช่อง State / กล่องสถานะ · ยังไม่ถึง = เทา ───────── */
   .pst-tube{display:flex;gap:3px;margin:0 14px 8px;height:24px;flex:none}
+  /* lots 1.30: กระดานยอด (คอม) — กล่องสถานะซ้ายสูงสองชั้น · เกจ / หลอด ตาราง 8 คอลัมน์เดียวกัน */
+  .pst-board{display:grid;grid-template-columns:minmax(124px,auto) minmax(0,1fr);gap:6px 6px;padding:4px 14px 8px;flex:none}
+  .pst-board > .pst-bl{grid-row:1 / span 2;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .pst-board > .pst-bl > .pst-sum{flex:1 1 auto;min-width:124px}
+  .pst-board > .pst-bl > .pst-sum.pst-dly{flex:0 0 auto}
+  .pst-board > .pst-sums.pst-gauges{grid-column:2;padding:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+  .pst-board > .pst-sums.pst-gauges > .pst-sum{min-width:0}
+  .pst-board > .pst-tube{grid-column:2;margin:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;height:26px}
+  .pst-board > .pst-tube .tseg{border-radius:7px}
+  .pst-t thead th.pck.cok{background:color-mix(in srgb,var(--good) 26%,var(--card2));color:color-mix(in srgb,var(--good) 75%,#000)}   /* lots 1.30: หัวคอลัมน์ขั้นที่ครบ = เขียว */
   .pst-tube .tseg{position:relative;flex:1 1 0;min-width:0;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center;
     background:color-mix(in srgb,var(--ink-faint) 16%,var(--solid))}
   .pst-tube .tseg:first-child{border-radius:12px 5px 5px 12px} .pst-tube .tseg:last-child{border-radius:5px 12px 12px 5px}
-  .pst-tube .tseg.rch{background:color-mix(in srgb,var(--stc) 14%,var(--solid))}
-  .pst-tube .tseg i{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb,var(--stc) 58%,var(--solid))}
+  .pst-tube .tseg.rch{background:color-mix(in srgb,var(--accent) 8%,var(--solid))}   /* lots 1.30 (เดิมสีของขั้น) */
+  .pst-tube .tseg i{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb,var(--accent) 26%,var(--solid))}
+  .pst-tube .tseg.full,.pst-tube .tseg.full i{background:color-mix(in srgb,var(--good) 30%,var(--solid))}
+  .pst-tube .tseg.full span{color:color-mix(in srgb,var(--good) 70%,#000)}
   .pst-tube .tseg span{position:relative;font-size:11px;font-weight:600;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 5px}
   .pst-tube .tseg span b{font:800 11px var(--mono)}
-  .pst-tube .tseg.rch span{color:color-mix(in srgb,var(--stc) 45%,#111)}
-  .pst-tube .tseg.cur{box-shadow:inset 0 0 0 2px var(--stc)}
-  .pst-sum.rch[data-pstf]{background:color-mix(in srgb,var(--stc) 9%,var(--solid));border-color:color-mix(in srgb,var(--stc) 50%,var(--line-strong))}
-  .pst-sum.rch[data-pstf] .pst-st > b{color:color-mix(in srgb,var(--stc) 60%,var(--ink))}
-  .pst-sum.rch[data-pstf] .pst-st > span{color:var(--ink)}
-  .pst-sum.rch[data-pstf] .pst-ring .fg{stroke:var(--stc)}
-  .pst-sum.rch[data-pstf] .pst-ring text{fill:color-mix(in srgb,var(--stc) 60%,var(--ink))}
+  .pst-tube .tseg.rch span{color:var(--ink)}
+  .pst-tube .tseg.cur{box-shadow:inset 0 0 0 2px var(--accent)}
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-sum.rch[data-pstf]{background:color-mix(in srgb,var(--stc) 9%,var(--solid));border-color:color-mix(in srgb,var(--stc) 50%,var(--line-strong))} */
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-sum.rch[data-pstf] .pst-st > b{color:color-mix(in srgb,var(--stc) 60%,var(--ink))} */
+  .pst-sum.rch[data-pstf]:not(.ok) .pst-st > span{color:var(--ink)}
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-sum.rch[data-pstf] .pst-ring .fg{stroke:var(--stc)} */
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-sum.rch[data-pstf] .pst-ring text{fill:color-mix(in srgb,var(--stc) 60%,var(--ink))} */
   .pst-sum.unr[data-pstf]{background:var(--bg2);border-color:var(--line)}
   .pst-sum.unr[data-pstf] .pst-st > b,.pst-sum.unr[data-pstf] .pst-st > span,.pst-sum.unr[data-pstf] .pst-th{color:var(--ink-faint)}
   .pst-sum.unr[data-pstf] .pst-ring .fg{stroke:var(--ink-faint)}
-  .pst-sum.pst-cur[class*=" cs"]{background:color-mix(in srgb,var(--stc) 72%,#0b1220);border-color:color-mix(in srgb,var(--stc) 72%,#0b1220);box-shadow:0 4px 14px color-mix(in srgb,var(--stc) 35%,transparent)}
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-sum.pst-cur[class*=" cs"]{background:color-mix(in srgb,var(--stc) 72%,#0b1220);border-color:color-mix(in srgb,var(--stc) 72%,#0b1220);box-shadow:0 4px 14px color-mix(in srgb,var(--stc) 35%,transparent)} */
   /* lots 1.27 (ผู้ใช้ 13:36 “ตรงที่ติ๊กถูก ให้พื้นหลังเขียว ไม่ต้องแยกตามสี”): ช่อง ✓ = เขียวทุกขั้น (1.25 เคยเป็นสีของขั้น) */
   /* lots 1.28 (ผู้ใช้ 13:37 “ติ๊กครบให้คอลัมน์นั้นพื้นเขียว ไม่ครบก็ไม่ต้อง”): พื้นรายช่องออก · คอลัมน์ครบ (td.cok) = เขียวทั้งคอลัมน์ */
   #lotSt .pst-t tbody td.pck[class*=" cs"].on,#lotSt .pst-t tbody td.pck[class*=" cs"].on.inf{background:var(--solid)}
@@ -673,11 +693,11 @@
   #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#8a5cf5;--st4:#d6409f;--st5:#ef7d22;--st6:#0ea5c6;--st7:#6aa121}
   #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
   #lotSt .cs4{--stc:var(--st4)} #lotSt .cs5{--stc:var(--st5)} #lotSt .cs6{--stc:var(--st6)} #lotSt .cs7{--stc:var(--st7)}
-  .pst-t tbody tr.csx td:not(.pck){background:color-mix(in srgb,var(--stc) 11%,var(--solid))}
-  .pst-t tbody tr.csx:hover td:not(.pck){background:color-mix(in srgb,var(--stc) 22%,var(--solid))}
-  .pst-t thead th.pck[class*="cs"]{background:color-mix(in srgb,var(--stc) 24%,var(--card2));color:color-mix(in srgb,var(--stc) 55%,var(--ink))}
-  .pst-mi.csx{background:color-mix(in srgb,var(--stc) 11%,var(--solid))}
-  .pst-mi.csx.open{background:color-mix(in srgb,var(--stc) 18%,var(--solid))}
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-t tbody tr.csx td:not(.pck){background:color-mix(in srgb,var(--stc) 11%,var(--solid))} */
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-t tbody tr.csx:hover td:not(.pck){background:color-mix(in srgb,var(--stc) 22%,var(--solid))} */
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-t thead th.pck[class*="cs"]{background:color-mix(in srgb,var(--stc) 24%,var(--card2));color:color-mix(in srgb,var(--stc) 55%,var(--ink))} */
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-mi.csx{background:color-mix(in srgb,var(--stc) 11%,var(--solid))} */
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-mi.csx.open{background:color-mix(in srgb,var(--stc) 18%,var(--solid))} */
   /* ───────── lots 1.22: เกจใหญ่ขึ้น (ผู้ใช้ 13:11) ───────── */
   .pst-sums:not(.pst-gg) .pst-ring{width:40px;height:40px}
   .pst-sums:not(.pst-gg) > .pst-sum{gap:5px;padding:5px 6px 5px 8px}
@@ -690,7 +710,7 @@
   .pst-hd ~ .pst-sums .pst-sum.pst-cur em{max-width:220px;overflow:hidden;text-overflow:ellipsis}
   .pst-pkr .cu{width:72px}
   .pst-pkr .cu{width:178px;text-align:left}   /* lots 1.26: ชื่อ “Pick/เตรียมส่งของเข้าคลัง” */
-  .pst-cs[class*=" cs"]{background:color-mix(in srgb,var(--stc) 18%,var(--solid));color:color-mix(in srgb,var(--stc) 55%,#111);font-family:inherit;font-weight:700}
+  /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-cs[class*=" cs"]{background:color-mix(in srgb,var(--stc) 18%,var(--solid));color:color-mix(in srgb,var(--stc) 55%,#111);font-family:inherit;font-weight:700} */
   /* ───────── lots 1.20: เส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (ผู้ใช้ 12:58) ───────── */
   .pst-t th,.pst-t td{border-right:.5px solid var(--line)}
   .pst-t td{padding:3px 6px}
@@ -777,7 +797,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.29';
+var LOTS_VER = '1.30';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1525,7 +1545,7 @@ function pstChip(S0, z, on, sub, rc) {   // lots 1.25: rc = ' cs{i} rch' (ถึ
 function pstTube(sum, agg, reach) {
   return '<div class="pst-tube" role="img" aria-label="หลอดสถานะ">' + PST_STEPS.map(function (S0, i) {
     var z = sum[S0.k], p = z && z.n ? Math.floor(Math.min(1, z.d / z.n) * 100) : null, r = reach(i);
-    return '<div class="tseg cs' + i + (r ? ' rch' : '') + (agg.min === i ? ' cur' : '') + '" title="' + esc(pstStepNm(S0) + ' · ' + (z ? fmtN(z.d) + '/' + fmtN(z.n) + ' ชิ้น' : 'ไม่มีข้อมูล') + (agg.min === i ? ' · ขั้นปัจจุบัน' : r ? '' : ' · ยังไม่ถึง')) + '">'
+    return '<div class="tseg cs' + i + (r ? ' rch' : '') + (p === 100 ? ' full' : '') /* lots 1.30 ครบ = เขียว */ + (agg.min === i ? ' cur' : '') + '" title="' + esc(pstStepNm(S0) + ' · ' + (z ? fmtN(z.d) + '/' + fmtN(z.n) + ' ชิ้น' : 'ไม่มีข้อมูล') + (agg.min === i ? ' · ขั้นปัจจุบัน' : r ? '' : ' · ยังไม่ถึง')) + '">'
       + '<i style="width:' + (r && p ? p : 0) + '%"></i><span>' + esc(S0.th) + ' <b>' + (p == null ? '—' : p + '%') + '</b></span></div>';
   }).join('') + '</div>';
 }
@@ -1966,8 +1986,11 @@ function pstRender(keep) {
       h += '<div class="pst-mbar"><button type="button" class="tbtn" data-pstmg title="กลับหน้าเกจสถานะ">← เกจสถานะ</button><span class="pst-mf">' + esc(pstCfDesc()) + ' · <b>' + fmtN(shown.length) + '</b> ชิ้น</span></div>'
         + '<div class="pst-tools">' + qbox + '</div>';
     } else {
-    h += '<div class="pst-sums">' + (mv === 'l' ? '<button type="button" class="tbtn pst-gback" data-pstmg title="กลับหน้าเกจสถานะ (Esc)">← เกจสถานะ</button>' : '')   // lots 1.13: ตาราง → กลับหน้าเกจ
-      + (all.length ? pstCurChip(agg, mob, undefined, cx) + (agg.dly ? pstDlyChip(agg) : '') : '')   // lots 1.10 · 1.21 + cx
+    /* lots 1.30 (ผู้ใช้ 13:49): มีรายชิ้น = กระดาน .pst-board — ซ้าย: กล่องสถานะ (+ ขาดส่ง) สูงสองชั้น · ขวา: เกจ 8 คอลัมน์ / หลอด 8 คอลัมน์ ตรงกัน */
+    var board = all.length && !mob;
+    if (board) h += '<div class="pst-board"><div class="pst-bl">' + pstCurChip(agg, mob, undefined, cx) + (agg.dly ? pstDlyChip(agg) : '') + '</div>';
+    h += '<div class="pst-sums' + (board ? ' pst-gauges' : '') + '">' + (mv === 'l' ? '<button type="button" class="tbtn pst-gback" data-pstmg title="กลับหน้าเกจสถานะ (Esc)">← เกจสถานะ</button>' : '')   // lots 1.13: ตาราง → กลับหน้าเกจ
+      + (all.length && !board ? pstCurChip(agg, mob, undefined, cx) + (agg.dly ? pstDlyChip(agg) : '') : '')   // lots 1.10 · 1.21 + cx · 1.30 กระดาน = อยู่ซ้าย
       + PST_STEPS.map(function (S0, si) { return pstChip(S0, sum[S0.k], L.stCF[S0.k] === '0', subOf(S0.k), pstRc(si)); }).join('');   // lots 1.25 + สีขั้น
     /* lots 1.15: คอม = ช่องค้นหา/จำนวนแถวขึ้นแถวชื่อ Lot (<!--pst-tools-->) — เดิมต่อท้ายแถวยอด ยอดยาวแล้วดันตกบรรทัด (ผู้ใช้ 11:33) · มือถือที่ไม่มีรายชิ้น = ไม่มีช่องค้นหาเหมือนเดิม */
     var toolsH = all.length ? '<div class="pst-tools pst-htools">' + qbox
@@ -1976,7 +1999,7 @@ function pstRender(keep) {
     if (!mob) h = h.replace('<!--pst-tools-->', toolsH); else if (all.length) h += '<span class="sp"></span>' + toolsH;
     h += '</div>';
     }
-    if (all.length) h += pstTube(sum, agg, pstReach);   // lots 1.25 หลอดสถานะ
+    if (all.length) h += pstTube(sum, agg, pstReach) + (board ? '</div>' : '');   // lots 1.25 หลอดสถานะ · 1.30 ปิดกระดาน
     /* ข้อความแหล่งข้อมูล / เหตุที่ไม่มีรายชิ้น */
     var note = '', rng = PST.meta && PST.meta.from ? fD(lotDate(PST.meta.from)) + '–' + fD(lotDate(PST.meta.to) - DAY) : '?';
     if (PST.loading && !PST.lots) note = '⏳ กำลังโหลดสถานะรายชิ้นจาก Google Drive…';
@@ -2004,7 +2027,7 @@ function pstRender(keep) {
       else
       h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
         + cols.map(function (c) { return '<th rowspan="2"' + (c.num ? ' class="num"' : '') + (c.t ? ' title="' + esc(c.t) + '"' : '') + '>' + esc(c.h) + '</th>'; }).join('') + '</tr><tr>'
-        + PST_STEPS.map(function (S0, si) { return '<th class="pck stk cs' + si + (S0.na ? ' na' : '') + '" title="' + esc(S0.t + ' · สีพื้นแถว = ชิ้นที่อยู่ขั้นนี้') + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง   // lots 1.23 สีหัว = ตัวบอกสีแถว
+        + PST_STEPS.map(function (S0, si) { return '<th class="pck stk cs' + si + (colOk[si] ? ' cok' : '') /* lots 1.30 ครบ = เขียว */ + (S0.na ? ' na' : '') + '" title="' + esc(S0.t + ' · สีพื้นแถว = ชิ้นที่อยู่ขั้นนี้') + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง   // lots 1.23 สีหัว = ตัวบอกสีแถว
         + part.map(function (it, i) {
           var p = it.p, s = it.s;
           var ci = it.cu.i >= 0 && it.cu.i < PST_DONE ? ' csx cs' + it.cu.i : '';   // lots 1.23: สีแถวตามขั้นที่อยู่
