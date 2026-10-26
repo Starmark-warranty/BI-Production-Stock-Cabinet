@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.30 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.31 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.31: ตารางชิ้นวาดทีละ 1,000 แถว (มือถือ 300) + ปุ่มแสดงเพิ่ม / แสดงทั้งหมด — Lot ใหญ่หลายพันชิ้นไม่กินแรม
       · lots 1.30: เลิกใช้ 8 สีของขั้น — ขั้นไหนครบ = เขียว (หลอด · เกจ · หัวคอลัมน์ · คอลัมน์ State) · ไม่ครบ = ปกติ · ยังไม่ถึง = เทา
       · lots 1.29: ชื่อ Lot บนหัวหน้าสถานะ = ช่องพิมพ์ — พิมพ์ชื่อ Lot อื่น (มีรายการให้เลือก) = เปลี่ยนไปดู Lot นั้นเลย
       · lots 1.28: คอลัมน์ State ที่ติ๊กครบทุกชิ้น = พื้นเขียวทั้งคอลัมน์ · ยังไม่ครบ = ไม่มีพื้นเขียว
@@ -72,6 +73,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.31 (2026-10-26 14:07 ผู้ใช้ รูป รพ.สินแพทย์ _F6_MASS_WARD 4,527 ชิ้น “แสดง 3,000 แถวแรก”: “บางเครื่อง 4 พันกว่าชิ้นกินแรม งั้นเอาเป็นคำนวณให้ Part สัก 1,000 ชิ้น ไปให้กดเพื่อดูทุกรายการแทน ไม่งั้นช้า”)
+        PERF ตารางชิ้นวาด 1,000 แถวแรก (เดิม 3,000 · มือถือ 500 → 300) — ยอด / เกจ / หลอด / ตัวกรอง / ค้นหา ยังคิดจากทุกชิ้นเหมือนเดิม
+           · ท้ายตาราง: “แสดง 1,000 จาก 4,527 แถว” + ปุ่ม ▾ แสดงเพิ่มอีก 1,000 · แสดงทั้งหมด (L.stLim) · เปลี่ยน Lot / ล้างตัวกรอง = กลับ 1,000
     1.30 (2026-10-26 13:48 ผู้ใช้ รูปคอลัมน์ State ที่ครบเป็นพื้นเขียว: “เปลี่ยน ไม่เอา 8 สีล่ะ สถานะไหนครบ เขียวเดียวกับตัวนี้ดีกว่าครับ”)
         CHANGE เลิกสีของขั้น 8 สี (1.23 · 1.25 · 1.26) ทุกจุด — เหลือกติกาเดียว: ขั้นไหนครบ = เขียว (สีเดียวกับคอลัมน์ State ที่ครบ 1.28)
            · หลอดสถานะ: ช่องที่ครบ = เขียว · ไม่ครบ = เติมสีน้ำเงินอ่อนตาม % · ยังไม่ถึง = เทา · ขั้นปัจจุบัน = กรอบ
@@ -639,6 +643,9 @@
   .pst-lsug .none{padding:9px 12px;color:var(--ink-dim);font-size:12.5px}
   /* ───────── lots 1.25: หลอดสถานะ · สีของขั้นบนเกจ / ช่อง State / กล่องสถานะ · ยังไม่ถึง = เทา ───────── */
   .pst-tube{display:flex;gap:3px;margin:0 14px 8px;height:24px;flex:none}
+  /* lots 1.31: แถบแสดงเพิ่มท้ายตาราง */
+  .pst-note.pst-more{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pst-note.pst-more span{color:var(--ink-dim);font-size:12px}
   /* lots 1.30: กระดานยอด (คอม) — กล่องสถานะซ้ายสูงสองชั้น · เกจ / หลอด ตาราง 8 คอลัมน์เดียวกัน */
   .pst-board{display:grid;grid-template-columns:minmax(124px,auto) minmax(0,1fr);gap:6px 6px;padding:4px 14px 8px;flex:none}
   .pst-board > .pst-bl{grid-row:1 / span 2;display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -797,7 +804,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.30';
+var LOTS_VER = '1.31';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1355,7 +1362,8 @@ var PST_AFTER = ['pk', 'pi', 'wh', 'dl', 'si'];   // lots 1.2: ผ่านข�
 L.stMode = 'st';
 L.stQ = ''; L.stF = '';
 L.stCF = {}; L.stMo = new Set(); L.stMx = false;
-L.stMv = 'g';   // lots 1.12: มือถือ 'g' = หน้าเกจ · 'l' = รายการชิ้น (L.stMx ของ 1.10 ไม่ใช้แล้ว)   // lots 1.10: ตัวกรองรายคอลัมน์ { ช่อง: ค่า } · มือถือ: ชิ้นที่แตะเปิด (rec) · แถวยอดทุกขั้นเปิดอยู่
+L.stMv = 'g';   // lots 1.12: มือถือ 'g' = หน้าเกจ
+var PST_LIM = 1000, PST_LIM_M = 300; L.stLim = 0;   // lots 1.31: แถวที่วาด (0 = ค่าตั้งต้น · Infinity = ทั้งหมด) · 'l' = รายการชิ้น (L.stMx ของ 1.10 ไม่ใช้แล้ว)   // lots 1.10: ตัวกรองรายคอลัมน์ { ช่อง: ค่า } · มือถือ: ชิ้นที่แตะเปิด (rec) · แถวยอดทุกขั้นเปิดอยู่
 L.stSel = (function () { try { var a = JSON.parse(localStorage.getItem(PST_SK) || '[]'); return Array.isArray(a) ? a.filter(function (s) { return typeof s === 'string' && s; }).slice(0, PST_MAXSEL) : []; } catch (e) { return []; } })();
 L.stPk = { open: false, q: '' };
 L.stKey = null;   // lots 1.1 (เก็บไว้ให้ของเก่าที่อ่านค่านี้): Lot แรกที่เลือก
@@ -1875,7 +1883,7 @@ function pstSelSet(ids) {
   var seen = {}, out = [];
   ids.forEach(function (s) { s = String(s || ''); var K = s.toUpperCase(); if (s && !seen[K]) { seen[K] = 1; out.push(s); } });
   if (out.length > PST_MAXSEL) toast('เลือกได้สูงสุด ' + PST_MAXSEL + ' Lot — ใช้ ' + PST_MAXSEL + ' Lot แรก');
-  L.stSel = out.slice(0, PST_MAXSEL); L.stF = ''; L.stCF = {}; L.stMo = new Set(); L.stMv = 'g';   // lots 1.12: เปลี่ยน Lot = มือถือกลับหน้าเกจ   // lots 1.10 + ตัวกรองรายคอลัมน์ / ชิ้นที่เปิดในมือถือ
+  L.stSel = out.slice(0, PST_MAXSEL); L.stF = ''; L.stCF = {}; L.stMo = new Set(); L.stMv = 'g'; L.stLim = 0;   // lots 1.31 + กลับ 1,000 แถว   // lots 1.12: เปลี่ยน Lot = มือถือกลับหน้าเกจ   // lots 1.10 + ตัวกรองรายคอลัมน์ / ชิ้นที่เปิดในมือถือ
   try { localStorage.setItem(PST_SK, JSON.stringify(L.stSel)); } catch (e) { }
   var f = pstSelRows()[0]; L.stKey = f ? f.key : null;
 }
@@ -2013,7 +2021,11 @@ function pstRender(keep) {
       var oth = q.length >= 3 ? pstFindOther(qs, sel) : null;
       if (oth && oth.n) h += pstOtherHtml(oth, shown.length);
       else if (oth && !shown.length) h += '<div class="pst-note">ไม่พบ “' + esc(L.stQ.trim()) + '” ใน Lot นี้ และใน Lot อื่น (ข้อมูลรายชิ้น ' + fmtN(PST.lots.size) + ' Lot · ค้นข้าม Lot ได้ด้วยชื่อ Lot / Code Part / Code Pack / Barcode)</div>';
-      var LIM = mob ? 500 : 3000, part = shown.slice(0, LIM), multi = !one;   // lots 1.10: มือถือ 500
+      /* lots 1.31 (ผู้ใช้ 14:07 Lot 4,527 ชิ้นกินแรม): วาดทีละ 1,000 แถว (มือถือ 300) + ปุ่มแสดงเพิ่ม / ทั้งหมด — เดิม 3,000 / 500 */
+      var LIM = L.stLim === Infinity ? Infinity : (L.stLim || (mob ? PST_LIM_M : PST_LIM)), part = shown.slice(0, LIM), multi = !one;
+      var moreH = shown.length > LIM ? '<div class="pst-note pst-more">แสดง <b>' + fmtN(LIM) + '</b> จาก ' + fmtN(shown.length) + ' แถว (กันเครื่องช้า)'
+        + '<button type="button" class="tbtn" data-pstmore="1">▾ แสดงเพิ่มอีก ' + fmtN(Math.min(mob ? PST_LIM_M : PST_LIM, shown.length - LIM)) + '</button>'
+        + '<button type="button" class="tbtn" data-pstmore="all" title="วาดทุกแถว — Lot ใหญ่หลายพันชิ้นอาจช้า / กินแรม">แสดงทั้งหมด ' + fmtN(shown.length) + ' แถว</button><span>หรือค้นหา / กรองเพื่อดูส่วนที่เหลือ</span></div>' : '';
       /* lots 1.4: คอลัมน์ตามหัวตาราง AX progress (PST_COLS) — ช่องของ StarSync v1.17 ที่ไฟล์ยังไม่มี = ซ่อน · # + State ติดซ้ายตอนเลื่อนขวา (pstStick)
          เดิม 1.1–1.3: Shelf No · Product Article · Product Name · Part Name · ขนาด (ยาว × กว้าง) · วัสดุ · Code Pack · Barcode · Room · Rec Id (+ Lot เมื่อหลาย Lot) */
       var cols = PST_COLS.filter(function (c) { return !c.ex || (PST.has && PST.has.has(c.k)); });
@@ -2021,7 +2033,7 @@ function pstRender(keep) {
       var missTxt = !miss.length ? '' : miss.length === PST_COLS.filter(function (c) { return c.ex; }).length ? 'คอลัมน์ ' + miss.join(' · ') + ' ขึ้นเมื่ออัปเดต StarSync เป็น v1.17'
         : 'StarSync หาคอลัมน์ไม่เจอ: ' + miss.join(' · ') + ' (ดู lots/pcols.json · ตั้ง stateCols ใน config.json)';
       if (mv === 'g') h += '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';   // lots 1.13: หน้าเกจ (คอม/มือถือ) ไม่มีตาราง
-      else if (mob) h += (mv === 'g' ? '' : pstMobHtml(part, multi) + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '')   // lots 1.10: มือถือ = รายการสั้น · 1.12 หน้าเกจไม่มีรายการ
+      else if (mob) h += (mv === 'g' ? '' : pstMobHtml(part, multi) + moreH   // lots 1.10: มือถือ = รายการสั้น · 1.12 หน้าเกจไม่มีรายการ
         + (!shown.length && !(oth && oth.n) ? '<div class="pst-note">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง</div>' : ''))
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
       else
@@ -2034,7 +2046,7 @@ function pstRender(keep) {
           return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : ci ? ' class="' + ci.slice(1) + '" title="' + esc(pstCurTip(it.cu)) + '"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
             + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0).replace('class="pck stk', 'class="pck stk cs' + k + (colOk[k] ? ' cok' : '')); }).join('')   /* lots 1.25 สีของขั้น */   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
-        }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
+        }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + moreH + '</div>'
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + (PST.anNone && !PST.an ? ' · ' + esc('Product Name เป็นชื่อไทยเมื่ออัปเดต StarSync เป็น v1.19 (ตั้ง lots.artName ใน config.json)') : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
     } else {
       h += '<div class="pst-note big">' + esc(note || 'ไม่มีข้อมูล') + '</div>';
@@ -2139,7 +2151,7 @@ document.addEventListener('click', function (e) {
   if (view() !== 'lots') return;
   /* lots 1.2: คลิกนอกกล่องเลือก Lot (ลอย) = ปิด */
   if (L.stPk.open && e.target.closest && !e.target.closest('[data-pstpkbox],[data-pstpk],#lotSide,#lotCfBar,.lcfpop') && document.contains(e.target)) { L.stPk.open = false; pstRender(true); }
-  var t = e.target.closest && e.target.closest('[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall],[data-pstcur],[data-pstdly],[data-pstcfb],[data-pstcfclr],[data-pstmi],[data-pstml],[data-pstmg],[data-pstdash]'); if (!t) return;
+  var t = e.target.closest && e.target.closest('[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall],[data-pstcur],[data-pstdly],[data-pstcfb],[data-pstcfclr],[data-pstmi],[data-pstml],[data-pstmg],[data-pstdash],[data-pstmore]'); if (!t) return;
   if (t.dataset.pstdash) { e.preventDefault(); B.sel = t.dataset.pstdash; location.hash = '#board-dash'; return; }   // lots 1.21: เปิด Dashboard + รายละเอียด Lot นี้
   /* lots 1.12: มือถือหน้าเกจ — แตะเกจ/กล่อง = รายการชิ้นของขั้นนั้น · 📋 = ทุกชิ้น · ← สถานะ = กลับหน้าเกจ */
   if (t.closest('.pst-gg')) {   // lots 1.13: คอมด้วย (1.12: เฉพาะมือถือ)
@@ -2154,7 +2166,8 @@ document.addEventListener('click', function (e) {
   if (t.dataset.pstcur != null) { e.preventDefault(); if (pstMobile()) { /* lots 1.12: จัดการด้านบน (.pst-gg) */ } else if (t.dataset.pstcur !== '') { if (L.stCF.cur === t.dataset.pstcur) delete L.stCF.cur; else L.stCF.cur = t.dataset.pstcur; } pstRender(pstMobile() ? true : 'x'); return; }
   if (t.hasAttribute('data-pstdly')) { e.preventDefault(); if (String(L.stCF.dly || '').trim() === '<>0') delete L.stCF.dly; else L.stCF.dly = '<>0'; pstRender('x'); return; }
   if (t.dataset.pstcfb) { e.preventDefault(); var ck = t.dataset.pstcfb, cv = L.stCF[ck] || ''; if (cv === '') L.stCF[ck] = '1'; else if (cv === '1') L.stCF[ck] = '0'; else delete L.stCF[ck]; pstRender('x'); return; }
-  if (t.hasAttribute('data-pstcfclr')) { e.preventDefault(); L.stCF = {}; L.stF = ''; pstRender('x'); return; }
+  if (t.hasAttribute('data-pstcfclr')) { e.preventDefault(); L.stCF = {}; L.stF = ''; L.stLim = 0; pstRender('x'); return; }
+  if (t.dataset.pstmore) { e.preventDefault(); var mb = pstMobile() ? PST_LIM_M : PST_LIM; L.stLim = t.dataset.pstmore === 'all' ? Infinity : (L.stLim || mb) + mb; pstRender(true); return; }   // lots 1.31
   if (t.dataset.pstmi) { e.preventDefault(); var mr = t.dataset.pstmi; if (L.stMo.has(mr)) L.stMo.delete(mr); else L.stMo.add(mr); pstRender(true); return; }
   /* lots 1.5: ไปดู Lot ที่พบจากคำค้น (คำค้นเดิมยังอยู่) */
   if (t.dataset.pstjump) { e.preventDefault(); pstSelSet([t.dataset.pstjump]); L.stPk.open = false; pstRender(); var W = $('lotSt').querySelector('.pst-wrap'); if (W) W.scrollTop = 0; return; }
