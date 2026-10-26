@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.3 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.4 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -13,6 +13,7 @@
       · lots 1.1: แท็บ ✅ สถานะ Part — ตารางสถานะทีละชิ้น (Part · Edge · Drill · Pack · Pick · Wh · Delivery · Site) แบบโปรแกรม Smart Production
       · lots 1.2: แท็บสถานะ Part เป็นหน้าของตัวเอง (เลือก/กรองได้หลาย Lot) · Edge / Drill จากการยิงบาร์โค้ดด้วยแอป Scan-Link (lots/steps.json)
       · lots 1.3: ตาราง Lot คอลัมน์ Amount → Barcode (10 หลักแรก) · ค้นหา Lot ด้วย Barcode ได้
+      · lots 1.4: ตารางสถานะ Part คอลัมน์ครบตามหน้า AX progress (StarSync v1.17) · ค้นหาด้วย Code Part (สติกเกอร์ที่ยิง) · ไม่มี Barcode = Manual
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
     · เปิดไฟล์นี้ตรง ๆ = หน้าบอกวิธีใช้ (ไม่มีข้อมูล) — ดูหน้า Lot ผลิตที่ index.html#lots
@@ -45,6 +46,13 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.4 (2026-10-26 09:12 ผู้ใช้ รูปตาราง AX progress 2 รูป: “เอาคอลัมน์ให้ครบเหมือน AX progress” · 09:20 รูปคอลัมน์ Code Part: “Code Part ครับ ที่มีทุกสติกเกอร์ที่แสกน”)
+        FEAT ตารางสถานะ Part: คอลัมน์ตามลำดับ AX progress — Rec Id · Lot Id · Proj Id · Proj Name · OrderNumber · Build · Floor · Room · Shelf No · Product Article
+             · Product Name · Item Fg · Item Part · Part Name · Code Pack · Code Part · Material Code · Finish Length · Finish Width · Part/Product/Pack Seq Total
+             · Item Id · Delay No (+ Barcode ท้ายสุด) · ช่องของ StarSync v1.17 ที่ไฟล์ยังไม่มี = ซ่อน + บอกท้ายตาราง · # + State ติดซ้ายตอนเลื่อนขวา (แบบ AX)
+        UX คอลัมน์ Barcode ในตาราง Lot (ผู้ใช้ 09:22 “ต้องแสดงเป็น Barcode 10 เพราะมันมีงานไม่ Manual ส่วนงานที่ Manual ให้แสดงคำว่า Manual”)
+             = 10 ตัวแรกของ Barcode (เหมือน 1.3) · Lot ที่ไม่มี Barcode จริงเลย (ทุกชิ้น “Manual”) = Manual
+             · ช่องค้นหาซ้ายบน: ยิง/พิมพ์ Code Part เต็มได้ (สติกเกอร์ทุกชิ้น · ผู้ใช้ 09:20 “Code Part ครับ ที่มีทุกสติกเกอร์ที่แสกน”) + Code Pack · Barcode
     1.3 (2026-10-26 09:08 ผู้ใช้ รูปหัวตาราง AMOUNT · REQBOM / PECONF: “ถ้าจะหาบาร์โค้ดแล้วไปหา Lot แสดงว่าหน้านี้ตัดคอลัมน์แสดง Amount ออก
         เอาบาร์มาแสดงครับ โดยแสดงแค่ 10 หลักด้านหน้าของ Part พอ”)
         CHANGE ตาราง Lot: คอลัมน์ Amount → Barcode (10 ตัวแรกของ Barcode ชิ้นงาน · ชุดที่พบมากสุด · มีหลายชุด = +n) · เรียง/กรองหัวคอลัมน์ได้
@@ -287,6 +295,18 @@
   .row.lcols > .c-bc small{font-size:9.5px;color:var(--ink-faint);margin-left:1px}
   /* lots 1.3: ปุ่ม ← รายการ Lot บนหัวหน้าสถานะ (ผู้ใช้ 09:11 หาทางกลับไม่เจอ — 1.2 เอาออกไป) */
   .pst-back{flex:none}
+  /* ───────── lots 1.4: คอลัมน์ตาม AX progress · # + State ติดซ้าย (left จาก pstStick) ───────── */
+  .pst-t .stk{position:sticky;z-index:1}
+  .pst-t td.stk{background-color:var(--solid)}
+  .pst-t th.stk{z-index:4}
+  .pst-t td.pck.on.stk{background:linear-gradient(color-mix(in srgb,var(--good) 16%,transparent),color-mix(in srgb,var(--good) 16%,transparent)),var(--solid)}
+  .pst-t td.pck.inf.stk{background:linear-gradient(color-mix(in srgb,var(--good) 8%,transparent),color-mix(in srgb,var(--good) 8%,transparent)),var(--solid)}
+  .pst-t tbody tr:hover td.stk{background:linear-gradient(var(--accent-soft),var(--accent-soft)),var(--solid)}
+  .pst-t tbody tr:hover td.pck.on.stk{background:linear-gradient(color-mix(in srgb,var(--good) 24%,transparent),color-mix(in srgb,var(--good) 24%,transparent)),var(--solid)}
+  .row.lcols > .c-bc.man{color:var(--ink-dim);font-style:italic}
+  .pst-t td.cpt{cursor:copy;font-weight:600}
+  .pst-t td.cpt:hover{color:var(--accent)}
+  @media (max-width: 760px){ .pst-t .stk{left:auto!important} }
 </style>
 </head>
 <body>
@@ -341,7 +361,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.3';
+var LOTS_VER = '1.4';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -399,7 +419,7 @@ function lotBanner() {
 }
 function lotSeg(key, opts) { return '<div class="seg">' + opts.map(function (o) { return '<button data-lseg="' + key + '" data-v="' + o[0] + '" class="' + (L.f[key] === o[0] ? 'on' : '') + '">' + esc(o[1]) + '<span class="c" data-lc="' + key + ':' + o[0] + '"></span></button>'; }).join('') + '</div>'; }
 function lotRenderSide() {
-  var h = '<div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="lq" type="search" placeholder="ค้นหา Lot / remark / Barcode" title="ค้นหา LotId · remark · Shelf · Bu · pool · Barcode (เต็มหรือบางส่วน)" value="' + esc(L.f.q) + '" autocomplete="off"></div>';
+  var h = '<div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="lq" type="search" placeholder="ค้นหา Lot / remark / Code Part" title="ค้นหา LotId · remark · Shelf · Bu · pool · Code Part / Code Pack / Barcode (เต็มหรือบางส่วน · ยิงสติกเกอร์ลงช่องนี้ได้)" value="' + esc(L.f.q) + '" autocomplete="off"></div>';
   h += '<div class="fgrp"><h4>Stage</h4>' + lotSeg('stage', [['all', 'ทั้งหมด'], ['open', 'ยังไม่จบ'], ['0', '0 NoBom'], ['1', '1 Open'], ['2', '2 PD'], ['3', '3 Finish'], ['closed', '✓ ปิดเอง']])   /* v1.10 ปิดเอง */ + '</div>';
   var wk = weekNow();
   h += '<div class="fgrp"><h4 title="เทียบ enddate กับวันนี้ · เลยกำหนด = enddate ผ่านไปแล้วแต่ยังไม่ Finish · ' + esc(WEEK_TIP) + '">enddate</h4>' + lotSeg('due', [['all', 'ทั้งหมด'], ['late', 'เลยกำหนด'], ['wk0', 'สัปดาห์นี้ W' + wk.w0], ['wk1', 'สัปดาห์หน้า W' + wk.w1], ['30', '30 วันข้างหน้า']]) + '</div>';
@@ -473,7 +493,7 @@ var LCOLS = [['lot', 'LotId', ''], ['remark', 'remark', ''], ['stage', 'Stage', 
   ['plan', 'แผน45', 'c-pl'], ['create', 'LotCreate', 'c-cr'], ['parts', 'TotalPart', 'c-pt'], ['shelf', 'Shelf', 'c-sh'], ['bc', 'Barcode', 'c-am c-bc'], ['', 'ReqBom / PeConf', 'c-rq']];
 /* lots 1.3: คอลัมน์ Amount → Barcode (เดิม ['amount', 'Amount', 'c-am']) — ใช้ช่อง/คลาส c-am เดิม = ความกว้างและการซ่อนตามขนาดจอเหมือนเดิมทุกจุด
    Amount ยังดูได้ที่แผงรายละเอียด · ยอดรวมบนแถบ · เรียงจากเมนูเรียง · ส่งออก CSV */
-var LCOL_TIP = { bc: 'Barcode ของชิ้นงาน 10 ตัวแรก (lots/pinfo.csv ของ StarSync · มีหลายชุด = +n) — ค้นหาด้วย Barcode เต็มได้ที่ช่องค้นหาซ้ายบน', '': 'R = ReqBom · P = PeConfirm', create: 'เวลาสร้าง Lot · AX เก็บเป็นเวลา UTC — แสดงเป็นเวลาไทย (+7 ชม.)', end: 'แดง = เลยกำหนดแต่ยังไม่ Finish · ส้ม = ครบกำหนดใน 7 วัน', pool: 'prodpoolid', week: 'Week' };
+var LCOL_TIP = { bc: 'Barcode ของชิ้นงาน 10 ตัวแรก (หลายชุด = +n) · Lot ที่ไม่มี Barcode (ทุกชิ้น Manual) = Manual — ยิง/พิมพ์ Code Part · Code Pack · Barcode เต็มได้ที่ช่องค้นหาซ้ายบน', '': 'R = ReqBom · P = PeConfirm', create: 'เวลาสร้าง Lot · AX เก็บเป็นเวลา UTC — แสดงเป็นเวลาไทย (+7 ชม.)', end: 'แดง = เลยกำหนดแต่ยังไม่ Finish · ส้ม = ครบกำหนดใน 7 วัน', pool: 'prodpoolid', week: 'Week' };
 function lotLayout() { $('lotSpacer').style.height = (L.shown.length * LROW + 8) + 'px'; lotDrawHdr(); lotDraw(); }
 function lotDrawHdr() {
   var E = $('lotHdr'); E.classList.toggle('hide', L.none || (!L.loaded && !L.rows.length));
@@ -928,19 +948,27 @@ function pstDitto(R, cols) {
   }
   return out;
 }
+var PST_EX = ['pj', 'pjn', 'ord', 'bld', 'flr', 'ifg', 'ipt', 'cpt', 'psq', 'prq', 'pkq', 'iid', 'dly'];   // lots 1.4: ช่องของ StarSync v1.17 (ต่อท้าย pinfo.csv)
 function pstParseInfo(t) {
-  var rows = pstDitto(parseCsv(t || ''), ['lot', 'rec', 'sz', 'mat', 'l', 'w', 'nm', 'cab', 'art', 'room', 'shelf', 'pack', 'bc1']), m = new Map();
+  var R = parseCsv(t || ''), rows = pstDitto(R, ['lot', 'rec', 'sz', 'mat', 'l', 'w', 'nm', 'cab', 'art', 'room', 'shelf', 'pack', 'bc1'].concat(PST_EX)), m = new Map();
+  PST.has = new Set((R[0] || []).map(function (x) { return String(x).trim(); }));   // lots 1.4: หัวคอลัมน์ที่มีในไฟล์
   rows.forEach(function (o) { if (!o.lot || !o.rec) return; var K = o.lot.toUpperCase(), a = m.get(K); if (!a) m.set(K, a = []);
-    a.push({ lot: o.lot, rec: o.rec, sz: o.sz === '' ? null : o.sz === '1', mat: o.mat, l: +o.l || 0, w: +o.w || 0, nm: o.nm, cab: o.cab, art: o.art, room: o.room, shelf: o.shelf, pack: o.pack, bc1: o.bc1 }); });
+    a.push({ lot: o.lot, rec: o.rec, sz: o.sz === '' ? null : o.sz === '1', mat: o.mat, l: +o.l || 0, w: +o.w || 0, nm: o.nm, cab: o.cab, art: o.art, room: o.room, shelf: o.shelf, pack: o.pack, bc1: o.bc1 }); var q = a[a.length - 1]; PST_EX.forEach(function (k) { q[k] = o[k] || ''; }); });   // lots 1.4 + ช่อง v1.17
   m.forEach(function (a) { a.sort(function (x, y) { return x.rec.length - y.rec.length || (x.rec < y.rec ? -1 : x.rec > y.rec ? 1 : 0); }); });   // RECID ตัวเลข (เทียบความยาวก่อน)
   PST.lots = m;
-  /* lots 1.3: Barcode ราย Lot — p = 10 ตัวแรกที่พบมากสุด · more = ชุดอื่น · all = ทุก Barcode (ตัวเล็ก · ไว้ค้นหา) · ห่ออุปกรณ์ “Manual” ไม่นับ */
+  /* lots 1.3: Barcode ราย Lot — p = 10 ตัวแรกที่พบมากสุด · more = ชุดอื่น · all = ทุก Barcode (ตัวเล็ก · ไว้ค้นหา) · ห่ออุปกรณ์ “Manual” ไม่นับ
+     lots 1.4: ไม่มี Barcode จริงเลย (ทุกชิ้น “Manual”) = p “Manual” (ผู้ใช้ 09:22) · all = Code Part + Code Pack + Barcode (ไม่ซ้ำ · ยิงสติกเกอร์ลงช่องค้นหาได้) */
   var bc = new Map();
   m.forEach(function (a, K) {
-    var cnt = {}, all = [];
-    a.forEach(function (p) { var v = String(p.bc1 || '').trim(); if (!v || /^manual$/i.test(v)) return; all.push(v.toLowerCase()); var k = v.slice(0, 10); cnt[k] = (cnt[k] || 0) + 1; });
+    var cnt = {}, all = [], seen = {}, man = 0;
+    var add = function (v) { v = String(v || '').trim(); if (!v || /^manual$/i.test(v)) return; v = v.toLowerCase(); if (!seen[v]) { seen[v] = 1; all.push(v); } };
+    a.forEach(function (p) {
+      add(p.cpt); add(p.pack); add(p.bc1);
+      var v = String(p.bc1 || '').trim(); if (/^manual$/i.test(v)) { man++; return; } if (!v) return;
+      var k = v.slice(0, 10); cnt[k] = (cnt[k] || 0) + 1; });
     var ks = Object.keys(cnt).sort(function (x, y) { return cnt[y] - cnt[x] || (x < y ? -1 : 1); });
-    if (ks.length) bc.set(K, { p: ks[0], more: ks.slice(1), n: all.length, all: all.join(' ') });
+    if (ks.length) bc.set(K, { p: ks[0], more: ks.slice(1), n: a.length - man, all: all.join(' ') });
+    else if (man) bc.set(K, { p: 'Manual', man: 1, more: [], n: 0, all: all.join(' ') });
   });
   PST.bc = bc;
 }
@@ -957,7 +985,8 @@ function pstAug() {
 }
 function lotBcCell(x) {
   var b = x._bc;
-  if (b) return '<div class="c-am c-bc" title="' + esc('Barcode 10 ตัวแรก' + (b.more.length ? ' · มี ' + (b.more.length + 1) + ' ชุด: ' + [b.p].concat(b.more).join(', ') : '') + ' · ' + fmtN(b.n) + ' ชิ้น — ค้นหาด้วย Barcode เต็มได้ที่ช่องค้นหาซ้ายบน') + '">'
+  if (b && b.man) return '<div class="c-am c-bc man" title="ทุกชิ้นของ Lot นี้ไม่มี Barcode (Manual) — ค้นด้วย Code Part ได้ที่ช่องค้นหาซ้ายบน">Manual</div>';   // lots 1.4
+  if (b) return '<div class="c-am c-bc" title="' + esc('Barcode 10 ตัวแรก' + (b.more.length ? ' · มี ' + (b.more.length + 1) + ' ชุด: ' + [b.p].concat(b.more).join(', ') : '') + ' · ' + fmtN(b.n) + ' ชิ้น — ยิง/พิมพ์ Code Part · Barcode เต็มได้ที่ช่องค้นหาซ้ายบน') + '">'
     + esc(b.p) + (b.more.length ? '<small>+' + b.more.length + '</small>' : '') + '</div>';
   return '<div class="c-am c-bc">' + (PST.lots ? '<span class="muted" title="ไม่มีรายชิ้นในไฟล์ของ StarSync (enddate นอกช่วงที่ส่ง)">—</span>' : '') + '</div>';
 }
@@ -1025,14 +1054,57 @@ function pstChip(S0, z, on, sub) {
   return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
     + '<b>' + esc(S0.h) + '</b><span>' + (S0.na ? 'รอจุดยิง' : z ? fmtN(z.d) + '/' + fmtN(z.n) : '—') + '</span>' + (sub ? '<em>' + esc(sub) + '</em>' : '') + '<i style="width:' + (na ? 0 : Math.round(p * 100)) + '%"></i></button>';
 }
-function pstCell(q, S0) {
-  if (q.na) return '<td class="pck na" title="' + esc(S0.t) + '">·</td>';
-  if (q.nc) return '<td class="pck nc" title="ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || '') + '">–</td>';
-  if (q.v === null) return '<td class="pck nd" title="ไม่มีข้อมูล">?</td>';
-  if (q.scan) return '<td class="pck on scan" title="' + esc(pstScanTip(S0, q.scan)) + '"><span class="cb">✓</span></td>';   // lots 1.2
-  if (q.inf) return '<td class="pck on inf" title="ถือว่าผ่าน — ชิ้นนี้ Pack แล้ว (ไม่ได้ยิง ' + esc(S0.h) + ')"><span class="cb">✓</span></td>';   // lots 1.2
-  return '<td class="pck' + (q.v ? ' on' : '') + '"' + (q.raw != null && q.raw !== '1' && q.raw !== '0' ? ' title="ค่าใน AX: ' + esc(q.raw) + '"' : '') + '><span class="cb">' + (q.v ? '✓' : '') + '</span>'
+function pstCell(q, S0) {   // lots 1.4: + stk (ติดซ้ายตอนเลื่อนขวา)
+  if (q.na) return '<td class="pck stk na" title="' + esc(S0.t) + '">·</td>';
+  if (q.nc) return '<td class="pck stk nc" title="ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || '') + '">–</td>';
+  if (q.v === null) return '<td class="pck stk nd" title="ไม่มีข้อมูล">?</td>';
+  if (q.scan) return '<td class="pck stk on scan" title="' + esc(pstScanTip(S0, q.scan)) + '"><span class="cb">✓</span></td>';   // lots 1.2
+  if (q.inf) return '<td class="pck stk on inf" title="ถือว่าผ่าน — ชิ้นนี้ Pack แล้ว (ไม่ได้ยิง ' + esc(S0.h) + ')"><span class="cb">✓</span></td>';   // lots 1.2
+  return '<td class="pck stk' + (q.v ? ' on' : '') + '"' + (q.raw != null && q.raw !== '1' && q.raw !== '0' ? ' title="ค่าใน AX: ' + esc(q.raw) + '"' : '') + '><span class="cb">' + (q.v ? '✓' : '') + '</span>'
     + (q.raw != null && q.raw !== '1' && q.raw !== '0' ? '<small>' + esc(q.raw) + '</small>' : '') + '</td>';
+}
+/* lots 1.4: คอลัมน์ตามหัวตาราง AX progress (Smart Production) · ex = ช่องของ StarSync v1.17 (ไม่มีในไฟล์ = ซ่อน) · cp = กดแล้วคัดลอก */
+var PST_DEC2 = function (v) { return (+v || 0).toFixed(2); };
+var PST_COLS = [
+  { k: 'rec', h: 'Rec Id', c: 'mono dim' },
+  { k: 'lot', h: 'Lot Id', c: 'mono lotc', cp: 1 },
+  { k: 'pj', h: 'Proj Id', c: 'mono', ex: 1 },
+  { k: 'pjn', h: 'Proj Name', ex: 1 },
+  { k: 'ord', h: 'OrderNumber', c: 'mono', ex: 1 },
+  { k: 'bld', h: 'Build', ex: 1 },
+  { k: 'flr', h: 'Floor', ex: 1 },
+  { k: 'room', h: 'Room' },
+  { k: 'shelf', h: 'Shelf No', c: 'mono' },
+  { k: 'art', h: 'Product Article', c: 'mono' },
+  { k: 'cab', h: 'Product Name' },
+  { k: 'ifg', h: 'Item Fg', c: 'mono', ex: 1 },
+  { k: 'ipt', h: 'Item Part', c: 'mono', ex: 1 },
+  { k: 'nm', h: 'Part Name', c: 'pn' },
+  { k: 'pack', h: 'Code Pack', c: 'mono' },
+  { k: 'cpt', h: 'Code Part', c: 'mono cpt', ex: 1, cp: 1, t: 'รหัสบนสติกเกอร์ที่ยิง (กด = คัดลอก)' },
+  { k: 'mat', h: 'Material Code', c: 'mono' },
+  { k: 'l', h: 'Finish Length', c: 'num mono', num: 1, f: PST_DEC2 },
+  { k: 'w', h: 'Finish Width', c: 'num mono', num: 1, f: PST_DEC2 },
+  { k: 'psq', h: 'Part Seq Total', c: 'mono', ex: 1 },
+  { k: 'prq', h: 'Product Seq Total', c: 'mono', ex: 1 },
+  { k: 'pkq', h: 'Pack Seq Total', c: 'mono', ex: 1 },
+  { k: 'iid', h: 'Item Id', c: 'mono', ex: 1 },
+  { k: 'dly', h: 'Delay No', c: 'num mono', num: 1, ex: 1 },
+  { k: 'bc1', h: 'Barcode', c: 'mono dim', t: 'Barcode 1 ใน AX (ไม่อยู่ในหน้า AX progress — เก็บไว้ท้ายสุด)' }];
+function pstTd(c, p) {
+  var v = p[c.k]; if (c.f) v = c.f(v, p); v = v == null ? '' : String(v);
+  return '<td' + (c.c ? ' class="' + c.c + '"' : '') + (c.cp && v ? ' data-cp="' + esc(v) + '" title="กด = คัดลอก"' : '') + '>' + esc(v) + '</td>';
+}
+/* lots 1.4: # + State ติดซ้าย — วัดตำแหน่งจริงของหัวคอลัมน์แล้วเขียน left ให้ทั้งคอลัมน์ (CSS nth-child) · เส้นแบ่งหลังคอลัมน์สุดท้ายที่ติด */
+function pstStick(E) {
+  var T = E.querySelector('.pst-t'); if (!T || !T.tHead || T.tHead.rows.length < 2) return;
+  /* ระยะจากขอบซ้ายตาราง (ไม่ใช้ offsetLeft — ช่อง sticky วัดจาก #lotSt ที่เป็น position:relative = เกินไปเท่าระยะขอบกล่อง → มีร่องให้ข้อมูลที่เลื่อนผ่านโผล่) */
+  var r2 = T.tHead.rows[1], n = r2.cells.length, P = '#lotSt .pst-t ', x0 = T.getBoundingClientRect().left, L = function (c) { return Math.round((c.getBoundingClientRect().left - x0) * 100) / 100; };
+  var css = P + 'thead tr:first-child > th:nth-child(1),' + P + 'tbody td:nth-child(1){left:0}' + P + 'thead tr:first-child > th:nth-child(2){left:' + L(r2.cells[0]) + 'px}';
+  for (var i = 0; i < n; i++) css += P + 'thead tr:nth-child(2) > th:nth-child(' + (i + 1) + '),' + P + 'tbody td:nth-child(' + (i + 2) + '){left:' + L(r2.cells[i]) + 'px}';
+  css += P + 'thead tr:first-child > th:nth-child(2),' + P + 'thead tr:nth-child(2) > th:nth-child(' + n + '),' + P + 'tbody td:nth-child(' + (n + 1) + '){box-shadow:inset -1px 0 0 var(--line-strong)}';
+  var st = E.querySelector('style.pst-stk'); if (!st) { st = document.createElement('style'); st.className = 'pst-stk'; E.appendChild(st); }
+  if (st.textContent !== css) st.textContent = css;
 }
 function pstWhen() {
   var m = PST.meta; if (!m) return '';
@@ -1124,11 +1196,11 @@ function pstRender(keep) {
     var shown = all.filter(function (p) {
       if (f) { var v = pstVal(p, PST.st && PST.st.get(p.rec), f); if (v.v !== false) return false; }
       if (!qs.length) return true;
-      var hay = (p.lot + ' ' + p.nm + ' ' + p.cab + ' ' + p.art + ' ' + p.shelf + ' ' + p.pack + ' ' + p.bc1 + ' ' + p.mat + ' ' + p.room + ' ' + p.rec).toLowerCase();
+      var hay = (p.lot + ' ' + p.nm + ' ' + p.cab + ' ' + p.art + ' ' + p.shelf + ' ' + p.pack + ' ' + p.bc1 + ' ' + p.mat + ' ' + p.room + ' ' + p.rec + ' ' + PST_EX.map(function (k) { return p[k] || ''; }).join(' ')).toLowerCase();   // lots 1.4 + ช่อง v1.17
       return qs.every(function (w) { return hay.indexOf(w) >= 0; });
     });
     h += '<div class="pst-sums">' + PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], L.stF === S0.k, subOf(S0.k)); }).join('');
-    if (all.length) h += '<span class="sp"></span><div class="pst-tools"><input type="search" class="pst-q" placeholder="🔍 ค้นหา Part · ตู้ · Shelf · Barcode" title="ค้นหา Part · ตู้ · Shelf · Code Pack · Barcode · วัสดุ · Room · Rec Id" value="' + esc(L.stQ) + '">'
+    if (all.length) h += '<span class="sp"></span><div class="pst-tools"><input type="search" class="pst-q" placeholder="🔍 ค้นหา Part · ตู้ · Shelf · Code Part" title="ค้นหาทุกช่อง: Part · ตู้ · Shelf · Code Part · Code Pack · Barcode · Order · Item · วัสดุ · Room · Rec Id" value="' + esc(L.stQ) + '">'
       + (f ? '<button type="button" class="tbtn" data-pstf="" title="แสดงทุกชิ้น">✕ ยังไม่ผ่าน ' + esc((PST_STEPS.filter(function (S0) { return S0.k === f; })[0] || {}).h || f) + '</button>' : '')
       + '<span class="pst-cnt">แสดง <b>' + fmtN(shown.length) + '</b> จาก ' + fmtN(all.length) + ' แถว</span></div>';
     h += '</div>';
@@ -1142,25 +1214,28 @@ function pstRender(keep) {
     if (all.length) {
       if (note) h += '<div class="pst-note">' + esc(note) + '</div>';
       var LIM = 3000, part = shown.slice(0, LIM), multi = !one;
-      h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no">#</th>' + (multi ? '<th rowspan="2">Lot</th>' : '') + '<th colspan="' + PST_STEPS.length + '" class="grp">State</th>'
-        + '<th rowspan="2">Shelf No</th><th rowspan="2">Product Article</th><th rowspan="2">Product Name</th><th rowspan="2">Part Name</th><th rowspan="2" class="num">ขนาด (มม.)</th>'
-        + '<th rowspan="2">วัสดุ</th><th rowspan="2">Code Pack</th><th rowspan="2">Barcode</th><th rowspan="2">Room</th><th rowspan="2">Rec Id</th></tr><tr>'
-        + PST_STEPS.map(function (S0) { return '<th class="pck' + (S0.na ? ' na' : '') + '" title="' + esc(S0.t) + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr></thead><tbody>'
+      /* lots 1.4: คอลัมน์ตามหัวตาราง AX progress (PST_COLS) — ช่องของ StarSync v1.17 ที่ไฟล์ยังไม่มี = ซ่อน · # + State ติดซ้ายตอนเลื่อนขวา (pstStick)
+         เดิม 1.1–1.3: Shelf No · Product Article · Product Name · Part Name · ขนาด (ยาว × กว้าง) · วัสดุ · Code Pack · Barcode · Room · Rec Id (+ Lot เมื่อหลาย Lot) */
+      var cols = PST_COLS.filter(function (c) { return !c.ex || (PST.has && PST.has.has(c.k)); });
+      var miss = PST_COLS.filter(function (c) { return c.ex && !(PST.has && PST.has.has(c.k)); }).map(function (c) { return c.h; });
+      var missTxt = !miss.length ? '' : miss.length === PST_COLS.filter(function (c) { return c.ex; }).length ? 'คอลัมน์ ' + miss.join(' · ') + ' ขึ้นเมื่ออัปเดต StarSync เป็น v1.17'
+        : 'StarSync หาคอลัมน์ไม่เจอ: ' + miss.join(' · ') + ' (ดู lots/pcols.json · ตั้ง stateCols ใน config.json)';
+      h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th>'
+        + cols.map(function (c) { return '<th rowspan="2"' + (c.num ? ' class="num"' : '') + (c.t ? ' title="' + esc(c.t) + '"' : '') + '>' + esc(c.h) + '</th>'; }).join('') + '</tr><tr>'
+        + PST_STEPS.map(function (S0) { return '<th class="pck stk' + (S0.na ? ' na' : '') + '" title="' + esc(S0.t) + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr></thead><tbody>'
         + part.map(function (p, i) {
           var s = PST.st && PST.st.get(p.rec);
-          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : '') + '><td class="no">' + (i + 1) + '</td>'
-            + (multi ? '<td class="mono lotc" data-cp="' + esc(p.lot) + '" title="กด = คัดลอกชื่อ Lot">' + esc(p.lot) + '</td>' : '')
+          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
             + PST_STEPS.map(function (S0) { return pstCell(pstVal(p, s, S0.k), S0); }).join('')
-            + '<td class="mono">' + esc(p.shelf) + '</td><td class="mono">' + esc(p.art) + '</td><td>' + esc(p.cab) + '</td><td class="pn">' + esc(p.nm) + '</td>'
-            + '<td class="num mono">' + (p.l || p.w ? esc(String(p.l)) + ' × ' + esc(String(p.w)) : '') + '</td><td class="mono">' + esc(p.mat) + '</td><td class="mono">' + esc(p.pack) + '</td>'
-            + '<td class="mono">' + esc(p.bc1) + '</td><td class="mono">' + esc(p.room) + '</td><td class="mono dim">' + esc(p.rec) + '</td></tr>';
+            + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
-        + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
+        + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
     } else {
       h += '<div class="pst-note big">' + esc(note || 'ไม่มีข้อมูล') + '</div>';
     }
     if (L.stPk.open) h += pstPickHtml(false);
     E.innerHTML = h;
+    pstStick(E);   // lots 1.4
     if (sc) { var W = E.querySelector('.pst-wrap'); if (W) { W.scrollTop = sc[0]; W.scrollLeft = sc[1]; } }
   }
   var P1 = E.querySelector('.pst-pkl'); if (P1 && psc) P1.scrollTop = psc;
