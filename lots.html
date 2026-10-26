@@ -75,6 +75,8 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.44 (2026-10-26 17:19 ผู้ใช้ รูปหน้าค้นหา Lot: “ดู Part/ค้างตัด ทำไมมันเยื้อง”)
+        FIX ป้าย Part/ค้างตัด ในหน้าค้นหา Lot เป็นวงกลมเล็กเยื้อง — คลาส ck ของป้าย (1.40) ชนกับช่องติ๊ก .pst-pkr .ck (กว้าง 17px · วงกลมตอนเลือกทีละ Lot) → เปลี่ยนเป็นคลาส cry
     1.43 (2026-10-26 15:32–16:35 ผู้ใช้: “HG งานทำสีเงา · MU งานทำสีด้าน … งานเคลือบ ดึงคอลัมน์ FrontStyle ของที่ที่ดึงบาร์โค้ดมา” ·
          15:36 “ถ้าดึงช่อง FrontStyle มาได้ จะให้เพิ่มช่องเพื่อสแกนรับเข้างานทำสี หรือรับเข้างานเคลือบ เพิ่มอีก 1 State … งานทำสีจะไม่ใช่งานเคลือบ
          และงานเคลือบก็ไม่ใช่งานทำสีอยู่แล้ว ชิ้นนั้น ๆ” · 15:38 “State อยู่หลังปิดขอบ ก่อน Drill” · 16:35 “ทำต่อ”)
@@ -770,7 +772,7 @@
   .pst-sum.pst-cur .pst-st > em{font-size:12.5px;font-weight:700;color:#fff}
   #lotSt .lt-cut{--lt:#1d6fe0} #lotSt .lt-go{--lt:#15803d} #lotSt .lt-wait{--lt:#a16207} #lotSt .lt-bad{--lt:#c62828} #lotSt .lt-run,#lotSt .lt-idle{--lt:var(--accent)}
   #lotSt .lt-carry{--lt:#ea580c}   /* lots 1.40 ค้างตัด = ส้ม (Dashboard: ส้ม = ค้างตัด) · ไม้ยังไม่ครบ (lt-wait) เปลี่ยนเป็นเหลืองเข้ม แยกจากค้างตัด */
-  #lotSt .pst-pkr .pst-cs.ck,#lotSt .pst-lsug .pst-cs.ck{--stc:#ea580c}
+  #lotSt .pst-pkr .pst-cs.cry,#lotSt .pst-lsug .pst-cs.cry{--stc:#ea580c}   /* lots 1.44 คลาส ck → cry (ck = ช่องติ๊กของแถว · ป้ายเลยกลายเป็นวงกลม 17px) */
   .pst-sum.pst-cur.lt{background:var(--lt);border-color:var(--lt);animation:pstGlow 2.8s ease-in-out infinite}
   .pst-sum.pst-cur.lt-cut{animation-duration:1.7s}
   .pst-sum.pst-cur.lt:not(.na):hover{border-color:var(--lt);filter:brightness(1.08)}
@@ -968,7 +970,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.43';
+var LOTS_VER = '1.44';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2661,7 +2663,7 @@ function pstLotStatTxt(x) {   // lots 1.39: ข้อความป้ายส
 function pstLotStat(x) {
   var c0 = pstRowsOf(x) ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; if (i0 < 0) return '';
   var l0 = pstLotStatTxt(x);   // lots 1.39 (เดิมคิดตรงนี้)
-  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + (i0 === 0 && /รอตัด$/.test(l0) ? ' cw' : '') /* lots 1.36 รอตัด = กรอบประ */ + (i0 === 0 && /ค้างตัด$/.test(l0) ? ' ck' : '') /* lots 1.40 ค้างตัด = ส้ม */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
+  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + (i0 === 0 && /รอตัด$/.test(l0) ? ' cw' : '') /* lots 1.36 รอตัด = กรอบประ */ + (i0 === 0 && /ค้างตัด$/.test(l0) ? ' cry' : '') /* lots 1.40 ค้างตัด = ส้ม · 1.44 คลาส ck → cry (ชนกับช่องติ๊ก .pst-pkr .ck = วงกลมเยื้อง) */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
 }
 /* ───────── lots 1.29: พิมพ์ชื่อ Lot บนหัว = เปลี่ยน Lot (ผู้ใช้ 13:42) ─────────
    รายการ: ขึ้นต้นด้วยคำที่พิมพ์ก่อน แล้วมีคำนี้ในชื่อ / remark · ใช้ L.rows ทั้งหมด (ไม่สนตัวกรองแถบซ้าย — พิมพ์ชื่อตรง ๆ ต้องเจอ) · ชื่อซ้ำ = แถวเดียว */
