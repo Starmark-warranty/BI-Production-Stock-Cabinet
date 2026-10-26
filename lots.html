@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.6 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.7 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -16,6 +16,7 @@
       · lots 1.4: ตารางสถานะ Part คอลัมน์ครบตามหน้า AX progress (StarSync v1.17) · ค้นหาด้วย Code Part (สติกเกอร์ที่ยิง) · ไม่มี Barcode = Manual
       · lots 1.5: ช่องค้นหาในหน้าสถานะ หาข้าม Lot (Code Part / Code Pack / Barcode) → ปุ่มกดไปดู Lot นั้น
       · lots 1.6: Site ยิงด้วย Scan-Link ได้ (ทั้ง Lot แบบ Edge/Drill)
+      · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
     · เปิดไฟล์นี้ตรง ๆ = หน้าบอกวิธีใช้ (ไม่มีข้อมูล) — ดูหน้า Lot ผลิตที่ index.html#lots
@@ -48,6 +49,8 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.7 (2026-10-26 10:04 ผู้ใช้ รูปคอลัมน์ Material Code: “ตรงนี้เพิ่มให้ เอาเมาส์ไปจี้แล้วขึ้น BOX บอกชื่อไม้หน่อยครับ”)
+        UX ชี้เมาส์ที่ Material Code (มือถือ = แตะ) = กล่องลอยบอกชื่อไม้ · หมวด · หน่วย — ชื่อจาก rxName (STOCK → rm.csv → items/info.csv · โหลดตอนเปิดหน้าสถานะ)
     1.6 (2026-10-26 09:37 ผู้ใช้: “ปรับให้ผมเทสแสกน Edge Drill ได้ปะครับ … แล้วเพื่อแสกนแล้วติ๊ก Site ด้วยครับ” → ตอบ Site = “ทั้ง Lot (แบบ Edge/Drill)”)
         FEAT Site: ยิงจาก Scan-Link (steps.json คีย์ site) = ✓ ทุกชิ้นของ Lot · AX (ST_STATUS) ✓ อยู่แล้วก็ยังโชว์ค่า AX · ยอด Site บอกเวลาที่ยิง
     1.5 (2026-10-26 09:35 ผู้ใช้ รูปหน้าสถานะ GHEB_BA1_B10_FL20_LOT1_HG ค้น “pd690000454” ได้ 0 แถว: “ต้องปรับหน้านี้ให้ช่องค้นหาหาไปที่ Lot อื่น เพื่อไปกดได้ครับ”)
@@ -325,6 +328,13 @@
   .pst-jump:not(:disabled):hover{border-color:var(--accent)}
   .pst-jump:disabled{opacity:.55;cursor:default}
   @media (max-width: 760px){ .pst-oth{margin:0 8px 8px} }
+  /* ───────── lots 1.7: กล่องชื่อไม้ (ชี้ Material Code) ───────── */
+  .pst-t td.matc[data-mat]{cursor:help;text-decoration:underline dotted var(--ink-faint);text-underline-offset:3px}
+  #pstTip{position:fixed;z-index:300;display:none;max-width:min(380px,calc(100vw - 16px));padding:8px 12px;border-radius:10px;background:var(--solid);color:var(--ink);
+    border:.5px solid var(--line-strong);box-shadow:0 10px 28px rgba(20,32,60,.24);font-size:13px;line-height:1.45;pointer-events:none}
+  #pstTip code{display:block;font:11.5px var(--mono);color:var(--ink-dim)}
+  #pstTip b{display:block;font-size:14.5px;font-weight:700}
+  #pstTip small{display:block;font-size:11.5px;color:var(--ink-dim)}
 </style>
 </head>
 <body>
@@ -379,14 +389,14 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.6';
+var LOTS_VER = '1.7';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
   '$', 'B', 'coll', 'connectDialog', 'DAY', 'durTh', 'ensureFs', 'esc', 'fD', 'fDT', 'fmtN', 'L', 'ldOf', 'ldSecHtml', 'LOT_BI', 'LOT_DIR',
   'LOT_FILE', 'LOT_META', 'lotAfterLoad', 'lotApply', 'lotBiMap', 'lotBuild', 'lotDate', 'lotFin', 'lotLoad', 'lotSavePref', 'lotSrcTxt', 'lotToday',
   'LROW', 'me', 'netMsg', 'nowIso', 'openBox', 'parseCsv', 'pgLoad', 'poolChip', 'poolNorm', 'readText', 'retryNet', 'rmLotFill', 'rmLotSecHtml',
-  'S', 'stgHtml', 'sxmRegister', 'toast', 'view', 'WEEK_TIP', 'weekNow'];
+  'S', 'stgHtml', 'sxmRegister', 'toast', 'view', 'WEEK_TIP', 'weekNow', 'RX', 'rxInfoLoad', 'rxName'];   // lots 1.7 + RX · rxInfoLoad · rxName (ชื่อไม้)
 var LOTS_MISS = LOTS_NEED.filter(function (n) { try { eval(n); return false; } catch (e) { return true; } });
 
 /* ┄┄┄ สำเนาหัวบล็อก data 6 จาก index.html (ตัวอ่าน/รวมข้อมูล L · lotLoad · lotBuild · lotApply ยังอยู่ index) ┄┄┄ */
@@ -1109,7 +1119,7 @@ var PST_COLS = [
   { k: 'nm', h: 'Part Name', c: 'pn' },
   { k: 'pack', h: 'Code Pack', c: 'mono' },
   { k: 'cpt', h: 'Code Part', c: 'mono cpt', ex: 1, cp: 1, t: 'รหัสบนสติกเกอร์ที่ยิง (กด = คัดลอก)' },
-  { k: 'mat', h: 'Material Code', c: 'mono' },
+  { k: 'mat', h: 'Material Code', c: 'mono matc', t: 'ชี้ (มือถือ = แตะ) = ชื่อไม้' },   // lots 1.7: กล่องชื่อไม้
   { k: 'l', h: 'Finish Length', c: 'num mono', num: 1, f: PST_DEC2 },
   { k: 'w', h: 'Finish Width', c: 'num mono', num: 1, f: PST_DEC2 },
   { k: 'psq', h: 'Part Seq Total', c: 'mono', ex: 1 },
@@ -1120,8 +1130,29 @@ var PST_COLS = [
   { k: 'bc1', h: 'Barcode', c: 'mono dim', t: 'Barcode 1 ใน AX (ไม่อยู่ในหน้า AX progress — เก็บไว้ท้ายสุด)' }];
 function pstTd(c, p) {
   var v = p[c.k]; if (c.f) v = c.f(v, p); v = v == null ? '' : String(v);
-  return '<td' + (c.c ? ' class="' + c.c + '"' : '') + (c.cp && v ? ' data-cp="' + esc(v) + '" title="กด = คัดลอก"' : '') + '>' + esc(v) + '</td>';
+  return '<td' + (c.c ? ' class="' + c.c + '"' : '') + (c.cp && v ? ' data-cp="' + esc(v) + '" title="กด = คัดลอก"' : '') + (c.k === 'mat' && v ? ' data-mat="' + esc(v) + '"' : '') + '>' + esc(v) + '</td>';
 }
+/* lots 1.7: กล่องชื่อไม้ — ชี้ Material Code (เมาส์) / แตะ (มือถือ) · ไม่ใช้ title (เบราว์เซอร์รอ ~1 วิ และตัวเล็ก) · ชื่อยังไม่มา = โหลด items/info.csv แล้วเติมเอง */
+var PST_TIP = { el: null, td: null };
+function pstTipHtml(code) {
+  var n = rxName(code) || {}, ld = !n.name && !RX.info;
+  return '<code>' + esc(code) + '</code><b>' + (n.name ? esc(n.name) : ld ? 'กำลังโหลดชื่อ…' : 'ไม่พบชื่อในรายการวัสดุ') + '</b>'
+    + (n.grp || n.unit ? '<small>' + esc([n.grp, n.unit ? 'หน่วย ' + n.unit : ''].filter(Boolean).join(' · ')) + '</small>' : '');
+}
+function pstTipShow(td) {
+  var code = td.dataset.mat; if (!code) return;
+  if (!PST_TIP.el) { PST_TIP.el = document.createElement('div'); PST_TIP.el.id = 'pstTip'; document.body.appendChild(PST_TIP.el); }
+  var T = PST_TIP.el; PST_TIP.td = td; T.innerHTML = pstTipHtml(code); T.style.display = 'block';
+  var r = td.getBoundingClientRect(), w = T.offsetWidth, h = T.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.bottom + 6;
+  if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
+  T.style.left = x + 'px'; T.style.top = y + 'px';
+  if (!RX.info) { try { Promise.resolve(rxInfoLoad()).then(function () { if (PST_TIP.td === td && T.style.display === 'block') T.innerHTML = pstTipHtml(code); }); } catch (e) { } }
+}
+function pstTipHide() { if (PST_TIP.el) PST_TIP.el.style.display = 'none'; PST_TIP.td = null; }
+document.addEventListener('mouseover', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { if (td !== PST_TIP.td) pstTipShow(td); } else if (PST_TIP.td) pstTipHide(); });
+document.addEventListener('click', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { if (PST_TIP.td === td && PST_TIP.el && PST_TIP.el.style.display === 'block') pstTipHide(); else pstTipShow(td); } else if (PST_TIP.td) pstTipHide(); });
+document.addEventListener('scroll', function () { if (PST_TIP.td) pstTipHide(); }, true);
+window.addEventListener('hashchange', pstTipHide);
 /* lots 1.5: คำค้นในหน้าสถานะ → Lot อื่นที่มีรหัสตรง (ชื่อ Lot · Code Part · Code Pack · Barcode — ไม่เทียบชื่อ Part/ตู้ เพราะตรงเกือบทุก Lot) */
 var PST_OTHMAX = 12;
 function pstFindOther(qs, sel) {
@@ -1304,6 +1335,7 @@ function pstShow() {
   document.body.classList.add('lotStOn'); var E = $('lotSt'); if (E) E.classList.remove('hide');
   if (!pstSelRows().length && L.loaded) L.stPk.open = false;
   pstRender();
+  try { rxInfoLoad(); } catch (e) { }   // lots 1.7: ชื่อไม้ (กล่องที่ Material Code) โหลดไว้ก่อน
   /* ยังไม่ได้เลือก Lot = โฟกัสช่องพิมพ์ชื่อ Lot (เฉพาะเครื่องที่มีเมาส์ — มือถือไม่เด้งคีย์บอร์ดเอง) */
   try { var qi = !pstSelRows().length && E && E.querySelector('.pst-pq'); var ae = document.activeElement; if (qi && (!ae || ae === document.body || ae.closest('#lotBar')) && matchMedia('(pointer:fine)').matches) qi.focus(); } catch (e) { }
   if (!B.pg || !B.pg.map) { try { Promise.resolve(pgLoad()).then(function () { pstRender(true); }); } catch (e) { } }   // ยอดรวมราย Lot (สำรอง)
