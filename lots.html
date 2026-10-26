@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.23 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.24 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.24: แถบเครื่องมือหน้า Lot ผลิต (แท็บรายการ Lot / สถานะ Part · จำนวน · อัปเดต · ปิดว่าจบ) ย้ายขึ้นแถบหัวแถวเดียวกับ HOME · เอาปุ่ม CSV / นำเข้า CSV ออก
       · lots 1.23: ตารางชิ้น สีพื้นแถวอ่อน ๆ บอกสถานะของชิ้น (8 ขั้น 8 สี · หัวคอลัมน์ขั้น = ตัวบอกสี)
       · lots 1.22: วงกลม % (เกจ) ใหญ่ขึ้น
       · lots 1.21: สถานะขั้นตัด = กำลังตัด (ยิงแล้ว ≥ 1 ชิ้น) / รอตัด + เหตุจาก Dashboard (ติดอะไร · คิวที่เท่าไร) + ปุ่มไป Dashboard
@@ -65,6 +66,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.24 (2026-10-26 13:26 ผู้ใช้ รูปแถบ [รายการ Lot | สถานะ Part] 6,337 แถว … ปิดว่าจบ · CSV · นำเข้า CSV: “ย้ายตรงนี้ขึ้นไปอีกที่ แท็บเดียวกับ Home เลย แล้วเอาปุ่ม CSV กับนำเข้าออก”)
+        UI #lotBar ย้ายเข้าแถบหัว (#top ของ index ต่อจากป้าย “Lot ผลิต · data 6”) ตอนเปิดโปรแกรม (lotBarPlace) — หน้า Lot ผลิตได้ที่สูงเพิ่มหนึ่งแถว
+           · ตัวเดิม (id · ปุ่ม · ตัวรับคลิก) ย้ายทั้งก้อน ไม่ได้สร้างใหม่ · มีคลาส lotsOnly = หน้าอื่นไม่โชว์ · มือถือ (≤ 760px) อยู่ที่เดิม (แถบหัวแคบ)
+        CHANGE ซ่อนปุ่ม ⬇ CSV (#lotExp) และ ⬆ นำเข้า CSV (#lotImp) — ยังลากไฟล์ CSV มาวางบนหน้าเพื่อนำเข้าได้เหมือนเดิม
     1.23 (2026-10-26 13:22 ผู้ใช้: “ถ้าให้สีมันบอกด้วยว่าถึงสถานะไหนดีไหม เอาโทนสีอ่อน ๆ ทั้งหมด 8 สถานะก็ 8 สี” · 13:23 “หมายถึงตารางนะครับ เฉพาะหน้าสถานะ Part”)
         UI ตารางชิ้น (หน้าสถานะ Part): สีพื้นแถว (ช่องข้อมูล + #) อ่อน ๆ ตามขั้นที่ชิ้นอยู่ตอนนี้ (pstCur — ขั้นถัดจากขั้นล่าสุดที่ผ่าน)
            Part ฟ้า · Edge เขียวน้ำทะเล · Drill เหลือง · Pack ม่วง · Pick ชมพู · Wh ส้ม · Delivery ฟ้าคราม · Site เขียวอ่อน · ครบทุกขั้น / ไม่มีข้อมูล = ไม่มีสี
@@ -583,6 +588,14 @@
   .pst-hd .pst-rm{flex:1 1 0;min-width:0}   /* lots 1.22: remark ไม่กันที่ตอนตัดบรรทัด (1.15 basis 140px) — ได้ที่เหลือ ยาวเกิน = … */
   .pst-hd{gap:8px}
   @media (max-width: 760px){ .pst-hd .pst-rm{flex:1 1 100%;white-space:normal;overflow:visible} }   /* มือถือ: remark บรรทัดของตัวเอง (ไม่หดเหลือ …) */
+  /* ───────── lots 1.24: #lotBar ในแถบหัว · ไม่มีปุ่ม CSV / นำเข้า CSV ───────── */
+  #top > #lotBar{flex:1 1 auto;min-width:0;padding:0;border:0;background:none;flex-wrap:nowrap;gap:8px}
+  #top > #lotBar #lotCount{white-space:nowrap}
+  #top > #lotBar #lotLive{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  #top > #lotBar #lotLive .lbl{display:inline}
+  body.lotBarTop[data-view="lots"] #top > .sp{flex:0 0 0}
+  #lotExp,#lotImp{display:none!important}
+  body:not([data-view="lots"]) #lotBar{display:none!important}   /* #lotBar (id) ชนะ .lotsOnly ของ index — ซ่อนเองเมื่ออยู่หน้าอื่น */
   /* ───────── lots 1.23: สีแถวตามขั้นที่ชิ้นอยู่ (ผู้ใช้ 13:22–13:23 · 8 ขั้น 8 สีอ่อน · เฉพาะตารางหน้าสถานะ Part) ───────── */
   #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#8a5cf5;--st4:#d6409f;--st5:#ef7d22;--st6:#0ea5c6;--st7:#6aa121}
   #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
@@ -689,7 +702,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.23';
+var LOTS_VER = '1.24';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2086,6 +2099,17 @@ setInterval(function () {
 }, 30000);
 window.addEventListener('hashchange', function () { if (view() !== 'lots') L.stPk.open = false; });
 
+/* ───────── lots 1.24: แถบเครื่องมือขึ้นแถบหัว (ผู้ใช้ 13:26 “ย้ายตรงนี้ขึ้นไปแท็บเดียวกับ Home”) ─────────
+   ย้าย #lotBar (ตัวเดิมทั้งก้อน) ไปต่อจาก #lotFresh ใน #top ของ index · มือถือ ≤ 760px = กลับที่เดิมใน #lots (ก่อน #lotBanner) · คลาส lotsOnly = หน้าอื่นซ่อน */
+function lotBarPlace() {
+  var B0 = $('lotBar'), top = $('top'), ref = $('lotFresh'), home = $('lotBanner'); if (!B0) return;
+  B0.classList.add('lotsOnly');
+  if (!pstMobile() && top && ref) { if (B0.parentNode !== top) ref.parentNode.insertBefore(B0, ref.nextSibling); document.body.classList.add('lotBarTop'); }
+  else if (home && B0.parentNode !== home.parentNode) { home.parentNode.insertBefore(B0, home); document.body.classList.remove('lotBarTop'); }
+  else document.body.classList.remove('lotBarTop');
+}
+try { if (PST_MQ) { if (PST_MQ.addEventListener) PST_MQ.addEventListener('change', lotBarPlace); else PST_MQ.addListener(lotBarPlace); } } catch (e) { }
+
 /* ═══════════════════════════════════════════════════════════════════════
    ส่งให้ index.html (ต้องอยู่ท้ายสุดเสมอ) — index เรียกได้แค่ของที่ส่งตรงนี้
      init()  = ผูกปุ่ม/ช่องของหน้า (เดิม lotBindUi ตอนเปิดโปรแกรม) · โครงหน้า (template ข้างล่าง) ถูกใส่ใน #lots ก่อนรันโค้ดนี้แล้ว
@@ -2096,7 +2120,7 @@ window.addEventListener('hashchange', function () { if (view() !== 'lots') L.stP
    ═══════════════════════════════════════════════════════════════════════ */
 sxmRegister('lots', {
   ver: LOTS_VER, miss: LOTS_MISS,
-  init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ },
+  init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
   exports: { lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */ }
