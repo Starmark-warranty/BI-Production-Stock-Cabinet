@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.36 (2026-10-26 14:35 ผู้ใช้ รูปคอลัมน์สถานะของหน้าเลือก Lot (Part/กำลังตัด · Part/รอตัด · Pack/แพ็ค สีเทาเหมือนกันหมด): “ตรงหน้าค้นหา Lot ใส่สี 8 สีได้ครับ”)
+        UI ป้ายสถานะของ Lot (pstLotStat) ในหน้าเลือก Lot + รายการใต้ช่องพิมพ์ชื่อ Lot = สีตามขั้น 8 สี (ชุดสี --st0…--st7 ของ 1.23) · ครบ = เขียวเหมือนเดิม
+           · Part/รอตัด = กรอบประ พื้นโปร่ง (สีเดียวกับ Part) แยกจาก Part/กำลังตัด · ตาราง/เกจ/หลอดหน้าสถานะยังไม่ใช้ 8 สี (ผู้ใช้ 13:48 ของ 1.30)
     1.35 (2026-10-26 14:19 ผู้ใช้: “ถ้าจะดู Lot เก่า ให้กดที่หน้า Lot นั้น ๆ แล้วให้ไปโหลดข้อมูลบน Drive เอา โดยให้ StarSync ส่งข้อมูลย้อนหลังแบบทยอยขึ้นบน Drive
          … ปิดแล้วเปิดโปรแกรมใหม่ก็ต้องกดดึงอีกรอบ”)
         FEAT Lot ที่ไม่มีรายชิ้นในไฟล์หลัก (enddate นอกช่วง 60/180 วัน) → ปุ่ม “⬇ ดึงข้อมูลย้อนหลัง” ใต้ข้อความ — โหลด lots/arch/index.json (Lot → เดือน)
@@ -751,6 +754,9 @@
   .pst-hd ~ .pst-sums .pst-sum.pst-cur em{max-width:220px;overflow:hidden;text-overflow:ellipsis}
   .pst-pkr .cu{width:72px}
   .pst-pkr .cu{width:178px;text-align:left}   /* lots 1.26: ชื่อ “Pick/เตรียมส่งของเข้าคลัง” */
+  /* lots 1.36 (ผู้ใช้ 14:35 “ตรงหน้าค้นหา Lot ใส่สี 8 สีได้ครับ”): ป้ายสถานะของ Lot ในหน้าเลือก Lot + รายการตอนพิมพ์ชื่อ = สีตามขั้น · เฉพาะ 2 ที่นี้ (ตาราง/เกจยังไม่ใช้ 8 สี — 1.30) */
+  #lotSt .pst-pkr .pst-cs[class*=" cs"],#lotSt .pst-lsug .pst-cs[class*=" cs"]{background:color-mix(in srgb,var(--stc) 17%,var(--solid));color:color-mix(in srgb,var(--stc) 60%,var(--ink));border:1px solid color-mix(in srgb,var(--stc) 50%,transparent);font-family:inherit;font-weight:700}
+  #lotSt .pst-pkr .pst-cs.cw,#lotSt .pst-lsug .pst-cs.cw{background:transparent;border-style:dashed}   /* Part/รอตัด = กรอบประ */
   /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-cs[class*=" cs"]{background:color-mix(in srgb,var(--stc) 18%,var(--solid));color:color-mix(in srgb,var(--stc) 55%,#111);font-family:inherit;font-weight:700} */
   /* ───────── lots 1.20: เส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (ผู้ใช้ 12:58) ───────── */
   .pst-t th,.pst-t td{border-right:.5px solid var(--line)}
@@ -838,7 +844,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.35';
+var LOTS_VER = '1.36';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2314,7 +2320,7 @@ document.addEventListener('click', function (e) {
 function pstLotStat(x) {
   var c0 = pstRowsOf(x) ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; if (i0 < 0) return '';
   var l0 = i0 === 0 ? 'Part/' + (pstLotCutting(x) ? 'กำลังตัด' : 'รอตัด') /* lots 1.34 กฎร่วมกับแถบซ้าย */ : i0 >= PST_DONE ? 'ครบ' : pstStepNm(PST_STEPS[i0]);
-  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
+  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + (i0 === 0 && /รอตัด$/.test(l0) ? ' cw' : '') /* lots 1.36 รอตัด = กรอบประ */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
 }
 /* ───────── lots 1.29: พิมพ์ชื่อ Lot บนหัว = เปลี่ยน Lot (ผู้ใช้ 13:42) ─────────
    รายการ: ขึ้นต้นด้วยคำที่พิมพ์ก่อน แล้วมีคำนี้ในชื่อ / remark · ใช้ L.rows ทั้งหมด (ไม่สนตัวกรองแถบซ้าย — พิมพ์ชื่อตรง ๆ ต้องเจอ) · ชื่อซ้ำ = แถวเดียว */
