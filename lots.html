@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.7 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.8 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -17,6 +17,7 @@
       · lots 1.5: ช่องค้นหาในหน้าสถานะ หาข้าม Lot (Code Part / Code Pack / Barcode) → ปุ่มกดไปดู Lot นั้น
       · lots 1.6: Site ยิงด้วย Scan-Link ได้ (ทั้ง Lot แบบ Edge/Drill)
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
+      · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
     · เปิดไฟล์นี้ตรง ๆ = หน้าบอกวิธีใช้ (ไม่มีข้อมูล) — ดูหน้า Lot ผลิตที่ index.html#lots
@@ -49,6 +50,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.8 (2026-10-26 10:28 ผู้ใช้ รูปแถวยอด Part…Site + รูปวงกลม: “ตรงสถานะด้านบน เพิ่มแท็บวงกลมได้ไหมครับ”)
+        UI ยอดแต่ละขั้น (Part · Edge · Drill · Pack · Pick · Wh · Delivery · Site) มีวงกลม % ด้านขวา (เต็ม = เขียว · บางส่วน = ฟ้า · ไม่มีข้อมูล = วงเทา “—”)
+           แทนแถบบาง ๆ ด้านล่างกล่อง (1.1) · % ปัดลง (239/240 = 99% ไม่ขึ้น 100%)
     1.7 (2026-10-26 10:04 ผู้ใช้ รูปคอลัมน์ Material Code: “ตรงนี้เพิ่มให้ เอาเมาส์ไปจี้แล้วขึ้น BOX บอกชื่อไม้หน่อยครับ”)
         UX ชี้เมาส์ที่ Material Code (มือถือ = แตะ) = กล่องลอยบอกชื่อไม้ · หมวด · หน่วย — ชื่อจาก rxName (STOCK → rm.csv → items/info.csv · โหลดตอนเปิดหน้าสถานะ)
     1.6 (2026-10-26 09:37 ผู้ใช้: “ปรับให้ผมเทสแสกน Edge Drill ได้ปะครับ … แล้วเพื่อแสกนแล้วติ๊ก Site ด้วยครับ” → ตอบ Site = “ทั้ง Lot (แบบ Edge/Drill)”)
@@ -335,6 +339,23 @@
   #pstTip code{display:block;font:11.5px var(--mono);color:var(--ink-dim)}
   #pstTip b{display:block;font-size:14.5px;font-weight:700}
   #pstTip small{display:block;font-size:11.5px;color:var(--ink-dim)}
+  /* ───────── lots 1.8: วงกลม % ในกล่องยอด (แทนแถบล่าง) ───────── */
+  .pst-sum{flex-direction:row;align-items:center;gap:6px;padding:5px 6px 5px 9px;min-width:0}
+  .pst-sum .pst-st > span{font-size:13.5px}
+  .pst-sums{gap:5px}
+  .pst-sums > .pst-tools{gap:6px}
+  .pst-sums > .pst-tools .pst-q{width:clamp(160px,15vw,280px)}
+  .pst-sum .pst-st{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0}
+  .pst-sum > i{display:none}
+  .pst-ring{flex:none;width:31px;height:31px;margin-left:auto}
+  .pst-ring circle{fill:none;stroke-width:4.5}
+  .pst-ring .bg{stroke:color-mix(in srgb,var(--ink-faint) 25%,transparent)}
+  .pst-ring .fg{stroke:var(--accent);stroke-linecap:round}
+  .pst-sum.ok .pst-ring .fg{stroke:var(--good)}
+  .pst-ring text{font:700 9px var(--mono);fill:var(--ink-dim);text-anchor:middle;dominant-baseline:central}
+  .pst-sum.ok .pst-ring text{fill:var(--good)}
+  .pst-sum.na .pst-ring .bg{stroke-dasharray:3 3}
+  @media (max-width: 760px){ .pst-ring{width:30px;height:30px} .pst-sum{gap:6px;padding:5px 6px 5px 8px} }
 </style>
 </head>
 <body>
@@ -389,7 +410,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.7';
+var LOTS_VER = '1.8';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1089,7 +1110,17 @@ function pstScanTip(S0, sc) { return (S0.k === 'si' ? 'ยิงถึงไซ�
 function pstChip(S0, z, on, sub) {
   var na = S0.na || !z, full = z && z.n > 0 && z.d >= z.n, p = z && z.n ? z.d / z.n : 0;
   return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
-    + '<b>' + esc(S0.h) + '</b><span>' + (S0.na ? 'รอจุดยิง' : z ? fmtN(z.d) + '/' + fmtN(z.n) : '—') + '</span>' + (sub ? '<em>' + esc(sub) + '</em>' : '') + '<i style="width:' + (na ? 0 : Math.round(p * 100)) + '%"></i></button>';
+    + '<span class="pst-st"><b>' + esc(S0.h) + '</b><span>' + (S0.na ? 'รอจุดยิง' : z ? fmtN(z.d) + '/' + fmtN(z.n) : '—') + '</span>' + (sub ? '<em>' + esc(sub) + '</em>' : '') + '</span>'
+    + pstRing(na ? null : p) + '<i style="width:' + (na ? 0 : Math.round(p * 100)) + '%"></i></button>';
+}
+function pstShortT(at) { var t = lotDate(at); if (t == null) return ''; var d = new Date(t), p = function (n) { return (n < 10 ? '0' : '') + n; }, hm = p(d.getHours()) + ':' + p(d.getMinutes());
+  return t >= lotToday() ? hm : p(d.getDate()) + '/' + p(d.getMonth() + 1); }   // วันนี้ = เวลา · วันอื่น = วันที่ (เวลาเต็มดูที่ช่องในตาราง)
+/* lots 1.8: วงกลม % (SVG · pathLength 100 = ใส่ % ตรง ๆ) · null = ไม่มีข้อมูล · ปัดลง = ไม่ขึ้น 100% จนกว่าจะครบจริง */
+function pstRing(p) {
+  var v = p == null ? 0 : Math.max(0, Math.min(1, p)), pc = p == null ? '—' : Math.floor(v * 100) + '%';
+  return '<svg class="pst-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="bg" cx="18" cy="18" r="15" pathLength="100"/>'
+    + (v > 0 ? '<circle class="fg" cx="18" cy="18" r="15" pathLength="100" stroke-dasharray="' + (Math.round(v * 1000) / 10) + ' 100" transform="rotate(-90 18 18)"/>' : '')
+    + '<text x="18" y="18">' + pc + '</text></svg>';
 }
 function pstCell(q, S0) {   // lots 1.4: + stk (ติดซ้ายตอนเลื่อนขวา)
   if (q.na) return '<td class="pck stk na" title="' + esc(S0.t) + '">·</td>';
@@ -1269,7 +1300,7 @@ function pstRender(keep) {
     }
     var subOf = function (k) {
       var S0 = PST_STEPS.filter(function (s) { return s.k === k; })[0];
-      if (one) { var z = sum.scan && sum.scan[k]; return z ? 'ยิง ' + (fDT(lotDate(z.at)) || '') : ''; }
+      if (one) { var z = sum.scan && sum.scan[k]; return z ? 'ยิง ' + pstShortT(z.at) : ''; }   // lots 1.8 สั้นลง (วันนี้ = เวลา) ให้กล่องแคบ
       return sum.scanN && sum.scanN[k] && S0 ? 'ยิงแล้ว ' + sum.scanN[k] + '/' + sum.n + ' Lot' : '';
     };
     var all = [], noRows = [];
