@@ -2119,7 +2119,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.58 · lots.html กำลังโหลด">v2.58</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.59 · lots.html กำลังโหลด">v2.59</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3244,10 +3244,11 @@ var GasFS = (function () {
    v2.56 (2026-10-26 09:11 ผู้ใช้: “ทำไมกดออก Excel A4 จำนวนดูงง ๆ โปรแกรมบอก 5 ชิ้นแค่ ทำไมหมายเหตุค้าง 6”) Excel A4 / ใบสั่งตัด ค้างตัดของวันนี้: ชิ้นรายชั้นไม้ = ที่ค้างจริง (ไม่คูณสัดส่วนแล้วปัดเศษ) · วันนี้ใส่ไม่หมด = ไล่ชั้นไม้ที่เหลือน้อยก่อน ที่ไม่ถึง = ไม่ทันวันนี้ → วันถัดไป · หมายเหตุ “ค้าง 6 ชิ้น (ทั้งชั้นไม้ 1,216 ชิ้น)”
    v2.57 (2026-10-26 09:44 ผู้ใช้: “ผมกดแสดงค้างตัดไม่ได้” · โหมด ⤢ ขยาย) โหมดขยายไม่บังคับซ่อนรายการค้างตัดแล้ว — กด ⤢ ขยาย = ย่อกรอบค้างตัดให้ · กดหัวกรอบ / ▾ แสดงรายการค้างตัด = เปิดได้
    v2.58 (2026-10-26 09:58 ผู้ใช้: “เวลาตามแผนหน้านี้รวมเวลาอะไรบ้าง … ทำเป็นดรอปดาวน์ลงมาก็ได้ ว่าแยกเป็นเวลาอะไรบ้าง”) ตารางวันนี้ แถวรวม: ปุ่ม “แยกเวลา ▾” = กล่องแยก เวลาทำงานเครื่อง · ค้างตัด · Lot ใหม่ · = เวลาตามแผน (ว่าง/เกิน) · ที่ไม่นับ (ไปตัดเครื่องอื่น · ต่อวันถัดไป · นอกแผน) · ตอนนี้ (ตัดแล้ววันนี้ · ยังค้างทั้ง Lot) + ความหมายตัวเลขฟ้า/ส้ม
+   v2.59 (2026-10-26 ตรวจข้อมูลจริงหลัง v2.58) กล่องแยกเวลา: เครื่องที่ปิดวันนี้ ไม่บอก “ว่าง …” (เดิม 300/3 ปิดวันนี้ ขึ้นว่าง 2:06 จากเวลาทำงานปกติ) → “เครื่องปิดวันนี้ (แผนเดิม)”
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.58';
+var VER = '2.59';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -16157,12 +16158,12 @@ function tmbData(x, P) {
   return o;
 }
 function tmbHtml(x, P) {
-  var o = tmbData(x, P), sum = o.cyT + o.nwT, free = o.cap > 0 && o.cap !== Infinity ? o.cap - sum : null, row = function (a, b, c, cls) { return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + a + '</td><td class="r">' + b + '</td><td class="n">' + (c || '') + '</td></tr>'; };
+  var o = tmbData(x, P), sum = o.cyT + o.nwT, free = !o.off /* v2.59 เครื่องปิดวันนี้ = ไม่บอกว่าง */ && o.cap > 0 && o.cap !== Infinity ? o.cap - sum : null, row = function (a, b, c, cls) { return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + a + '</td><td class="r">' + b + '</td><td class="n">' + (c || '') + '</td></tr>'; };
   var h = '<div class="tmbh">แยกเวลา · ' + esc(x.m.n) + ' วันนี้</div><table class="tmbt"><tbody>'
     + row('🕖 เวลาทำงานของเครื่องวันนี้', o.off ? 'ปิดวันนี้' : o.cap > 0 && o.cap !== Infinity ? esc(tmbHm(o.cap)) : 'ไม่จำกัด', o.off ? 'แผนเดิมยังแสดงอยู่ — ปรับเครื่องครบแล้วกด 🔄 จัดแผนวันนี้ใหม่' : '⚙ ตั้งค่า / เปิด-ปิดเครื่องรายวัน')
     + row('✂ ค้างตัด (ตัดก่อน Lot ใหม่)', esc(tmbHm(o.cyT)), o.cyN + ' Lot · ชิ้นที่ค้างตอนวางแผน ใส่เท่าที่เวลาวันนี้พอ')
     + row('🆕 Lot ใหม่ตามแผน', esc(tmbHm(o.nwT)), o.nwN + ' Lot · ตามลำดับจนเต็มเวลา')
-    + row('= เวลาตามแผน', '<b>' + esc(tmbHm(sum)) + '</b>', 'ตัวเลขรวมในตาราง' + (free != null ? (free >= 0.5 ? ' · ว่าง ' + esc(tmbHm(free)) : free <= -0.5 ? ' · <b class="neg">เกิน ' + esc(tmbHm(-free)) + '</b>' : ' · เต็มเวลา') : ''), 'sum');
+    + row('= เวลาตามแผน', '<b>' + esc(tmbHm(sum)) + '</b>', 'ตัวเลขรวมในตาราง' + (o.off ? ' · เครื่องปิดวันนี้ (แผนเดิม)' : '') + (free != null ? (free >= 0.5 ? ' · ว่าง ' + esc(tmbHm(free)) : free <= -0.5 ? ' · <b class="neg">เกิน ' + esc(tmbHm(-free)) + '</b>' : ' · เต็มเวลา') : ''), 'sum');
   var nx = [];
   if (o.elN) nx.push(row('↪ ค้างตัดที่วันนี้ไปตัดเครื่องอื่น', esc(tmbHm(o.elT)), o.elN + ' Lot · ' + esc(o.el.slice(0, 3).join(' / ')) + (o.el.length > 3 ? ' …' : '') + ' (นับที่เครื่องที่ตัดจริง)'));
   if (o.cyNx > 0.5) nx.push(row('⏭ ค้างตัดส่วนที่ต่อวันถัดไป', esc(tmbHm(o.cyNx)), 'วันนี้เวลาไม่พอ · ตัดก่อนในวันถัดไปที่เครื่องนี้'));
