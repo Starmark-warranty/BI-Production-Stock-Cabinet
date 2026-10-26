@@ -75,6 +75,14 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.40 (2026-10-26 15:04 ผู้ใช้ รูปกล่องรายละเอียด RE-0069-0786-MU… “กำลังตัด · ยิงตัดแล้ว 619/639 · ไม้ไม่พอจ่าย 3 รายการ”:
+         “เช็คกับข้อมูลจริงด้วยครับ ผมเห็น Lot นี้มันไม่ใช่กำลังตัด มันคือค้างตัดครับ”)
+        FIX ขั้นตัดแยก 3 แบบตามกติกา Dashboard (tpStatus v1.69/v1.96 ของ index): กำลังตัด = วันนี้มีการยิงตัด Lot นี้ (B.cp การยิงวันนี้ · g.scanN)
+           · ค้างตัด = ตัดไปแล้วบางส่วน (ไฟล์รายชิ้น / Dashboard กำลังตัด) แต่วันนี้ยังไม่ยิง · รอตัด = ยังไม่ได้ตัดสักชิ้น
+           เดิม (1.21–1.39): ยิงตัดแล้วอย่างน้อย 1 ชิ้น (เมื่อไรก็ได้) = “กำลังตัด” → Lot ที่ค้างตัดมาหลายวันขึ้นกำลังตัด
+           · ใช้ทุกที่: แถบซ้าย (ปุ่ม Part/ค้างตัด เพิ่ม · '0k') · ป้ายหน้าเลือก Lot / รายการตอนพิมพ์ชื่อ (ค้างตัด = สีส้ม) · ค้นหาด้วยคำ “ค้างตัด” · กล่องสถานะ · กล่องรายละเอียด
+           · กล่องสถานะ ค้างตัด = ไฟสีส้ม “เหลือ n ชิ้น · วันนี้ยังไม่ยิง” · กล่องรายละเอียดบอกเครื่องที่ยิงวันนี้/วันก่อน + เครื่องในแผนที่จะตัดต่อ
+           · โหลดการยิงวันนี้ (bdLoadCp ของ index · scan/<วันนี้>.csv) ตอนอยู่หน้า Lot ผลิตเอง ไม่เกินนาทีละครั้ง (pstCpEnsure) — ไม่ต้องรอแผน Dashboard
     1.39 (2026-10-26 14:52 ผู้ใช้ รูปมือถือ หน้าเลือก Lot พิมพ์ “กำลังตัด” → ตรง 0 Lot: “1. พิมพ์แล้วเหมือนหน่วง ๆ เหมือนมันค้นเรียลไทม์ ทำให้มันรอสัก 1–2 วิแล้วค่อยหา
          พิมพ์แล้วมันจะไม่สะดุด · 2. เพิ่มให้ค้นหา กำลังตัด ได้ในมือถือด้วย”)
         PERF ช่องค้นหาหน้าเลือก Lot + ช่องค้นหาแถบซ้าย: หยุดพิมพ์ 1 วิ แล้วค่อยค้น (เดิม 0.12 วิ = วาดใหม่แทบทุกตัวอักษร) · ช่องค้นหาชิ้นใน Lot 0.7 วิ (เดิม 0.15)
@@ -726,7 +734,9 @@
   .pst-board > .pst-bl > .pst-sum.pst-cur{max-width:190px}
   .pst-board > .pst-bl > .pst-sum.pst-cur .pst-st{max-width:100%;overflow:hidden}
   .pst-board > .pst-bl > .pst-sum.pst-cur em{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
-  #lotSt .lt-cut{--lt:#1d6fe0} #lotSt .lt-go{--lt:#15803d} #lotSt .lt-wait{--lt:#c2620a} #lotSt .lt-bad{--lt:#c62828} #lotSt .lt-run,#lotSt .lt-idle{--lt:var(--accent)}
+  #lotSt .lt-cut{--lt:#1d6fe0} #lotSt .lt-go{--lt:#15803d} #lotSt .lt-wait{--lt:#a16207} #lotSt .lt-bad{--lt:#c62828} #lotSt .lt-run,#lotSt .lt-idle{--lt:var(--accent)}
+  #lotSt .lt-carry{--lt:#ea580c}   /* lots 1.40 ค้างตัด = ส้ม (Dashboard: ส้ม = ค้างตัด) · ไม้ยังไม่ครบ (lt-wait) เปลี่ยนเป็นเหลืองเข้ม แยกจากค้างตัด */
+  #lotSt .pst-pkr .pst-cs.ck,#lotSt .pst-lsug .pst-cs.ck{--stc:#ea580c}
   .pst-sum.pst-cur.lt{background:var(--lt);border-color:var(--lt);animation:pstGlow 2.8s ease-in-out infinite}
   .pst-sum.pst-cur.lt-cut{animation-duration:1.7s}
   .pst-sum.pst-cur.lt:not(.na):hover{border-color:var(--lt);filter:brightness(1.08)}
@@ -924,7 +934,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.39';
+var LOTS_VER = '1.40';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1037,11 +1047,11 @@ function lotRefresh(resetScroll) {
   lotCfBarDraw();   // v1.9 ป้ายตัวกรองรายคอลัมน์ (แถวของตัวเองใต้แถบเครื่องมือ — ไม่ดันปุ่ม CSV ตกบรรทัด)
   var ss = $('lotSort'), sv = L.sort.k + ':' + L.sort.d; if (ss.value !== sv) { ss.value = sv; if (ss.value !== sv) ss.selectedIndex = -1; }
   if (resetScroll) $('lotWrap').scrollTop = 0;
-  lotLayout(); lotSideCounts(); pstDashLot();   // lots 1.34
+  lotLayout(); lotSideCounts(); pstDashLot(); pstCpEnsure();   // lots 1.34 · 1.40 การยิงวันนี้
 }
 function lotSideCounts() {
   if (!$('lfBu')) return;
-  var cPst = { all: 0, none: 0, '0c': 0, '0w': 0 }; PST_STEPS.forEach(function (S0, i) { cPst[i] = 0; }); cPst[PST_DONE] = 0;   // lots 1.13 · 1.34 0c/0w
+  var cPst = { all: 0, none: 0, '0c': 0, '0k': 0, '0w': 0 };   /* lots 1.40 + 0k */ PST_STEPS.forEach(function (S0, i) { cPst[i] = 0; }); cPst[PST_DONE] = 0;   // lots 1.13 · 1.34 0c/0w
   var F = L.f, cSt = { all: 0, open: 0, 0: 0, 1: 0, 2: 0, 3: 0, closed: 0 }, cDue = { all: 0, late: 0, wk0: 0, wk1: 0, 30: 0 }, bu = {}, pool = {}, t = lotToday(), wk = L._wk || weekNow();
   for (var i = 0; i < L.rows.length; i++) { var x = L.rows[i];
     if (lotMatch(x, F, 'stage')) { cSt.all++; if (ldOf(x.id)) cSt.closed++; else { if (x.st !== 3) cSt.open++; if (x.st >= 0 && x.st <= 3) cSt[x.st]++; } }   // v1.10
@@ -1855,10 +1865,13 @@ function pstCurChip(a, mob, solo, cx) {   // lots 1.21: cx = { cutD, cutN, why }
   var on = a.min != null && L.stCF.cur === String(a.min), sub = a.min == null ? 'ไม่มีข้อมูล' : a.min >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'ค้าง ' + fmtN(a.n[a.min]) + '/' + fmtN(a.tot) + ' ชิ้น';
   var tip = 'สถานะ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (แต่ละชิ้นอยู่ขั้นถัดจากขั้นล่าสุดที่ผ่าน)' + (a.tot ? '\nแต่ละขั้น: ' + pstCurBrk(a) : '') + (mob || solo != null ? '\nกด = ดูชิ้นที่อยู่ขั้นนี้' : a.min != null ? '\nกด = แสดงเฉพาะชิ้นที่อยู่ขั้นนี้' : '');
   /* lots 1.37 ไฟสถานะ: lt-cut กำลังตัด · lt-go ไม้ครบ · lt-wait ไม้ยังไม่ครบ · lt-bad ติด · lt-run/idle ขั้นอื่น/ยังไม่รู้ · ครบ (ok) = ไม่กระพริบ */
-  var lt = a.min == null || a.min >= PST_DONE ? '' : a.min === 0 && cx ? (cx.cutD > 0 || cx.dashCut ? 'cut' : cx.pl ? cx.pl.lt : 'idle') : 'run';
+  var ck = a.min === 0 && cx ? (cx.kind || (cx.cutD > 0 ? 'carry' : 'wait')) : '';   // lots 1.40 กำลังตัด / ค้างตัด / รอตัด
+  var lt = a.min == null || a.min >= PST_DONE ? '' : a.min === 0 && cx ? (ck === 'now' ? 'cut' : ck === 'carry' ? 'carry' : cx.pl ? cx.pl.lt : 'idle') : 'run';
   if (!mob && solo == null) tip = tip.replace(/\nกด = [^\n]*/, '') + '\nกด = ดูรายละเอียด (แผนตัดใน Dashboard · ความคืบหน้าแต่ละขั้น)';
   return '<button type="button" class="pst-sum pst-cur' + (a.min != null && a.min >= PST_DONE ? ' ok' : '') + (a.min != null && a.min < PST_DONE ? ' cs' + a.min : '') /* lots 1.25 สีขั้น */ + (lt ? ' lt lt-' + lt : '') + (L.stPop && !mob ? ' pop' : '') + (on ? ' on' : '') + (solo ? ' solo' : '') + '" data-pstcur="' + (a.min == null ? '' : a.min) + '" title="' + esc(tip) + '">'
-    + (function () { if (a.min === 0 && cx) { var cut = cx.cutD > 0; return '<span class="pst-st"><b><i class="pst-dot"></i>สถานะ</b><span>' + (cut || cx.dashCut ? 'กำลังตัด' : 'รอตัด') + '</span><em>' + esc(cut ? 'ตัดแล้ว ' + fmtN(cx.cutD) + '/' + fmtN(cx.cutN) + ' ชิ้น' : pstPlanShort(cx)) /* lots 1.37 สั้น — รายละเอียดอยู่ในกล่องเมื่อกด */ + '</em></span>'; }   // lots 1.21
+    + (function () { if (a.min === 0 && cx) {   // lots 1.21 · 1.37 ข้อความสั้น · 1.40 ค้างตัด
+        var emT = ck === 'now' ? 'ตัดแล้ว ' + fmtN(cx.cutD) + '/' + fmtN(cx.cutN) + ' ชิ้น' : ck === 'carry' ? (cx.cutN ? 'เหลือ ' + fmtN(Math.max(0, cx.cutN - cx.cutD)) + ' ชิ้น · ' : '') + 'วันนี้ยังไม่ยิง' : pstPlanShort(cx);
+        return '<span class="pst-st"><b><i class="pst-dot"></i>สถานะ</b><span>' + PST_CUTNM[ck] + '</span><em>' + esc(emT) + '</em></span>'; }
       return '<span class="pst-st"><b>' + (lt ? '<i class="pst-dot"></i>' : '') /* lots 1.37 */ + 'สถานะ</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + (a.min != null && a.min < PST_DONE ? '<span class="pst-th">' + esc(PST_STEPS[a.min].th) + '</span>' : '') + '</span><em>' + esc(sub) + '</em></span>'; })()
     + (mob || solo != null ? '<span class="chev">›</span>' : '<span class="chev pst-popc" aria-hidden="true">' + (L.stPop === 'pin' ? '▴' : '▾') + '</span>') /* lots 1.37 กดดูรายละเอียด */ + '</button>';   // lots 1.12 (1.10: ▾/▴ เปิดยอดทุกขั้น) · 1.13 หน้าเกจคอมด้วย
 }
@@ -1870,7 +1883,7 @@ function pstDashWhy(id) {
   var has = function (a) { return a && a.indexOf(g) >= 0; };
   if (g.closed) return 'ปิดเองว่าจบแล้ว (ไม่เข้าคิว)';
   if (has(P.blocked)) return 'ติด — ' + (g.why || 'ดูใน Dashboard');
-  if (has(P.cutting)) return 'Dashboard: กำลังตัด' + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '');
+  if (has(P.cutting)) return 'Dashboard: ' + (pstCutToday(id) ? 'กำลังตัด' : 'ค้างตัด') /* lots 1.40 */ + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '');
   if (has(P.tomorrow)) return 'อยู่ในแผนตัด' + (g.q ? ' ลำดับ ' + g.q : '');
   if (has(P.next)) return 'คิวถัดไป' + (g.q ? ' ลำดับ ' + g.q : '');
   if (has(P.after)) return 'Dashboard: หลังตัด';
@@ -1881,7 +1894,7 @@ function pstDashEnsure() {
   if (!ensureFs() || !L.loaded || L.none) return;
   PST_DB.busy = Promise.resolve().then(function () { return bdLoadAux(); }).then(function () { B.plan = bdPlan(); PST_DB.at = Date.now(); PST_DB.err = null; })
     .catch(function (e) { PST_DB.err = e; PST_DB.at = Date.now(); console.warn('StarStock lots 1.21: คิดแผนคิวตัด (Dashboard) ไม่ได้', e); })
-    .then(function () { PST_DB.busy = null; if (view() === 'lots') { if (L.f.pst === '0c' || L.f.pst === '0w') lotRefresh(); else lotSideCounts(); } /* lots 1.34 ตัวเลข กำลังตัด/รอตัด ใช้แผนนี้ */ if (view() === 'lots' && L.stMode === 'st') pstRenderSoon(); });
+    .then(function () { PST_DB.busy = null; if (view() === 'lots') { if (/^0[a-z]$/.test(L.f.pst || '')) lotRefresh(); else lotSideCounts(); } /* lots 1.34 ตัวเลข กำลังตัด/รอตัด ใช้แผนนี้ */ if (view() === 'lots' && L.stMode === 'st') pstRenderSoon(); });
 }
 /* ───────── lots 1.37: ไฟสถานะ + กล่องแผนตัดจาก Dashboard (ผู้ใช้ 14:27 · 14:31 · 14:39) ─────────
    เดิม: กล่องสถานะสีน้ำเงินนิ่ง · ขั้นตัดบอกเหตุจาก Dashboard ในกล่องตรง ๆ (pstDashWhy — เหตุ “ติด — ขาด MDF-HMR …” ยาวจนกล่องดันเกจทั้งแถว) · กดกล่อง = กรองชิ้นที่ค้างขั้นนั้น
@@ -1892,7 +1905,7 @@ function pstPlanOf(id) {
   var has = function (a) { return !!(a && a.indexOf(g) >= 0); }, o = { P: P, g: g, k: 'wait', lt: 'idle', where: 'รอคิวตัด', w: null, wk: '', ws: null, day: '', day1: '' };
   try { o.w = typeof wdOf === 'function' ? (g.wd || wdOf(g)) : null; o.wk = o.w && typeof wdKind === 'function' ? wdKind(o.w) : ''; o.ws = o.w && typeof wdShort === 'function' ? wdShort(o.w) : null; } catch (e) { o.w = null; o.wk = ''; o.ws = null; }
   if (g.closed) { o.k = 'closed'; o.where = 'ปิดเองว่าจบแล้ว (ไม่เข้าคิว)'; }
-  else if (has(P.cutting)) { o.k = 'cut'; o.where = 'กำลังตัด'; o.lt = 'cut'; }
+  else if (has(P.cutting)) { o.k = 'cut'; if (pstCutToday(id)) { o.where = 'กำลังตัด — ยิงตัดวันนี้'; o.lt = 'cut'; } else { o.k = 'carry'; o.where = '✂ ค้างตัด — เริ่มตัดแล้ว วันนี้ยังไม่ยิง'; o.lt = 'carry'; } }   // lots 1.40
   else if (has(P.blocked)) { o.k = 'blk'; o.where = 'ติด — ยังเข้าคิวตัดไม่ได้'; o.lt = 'bad'; }
   else if (has(P.tomorrow) || has(P.next)) {
     o.k = has(P.tomorrow) ? 'tmr' : 'next'; o.where = o.k === 'tmr' ? 'อยู่ในแผนตัด' : 'คิวถัดไป';
@@ -1904,7 +1917,7 @@ function pstPlanOf(id) {
 function pstPlanShort(cx) {   // ข้อความในกล่องสถานะ (ขั้นตัด · ยังไม่ยิง) — สั้นเสมอ · เหตุ/รายละเอียดอยู่ในกล่องเมื่อกด (ผู้ใช้ 14:39)
   var pl = cx.pl;
   if (pl) { var g = pl.g;
-    if (cx.dashCut || pl.k === 'cut') return 'ตาม Dashboard' + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '');
+    if (pl.k === 'cut' || pl.k === 'carry') return 'ตาม Dashboard' + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '');
     if (pl.k === 'blk') return 'ติด — กดดูเหตุ';
     if (pl.k === 'tmr') return 'อยู่ในแผนตัด' + (g.q ? ' · ลำดับ ' + g.q : '');
     if (pl.k === 'next') return 'คิวถัดไป' + (g.q ? ' · ลำดับ ' + g.q : '');
@@ -1914,29 +1927,32 @@ function pstPlanShort(cx) {   // ข้อความในกล่องส�
   var w = String(cx.why || 'ยังไม่ยิงตัดสักชิ้น');
   return /^ติด/.test(w) ? 'ติด — กดดูเหตุ' : w.length > 28 ? w.slice(0, 27) + '…' : w;
 }
-function pstPlanMcs(g) {   // เครื่องที่ยิง Lot นี้ (ล่าสุดก่อน · part_date “YYYY-MM-DD HH:MM…”) · ไม่มี = เครื่องในแผน
-  var a = (g.mcs || []).map(function (m) { var t = String(m.last || ''); return m.n + (t.length >= 16 ? ' (ยิงล่าสุด ' + (m.prev ? t.slice(8, 10) + '/' + t.slice(5, 7) + ' ' : '') + t.slice(11, 16) + ')' : ''); });
-  return a.length ? a.join(' · ') : (g.mc || '');
+function pstPlanMcs(g, prev) {   // เครื่องที่ยิง Lot นี้ (ล่าสุดก่อน · part_date “YYYY-MM-DD HH:MM…”) · prev true = วันก่อน · false = วันนี้ · ไม่ใส่ = ทั้งหมด (1.40)
+  var a = (g.mcs || []).filter(function (m) { return prev == null || !!m.prev === prev; }).map(function (m) { var t = String(m.last || ''); return m.n + (t.length >= 16 ? ' (' + (m.prev ? t.slice(8, 10) + '/' + t.slice(5, 7) + ' ' : '') + t.slice(11, 16) + ')' : ''); });
+  return a.join(' · ');
 }
 function pstPopHtml(c) {
   var a = c.agg, x = c.x, h = '<div class="pst-pop" role="dialog" aria-label="รายละเอียดสถานะ">';
-  var cutNow = !!(c.cx && (c.cx.cutD > 0 || c.cx.dashCut));
-  var ttl = a.min == null ? 'สถานะ' : a.min >= PST_DONE ? 'สถานะ: ครบทุกขั้น' : a.min === 0 && c.cx ? 'สถานะ: ' + (cutNow ? 'กำลังตัด' : 'รอตัด') : 'สถานะ: ' + pstStepNm(PST_STEPS[a.min]);
+  var ck = c.cx ? (c.cx.kind || (c.cx.cutD > 0 ? 'carry' : 'wait')) : 'wait';   // lots 1.40
+  var ttl = a.min == null ? 'สถานะ' : a.min >= PST_DONE ? 'สถานะ: ครบทุกขั้น' : a.min === 0 && c.cx ? 'สถานะ: ' + PST_CUTNM[ck] : 'สถานะ: ' + pstStepNm(PST_STEPS[a.min]);
   h += '<div class="pp-hd"><b>' + esc(ttl) + '<small>' + esc(c.one ? x.id : c.sel.length + ' Lot') + '</small></b><button type="button" class="pp-x" data-pstpopx title="ปิด (Esc)">✕</button></div>';
   var kv = function (k, v, cls) { return v ? '<dt>' + esc(k) + '</dt><dd' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(v) + '</dd>' : ''; };
   if (c.one && a.min === 0) {
     var pl = c.cx && c.cx.pl;
+    var whT = ck === 'now' ? 'กำลังตัด — ยิงตัดวันนี้' : ck === 'carry' ? '✂ ค้างตัด — ตัดไปแล้วบางส่วน วันนี้ยังไม่ยิง' : '', whL = ck === 'now' ? 'cut' : 'carry';   // lots 1.40
+    if (!pl && whT) h += '<div class="pp-where lt-' + whL + '"><i class="pst-dot"></i>' + esc(whT) + '</div>' + (c.cx.cutN ? '<dl class="pp-dl">' + kv('ยิงตัดแล้ว (รายชิ้น)', fmtN(c.cx.cutD) + '/' + fmtN(c.cx.cutN) + ' ชิ้น · เหลือ ' + fmtN(Math.max(0, c.cx.cutN - c.cx.cutD)) + ' ชิ้น') + '</dl>' : '');
     if (!pl) h += '<div class="pp-msg">' + esc(c.cx && c.cx.why && !/^กำลังเช็ค/.test(c.cx.why) ? c.cx.why : PST_DB.busy ? '⏳ กำลังเช็คแผนตัดใน Dashboard…' : PST_DB.err ? 'เช็คแผนตัดใน Dashboard ไม่ได้ — ' + netMsg(PST_DB.err) : 'ไม่พบ Lot นี้ในแผน Dashboard (คิวตัดงาน)') + '</div>';
     else {
-      var g = pl.g, cutX = cutNow && pl.k !== 'cut';
-      h += '<div class="pp-where lt-' + (cutX ? 'cut' : pl.lt) + '"><i class="pst-dot"></i>' + esc(cutX ? 'กำลังตัด (ยิงตัดแล้ว ' + fmtN(c.cx.cutD) + '/' + fmtN(c.cx.cutN) + ' ชิ้น)' : pl.where) + '</div><dl class="pp-dl">';
-      if (pl.k === 'cut' || cutNow) {
-        h += kv('เครื่องที่ยิงอยู่', pstPlanMcs(g));
+      var g = pl.g;
+      h += '<div class="pp-where lt-' + (whT ? whL : pl.lt) + '"><i class="pst-dot"></i>' + esc(whT || pl.where) + '</div><dl class="pp-dl">';
+      if (ck !== 'wait') {   // lots 1.40 กำลังตัด: เครื่องที่ยิงวันนี้ · ค้างตัด: ยิงล่าสุด (วันก่อน) + เครื่องในแผนที่จะตัดต่อ
+        if (ck === 'now') h += kv('เครื่องที่ยิงวันนี้', pstPlanMcs(g, false) || 'มีการยิงวันนี้ (ยังไม่รู้เครื่อง)');
+        else { h += kv('ยิงล่าสุด', pstPlanMcs(g, true) ? pstPlanMcs(g, true) + ' (วันทำงานก่อน)' : 'ไม่ได้ยิงวันนี้และวันทำงานก่อน'); if (g.mc) h += kv('เครื่องในแผน (ตัดต่อ)', g.mc); }
         var pc = g.cutDone != null ? Math.round(Math.max(0, Math.min(1, g.cutDone)) * 100) : null;
         if (c.cx.cutN) h += kv('ยิงตัดแล้ว (รายชิ้น)', fmtN(c.cx.cutD) + '/' + fmtN(c.cx.cutN) + ' ชิ้น · เหลือ ' + fmtN(Math.max(0, c.cx.cutN - c.cx.cutD)) + ' ชิ้น');
         h += kv('ตาม Dashboard', (pc != null ? 'ตัดแล้ว ' + pc + '%' : '') + (g.remP ? (pc != null ? ' · ' : '') + 'เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '') + (g.left > 0 ? ' ≈ ' + pstDur(g.left) : ''));   // ยอด AX / ยิงวันนี้ของ Dashboard (อาจไม่ตรงไฟล์รายชิ้นจนกว่า StarSync รอบถัดไป)
       }
-      if (g.mq && pl.k !== 'cut') {
+      if (g.mq && ck === 'wait' && pl.k !== 'cut') {   // lots 1.40 แผนเครื่อง/วัน = ของ Lot ที่ยังไม่เริ่มตัด
         h += kv('เครื่อง (แผน)', g.mq.n + ' · คิวที่ ' + g.mq.pos);
         h += kv('วันตัด (แผน)', pl.day + (pl.day1 ? ' → ' + pl.day1 : ''));
         h += kv('งาน', (g.mq.p ? fmtN(Math.round(g.mq.p)) + ' ชิ้น' : '') + (g.mq.t > 0 ? ' · ' + pstDur(g.mq.t) : ''));
@@ -1954,7 +1970,7 @@ function pstPopHtml(c) {
     if (zc && zc.n > 0 && zc.d >= zc.n && a.min != null && a.min < PST_DONE) h += '<div class="pp-msg ok">✓ ตัดจบแล้ว (' + fmtN(zc.n) + ' ชิ้น)</div>';
   } else {
     h += '<div class="pp-lots">' + c.sel.map(function (y) { var pw = pstPlanOf(y.id), st = pstLotStat(y);
-      return '<div><b>' + esc(y.id) + '</b>' + (st || '<span class="muted">ไม่มีรายชิ้น</span>') + (pw && /รอตัด|กำลังตัด/.test(st) ? '<span class="pp-pw lt-' + pw.lt + '">' + esc(pw.where + (pw.g.mq && pw.k !== 'cut' ? ' · ' + pw.g.mq.n + (pw.day ? ' · ' + pw.day : '') : '')) + '</span>' : '') + '</div>'; }).join('') + '</div>';
+      return '<div><b>' + esc(y.id) + '</b>' + (st || '<span class="muted">ไม่มีรายชิ้น</span>') + (pw && /รอตัด|กำลังตัด|ค้างตัด/.test(st) ? '<span class="pp-pw lt-' + pw.lt + '">' + esc(pw.where + (pw.g.mq && pw.k !== 'cut' && pw.k !== 'carry' ? ' · ' + pw.g.mq.n + (pw.day ? ' · ' + pw.day : '') : '')) + '</span>' : '') + '</div>'; }).join('') + '</div>';
   }
   if (a.tot) h += '<div class="pp-steps">' + PST_STEPS.map(function (S0, i) { var z = c.sum[S0.k] || { d: 0, n: 0 }, full = z.n > 0 && z.d >= z.n;
     return '<span class="' + (full ? 'ok' : '') + (a.min === i ? ' cur' : '') + '" title="' + esc(S0.t) + '"><b>' + esc(pstStepNm(S0)) + '</b>' + (z.n ? (full ? '✓ ' : '') + fmtN(z.d) + '/' + fmtN(z.n) : '–') + '</span>'; }).join('') + '</div>';
@@ -1991,14 +2007,32 @@ function pstFSave() { try { localStorage.setItem(PST_PF, L.f.pst || 'all'); } ca
 /* ───────── lots 1.34: กรอง “กำลังตัด” ได้ (ผู้ใช้ 14:15 “ถ้าจะหาสถานะ กำลังตัด กรองได้ตรงไหนครับ”) ─────────
    เดิมแถบซ้ายมีแค่ Part/ตัด (รวมรอตัด + กำลังตัด) ส่วนคำว่ากำลังตัด/รอตัดมีแค่บนป้ายในรายการ → กรองตรง ๆ ไม่ได้
    แก้: ขั้นตัดแยกเป็น '0c' กำลังตัด · '0w' รอตัด (pstLotKey) · กฎเดียวกับป้าย pstLotStat (pstLotCutting) ให้ตัวเลขกับป้ายตรงกันเสมอ */
-var PST_LCUT = [['0c', 'Part/กำลังตัด', 'ขั้นตัด · ยิงตัดแล้วอย่างน้อย 1 ชิ้น หรือ Dashboard บอกว่ากำลังตัด'], ['0w', 'Part/รอตัด', 'ขั้นตัด · ยังไม่ยิงตัดสักชิ้น (และ Dashboard ไม่ได้บอกว่ากำลังตัด)']];
-function pstLotCutting(x) {
-  if (PST_LC.c && PST_LC.c.get(String(x.id).toUpperCase())) return true;
-  var g0 = B.plan && B.plan.G ? B.plan.G.get(x.id) : null;
-  return !!(g0 && B.plan.cutting && B.plan.cutting.indexOf(g0) >= 0);
+var PST_LCUT = [['0c', 'Part/กำลังตัด', 'ขั้นตัด · วันนี้มีการยิงตัด Lot นี้'], ['0k', 'Part/ค้างตัด', 'ขั้นตัด · ตัดไปแล้วบางส่วน แต่วันนี้ยังไม่ยิง (กติกาเดียวกับ Dashboard)'], ['0w', 'Part/รอตัด', 'ขั้นตัด · ยังไม่ได้ตัดสักชิ้น']];   // lots 1.40 + ค้างตัด
+/* ───────── lots 1.40: กำลังตัด / ค้างตัด / รอตัด (ผู้ใช้ 15:04 “Lot นี้ไม่ใช่กำลังตัด มันคือค้างตัด”) ─────────
+   กติกาเดียวกับ Dashboard (tpStatus ของ index · v1.96 ผู้ใช้ 23/10): ยิงวันนี้ = กำลังตัด · เริ่มตัดแล้วแต่วันนี้ยังไม่ยิง = ✂ ค้างตัด · ยังไม่เริ่ม = รอตัด
+   เดิม pstLotCutting: ยิงแล้ว 1 ชิ้น (เมื่อไรก็ได้) = กำลังตัด */
+function pstCutToday(id) {   // วันนี้มีการยิงตัด Lot นี้ — B.cp (การยิงวันนี้ของ index · scan/<วันนี้>.csv) หรือแผน Dashboard (g.scanN)
+  var K = String(id).toUpperCase(), X = B.cp;
+  try { if (X && X.lotMc && X.day && X.day === bdIsoLocal(Date.now()).slice(0, 10) && X.lotMc.has(K)) return true; } catch (e) { }
+  var g0 = B.plan && B.plan.G ? B.plan.G.get(id) : null; return !!(g0 && g0.scanN > 0);
 }
-function pstDashLot() { if (L.f.pst !== '0c' && L.f.pst !== '0w') return; if (PST_DB.at && Date.now() - PST_DB.at < 120000) return; pstDashEnsure(); }   // เลือกกำลังตัด/รอตัดอยู่ = โหลดแผน Dashboard (ไม่เกิน 2 นาที/ครั้ง แม้โหลดพลาด)
-function pstLotKey(x) { var k = pstLotCur(x); return k === '0' ? (pstLotCutting(x) ? '0c' : '0w') : k; }
+function pstLotCutKind(x) {   // 'now' กำลังตัด · 'carry' ค้างตัด · 'wait' รอตัด (เฉพาะ Lot ที่อยู่ขั้นตัด)
+  if (pstCutToday(x.id)) return 'now';
+  if (PST_LC.c && PST_LC.c.get(String(x.id).toUpperCase())) return 'carry';
+  var g0 = B.plan && B.plan.G ? B.plan.G.get(x.id) : null;
+  return g0 && B.plan.cutting && B.plan.cutting.indexOf(g0) >= 0 ? 'carry' : 'wait';
+}
+var PST_CUTNM = { now: 'กำลังตัด', carry: 'ค้างตัด', wait: 'รอตัด' };
+function pstLotCutting(x) { return pstLotCutKind(x) !== 'wait'; }   // ชื่อเดิม (1.34) — เริ่มตัดแล้ว (กำลังตัด + ค้างตัด)
+function pstCpEnsure() {   // การยิงวันนี้ (ไม่ต้องรอแผน Dashboard) · ไม่เกินนาทีละครั้ง · พลาด = รอรอบหน้า
+  if (typeof bdLoadCp !== 'function' || !B.cp || B.cp.busy || view() !== 'lots') return;
+  if (B.cp.at && Date.now() - B.cp.at < 60000) return;
+  if (!ensureFs() || !L.loaded) return;
+  var p0 = B.cp.busy = bdLoadCp();
+  Promise.resolve(p0).then(function () { if (view() !== 'lots') return; if (/^0[a-z]$/.test(L.f.pst || '')) lotRefresh(); else lotSideCounts(); if (L.stMode === 'st' && document.body.classList.contains('lotStOn')) pstRenderSoon(); }, function () { });
+}
+function pstDashLot() { if (!/^0[a-z]$/.test(L.f.pst || '')) return; /* lots 1.40 + 0k */ if (PST_DB.at && Date.now() - PST_DB.at < 120000) return; pstDashEnsure(); }   // เลือกกำลังตัด/รอตัดอยู่ = โหลดแผน Dashboard (ไม่เกิน 2 นาที/ครั้ง แม้โหลดพลาด)
+function pstLotKey(x) { var k = pstLotCur(x); return k === '0' ? ({ now: '0c', carry: '0k', wait: '0w' })[pstLotCutKind(x)] : k; }   // lots 1.40 + 0k ค้างตัด
 L.f.pst = (function () { try { var v = localStorage.getItem(PST_PF) || 'all'; return v === '0' ? 'all' : v; /* lots 1.34: '0' (Part/ตัด รวม) ไม่มีปุ่มแล้ว */ } catch (e) { return 'all'; } })();
 function pstGauge() { L.stMv = 'g'; L.stCF = {}; L.stQ = ''; L.stMo = new Set(); pstRender(); }   // lots 1.13: กลับหน้าเกจ (ล้างตัวกรอง/คำค้น)
 function pstDlyChip(a) {
@@ -2292,6 +2326,9 @@ function pstRender(keep) {
     /* lots 1.21: ขั้นตัด = กำลังตัด / รอตัด (+ เหตุจาก Dashboard ตอนรอตัด · Lot เดียว) */
     var cx = null, dsh = '';
     if (agg.min === 0) { var zc = sum.cut || { d: 0, n: 0 }; cx = { cutD: zc.d, cutN: zc.n, why: '' };
+      pstCpEnsure();   // lots 1.40 การยิงวันนี้
+      var kinds = sel.map(function (y) { return pstRowsOf(y) && pstLotCur(y) === '0' ? pstLotCutKind(y) : ''; });
+      cx.kind = kinds.indexOf('now') >= 0 ? 'now' : (kinds.indexOf('carry') >= 0 || zc.d > 0) ? 'carry' : 'wait';   // lots 1.40 กำลังตัด / ค้างตัด / รอตัด
       if (one) { pstDashEnsure(); cx.pl = pstPlanOf(x.id); }   // lots 1.37 แผน Dashboard ทั้งรอตัดและกำลังตัด (สีไฟ · กล่องรายละเอียด)
       if (one && !zc.d) { pstDashEnsure(); cx.why = pstDashWhy(x.id) || (PST_DB.err ? 'เช็คคิวตัดไม่ได้ — ดูใน Dashboard' : '');
         /* ไฟล์รายชิ้นยังไม่เห็นการยิง แต่ Dashboard (ยิงตัดวันนี้ / ยอด AX) ว่ากำลังตัด = ขึ้นกำลังตัดตาม Dashboard (ผู้ใช้: “ไม่ก็ล้อกับหน้า Dashboard”) */
@@ -2514,12 +2551,12 @@ document.addEventListener('click', function (e) {
 /* lots 1.32: ป้ายสถานะของ Lot (หน้าเลือก Lot + รายการตอนพิมพ์ชื่อ) — ขั้นตัด = กำลังตัด / รอตัด (+ ตาม Dashboard ถ้ามีแผน) · ไม่มีรายชิ้น = '' */
 function pstLotStatTxt(x) {   // lots 1.39: ข้อความป้ายสถานะ (ค้นหาด้วยสถานะ) · '' = ไม่มีรายชิ้น
   var c0 = pstRowsOf(x) ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; if (i0 < 0) return '';
-  return i0 === 0 ? 'Part/' + (pstLotCutting(x) ? 'กำลังตัด' : 'รอตัด') /* lots 1.34 กฎร่วมกับแถบซ้าย */ : i0 >= PST_DONE ? 'ครบ' : pstStepNm(PST_STEPS[i0]);
+  return i0 === 0 ? 'Part/' + PST_CUTNM[pstLotCutKind(x)] /* lots 1.34 กฎร่วมกับแถบซ้าย · 1.40 + ค้างตัด */ : i0 >= PST_DONE ? 'ครบ' : pstStepNm(PST_STEPS[i0]);
 }
 function pstLotStat(x) {
   var c0 = pstRowsOf(x) ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; if (i0 < 0) return '';
   var l0 = pstLotStatTxt(x);   // lots 1.39 (เดิมคิดตรงนี้)
-  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + (i0 === 0 && /รอตัด$/.test(l0) ? ' cw' : '') /* lots 1.36 รอตัด = กรอบประ */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
+  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + (i0 === 0 && /รอตัด$/.test(l0) ? ' cw' : '') /* lots 1.36 รอตัด = กรอบประ */ + (i0 === 0 && /ค้างตัด$/.test(l0) ? ' ck' : '') /* lots 1.40 ค้างตัด = ส้ม */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
 }
 /* ───────── lots 1.29: พิมพ์ชื่อ Lot บนหัว = เปลี่ยน Lot (ผู้ใช้ 13:42) ─────────
    รายการ: ขึ้นต้นด้วยคำที่พิมพ์ก่อน แล้วมีคำนี้ในชื่อ / remark · ใช้ L.rows ทั้งหมด (ไม่สนตัวกรองแถบซ้าย — พิมพ์ชื่อตรง ๆ ต้องเจอ) · ชื่อซ้ำ = แถวเดียว */
@@ -2659,7 +2696,7 @@ sxmRegister('lots', {
   init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
-  exports: { lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */ }
+  exports: { lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
 });
 </script>
 <script>
