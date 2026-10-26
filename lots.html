@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.8 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.9 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -18,6 +18,7 @@
       · lots 1.6: Site ยิงด้วย Scan-Link ได้ (ทั้ง Lot แบบ Edge/Drill)
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
+      · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
     · เปิดไฟล์นี้ตรง ๆ = หน้าบอกวิธีใช้ (ไม่มีข้อมูล) — ดูหน้า Lot ผลิตที่ index.html#lots
@@ -50,6 +51,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.9 (2026-10-26 10:40 ผู้ใช้ส่งชุด ReCheck Bom / Article-Name-Filler: “ชื่อไทยของตู้อยู่ที่นี่ครับ” — ต่อจาก 10:09 “Product Name ขอเปลี่ยนเป็นไทยได้ไหมครับ”)
+        FEAT คอลัมน์ Product Name ในหน้าสถานะ Part = ชื่อไทย (NAME_TH) ของ Product Article · ชี้ = ชื่ออังกฤษของ AX + รหัสที่ใช้ชื่อ
+           ชื่อจาก lots/artname.csv (StarSync v1.19: ProductEngineering.pd.ProductionArticle → Library ModularV2 → StandAloneV2)
+           จับคู่แบบ Article-Name-Filler: รหัสเต็มก่อน แล้วตัดส่วนหลัง “_” ตัวสุดท้ายทีละช่วง (BNR006_TSH → BNR006)
+           ไม่มีไฟล์ / ไม่พบรหัส = ชื่อ AX (อังกฤษ) เหมือนเดิม · ค้นหาด้วยชื่อไทยได้ · โหลดเฉพาะตอนเปิดหน้าสถานะ
     1.8 (2026-10-26 10:28 ผู้ใช้ รูปแถวยอด Part…Site + รูปวงกลม: “ตรงสถานะด้านบน เพิ่มแท็บวงกลมได้ไหมครับ”)
         UI ยอดแต่ละขั้น (Part · Edge · Drill · Pack · Pick · Wh · Delivery · Site) มีวงกลม % ด้านขวา (เต็ม = เขียว · บางส่วน = ฟ้า · ไม่มีข้อมูล = วงเทา “—”)
            แทนแถบบาง ๆ ด้านล่างกล่อง (1.1) · % ปัดลง (239/240 = 99% ไม่ขึ้น 100%)
@@ -356,6 +362,9 @@
   .pst-sum.ok .pst-ring text{fill:var(--good)}
   .pst-sum.na .pst-ring .bg{stroke-dasharray:3 3}
   @media (max-width: 760px){ .pst-ring{width:30px;height:30px} .pst-sum{gap:6px;padding:5px 6px 5px 8px} }
+  /* ───────── lots 1.9: Product Name ชื่อไทย (ชี้ = ชื่ออังกฤษ) · ไม่พบชื่อไทย = ชื่อ AX ตัวจาง ───────── */
+  .pst-t td.thn{cursor:help}
+  .pst-t td.thn.en{color:var(--ink-dim)}
 </style>
 </head>
 <body>
@@ -410,7 +419,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.8';
+var LOTS_VER = '1.9';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -938,11 +947,12 @@ document.addEventListener('click', function (e) {
        · ห่ออุปกรณ์ (ไม่มีขนาด) = “–” เหมือนช่อง Part · ยอดของขั้นบอกเวลาที่ยิง (Lot เดียว) / ยิงแล้วกี่ Lot (หลาย Lot)
        · steps.json: { v, at, lots: { LOTID ตัวใหญ่: { lot, edge: {at, by, bc, dev}, drill: {…} } }, hist: [ … ] } — Scan-Link เขียน (กันเขียนชนด้วย ifU)
    ═══════════════════════════════════════════════════════════════════════ */
-var PST_F = { info: 'pinfo.csv', st: 'pstate.csv', meta: 'pstate.meta.json', steps: 'steps.json' };   // lots 1.2 + steps.json (Scan-Link)
+var PST_F = { info: 'pinfo.csv', st: 'pstate.csv', meta: 'pstate.meta.json', steps: 'steps.json', an: 'artname.csv' };   // lots 1.2 + steps.json (Scan-Link) · 1.9 artname.csv (ชื่อไทย)
 var PST_K = 'sxlocaltrial:furnitech:lotStMode';   // แท็บของหน้า Lot ผลิต: 'list' | 'st'
 var PST_SK = 'sxlocaltrial:furnitech:lotStSel';   // lots 1.2: LotId ที่เลือกดูในหน้าสถานะ (JSON array)
 var PST_MAXSEL = 60, PST_PKLIM = 300;             // lots 1.2: เลือกได้สูงสุด · รายการให้เลือกโชว์สูงสุด (พิมพ์เพื่อกรอง)
-var PST = { lots: null, rec: null, st: null, steps: null, iu: 0, su: 0, mu: 0, xu: 0, meta: null, none: null, err: null, loading: null, at: 0, ver: 0 };
+var PST = { lots: null, rec: null, st: null, steps: null, iu: 0, su: 0, mu: 0, xu: 0, meta: null, none: null, err: null, loading: null, at: 0, ver: 0,
+  an: null, anC: null, au: 0, anWant: 0, anPend: 0, anNone: null };   // lots 1.9: ชื่อไทย Article (an = Map รหัสตัวใหญ่ → { n, s } · anC = ผลจับคู่ที่เคยหา)
 /* ขั้น: k = ช่องใน pstate.csv · th = ชื่อไทย · t = ที่มา */
 var PST_STEPS = [
   { k: 'cut', h: 'Part', th: 'ตัด', t: 'ยิงตัดแล้ว (CHECKPART) — ห่ออุปกรณ์ที่ไม่มีขนาด = “–” (ไม่ต้องตัด)' },
@@ -977,6 +987,12 @@ async function pstLoad() {
       /* lots 1.2: ยิง Edge / Drill (Scan-Link) — ไม่มีไฟล์ = ยังไม่มีใครยิง */
       if (fx && fx.u !== PST.xu) { try { pstParseSteps(await readText(LOT_DIR, PST_F.steps)); } catch (e) { console.warn('StarStock: อ่าน lots/steps.json ไม่ได้', e); } PST.xu = fx.u; ch = true; }
       else if (!fx && PST.xu) { PST.steps = new Map(); PST.xu = 0; ch = true; }
+      /* lots 1.9: ชื่อไทย Article (lots/artname.csv ~1 MB) — โหลดเมื่อเคยเปิดหน้าสถานะแล้ว (anWant) · ข้ามไว้ = anPend (pstShow ขอใหม่) */
+      var fa = Ld && Ld.ok && Ld.files[PST_F.an];
+      PST.anNone = Ld && Ld.ok ? !fa : PST.anNone;
+      PST.anPend = fa && fa.u !== PST.au && !PST.anWant ? 1 : 0;
+      if (fa && PST.anWant && fa.u !== PST.au) { try { pstParseAn(await readText(LOT_DIR, PST_F.an)); PST.au = fa.u; ch = true; } catch (e) { console.warn('StarStock: อ่าน lots/artname.csv (ชื่อไทย Article) ไม่ได้', e); } }
+      else if (!fa && PST.au && Ld && Ld.ok) { PST.an = null; PST.anC = null; PST.au = 0; ch = true; }
       if (!PST.steps) PST.steps = new Map();
       if (PST.err) ch = true;
       PST.err = null; PST.at = Date.now(); if (ch) PST.ver++;
@@ -1056,6 +1072,27 @@ function pstParseSteps(t) {
     if (e.site && e.site.at) v.si = e.site;   // lots 1.6: Scan-Link คีย์ site = ช่อง si (Site)
     if (v.edge || v.drill || v.si) m.set(String(K).toUpperCase(), v); });
   PST.steps = m;
+}
+/* ───────── lots 1.9: Product Name เป็นชื่อไทย ─────────
+   ผู้ใช้ 10:09 “Product Name ขอเปลี่ยนเป็นไทยได้ไหมครับ” → AX ไม่มีชื่อไทย (lots/pcols.json · PRODUCTNAME อังกฤษอย่างเดียว) → ผู้ใช้ “ไม่ต้องแล้ว”
+   10:40 ส่งชุด ReCheck Bom (Article-Name-Filler.ps1) มา: “ชื่อไทยของตู้อยู่ที่นี่ครับ” = NAME_TH ใน ProductEngineering
+   lots/artname.csv (StarSync v1.19): code,name,src · src P = pd.ProductionArticle · M = Library.mo.ModularV2 · S = Library.sd.StandAloneV2
+     แถวเรียงตามรหัส แล้ว P → M → S = รหัสเดียวกันหลายแหล่ง ใช้ตัวแรก (P ก่อน แบบ Article-Name-Filler)
+   จับคู่ Product Article แบบ Resolve-BaseName ของ Article-Name-Filler: รหัสเต็มก่อน แล้วตัดส่วนหลัง “_” ตัวสุดท้ายทีละช่วง (A_B_C → A_B → A) · ไม่สนตัวพิมพ์ */
+var PST_ANSRC = { P: 'ProductEngineering (ProductionArticle)', M: 'Library (ModularV2)', S: 'Library (StandAloneV2)' };
+function pstParseAn(t) {
+  var R = parseCsv(t || ''), h = (R[0] || []).map(function (x) { return String(x).trim().toLowerCase(); }), ic = h.indexOf('code'), inm = h.indexOf('name'), is = h.indexOf('src'), m = new Map();
+  if (ic < 0 || inm < 0) throw new Error('artname.csv ไม่มีหัวคอลัมน์ code,name');
+  for (var r = 1; r < R.length; r++) { var a = R[r], c = String(a[ic] || '').trim().toUpperCase(), n = String(a[inm] || '').trim(); if (!c || !n || m.has(c)) continue; m.set(c, { n: n, s: is < 0 ? '' : String(a[is] || '').trim() }); }
+  PST.an = m; PST.anC = new Map();
+}
+function pstArtTh(art) {   // → { n: ชื่อไทย, s: แหล่ง, base: รหัสที่ใช้ชื่อ, ex: ตรงทั้งรหัส } · null = ไม่พบ / ยังไม่มีไฟล์
+  if (!PST.an || !art) return null;
+  var K = String(art).trim().toUpperCase(); if (!K) return null;
+  var c = PST.anC.get(K); if (c !== undefined) return c;
+  var k = K, r = null;
+  for (;;) { var e = PST.an.get(k); if (e) { r = { n: e.n, s: e.s, base: k, ex: k === K }; break; } var i = k.lastIndexOf('_'); if (i <= 0) break; k = k.slice(0, i); }
+  PST.anC.set(K, r); return r;
 }
 function pstScanOf(lot, k) { var e = PST.steps && PST.steps.get(String(lot || '').toUpperCase()); return (e && e[k]) || null; }
 function pstPassed(s, k) { var v = s && s[k] != null ? String(s[k]).trim() : ''; return k === 'dl' || k === 'si' ? v !== '' && v !== '0' : v === '1'; }
@@ -1144,7 +1181,7 @@ var PST_COLS = [
   { k: 'room', h: 'Room' },
   { k: 'shelf', h: 'Shelf No', c: 'mono' },
   { k: 'art', h: 'Product Article', c: 'mono' },
-  { k: 'cab', h: 'Product Name' },
+  { k: 'cab', h: 'Product Name', t: 'ชื่อไทยของ Product Article (ProductEngineering · lots/artname.csv จาก StarSync v1.19) — ชี้ = ชื่ออังกฤษใน AX · ไม่พบชื่อไทย = ชื่อ AX ตัวจาง' },   // lots 1.9
   { k: 'ifg', h: 'Item Fg', c: 'mono', ex: 1 },
   { k: 'ipt', h: 'Item Part', c: 'mono', ex: 1 },
   { k: 'nm', h: 'Part Name', c: 'pn' },
@@ -1161,6 +1198,11 @@ var PST_COLS = [
   { k: 'bc1', h: 'Barcode', c: 'mono dim', t: 'Barcode 1 ใน AX (ไม่อยู่ในหน้า AX progress — เก็บไว้ท้ายสุด)' }];
 function pstTd(c, p) {
   var v = p[c.k]; if (c.f) v = c.f(v, p); v = v == null ? '' : String(v);
+  if (c.k === 'cab' && PST.an) {   // lots 1.9: ชื่อไทย · ไม่พบ = ชื่อ AX (ตัวจาง)
+    var th = pstArtTh(p.art);
+    if (th) return '<td class="thn" title="' + esc((v ? 'AX: ' + v + '\n' : '') + 'ชื่อไทยจาก ' + (PST_ANSRC[th.s] || th.s || 'ProductEngineering') + (th.ex ? '' : ' · ใช้ชื่อของรหัสหลัก ' + th.base)) + '">' + esc(th.n) + '</td>';
+    if (p.art) return '<td class="thn en" title="' + esc('ไม่มีชื่อไทยของ ' + p.art + ' ใน ProductEngineering / Library — แสดงชื่อใน AX (เติมชื่อได้ที่ ReCheck Bom › ชื่อไทย Article)') + '">' + esc(v) + '</td>';
+  }
   return '<td' + (c.c ? ' class="' + c.c + '"' : '') + (c.cp && v ? ' data-cp="' + esc(v) + '" title="กด = คัดลอก"' : '') + (c.k === 'mat' && v ? ' data-mat="' + esc(v) + '"' : '') + '>' + esc(v) + '</td>';
 }
 /* lots 1.7: กล่องชื่อไม้ — ชี้ Material Code (เมาส์) / แตะ (มือถือ) · ไม่ใช้ title (เบราว์เซอร์รอ ~1 วิ และตัวเล็ก) · ชื่อยังไม่มา = โหลด items/info.csv แล้วเติมเอง */
@@ -1310,7 +1352,8 @@ function pstRender(keep) {
     var shown = all.filter(function (p) {
       if (f) { var v = pstVal(p, PST.st && PST.st.get(p.rec), f); if (v.v !== false) return false; }
       if (!qs.length) return true;
-      var hay = (p.lot + ' ' + p.nm + ' ' + p.cab + ' ' + p.art + ' ' + p.shelf + ' ' + p.pack + ' ' + p.bc1 + ' ' + p.mat + ' ' + p.room + ' ' + p.rec + ' ' + PST_EX.map(function (k) { return p[k] || ''; }).join(' ')).toLowerCase();   // lots 1.4 + ช่อง v1.17
+      var th = PST.an ? pstArtTh(p.art) : null;   // lots 1.9: ค้นด้วยชื่อไทยได้
+      var hay = (p.lot + ' ' + p.nm + ' ' + p.cab + ' ' + (th ? th.n : '') + ' ' + p.art + ' ' + p.shelf + ' ' + p.pack + ' ' + p.bc1 + ' ' + p.mat + ' ' + p.room + ' ' + p.rec + ' ' + PST_EX.map(function (k) { return p[k] || ''; }).join(' ')).toLowerCase();   // lots 1.4 + ช่อง v1.17
       return qs.every(function (w) { return hay.indexOf(w) >= 0; });
     });
     h += '<div class="pst-sums">' + PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], L.stF === S0.k, subOf(S0.k)); }).join('');
@@ -1347,7 +1390,7 @@ function pstRender(keep) {
             + PST_STEPS.map(function (S0) { return pstCell(pstVal(p, s, S0.k), S0); }).join('')
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
-        + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
+        + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + (PST.anNone && !PST.an ? ' · ' + esc('Product Name เป็นชื่อไทยเมื่ออัปเดต StarSync เป็น v1.19 (ตั้ง lots.artName ใน config.json)') : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
     } else {
       h += '<div class="pst-note big">' + esc(note || 'ไม่มีข้อมูล') + '</div>';
     }
@@ -1370,7 +1413,9 @@ function pstShow() {
   /* ยังไม่ได้เลือก Lot = โฟกัสช่องพิมพ์ชื่อ Lot (เฉพาะเครื่องที่มีเมาส์ — มือถือไม่เด้งคีย์บอร์ดเอง) */
   try { var qi = !pstSelRows().length && E && E.querySelector('.pst-pq'); var ae = document.activeElement; if (qi && (!ae || ae === document.body || ae.closest('#lotBar')) && matchMedia('(pointer:fine)').matches) qi.focus(); } catch (e) { }
   if (!B.pg || !B.pg.map) { try { Promise.resolve(pgLoad()).then(function () { pstRender(true); }); } catch (e) { } }   // ยอดรวมราย Lot (สำรอง)
-  pstLoad().then(function (ch) { if (view() === 'lots' && L.stMode === 'st') pstRender(!ch); });
+  PST.anWant = 1;   // lots 1.9: เปิดหน้าสถานะแล้ว = โหลดชื่อไทย Article ด้วย · รอบที่โหลดค้างอยู่ก่อนหน้า (anPend) = ขออีกรอบ (ใช้รายการไฟล์เดิม)
+  pstLoad().then(function (ch) { return PST.anPend ? pstLoad().then(function (c2) { return ch || c2; }) : ch; })
+    .then(function (ch) { if (view() === 'lots' && L.stMode === 'st') pstRender(!ch); });
   if (PST.loading) pstRender(true);
 }
 function pstHide() {
