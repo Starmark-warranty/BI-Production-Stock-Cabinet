@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.25 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.26 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.26: หน้าเลือก Lot คอลัมน์สถานะ = สีของขั้น + ชื่อไทย (Edge/ปิดขอบ …)
       · lots 1.25: หลอดสถานะ (8 ช่อง · % ในหลอด) · เกจ / ช่อง State / กล่องสถานะ ใช้สีของขั้น — ขั้นที่ยังไม่ถึง = เทา
       · lots 1.24: แถบเครื่องมือหน้า Lot ผลิต (แท็บรายการ Lot / สถานะ Part · จำนวน · อัปเดต · ปิดว่าจบ) ย้ายขึ้นแถบหัวแถวเดียวกับ HOME · เอาปุ่ม CSV / นำเข้า CSV ออก
       · lots 1.23: ตารางชิ้น สีพื้นแถวอ่อน ๆ บอกสถานะของชิ้น (8 ขั้น 8 สี · หัวคอลัมน์ขั้น = ตัวบอกสี)
@@ -67,6 +68,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.26 (2026-10-26 13:30 ผู้ใช้ รูปคอลัมน์สถานะในหน้าเลือก Lot (Pick · Edge · Site · รอตัด …): “หน้านี้ตรงสถานะก็ใส่สีตามไป พร้อม / ภาษาไทย”)
+        UI ป้ายสถานะในหน้าเลือก Lot = สีของขั้น (ชุดเดียวกับหลอดสถานะ 1.25) + ชื่อ “Edge/ปิดขอบ” · ขั้นตัด = “Part/กำลังตัด” หรือ “Part/รอตัด” · ครบ = เขียว
+           · คอลัมน์กว้างขึ้น (ชื่อยาวสุด Pick/เตรียมส่งของเข้าคลัง) · ป้ายสถานะรายชิ้นในมือถือก็ใช้สีของขั้นด้วย
     1.25 (2026-10-26 13:28 ผู้ใช้ รูปแถวเกจ (สถานะ Edge · Part 20/20 100% · ที่เหลือ 0%): “เพิ่มเป็นหลอดสถานะ แล้วใส่ % ไปในหลอด เช่นตอนนี้ถึงปิดขอบ
           สีหลอดก็ให้ตรง เกจก็ขึ้นสี 2 สี คือตัด แล้วก็ขอบ ยังไปไม่ถึงไหนก็ยังไม่ต้องมีสี ก็เทาไว้ครับ คอลัม State ด้วย”)
         FEAT หลอดสถานะใต้แถวยอด: 8 ช่อง (ตัด · ปิดขอบ · เจาะ&CNC · แพ็ค · เตรียมส่งของเข้าคลัง · คลัง · จัดส่ง · หน้างาน) แต่ละช่องเติมสีของขั้นตาม % + เลข % ในช่อง
@@ -651,6 +655,8 @@
   .pst-hd .pst-dashl{flex:none;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
   .pst-hd ~ .pst-sums .pst-sum.pst-cur em{max-width:220px;overflow:hidden;text-overflow:ellipsis}
   .pst-pkr .cu{width:72px}
+  .pst-pkr .cu{width:178px;text-align:left}   /* lots 1.26: ชื่อ “Pick/เตรียมส่งของเข้าคลัง” */
+  .pst-cs[class*=" cs"]{background:color-mix(in srgb,var(--stc) 18%,var(--solid));color:color-mix(in srgb,var(--stc) 55%,#111);font-family:inherit;font-weight:700}
   /* ───────── lots 1.20: เส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (ผู้ใช้ 12:58) ───────── */
   .pst-t th,.pst-t td{border-right:.5px solid var(--line)}
   .pst-t td{padding:3px 6px}
@@ -737,7 +743,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.25';
+var LOTS_VER = '1.26';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1576,7 +1582,7 @@ function pstCurTip(cu) {
   return (cu.last >= 0 ? 'ผ่าน ' + PST_STEPS[cu.last].h + ' แล้ว' : 'ยังไม่ผ่านขั้นไหน') + ' · ตอนนี้อยู่ขั้น ' + PST_STEPS[cu.i].h + ' (' + PST_STEPS[cu.i].th + ')';
 }
 function pstCurBadge(cu, d) {
-  return '<span class="pst-cs' + (cu.i < 0 ? ' nd' : cu.i >= PST_DONE ? ' ok' : '') + '" title="' + esc(pstCurTip(cu) + (d ? '\n⚠ ขาดส่ง (Delay No ' + d + ')' : '')) + '">' + esc(pstCurLbl(cu.i)) + (d ? '<b class="dl">⚠</b>' : '') + '</span>';
+  return '<span class="pst-cs' + (cu.i < 0 ? ' nd' : cu.i >= PST_DONE ? ' ok' : ' cs' + cu.i /* lots 1.26 สีของขั้น */) + '" title="' + esc(pstCurTip(cu) + (d ? '\n⚠ ขาดส่ง (Delay No ' + d + ')' : '')) + '">' + esc(pstCurLbl(cu.i)) + (d ? '<b class="dl">⚠</b>' : '') + '</span>';
 }
 function pstItem(p) { var s = PST.st && PST.st.get(p.rec); return { p: p, s: s, cu: pstCur(p, s), d: pstDly(p) }; }
 function pstCurAgg(its) {   // ราย Lot / หลาย Lot → { min: ขั้นที่ช้าสุด, n: { ขั้น: จำนวนชิ้น }, tot, dly }
@@ -1846,8 +1852,8 @@ function pstPickHtml(inline) {
       + '<b title="' + esc(x.id) + '">' + esc(x.id) + '</b><span class="sg">' + stgHtml(x) + '</span><span class="rm" title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</span>'   // lots 1.14: ช่องกว้างคงที่ (ตรงหัว)
       + '<span class="sc">' + (sc ? '<span title="ยิง Edge/Drill/Site แล้ว (Scan-Link)">⚡</span>' : '') + '</span>'
       + (function () { var c0 = rows ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; var g0 = i0 === 0 && B.plan && B.plan.G ? B.plan.G.get(x.id) : null;
-        var l0 = i0 === 0 ? ((PST_LC.c && PST_LC.c.get(String(x.id).toUpperCase())) || (g0 && B.plan.cutting && B.plan.cutting.indexOf(g0) >= 0) ? 'กำลังตัด' : 'รอตัด') : pstCurLbl(i0);   // lots 1.21 (+ ตาม Dashboard ถ้ามีแผนแล้ว)
-        return '<span class="cu">' + (i0 < 0 ? '' : '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : '') + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>') + '</span>'; })()   // lots 1.14
+        var l0 = i0 === 0 ? 'Part/' + ((PST_LC.c && PST_LC.c.get(String(x.id).toUpperCase())) || (g0 && B.plan.cutting && B.plan.cutting.indexOf(g0) >= 0) ? 'กำลังตัด' : 'รอตัด') : i0 < 0 ? '' : i0 >= PST_DONE ? 'ครบ' : pstStepNm(PST_STEPS[i0]);   // lots 1.21 (+ ตาม Dashboard ถ้ามีแผนแล้ว) · 1.26 + ชื่อไทย
+        return '<span class="cu">' + (i0 < 0 ? '' : '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) /* lots 1.26 สีของขั้น */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>') + '</span>'; })()   // lots 1.14
       + '<span class="dt">' + (x.end != null ? esc(fD(x.end)) : '') + '</span>'
       + '<span class="pc' + (rows ? '' : ' no') + '">' + (rows ? fmtN(rows.length) + ' ชิ้น' : PST.lots ? 'ไม่มีรายชิ้น' : '') + '</span></div>';
   });
