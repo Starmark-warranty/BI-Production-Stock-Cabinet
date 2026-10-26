@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.49 (2026-10-26 20:24 ผู้ใช้ รูปหน้ารายการ Lot แถบส้ม “StarSync ไม่ได้ส่งข้อมูล Lot มา 3 ชม. 17 นาทีแล้ว — ดูหน้าต่าง StarSync ที่เครื่องออฟฟิศ”: “เอาคำเตือนออกทีครับ”)
+        UX เลิกเตือนว่า StarSync ไม่ได้ส่งข้อมูลนานเกิน 40 นาที (แถบส้มหน้ารายการ Lot + ตัวอักษรส้มของป้าย data 6) — ปิดเครื่องออฟฟิศหลังเลิกงานเป็นเรื่องปกติ
+           · ยังเตือนเมื่ออ่าน Drive ไม่ได้ (เหมือนเดิม) · เวลาอัปเดตล่าสุดยังดูได้ที่ป้าย data 6 (ชี้ = เวลาที่ StarSync ตรวจ AX ล่าสุด)
     1.48 (2026-10-26 19:37 ผู้ใช้ รูปเกจ FOREST-2026-0017 (Site 12/169): “เพิ่มห่อ ตรงเกจ site หน่อยครับ มีกี่ห่อ”)
         UX เกจ Site บอกจำนวนห่อ “ห่อ x/ทั้งหมด” — ห่อ = Code Pack ที่ไม่ซ้ำของรายชิ้น (ไม่นับว่าง / Manual) · x = ห่อที่ตรวจรับใน Scan-Link แล้ว (sitePk)
            (มีชิ้นขาด = “ห่อ x/ทั้งหมด · ขาด n” ชิ้น) · หลาย Lot = รวมทุก Lot · Scan-Link แผงห่อบอก “ห่อของ Lot ตรวจรับแล้ว x / ทั้งหมด” เหมือนกัน
@@ -1003,7 +1006,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.48';
+var LOTS_VER = '1.49';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1041,7 +1044,7 @@ function lotRenderFresh() {
   var e = $('lotFresh'), s = lotSrcTxt(), ago = function (t) { var m = Math.round((Date.now() - t) / 1000); return m < 60 ? m + ' วิที่แล้ว' : durTh(m / 60) + 'ที่แล้ว'; };   // v1.7.1 เกินชั่วโมง = ชม. + นาที
   if (e) { e.textContent = L.none ? 'data 6 · ยังไม่มีไฟล์บน Drive' : L.loaded ? 'data 6 · ' + L.rows.length.toLocaleString('th-TH') + ' แถว' + (s.at ? ' · อัปเดต ' + s.short : '') + (s.src ? ' · ' + s.src : '') : 'กำลังอ่าน data 6…';
     if (s.checked) e.title = 'StarSync ตรวจ AX ล่าสุด ' + s.checked + ' (ข้อมูลไม่เปลี่ยนตั้งแต่ ' + s.short + ')';
-    e.classList.toggle('warn', !!L.err || (!s.imp && s.age != null && s.age > 40)); }
+    e.classList.toggle('warn', !!L.err); }   /* lots 1.49 ผู้ใช้ 20:24 “เอาคำเตือนออก” — เดิม: || (!s.imp && s.age != null && s.age > 40) = StarSync ไม่ส่งเกิน 40 นาทีก็เป็นสีส้ม */
   var lv = $('lotLive');
   if (lv) lv.innerHTML = '<span class="live' + (L.err ? ' bad' : '') + '"></span><span class="lbl">' + (L.err ? 'ติดต่อ Drive ไม่ได้ — ลองใหม่เอง' : 'อัปเดตเองทุก 30 วิ') + (L.lastCheck ? ' · ตรวจ ' + ago(L.lastCheck) : '') + '</span>';
 }
@@ -1052,7 +1055,7 @@ function lotBanner() {
   else if (L.err) { h = '<b>อ่าน data 6 จาก Google Drive ไม่ได้</b> — ' + esc(netMsg(L.err)) + ' · <a href="#" data-act="retry">ลองเลย</a>'; warn = true; }
   else if (L.loaded && !L.none && s.imp) h = '<b>ข้อมูลชุดนี้นำเข้าจากไฟล์ CSV</b>' + (L.meta && L.meta.file ? ' (' + esc(L.meta.file) + ')' : '') + (L.meta && L.meta.by ? ' โดย ' + esc(L.meta.by) : '') + (s.at ? ' เมื่อ ' + esc(s.short) : '')
     + ' — ยังไม่ได้ดึงจาก AX อัตโนมัติ · ตารางเปลี่ยนเมื่อมีคนนำเข้าไฟล์ใหม่ หรือเมื่อ StarSync เริ่มส่ง (sync-ax-lots.ps1 + lots.sql)';
-  else if (L.loaded && !L.none && s.age != null && s.age > 40) { h = '<b>StarSync ไม่ได้ส่งข้อมูล Lot มา ' + durTh(s.age) + 'แล้ว</b> — ดูหน้าต่าง StarSync ที่เครื่องออฟฟิศ (ปกติส่งทุก 10 นาทีเมื่อมีอะไรเปลี่ยน)'; warn = s.age > 120; }
+  else if (false /* lots 1.49 ผู้ใช้ 20:24 “เอาคำเตือนออกทีครับ” — เดิม: L.loaded && !L.none && s.age != null && s.age > 40 (StarSync ไม่ส่งเกิน 40 นาที = แถบส้ม) */) { h = '<b>StarSync ไม่ได้ส่งข้อมูล Lot มา ' + durTh(s.age) + 'แล้ว</b> — ดูหน้าต่าง StarSync ที่เครื่องออฟฟิศ (ปกติส่งทุก 10 นาทีเมื่อมีอะไรเปลี่ยน)'; warn = s.age > 120; }
   /* v1.7: ข้อมูลจาก AX — บอกว่าช่องที่ AX ไม่มีเติมจาก BI ได้กี่ Lot */
   if (!h && L.loaded && !L.none && L.meta && /StarSync/i.test(L.meta.src || ''))
     h = '<b>ข้อมูลจาก AX (StarSync ทุก 10 นาที)</b> · ' + (L.bi ? 'Bu · Amount · แผน45 เติมจากไฟล์ BI ที่นำเข้าไว้ ' + L.biUsed.toLocaleString('th-TH') + ' Lot · Lot ที่ไม่มีในไฟล์ BI ช่องพวกนี้ว่าง (นำเข้าไฟล์ใหม่เมื่อไหร่ก็เติมให้)'
