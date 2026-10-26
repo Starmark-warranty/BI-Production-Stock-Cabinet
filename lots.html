@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.31 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.32 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.32: รายการ Lot ตอนพิมพ์ชื่อ (1.29) มีสถานะของ Lot (8 ขั้น) + ช่องเรียงตรงกัน
       · lots 1.31: ตารางชิ้นวาดทีละ 1,000 แถว (มือถือ 300) + ปุ่มแสดงเพิ่ม / แสดงทั้งหมด — Lot ใหญ่หลายพันชิ้นไม่กินแรม
       · lots 1.30: เลิกใช้ 8 สีของขั้น — ขั้นไหนครบ = เขียว (หลอด · เกจ · หัวคอลัมน์ · คอลัมน์ State) · ไม่ครบ = ปกติ · ยังไม่ถึง = เทา
       · lots 1.29: ชื่อ Lot บนหัวหน้าสถานะ = ช่องพิมพ์ — พิมพ์ชื่อ Lot อื่น (มีรายการให้เลือก) = เปลี่ยนไปดู Lot นั้นเลย
@@ -73,6 +74,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.32 (2026-10-26 14:09 ผู้ใช้ รูปรายการ Lot ใต้ช่องพิมพ์ชื่อ “69-09”: “ถ้าจะดีขึ้นอีก เพิ่มสถานะเข้าไปให้ด้วยครับ ของ 8 สถานะ ตรง Box ที่พิมพ์ตรงนี้”)
+        UI รายการ Lot ใต้ช่องพิมพ์ชื่อ: + ป้ายสถานะของ Lot (Part/กำลังตัด · Part/รอตัด · Edge/ปิดขอบ … · ครบ — ตัวเดียวกับหน้าเลือก Lot) · ไม่มีรายชิ้น = “ไม่มีรายชิ้น”
+           · ช่องกว้างคงที่ (ชื่อ · Stage · remark · สถานะ · ชิ้น) ให้ทุกแถวตรงกัน (เดิมจำนวนชิ้นเลื่อนตามความยาว remark) · pstLotStat แยกเป็นฟังก์ชันใช้ร่วมกับหน้าเลือก Lot
     1.31 (2026-10-26 14:07 ผู้ใช้ รูป รพ.สินแพทย์ _F6_MASS_WARD 4,527 ชิ้น “แสดง 3,000 แถวแรก”: “บางเครื่อง 4 พันกว่าชิ้นกินแรม งั้นเอาเป็นคำนวณให้ Part สัก 1,000 ชิ้น ไปให้กดเพื่อดูทุกรายการแทน ไม่งั้นช้า”)
         PERF ตารางชิ้นวาด 1,000 แถวแรก (เดิม 3,000 · มือถือ 500 → 300) — ยอด / เกจ / หลอด / ตัวกรอง / ค้นหา ยังคิดจากทุกชิ้นเหมือนเดิม
            · ท้ายตาราง: “แสดง 1,000 จาก 4,527 แถว” + ปุ่ม ▾ แสดงเพิ่มอีก 1,000 · แสดงทั้งหมด (L.stLim) · เปลี่ยน Lot / ล้างตัวกรอง = กลับ 1,000
@@ -640,6 +644,15 @@
   .pst-lsug .it b{font:700 13px var(--mono);white-space:nowrap}
   .pst-lsug .it small{flex:1;min-width:0;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-dim);font-size:12px}
   .pst-lsug .it .pc{flex:none;font:12px var(--mono);color:var(--ink-dim)}
+  /* lots 1.32: ช่องกว้างคงที่ + สถานะ */
+  .pst-lsug{width:min(780px,92vw);max-width:min(780px,92vw)}
+  .pst-lsug .it > b{flex:none;width:230px;overflow:hidden;text-overflow:ellipsis}
+  .pst-lsug .it > .stg{flex:none}
+  .pst-lsug .it > small{max-width:none}
+  .pst-lsug .it > .cu{flex:none;width:178px;text-align:left}
+  .pst-lsug .it > .cu .nd{font-size:11.5px;color:var(--ink-faint)}
+  .pst-lsug .it > .pc{width:72px;text-align:right}
+  @media (max-width: 760px){ .pst-lsug .it > b{width:auto;max-width:150px} .pst-lsug .it > small,.pst-lsug .it > .stg{display:none} .pst-lsug .it > .cu{width:auto} }
   .pst-lsug .none{padding:9px 12px;color:var(--ink-dim);font-size:12.5px}
   /* ───────── lots 1.25: หลอดสถานะ · สีของขั้นบนเกจ / ช่อง State / กล่องสถานะ · ยังไม่ถึง = เทา ───────── */
   .pst-tube{display:flex;gap:3px;margin:0 14px 8px;height:24px;flex:none}
@@ -804,7 +817,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.31';
+var LOTS_VER = '1.32';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1913,9 +1926,7 @@ function pstPickHtml(inline) {
     h += '<div class="pst-pkr' + (on ? ' on' : '') + '" data-pstpick="' + esc(x.id) + '" role="checkbox" aria-checked="' + on + '"><span class="ck">' + (on ? '✓' : '') + '</span>'
       + '<b title="' + esc(x.id) + '">' + esc(x.id) + '</b><span class="sg">' + stgHtml(x) + '</span><span class="rm" title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</span>'   // lots 1.14: ช่องกว้างคงที่ (ตรงหัว)
       + '<span class="sc">' + (sc ? '<span title="ยิง Edge/Drill/Site แล้ว (Scan-Link)">⚡</span>' : '') + '</span>'
-      + (function () { var c0 = rows ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; var g0 = i0 === 0 && B.plan && B.plan.G ? B.plan.G.get(x.id) : null;
-        var l0 = i0 === 0 ? 'Part/' + ((PST_LC.c && PST_LC.c.get(String(x.id).toUpperCase())) || (g0 && B.plan.cutting && B.plan.cutting.indexOf(g0) >= 0) ? 'กำลังตัด' : 'รอตัด') : i0 < 0 ? '' : i0 >= PST_DONE ? 'ครบ' : pstStepNm(PST_STEPS[i0]);   // lots 1.21 (+ ตาม Dashboard ถ้ามีแผนแล้ว) · 1.26 + ชื่อไทย
-        return '<span class="cu">' + (i0 < 0 ? '' : '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) /* lots 1.26 สีของขั้น */ + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>') + '</span>'; })()   // lots 1.14
+      + '<span class="cu">' + pstLotStat(x) + '</span>'   // lots 1.14 สถานะ · 1.32 ใช้ pstLotStat ร่วมกับรายการตอนพิมพ์ชื่อ
       + '<span class="dt">' + (x.end != null ? esc(fD(x.end)) : '') + '</span>'
       + '<span class="pc' + (rows ? '' : ' no') + '">' + (rows ? fmtN(rows.length) + ' ชิ้น' : PST.lots ? 'ไม่มีรายชิ้น' : '') + '</span></div>';
   });
@@ -2187,6 +2198,13 @@ document.addEventListener('click', function (e) {
   if (t.hasAttribute('data-pstclr')) { e.preventDefault(); pstSelSet([]); L.stPk.open = false; pstRender(); return; }
   if (t.dataset.pstrm) { e.preventDefault(); var rm = String(t.dataset.pstrm).toUpperCase(); pstSelSet(L.stSel.filter(function (s) { return String(s).toUpperCase() !== rm; })); pstRender(true); return; }
 });
+/* lots 1.32: ป้ายสถานะของ Lot (หน้าเลือก Lot + รายการตอนพิมพ์ชื่อ) — ขั้นตัด = กำลังตัด / รอตัด (+ ตาม Dashboard ถ้ามีแผน) · ไม่มีรายชิ้น = '' */
+function pstLotStat(x) {
+  var c0 = pstRowsOf(x) ? pstLotCur(x) : 'none', i0 = c0 === 'none' ? -1 : +c0; if (i0 < 0) return '';
+  var g0 = i0 === 0 && B.plan && B.plan.G ? B.plan.G.get(x.id) : null;
+  var l0 = i0 === 0 ? 'Part/' + ((PST_LC.c && PST_LC.c.get(String(x.id).toUpperCase())) || (g0 && B.plan.cutting && B.plan.cutting.indexOf(g0) >= 0) ? 'กำลังตัด' : 'รอตัด') : i0 >= PST_DONE ? 'ครบ' : pstStepNm(PST_STEPS[i0]);
+  return '<span class="pst-cs' + (i0 >= PST_DONE ? ' ok' : ' cs' + i0) + '" title="' + esc(i0 >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'สถานะของ Lot: ' + pstStepNm(PST_STEPS[i0])) + '">' + esc(l0) + '</span>';
+}
 /* ───────── lots 1.29: พิมพ์ชื่อ Lot บนหัว = เปลี่ยน Lot (ผู้ใช้ 13:42) ─────────
    รายการ: ขึ้นต้นด้วยคำที่พิมพ์ก่อน แล้วมีคำนี้ในชื่อ / remark · ใช้ L.rows ทั้งหมด (ไม่สนตัวกรองแถบซ้าย — พิมพ์ชื่อตรง ๆ ต้องเจอ) · ชื่อซ้ำ = แถวเดียว */
 var PST_LS = { hi: 0, list: [] };
@@ -2204,7 +2222,7 @@ function pstLotSugDraw(inp) {
   PST_LS.list = l; if (PST_LS.hi >= l.length) PST_LS.hi = 0;
   if (!v.trim() || v.trim().toUpperCase() === String(inp.dataset.orig).toUpperCase()) { box.classList.add('hide'); box.innerHTML = ''; return; }
   box.innerHTML = l.length ? l.map(function (x, i) { var rows = pstRowsOf(x);
-      return '<div class="it' + (i === PST_LS.hi ? ' on' : '') + '" role="option" data-pstlot="' + esc(x.id) + '"><b>' + esc(x.id) + '</b>' + stgHtml(x) + '<small>' + esc(x.remark || '') + '</small><span class="pc">' + (rows ? fmtN(rows.length) + ' ชิ้น' : '') + '</span></div>'; }).join('')
+      return '<div class="it' + (i === PST_LS.hi ? ' on' : '') + '" role="option" data-pstlot="' + esc(x.id) + '"><b>' + esc(x.id) + '</b>' + stgHtml(x) + '<small title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</small><span class="cu">' + (pstLotStat(x) || (PST.lots ? '<span class="nd">ไม่มีรายชิ้น</span>' : '')) + '</span><span class="pc">' + (rows ? fmtN(rows.length) + ' ชิ้น' : '') + '</span></div>'; }).join('')   /* lots 1.32 + สถานะ */
     : '<div class="none">ไม่พบ Lot “' + esc(v.trim()) + '”</div>';
   box.classList.remove('hide');
   inp.size = Math.max(8, v.length + 1);
