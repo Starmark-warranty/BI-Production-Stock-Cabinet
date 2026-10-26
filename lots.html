@@ -75,6 +75,12 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.45 (2026-10-26 17:15 ผู้ใช้ รูปตาราง FrontStyle “FrontShape:PCxx02\ Color:N00S0073N” · วัสดุ MD19N01M0034NN01M0034N: “งานสี ไม้มันจะเป็น 34N และช่อง FrontStyle จะเป็น N00S” ·
+         17:16 รูปหน้าค้นหา Lot ช่องสถานะ: “อย่าลืมเพิ่มสถานะ Lot ให้ด้วยนะว่าเป็นงานประเภท ทำสี หรือ เคลือบ หรือ ปิดผิว หรือ เมลามีน”)
+        FIX ชนิดสี/เคลือบรายชิ้น (pstFinKind) — 1.43 เดาจากคำ แต่ค่าจริงทุกชิ้นขึ้นต้น “Color:” = เกือบทุกชิ้นกลายเป็น “สี” (เมลามีน N01M ด้วย)
+           · ตอนนี้: สี = FrontStyle มี N00S หรือ ไม้ 34N (N01M0034N) ใน Lot ชื่อ MU / HG · เคลือบ = FrontShape ขึ้นต้น M (MCAx28 · Mxxx01 …) · อื่น ๆ = ไม่ต้อง (เดิม ? ไม่รู้ชนิด)
+        FEAT ประเภทงานของ Lot: 🎨 ทำสี · ✨ เคลือบ · 📑 ปิดผิว (ใบสั่งผลิต Pool SP302) · เมลามีน (ที่เหลือ) — คอลัมน์ “ประเภทงาน” ในหน้าค้นหา Lot + รายการตอนพิมพ์ชื่อ + แถวชื่อ Lot
+           · พิมพ์ ทำสี / เคลือบ / ปิดผิว / เมลามีน ในช่องค้นหา Lot ได้ · กรอบประ = เดา (ยังไม่มี FrontStyle ของ Lot นั้น)
     1.44 (2026-10-26 17:19 ผู้ใช้ รูปหน้าค้นหา Lot: “ดู Part/ค้างตัด ทำไมมันเยื้อง”)
         FIX ป้าย Part/ค้างตัด ในหน้าค้นหา Lot เป็นวงกลมเล็กเยื้อง — คลาส ck ของป้าย (1.40) ชนกับช่องติ๊ก .pst-pkr .ck (กว้าง 17px · วงกลมตอนเลือกทีละ Lot) → เปลี่ยนเป็นคลาส cry
     1.43 (2026-10-26 15:32–16:35 ผู้ใช้: “HG งานทำสีเงา · MU งานทำสีด้าน … งานเคลือบ ดึงคอลัมน์ FrontStyle ของที่ที่ดึงบาร์โค้ดมา” ·
@@ -772,6 +778,15 @@
   .pst-sum.pst-cur .pst-st > em{font-size:12.5px;font-weight:700;color:#fff}
   #lotSt .lt-cut{--lt:#1d6fe0} #lotSt .lt-go{--lt:#15803d} #lotSt .lt-wait{--lt:#a16207} #lotSt .lt-bad{--lt:#c62828} #lotSt .lt-run,#lotSt .lt-idle{--lt:var(--accent)}
   #lotSt .lt-carry{--lt:#ea580c}   /* lots 1.40 ค้างตัด = ส้ม (Dashboard: ส้ม = ค้างตัด) · ไม้ยังไม่ครบ (lt-wait) เปลี่ยนเป็นเหลืองเข้ม แยกจากค้างตัด */
+  /* lots 1.45 ประเภทงานของ Lot: ทำสี (ชมพูแดง = สีขั้นสี·เคลือบ) · เคลือบ (เขียวน้ำทะเล) · ปิดผิว (ม่วง) · เมลามีน (เทา) · .g = เดา กรอบประ */
+  .pst-ty{--tyc:#64748b;display:inline-flex;align-items:center;padding:1px 7px;margin-right:3px;border-radius:999px;font-size:11px;font-weight:700;line-height:1.5;white-space:nowrap;
+    background:color-mix(in srgb,var(--tyc) 14%,var(--solid));color:color-mix(in srgb,var(--tyc) 70%,var(--ink));border:1px solid color-mix(in srgb,var(--tyc) 45%,transparent)}
+  .pst-ty.paint{--tyc:#e11d48} .pst-ty.coat{--tyc:#0d9488} .pst-ty.lam{--tyc:#7c3aed} .pst-ty.mel{--tyc:#78716c}
+  .pst-ty.g{background:transparent;border-style:dashed}
+  .pst-pkr .ty{flex:none;width:150px;overflow:hidden;white-space:nowrap}
+  .pst-lsug .it > .ty{flex:none;width:150px;overflow:hidden;white-space:nowrap}
+  .pst-tys{display:inline-flex;flex-wrap:wrap;gap:3px;align-items:center}
+  .pst-tys .pst-ty{margin-right:0;font-size:12px}
   #lotSt .pst-pkr .pst-cs.cry,#lotSt .pst-lsug .pst-cs.cry{--stc:#ea580c}   /* lots 1.44 คลาส ck → cry (ck = ช่องติ๊กของแถว · ป้ายเลยกลายเป็นวงกลม 17px) */
   .pst-sum.pst-cur.lt{background:var(--lt);border-color:var(--lt);animation:pstGlow 2.8s ease-in-out infinite}
   .pst-sum.pst-cur.lt-cut{animation-duration:1.7s}
@@ -875,7 +890,8 @@
   .pst-pkr .cu{width:178px;text-align:left}   /* lots 1.26: ชื่อ “Pick/เตรียมส่งของเข้าคลัง” */
   /* lots 1.39 มือถือ: แถวรายการ Lot 2 บรรทัด (ชื่อ Lot · สถานะ / Stage · จำนวนชิ้น) — เดิมช่องสถานะกว้าง 178px (1.26 อยู่หลังกฎมือถือ = ชนะ) บีบชื่อ Lot จนหายหมด */
   @media (max-width: 760px){
-    .pst-pkr:not(.hd){display:grid;grid-template-columns:17px minmax(0,1fr) auto;grid-template-areas:"ck b cu" ". sg pc";gap:3px 8px;align-items:center}
+    .pst-pkr:not(.hd){display:grid;grid-template-columns:17px minmax(0,1fr) auto;grid-template-areas:"ck b cu" ". sg pc" ". ty ty";gap:3px 8px;align-items:center}   /* lots 1.45 + แถวประเภทงาน */
+    .pst-pkr:not(.hd) > .ty{grid-area:ty;width:auto} .pst-pkr:not(.hd) > .ty:empty{display:none}
     .pst-pkr:not(.hd) > .ck{grid-area:ck} .pst-pkr:not(.hd) > b{grid-area:b;overflow:hidden;text-overflow:ellipsis}
     .pst-pkr:not(.hd) > .cu{grid-area:cu;width:auto;text-align:right} .pst-pkr:not(.hd) > .sg{grid-area:sg;width:auto} .pst-pkr:not(.hd) > .pc{grid-area:pc;min-width:0}
     .pst-pkr:not(.hd) > .sc{display:none} .pst-pkr.hd{display:none}
@@ -970,7 +986,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.44';
+var LOTS_VER = '1.45';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1516,7 +1532,7 @@ var PST = { lots: null, rec: null, st: null, steps: null, iu: 0, su: 0, mu: 0, x
 var PST_STEPS = [
   { k: 'cut', h: 'Part', th: 'ตัด', t: 'ยิงตัดแล้ว (CHECKPART) — ห่ออุปกรณ์ที่ไม่มีขนาด = “–” (ไม่ต้องตัด)' },
   { k: 'edge', h: 'Edge', th: 'ปิดขอบ', t: 'ปิดขอบ — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Edge = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
-  { k: 'fin', h: 'Finish', th: 'สี·เคลือบ', t: 'รับเข้างานทำสี / งานเคลือบ (lots 1.43) — เฉพาะชิ้นที่มี FrontStyle (StarSync v1.22 · lots/fstyle.csv) · ยิงด้วย Scan-Link: ทำสี / เคลือบ = ติ๊กชิ้นชนิดนั้นทั้ง Lot · ยิง Drill / Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
+  { k: 'fin', h: 'Finish', th: 'สี·เคลือบ', t: 'รับเข้างานทำสี / งานเคลือบ (lots 1.43) — เฉพาะชิ้นสี (FrontStyle N00S หรือไม้ 34N ใน Lot MU / HG) / ชิ้นเคลือบ (FrontShape ขึ้นต้น M) · lots 1.45 (StarSync v1.22 · lots/fstyle.csv) · ยิงด้วย Scan-Link: ทำสี / เคลือบ = ติ๊กชิ้นชนิดนั้นทั้ง Lot · ยิง Drill / Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
   { k: 'drill', h: 'Drill', th: 'เจาะ&CNC', t: 'เจาะ & CNC — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Drill = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
   { k: 'pk', h: 'Pack', th: 'แพ็ค', t: 'แพ็คแล้ว (CHECKPACK)' },
   { k: 'pi', h: 'Pick', th: 'เตรียมส่งของเข้าคลัง', t: 'เตรียมส่งของเข้าคลัง (CHECKPICK)' },
@@ -1529,20 +1545,72 @@ var PST_AFTER = ['pk', 'pi', 'wh', 'dl', 'si'];   // lots 1.2: ผ่านข�
 /* ───────── lots 1.43: งานทำสี / งานเคลือบ ราย Part (FrontStyle จาก lots/fstyle.csv · StarSync v1.22) ─────────
    PST.fsm = Map('LOTID|BARCODE' → FrontStyle) จาก Barcode 1 และ 2 ของ CSV ราย Lot (Cut Rite\AX) · p.fs = ค่าของชิ้นใน pinfo.csv (จับด้วย bc1)
    ชนิด (pstFinKind): '' ไม่ต้องทำ · 'paint' ทำสี · 'coat' เคลือบ · 'unk' มี FrontStyle แต่ไม่รู้ชนิด — กฎอยู่ที่ PST_FINRE (ค่าจริงดูได้ที่ lotcsv.meta.json → fsVals) */
-var PST_FINRE = { none: /^(-+|0|none|n\/?a|no|null|melamine|เมลามีน)$/i, coat: /เคลือบ|coat|lacq|varnish|uv\b/i, paint: /^(hg|mu)\s*\d|ทำสี|สี|paint|colou?r|\bpu\b|2k/i };
+/* lots 1.45 ปิด (เดาจากคำ — ค่าจริงทุกชิ้นขึ้นต้น “Color:” → คำ color ทำให้เกือบทุกชิ้นเป็น “สี”):
+   var PST_FINRE = { none: /^(-+|0|none|n\/?a|no|null|melamine|เมลามีน)$/i, coat: /เคลือบ|coat|lacq|varnish|uv\b/i, paint: /^(hg|mu)\s*\d|ทำสี|สี|paint|colou?r|\bpu\b|2k/i };
+   function pstFinKind(p) { var v = String(p && p.fs || '').trim(); if (!v || PST_FINRE.none.test(v)) return ''; return PST_FINRE.coat.test(v) ? 'coat' : PST_FINRE.paint.test(v) ? 'paint' : 'unk'; } */
+/* ───────── lots 1.45: กฎสี / เคลือบจากข้อมูลจริง + ประเภทงานของ Lot (ทำสี · เคลือบ · ปิดผิว · เมลามีน) ─────────
+   ผู้ใช้ 26/10/2026 17:15 (รูปตาราง FrontShape:PCxx02\ Color:N00S0073N · วัสดุ MD19N01M0034NN01M0034N): “งานสี ไม้มันจะเป็น 34N และช่อง FrontStyle จะเป็น N00S”
+   ผู้ใช้ 17:16 (รูปหน้าค้นหา Lot ช่องสถานะ): “อย่าลืมเพิ่มสถานะ Lot ให้ด้วยนะว่าเป็นงานประเภท ทำสี หรือ เคลือบ หรือ ปิดผิว หรือ เมลามีน”
+   เดิม 1.43: เดาชนิดจากคำ — ค่าจริงทุกชิ้นขึ้นต้น “Color:” → คำ color ทำให้เกือบทุกชิ้น (เมลามีน N01M ด้วย) กลายเป็น “สี”
+   ข้อมูลจริง lotcsv.csv 26/10 17:19 (138,011 ชิ้น · มี FrontStyle 13,482 ชิ้น 87 Lot): ค่า = “Color:<รหัสสี>” หรือ “FrontShape:<รูปหน้า>\ Color:<รหัสสี>”
+     · N00S (สีพ่น) ~1,050 ชิ้น 21 Lot — ทุก Lot ชื่อ MU / HG · ไม้ MD19N01M0034N (34N) เกือบทั้งหมด (บางชิ้น MDF ดิบ MD25xxxxxxxx)
+     · FrontShape ขึ้นต้น M (MCAx28 · Mxxx01 …) ~430 ชิ้น 25 Lot — สีฟิล์ม G04P / N04P บนไม้ที่ผิวหน้าดิบ (xxxxxxxx) · Lot ชื่อ _Mc / _MC เกือบทั้งหมด = ถือเป็นงานเคลือบ
+     · ที่เหลือ: N01M / G01M (เมลามีน) · N03P / G03P (ไม้ปิดผิวสำเร็จ) · …H (HPL) · อะลูมิเนียม = ไม่ต้องทำสี/เคลือบ
+   ราย Part (pstFinKind): สี = FrontStyle มี N00S · หรือไม้ 34N (N01M0034N) ใน Lot ชื่อ MU / HG (กฎ v2.76 ของ index — ไม่มี FrontStyle ก็รู้)
+                          เคลือบ = FrontShape ขึ้นต้น M · อื่น ๆ = '' ไม่ต้อง (เดิม 'unk' ไม่ใช้แล้ว)
+   ราย Lot (pstLotTypes): 🎨 ทำสี = มีชิ้น N00S (fstyle.csv) หรือ งานสีของ Dashboard (paintOf: BOM N00S / ชื่อ MU HG)
+     · ✨ เคลือบ = มีชิ้น FrontShape M (fstyle.csv) · ยังไม่มี FrontStyle ของ Lot นี้ + ชื่อ _MC = “เคลือบ” กรอบประ (เดา)
+     · 📑 ปิดผิว = มีใบสั่งผลิต Pool SP302 (lots/lam.csv · lamOf ของ index)
+     · เมลามีน = มีข้อมูล Lot (รายชิ้น / CSV Cut Rite / BOM) แต่ไม่เข้า 3 อย่างบน — ยังไม่มี FrontStyle ของ Lot = กรอบประ (ยังตัดเคลือบออกไม่ได้)
+     · ไม่มีข้อมูลอะไรเลย = ไม่ขึ้นป้าย */
+var PST_FINRE = { paint: /N00S/i, coat: /FrontShape:\s*M/i, mat34: /N01M0034/i };   // lots 1.45 · mat34 = ผิวไม้ทำสี (Cut Rite MD19N01M0034NN01M0034N · AX …N01M0034…)
 var PST_FINNM = { paint: 'สี', coat: 'เคลือบ', unk: 'สี/เคลือบ?' };
+function pstPaintName(id) {   // ชื่อ Lot มี MU / HG (กฎ v2.76 ของ index · ⚙ ปิด “งานสีจากชื่อ Lot” ได้)
+  try { return typeof pnbName === 'function' ? !!pnbName(id) : /(?:^|[_\-\s])(?:HG|MU)(?![A-Za-z])/i.test(String(id || '')); } catch (e) { return false; }
+}
 function pstFinKind(p) {
-  var v = String(p && p.fs || '').trim(); if (!v || PST_FINRE.none.test(v)) return '';
-  return PST_FINRE.coat.test(v) ? 'coat' : PST_FINRE.paint.test(v) ? 'paint' : 'unk';
+  var v = String(p && p.fs || '');
+  if (PST_FINRE.paint.test(v)) return 'paint';
+  if (PST_FINRE.coat.test(v)) return 'coat';
+  if (p && PST_FINRE.mat34.test(String(p.mat || '')) && pstPaintName(p.lot)) return 'paint';   // ไม้ 34N ใน Lot MU / HG
+  return '';
+}
+var PST_MC_RE = /(?:^|[_\-\s])MC(?![A-Za-z])/i;   // ชื่อ Lot …_Mc · …-MC · …-MU19-MC
+var PST_TYNM = { paint: '🎨 ทำสี', coat: '✨ เคลือบ', lam: '📑 ปิดผิว', mel: 'เมลามีน' };
+var PST_TYQ = { paint: 'ทำสี งานสี', coat: 'เคลือบ งานเคลือบ', lam: 'ปิดผิว sp302', mel: 'เมลามีน' };   // คำที่ค้นได้
+function pstLotKnown(id, K) {
+  try { if (PST.lots && PST.lots.get(K)) return true; } catch (e) { }
+  try { if (B.lc && B.lc.map && B.lc.map.get(K)) return true; } catch (e) { }
+  try { if (typeof rcOf === 'function' && rcOf(id)) return true; } catch (e) { }
+  return false;
+}
+/* ประเภทงานของ Lot → [{ k: paint|coat|lam|mel, g: เดา (กรอบประ), t: ที่มา }] · [] = ไม่มีข้อมูล */
+function pstLotTypes(x) {
+  var id = x && typeof x === 'object' ? x.id : x; if (id == null) return [];
+  var K = String(id).toUpperCase(), F = PST.fsLot ? PST.fsLot.get(K) || null : null, out = [], pt = null, lm = null;
+  try { pt = typeof paintOf === 'function' ? paintOf(id) : null; } catch (e) { pt = null; }
+  if (F && F.p) out.push({ k: 'paint', t: 'FrontStyle สี N00S ' + fmtN(F.p) + ' ชิ้น' });
+  else if (pt) out.push({ k: 'paint', t: pt.src === 'name' ? 'ชื่อ Lot มี MU / HG (ไม้ทำสี 34N)' : 'BOM มีสี N00S' });
+  if (F && F.c) out.push({ k: 'coat', t: 'FrontShape ขึ้นต้น M (ฟิล์มบนผิวไม้ดิบ) ' + fmtN(F.c) + ' ชิ้น' });
+  else if (!F && PST_MC_RE.test(String(id))) out.push({ k: 'coat', g: 1, t: 'เดาจากชื่อ Lot (_MC) — ยังไม่มี FrontStyle ของ Lot นี้' });
+  try { lm = typeof lamOf === 'function' ? lamOf(id) : null; } catch (e) { lm = null; }
+  if (lm && lm.length) out.push({ k: 'lam', t: 'ไม้ปิดผิวเอง — ใบสั่งผลิต Pool SP302 ' + fmtN(lm.length) + ' ใบ' });
+  if (!out.length && (F || pstLotKnown(id, K))) out.push({ k: 'mel', g: F ? 0 : 1, t: F ? 'ไม่มีชิ้นสี / เคลือบ / ปิดผิว SP302 (FrontStyle ' + fmtN(F.n) + ' ชิ้น)' : 'ไม่มีชิ้นสี / ปิดผิว SP302 — ยังไม่มี FrontStyle ของ Lot นี้ (ยังบอกไม่ได้ว่ามีงานเคลือบไหม)' });
+  return out;
+}
+function pstLotTypeTxt(x) { return pstLotTypes(x).map(function (o) { return PST_TYQ[o.k]; }).join(' '); }
+function pstLotTypeHtml(x) {
+  return pstLotTypes(x).map(function (o) { return '<span class="pst-ty ' + o.k + (o.g ? ' g' : '') + '" title="' + esc(PST_TYNM[o.k].replace(/^\S+ /, '') + (o.g ? ' (เดา)' : '') + ' — ' + o.t) + '">' + PST_TYNM[o.k] + (o.g ? '?' : '') + '</span>'; }).join('');
 }
 function pstParseFs(t) {
   var R = parseCsv(t || ''), h = (R[0] || []).map(function (x) { return String(x).replace(/^\uFEFF/, '').trim().toLowerCase(); }), ix = {}; h.forEach(function (k, i) { ix[k] = i; });
-  var m = new Map(), lot = '', n = 0, col = function (a, k) { var i = ix[k]; return i == null || a[i] == null ? '' : String(a[i]).trim(); };
+  var m = new Map(), fsl = new Map() /* lots 1.45 */, lot = '', n = 0, col = function (a, k) { var i = ix[k]; return i == null || a[i] == null ? '' : String(a[i]).trim(); };
   for (var r = 1; r < R.length; r++) { var a = R[r]; if (a.length === 1 && a[0] === '') continue;
     var l0 = col(a, 'lot'); if (l0 === '^') l0 = lot; else if (l0.charAt(0) === '=') l0 = l0.slice(1); lot = l0;
     var fs = col(a, 'fs'); if (fs.charAt(0) === '=') fs = fs.slice(1); if (!l0 || !fs) continue; n++;
-    var K = l0.toUpperCase(); [col(a, 'bc1'), col(a, 'bc2')].forEach(function (b) { if (b && !/^manual$/i.test(b)) m.set(K + '|' + b.toUpperCase(), fs); }); }   // Manual (ห่ออุปกรณ์) ไม่ใช่บาร์โค้ดจริง
-  PST.fsm = m; PST.fsN = n;
+    var K = l0.toUpperCase(), fl = fsl.get(K); if (!fl) fsl.set(K, fl = { n: 0, p: 0, c: 0 }); fl.n++; if (PST_FINRE.paint.test(fs)) fl.p++; else if (PST_FINRE.coat.test(fs)) fl.c++;   // lots 1.45 ราย Lot
+    [col(a, 'bc1'), col(a, 'bc2')].forEach(function (b) { if (b && !/^manual$/i.test(b)) m.set(K + '|' + b.toUpperCase(), fs); }); }   // Manual (ห่ออุปกรณ์) ไม่ใช่บาร์โค้ดจริง
+  PST.fsm = m; PST.fsN = n; PST.fsLot = fsl;   // lots 1.45 fsLot = Map(LOT → { n, p สี, c เคลือบ })
 }
 function pstFsApply() {   // ใส่ p.fs ให้ทุกชิ้น (รายชิ้นอ่านใหม่ / fstyle.csv เปลี่ยน / ดึงย้อนหลัง) · นับที่จับคู่ได้ (PST.fsHit)
   var m = PST.fsm, hit = 0; if (!PST.lots) return;
@@ -1780,7 +1848,7 @@ function pstPassed(s, k) { var v = s && s[k] != null ? String(s[k]).trim() : '';
 /* ค่าในช่อง: true = ผ่าน · false = ยัง · null = ไม่มีข้อมูล/ไม่เกี่ยว · raw = ค่าดิบ (dl/si) · scan = ยิงจากโทรศัพท์ · inf = ถือว่าผ่านเพราะ Pack แล้ว */
 function pstVal(p, s, k) {
   if (k === 'fin') {   // lots 1.43 สี/เคลือบ: เฉพาะชิ้นที่มี FrontStyle · ยิง paint / coat ตามชนิด · ยิง Drill / Pack แล้ว = ผ่าน
-    var fk = pstFinKind(p); if (!fk) return { v: null, nc: 1, fin: 1 };
+    var fk = pstFinKind(p); if (!fk) return { v: null, nc: 1, fin: 1, fs: p.fs || '' };   // lots 1.45 + fs (มี FrontStyle แต่ไม่ใช่สี/เคลือบ)
     var fsc = fk === 'paint' ? pstScanOf(p.lot, 'paint') : fk === 'coat' ? pstScanOf(p.lot, 'coat') : (pstScanOf(p.lot, 'paint') || pstScanOf(p.lot, 'coat'));
     if (fsc) return { v: true, scan: fsc, fk: fk };
     if (pstScanOf(p.lot, 'drill') || (s && PST_AFTER.some(function (a) { return pstPassed(s, a); }))) return { v: true, inf: 1, fk: fk };
@@ -1869,7 +1937,7 @@ function pstCell(q, S0) {   // lots 1.4: + stk (ติดซ้ายตอน�
 var pstCellL143 = pstCell;
 pstCell = function (q, S0) {
   var h = pstCellL143(q, S0);
-  if (S0.k === 'fin') { if (q.nc) h = h.replace('ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || ''), PST.fsm ? 'ไม่มี FrontStyle — ไม่ต้องทำสี/เคลือบ' : 'ยังไม่มี lots/fstyle.csv (StarSync v1.22)');
+  if (S0.k === 'fin') { if (q.nc) h = h.replace('ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || ''), q.fs ? esc('FrontStyle ' + q.fs + ' — ไม่ใช่งานสี (N00S) / เคลือบ (FrontShape M…) = ไม่ต้อง') /* lots 1.45 */ : PST.fsm ? 'ไม่มี FrontStyle — ไม่ต้องทำสี/เคลือบ' : 'ยังไม่มี lots/fstyle.csv (StarSync v1.22)');
     else if (q.fk) h = h.replace(/<\/td>$/, '<small class="fk ' + q.fk + '">' + PST_FINNM[q.fk] + '</small></td>'); }
   return h;
 };
@@ -2311,7 +2379,7 @@ function pstSelSet(ids) {
 function pstCands() {
   var q = L.stPk.q.trim().toLowerCase(), tk = q ? q.split(/\s+/) : null;
   return (L.shown || []).filter(function (x) { if (!tk) return true; var s = x.s || String(x.id).toLowerCase(), st = null;
-    for (var i = 0; i < tk.length; i++) if (s.indexOf(tk[i]) < 0) { if (st === null) st = pstLotStatTxt(x).toLowerCase(); if (st.indexOf(tk[i]) < 0) return false; }   // lots 1.39 + ป้ายสถานะ (กำลังตัด · รอตัด · แพ็ค …)
+    for (var i = 0; i < tk.length; i++) if (s.indexOf(tk[i]) < 0) { if (st === null) st = (pstLotStatTxt(x) + ' ' + pstLotTypeTxt(x)).toLowerCase() /* lots 1.45 + ประเภทงาน */; if (st.indexOf(tk[i]) < 0) return false; }   // lots 1.39 + ป้ายสถานะ (กำลังตัด · รอตัด · แพ็ค …)
     return true; });
 }
 /* lots 1.39: มือถือ — แถวปุ่มสถานะในหน้าเลือก Lot (ตัวกรองเดียวกับแถบซ้าย L.f.pst · จำนวน = ผ่านตัวกรองอื่นแล้ว) */
@@ -2336,7 +2404,7 @@ function pstPickHtml(inline) {
   var mu = !!L.stPk.multi;   // lots 1.38: ปกติ = กดที่ Lot แล้วเปิดเลย · โหมดหลาย Lot = ติ๊กสะสม
   var h = '<div class="pst-pk' + (inline ? ' inline' : ' full') + (mu ? ' multi' : ' single') + '" data-pstpkbox>'   // lots 1.16: ไม่ใช่หน้าแรก = เต็มพื้นที่ด้วย (เดิมกล่องลอย)
     + '<div class="pst-pkhd">' + '<b class="pst-pkt">เลือก Lot ที่จะดู</b>'   // lots 1.16: หัวเรื่องทั้งสองแบบ   /* lots 1.13: เอา ← รายการ Lot ออก (ใช้แท็บ 📋 รายการ Lot ด้านบน) */
-    + '<input type="search" class="pst-pq" placeholder="พิมพ์ชื่อ Lot / remark / สถานะ เช่น กำลังตัด (Enter = ดูทุก Lot ที่ตรง)" value="' + esc(L.stPk.q) + '" autocomplete="off" enterkeyhint="search">'   // lots 1.39 + สถานะ
+    + '<input type="search" class="pst-pq" placeholder="พิมพ์ชื่อ Lot / remark / สถานะ / ประเภท เช่น กำลังตัด · ทำสี (Enter = ดูทุก Lot ที่ตรง)" value="' + esc(L.stPk.q) + '" autocomplete="off" enterkeyhint="search">'   // lots 1.39 + สถานะ
     + '<button type="button" class="tbtn pri" data-pstall' + (c.length ? '' : ' disabled') + ' title="ดูทุก Lot ในรายการนี้ (สูงสุด ' + PST_MAXSEL + ' Lot)">แสดง ' + fmtN(Math.min(c.length, PST_MAXSEL)) + (c.length > PST_MAXSEL ? '+' : '') + ' Lot ที่ตรง</button>'
     + '<button type="button" class="tbtn pst-pkmu' + (mu ? ' on' : '') + '" data-pstmulti aria-pressed="' + mu + '" title="' + (mu ? 'กลับเป็นกดที่ Lot แล้วเปิดดูเลย' : 'ติ๊กหลาย Lot แล้วดูพร้อมกัน (สูงสุด ' + PST_MAXSEL + ')') + '">' + (mu ? '☑ เลือกหลาย Lot' : '☐ เลือกหลาย Lot') + '</button>'   // lots 1.38
     + (mu && sel.length ? '<button type="button" class="tbtn" data-pstclr title="เอา Lot ที่เลือกออกทั้งหมด">ล้างที่เลือก (' + sel.length + ')</button>' : '')
@@ -2350,13 +2418,14 @@ function pstPickHtml(inline) {
   else if (!list.length) h += '<div class="pst-pkmore">ไม่มี Lot ที่ตรง — ลองล้างตัวกรองแถบซ้าย หรือพิมพ์คำอื่น</div>';
   /* lots 1.14 (ผู้ใช้ 11:30 “ไม่มีหัวตารางบอกหรอว่ามันคือวันที่ของอะไร”): แถวหัว + คอลัมน์สถานะของ Lot */
   if (list.length) h += '<div class="pst-pkr hd" aria-hidden="true"><span class="ck"></span><b>Lot</b><span class="sg">Stage</span><span class="rm">remark</span><span class="sc"></span>'
-    + '<span class="cu" title="ขั้นที่ Lot อยู่ตอนนี้ (ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง)">สถานะ</span><span class="dt" title="enddate ของ Lot (data 6)">enddate</span><span class="pc" title="จำนวนชิ้นในไฟล์รายชิ้นของ StarSync">รายชิ้น</span></div>';
+    + '<span class="cu" title="ขั้นที่ Lot อยู่ตอนนี้ (ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง)">สถานะ</span><span class="ty" title="ประเภทงานของ Lot (lots 1.45): 🎨 ทำสี · ✨ เคลือบ · 📑 ปิดผิว SP302 · เมลามีน — กรอบประ = เดา">ประเภทงาน</span><span class="dt" title="enddate ของ Lot (data 6)">enddate</span><span class="pc" title="จำนวนชิ้นในไฟล์รายชิ้นของ StarSync">รายชิ้น</span></div>';
   list.slice(0, PST_PKLIM).forEach(function (x) {
     var rows = pstRowsOf(x), on = !!selK[x.key], sc = pstScanOf(x.id, 'edge') || pstScanOf(x.id, 'drill') || pstScanOf(x.id, 'si');
     h += '<div class="pst-pkr' + (on ? ' on' : '') + '" data-pstpick="' + esc(x.id) + '" role="checkbox" aria-checked="' + on + '"><span class="ck">' + (on ? '✓' : '') + '</span>'
       + '<b title="' + esc(x.id) + '">' + esc(x.id) + '</b><span class="sg">' + stgHtml(x) + '</span><span class="rm" title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</span>'   // lots 1.14: ช่องกว้างคงที่ (ตรงหัว)
       + '<span class="sc">' + (sc ? '<span title="ยิง Edge/Drill/Site แล้ว (Scan-Link)">⚡</span>' : '') + '</span>'
       + '<span class="cu">' + pstLotStat(x) + '</span>'   // lots 1.14 สถานะ · 1.32 ใช้ pstLotStat ร่วมกับรายการตอนพิมพ์ชื่อ
+      + '<span class="ty">' + pstLotTypeHtml(x) + '</span>'   // lots 1.45 ประเภทงาน
       + '<span class="dt">' + (x.end != null ? esc(fD(x.end)) : '') + '</span>'
       + '<span class="pc' + (rows ? '' : ' no') + '">' + (rows ? fmtN(rows.length) + ' ชิ้น' : PST.lots ? 'ไม่มีรายชิ้น' : '') + '</span></div>';
   });
@@ -2385,6 +2454,7 @@ function pstRender(keep) {
         + '<button type="button" class="pst-cpy" data-cp="' + esc(x.id) + '" title="คัดลอกชื่อ Lot">⧉</button><div class="pst-lsug hide" role="listbox"></div></span>'   /* lots 1.29: ชื่อ Lot = ช่องพิมพ์ (เดิม <h2 data-cp> คลิก = คัดลอก) */ + poolChip(x.id, x.pool) + stgHtml(x)
         + '<span class="pst-rm" title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</span>'
         + (x.end != null ? '<span class="pst-end' + (dl < 0 && !lotFin(x) ? ' late' : '') + '">enddate ' + esc(fD(x.end)) + '</span>' : '')
+        + '<span class="pst-tys">' + pstLotTypeHtml(x) + '</span>'   // lots 1.45 ประเภทงานของ Lot
         + '<!--pst-dash--><span class="sp"></span><!--pst-tools-->'   // lots 1.21 ปุ่ม Dashboard · lots 1.13: ➕ เลือก Lot ย้ายไปซ้ายแทน ← รายการ Lot · 1.15 ช่องค้นหา (คอม) มาแทนที่ <!--pst-tools-->
         + '<button type="button" class="tbtn" data-pstdet title="แผงรายละเอียด Lot (วัตถุดิบ · Part ทั้งหมด · ปิดว่าจบ)">ⓘ รายละเอียด</button></div>';
     } else {
@@ -2687,7 +2757,7 @@ function pstLotSugDraw(inp) {
   if (!v.trim() || v.trim().toUpperCase() === String(inp.dataset.orig).toUpperCase()) { box.classList.add('hide'); box.innerHTML = ''; return; }
   box.innerHTML = (l.length ? '<div class="hd">พบ <b>' + fmtN(PST_LS.total) + '</b> Lot' + (PST_LS.total > l.length ? ' · แสดง ' + fmtN(l.length) + ' แรก — พิมพ์เพิ่มเพื่อกรอง' : '') + ' · ยังไม่จบขึ้นก่อน</div>' : '')   // lots 1.33
     + (l.length ? l.map(function (x, i) { var rows = pstRowsOf(x);
-      return '<div class="it' + (i === PST_LS.hi ? ' on' : '') + '" role="option" data-pstlot="' + esc(x.id) + '"><b>' + esc(x.id) + '</b>' + stgHtml(x) + '<small title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</small><span class="cu">' + (pstLotStat(x) || (PST.lots ? '<span class="nd">ไม่มีรายชิ้น</span>' : '')) + '</span><span class="pc">' + (rows ? fmtN(rows.length) + ' ชิ้น' : '') + '</span></div>'; }).join('')   /* lots 1.32 + สถานะ */
+      return '<div class="it' + (i === PST_LS.hi ? ' on' : '') + '" role="option" data-pstlot="' + esc(x.id) + '"><b>' + esc(x.id) + '</b>' + stgHtml(x) + '<small title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</small><span class="cu">' + (pstLotStat(x) || (PST.lots ? '<span class="nd">ไม่มีรายชิ้น</span>' : '')) + '</span><span class="ty">' + pstLotTypeHtml(x) /* lots 1.45 */ + '</span><span class="pc">' + (rows ? fmtN(rows.length) + ' ชิ้น' : '') + '</span></div>'; }).join('')   /* lots 1.32 + สถานะ */
     : '<div class="none">ไม่พบ Lot “' + esc(v.trim()) + '”</div>');
   box.classList.remove('hide');
   var on = box.querySelector('.it.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (x2) { } }   // lots 1.33 ↑↓ เลื่อนตาม
@@ -2803,7 +2873,7 @@ sxmRegister('lots', {
   init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
-  exports: { lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
+  exports: { pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
 });
 </script>
 <script>
