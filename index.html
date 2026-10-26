@@ -2168,6 +2168,91 @@ body.tv #bdDash details.dbmcd{display:none!important}
   @media (max-width:420px){ #ldOv .ldsteps{grid-template-columns:1fr} }
   @media (prefers-reduced-motion: reduce){ #ldOv,#ldOv *{animation:none!important;transition:none!important} }
   @media print{ #ldOv{display:none!important} }
+  /* v2.66 แท็บวางแผนตัด */
+  #board.cp > :not(#bdTabs):not(#bdCp):not(#bdDetail){display:none!important}
+  #board:not(.cp) #bdCp{display:none!important}
+  #bdCp{padding:8px 10px 0;color:var(--ink)}
+  #bdCp .cpbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+  #bdCp .cpttl b{font-size:16px;font-weight:800;display:block}
+  #bdCp .cpttl small{font-size:11.5px;color:var(--ink-dim)}
+  #bdCp .sp{flex:1}
+  #bdCp .cpseg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden}
+  #bdCp .cpseg button{border:0;background:var(--card);color:var(--ink);padding:5px 10px;font:600 12px var(--font);cursor:pointer}
+  #bdCp .cpseg button.on{background:#2563eb;color:#fff}
+  #bdCp .cplock.on{border-color:#16a34a;color:#16a34a}
+  #bdCp .cplg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--ink-dim);margin-bottom:6px;align-items:center}
+  #bdCp .cplg .k{display:inline-block;min-width:18px;text-align:center;margin-right:2px}
+  #bdCp .cplg .busy{color:#2563eb;font-weight:700}
+  #bdCp .cpm{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;flex:none;vertical-align:1px}
+  #bdCp .cpm.ok{background:#16a34a} #bdCp .cpm.mid{background:#f59e0b} #bdCp .cpm.bad{background:#dc2626} #bdCp .cpm.unk{background:#94a3b8}
+  #bdCp .cpmain{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:10px;min-height:320px}
+  #bdCp .cpmain.nopool{grid-template-columns:minmax(0,1fr)}
+  #bdCp .cpgw{overflow:auto;border:1px solid var(--line-strong);border-radius:10px;background:var(--card)}
+  #bdCp table.cpgrid{border-collapse:separate;border-spacing:0;min-width:100%}
+  #bdCp .cpgrid th,#bdCp .cpgrid td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top}
+  #bdCp .cpgrid thead th{position:sticky;top:0;z-index:3;background:var(--card2,var(--card));padding:6px 8px;font-size:12px;text-align:center;white-space:nowrap}
+  #bdCp .cpgrid thead th.tdy{color:#2563eb} #bdCp .cpgrid thead th.we{color:var(--ink-faint)}
+  #bdCp .cpgrid th.cpmc{position:sticky;left:0;z-index:2;background:var(--card2,var(--card));text-align:left;padding:8px;min-width:112px;width:112px}
+  #bdCp .cpgrid thead th.cpmc{z-index:4}
+  #bdCp .cpgrid th.cpmc b{display:block;font-size:14px} #bdCp .cpgrid th.cpmc small{display:block;font-size:11px;color:var(--ink-dim);font-weight:400}
+  #bdCp td.cpc{min-width:190px;width:190px;padding:6px;position:relative;background:var(--card)}
+  #bdCp .cpgrid.mini td.cpc{min-width:150px;width:150px;padding:4px}
+  #bdCp td.cpc.tdy{background:color-mix(in srgb,#2563eb 4%,var(--card))}
+  #bdCp td.cpc.off{background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(148,163,184,.12) 6px 12px)}
+  #bdCp .cpcap{position:relative;height:18px;border-radius:5px;background:rgba(148,163,184,.18);overflow:hidden;margin-bottom:5px}
+  #bdCp .cpcap i{position:absolute;left:0;top:0;bottom:0;background:#22c55e}
+  #bdCp .cpcap.hi i{background:#84cc16} #bdCp .cpcap.full i{background:#f59e0b} #bdCp .cpcap.over i{background:#ef4444}
+  #bdCp .cpcap span{position:relative;display:block;font:700 10.5px var(--mono);line-height:18px;padding:0 6px;color:var(--ink);white-space:nowrap}
+  #bdCp .cpcap.off{background:transparent} #bdCp .cpcap.off span{color:var(--ink-faint);font-weight:400;font-family:var(--font)}
+  #bdCp .cpcards{display:flex;flex-direction:column;gap:4px}
+  #bdCp .cpk{position:relative;display:block;padding:5px 22px 5px 7px;border-radius:7px;border:1px solid var(--line-strong);background:var(--card);cursor:grab;font-size:12px;line-height:1.3}
+  #bdCp .cpk b{font-weight:700;word-break:break-word;cursor:pointer}
+  #bdCp .cpk small{display:block;color:var(--ink-dim);font-size:11px}
+  #bdCp .cpk small em{color:#dc2626;font-style:normal}
+  #bdCp .cpk.lk{border:1.5px solid #2563eb;background:color-mix(in srgb,#2563eb 10%,var(--card))}
+  #bdCp .cpk.au{border-style:dashed}
+  #bdCp .cpk.cy{border-color:#f59e0b;background:color-mix(in srgb,#f59e0b 9%,var(--card))}
+  #bdCp .cpk.ns{opacity:.75}
+  #bdCp .cpk .cpi{margin-right:3px}
+  #bdCp .cpk .cpx{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:0;background:rgba(148,163,184,.25);color:var(--ink);cursor:pointer;font-size:12px;line-height:18px;padding:0}
+  #bdCp .cpk .cpx:hover{background:#dc2626;color:#fff}
+  #bdCp .cpgrid.mini .cpk small{display:none} #bdCp .cpgrid.mini .cpk{padding:3px 20px 3px 6px;font-size:11.5px}
+  #bdCp .cpk.dragging,#bdCp .cpr.dragging{opacity:.4}
+  #bdCp td.cpc.dov{outline:2px dashed #2563eb;outline-offset:-3px} #bdCp td.cpc.dov.warn{outline-color:#f59e0b} #bdCp td.cpc.dov.bad{outline-color:#dc2626}
+  #bdCp .cpprev{font-size:11px;font-weight:700;padding:4px 6px;border-radius:6px;margin-bottom:5px;background:#dcfce7;color:#166534}
+  #bdCp .cpprev.warn{background:#fef3c7;color:#92400e} #bdCp .cpprev.bad{background:#fee2e2;color:#991b1b}
+  #bdCp .cppool{display:flex;flex-direction:column;min-height:0;border:1px solid var(--line-strong);border-radius:10px;background:var(--card);overflow:hidden}
+  #bdCp .cppool.dov{outline:2px dashed #dc2626;outline-offset:-3px}
+  #bdCp .cpph{display:flex;gap:6px;padding:8px 8px 4px}
+  #bdCp .cpph input{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--line-strong);border-radius:7px;background:var(--solid,var(--card));color:var(--ink);font-size:12.5px}
+  #bdCp .cpph select{padding:5px;border:1px solid var(--line-strong);border-radius:7px;background:var(--solid,var(--card));color:var(--ink);font-size:12px}
+  #bdCp .cpchips{display:flex;flex-wrap:wrap;gap:4px;padding:2px 8px;align-items:center}
+  #bdCp .cpchips .lb{font-size:11px;color:var(--ink-dim);margin-right:2px;min-width:44px}
+  #bdCp .cpchips button{border:1px solid var(--line-strong);background:var(--card);color:var(--ink);border-radius:999px;padding:2px 8px;font-size:11.5px;cursor:pointer}
+  #bdCp .cpchips button.on{background:#2563eb;border-color:#2563eb;color:#fff}
+  #bdCp .cpchips button i{font-style:normal;opacity:.75;font-size:10.5px}
+  #bdCp .cpcount{font-size:11.5px;color:var(--ink-dim);padding:4px 10px;border-bottom:1px solid var(--line)}
+  #bdCp .cplist{flex:1;overflow:auto;min-height:0}
+  #bdCp .cpr{display:flex;gap:4px;padding:6px 8px;border-bottom:1px solid var(--line);cursor:grab;font-size:12px}
+  #bdCp .cpr:hover{background:color-mix(in srgb,#2563eb 5%,var(--card))}
+  #bdCp .cpr.lk{box-shadow:inset 3px 0 0 #2563eb} #bdCp .cpr.cy{box-shadow:inset 3px 0 0 #f59e0b} #bdCp .cpr.bl{box-shadow:inset 3px 0 0 #dc2626}
+  #bdCp .cpe{border:0;background:transparent;color:var(--ink-dim);cursor:pointer;padding:0 2px;font-size:12px;align-self:flex-start}
+  #bdCp .cprb{flex:1;min-width:0}
+  #bdCp .cpr .l1{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+  #bdCp .cpr .l1 > *{flex:none;white-space:nowrap} #bdCp .cpr .l1 b{white-space:normal;word-break:break-word;flex:0 1 auto}
+  #bdCp .cpr .l1 b{font-weight:700;cursor:pointer}
+  #bdCp .cpr .pl{font-size:10.5px;border:1px solid var(--line-strong);border-radius:4px;padding:0 4px;color:var(--ink-dim)}
+  #bdCp .cpr .sw{font-size:11px;color:var(--ink-dim)} #bdCp .cpr .sw.no{color:#c2410c}
+  #bdCp .cpr .tm{margin-left:auto;font:700 11.5px var(--mono)}
+  #bdCp .cpr .l2{font-size:11px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #bdCp .cpr .l3{display:flex;flex-wrap:wrap;gap:3px 10px;font-size:11px;margin-top:2px}
+  #bdCp .cpr .ed{color:var(--ink-dim)} #bdCp .cpr .ed.late{color:#dc2626;font-weight:700}
+  #bdCp .cpr .mt.ok{color:#16a34a} #bdCp .cpr .mt.mid{color:#d97706} #bdCp .cpr .mt.bad{color:#dc2626} #bdCp .cpr .mt.unk{color:var(--ink-faint)}
+  #bdCp .cpr .at{color:var(--ink-dim)} #bdCp .cpr .at.lk{color:#2563eb;font-weight:700} #bdCp .cpr .at.bl{color:#dc2626}
+  #bdCp .cpr .l4{margin-top:6px} #bdCp .cpr .l4 .why{color:#dc2626;margin:0 0 4px} #bdCp .cpr .l4 p{font-size:11px;margin:4px 0 0}
+  #bdCp .cpmore{padding:10px;text-align:center}
+  @media (max-width: 1100px){ #bdCp .cpmain{grid-template-columns:minmax(0,1fr) 340px} }
+  @media (max-width: 800px){ #bdCp .cpmain{grid-template-columns:1fr;height:auto!important} #bdCp .cppool{max-height:60vh} }
 </style>
 </head>
 <body>
@@ -2178,7 +2263,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.65 · lots.html กำลังโหลด">v2.65</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.66 · lots.html กำลังโหลด">v2.66</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3310,10 +3395,11 @@ var GasFS = (function () {
    v2.63 (2026-10-26 11:02 ผู้ใช้: “เวลากดออก Excel เพิ่ม sheet สรุปรวมเครื่อง เอาแค่แถบเขียวกับรายการสรุป ชั้นไม้ไม่ต้อง · รวมเวลาให้ด้วย จะได้รู้แต่ละเครื่องต้องใช้เวลาตัดเท่าไหร่”) Excel A4 (Dashboard · Daily Plan) ชีตแรก “สรุปรวมเครื่อง”: เวลาตัดรายเครื่อง (จาก Capacity % · เหลือ/เกิน) + รวมทุกเครื่อง · ทีละเครื่อง แถบน้ำเงิน → แถวเขียว + แถว Lot (ไม่มีชั้นไม้) → รวมเครื่อง
    v2.64 (2026-10-26 11:13 ผู้ใช้: “ตรงวัตถุดิบกับตารางช่องไม่สมดุล · ทำให้ Excel กรอง Lot กับข้อมูลอื่นได้มะ — แบบนี้เหมือนมีตารางชั้น กดกรองไม่ถูก”) ชีต “สรุปรวมเครื่อง” = ตารางเดียว Lot ละแถว (A4 แนวนอน · ไม่มีรวมช่อง) + ปุ่มกรองทุกคอลัมน์ · คอลัมน์ เครื่อง/ลำดับ/Lot/Project/ประเภท/.saw/Pool/Enddate/แผ่น/ชิ้น/เวลา/สะสม/ตัดแล้ว/ค้างตัด/วัตถุดิบ/หมายเหตุ · หัวใบ = เวลาตัดรายเครื่อง · ใต้ตาราง “รวมที่แสดง” (SUBTOTAL ตามที่กรอง) · ไม่มี emoji
    v2.65 (2026-10-26 11:42 ผู้ใช้: “ตอนกด F5 หรือเวลาโหลดโปรแกรม ให้แถบโหลดอยู่ตรงกลางจอ · ไม่อยากให้คนทำงานคลิกไปทำอย่างอื่นได้ · ภาพจอด้านหลังเบลอ ๆ โหลดเสร็จเป็นภาพชัด”) หน้าคิวตัดงาน ตอนเปิด/F5: หน้าต่างโหลดกลางจอ (แถบ % ตามไฟล์ที่อ่านเสร็จ · รายการขั้น · เวลาที่ผ่านไป) · จอข้างหลังเบลอ กด/พิมพ์ไม่ได้ · เสร็จ = ✓ พร้อมใช้งาน แล้วจางหาย จอชัด · เกิน 90 วิ = ปุ่มโหลดใหม่ / ใช้ต่อก่อน
+   v2.66 (2026-10-26 12:58 ผู้ใช้: “เพิ่มแท็บตารางแผนงานตัด ขวา = ข้อมูลทั้งหมดกรอง/ค้นหาได้ ซ้าย = ตารางเครื่องจักร ลาก Lot ลงไปได้ · ปริ้น Excel · Lot ที่ลากลงวันไหน Dashboard ล็อกไว้ไม่จัด auto ทับเด็ดขาด ที่เหลือจัด auto · ขึ้น cap เวลา” · ถามแล้ว: เกินเวลา = ต่อวันถัดไป · SAW PLAN ยังอยู่ · ชั้นไม้ = ขั้นที่ 2 · ต้องใส่รหัส) แท็บ “🗂 วางแผนตัด” (#board-cp): ตารางเครื่อง × วัน (แถบเวลาใช้/เวลาเครื่อง · การ์ด 🔒 ล็อก / 🤖 Auto / ✂ ค้างตัด) + รายการ Lot ทั้งหมด (ค้นหา · กรองแผน/วัตถุดิบ/เลยกำหนด/ไม่มี .saw · เรียง · ▸ ชั้นไม้) · ลากผ่าน = บอกเวลาหลังวาง · ปล่อย = 🔒 ล็อก (adjust.json lock) · × / ลากกลับ = ปลดล็อก · ตัวจัดแผน: ล็อกลงก่อน Auto เติมรอบ ๆ · ไม้ไม่ครบที่ล็อกก็ลงแผน · 📊 Excel A4 (ตารางกรองได้ + สรุปเวลาเครื่อง)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.65';
+var VER = '2.66';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -17028,7 +17114,438 @@ document.addEventListener('click', function (e) {
 });
 ['wheel', 'touchmove'].forEach(function (t) { document.addEventListener(t, function (e) { if (document.body.classList.contains('ldon') && !(e.target.closest && e.target.closest('#ldOv .ldc'))) e.preventDefault(); }, { capture: true, passive: false }); });
 
-window.StarStock = { LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═══════════════════════════════════════════════════════════════════════
+   v2.66: แท็บ “🗂 วางแผนตัด” (#board-cp) — ลาก Lot ลงช่องเครื่อง × วัน = 🔒 ล็อกแผน · ที่เหลือ 🤖 Auto จัดรอบ ๆ
+   ผู้ใช้ 26/10/2026 12:58 (รูปตัวอย่าง Install-QA Tracker ทีม × วัน):
+     “อยากเพิ่มแท็บตารางแผนงานตัด ให้ขึ้นข้อมูลทั้งหมดทางด้านขวา กรองแล้วค้นหาสถานะได้ทุกอย่าง เช่น Lot สถานะวัตถุดิบ enddate .saw
+      ทางด้านซ้ายเป็นตารางเครื่องจักรแต่ละเครื่อง ให้ลาก Lot ทางด้านขวาลงไปได้ แล้วปริ้นเอกสารออกมาเป็น Excel ได้
+      ถ้า Lot ไหนลากไปในวันไหนแล้ว ให้แท็บ Dashboard ล็อกแผนนั้นไว้ ไม่จัด auto ไปทับเด็ดขาด ส่วนนอกนั้นให้จัด auto ตามเวลาเป้าหมาย
+      ตอนแรก Lot ลงตาราง ให้ขึ้น cap เวลาด้วย · คล้ายเอา sawplan ไปรวมกับ starstock · เลือกชั้นไม้ได้ (ละเอียด) · ตารางสรุปย่อดูได้”
+   ถามแล้ว (13:0x): เกินเวลาเครื่อง = ส่วนที่เกินต่อวันถัดไปที่เครื่องเดิม · แท็บใหม่ (SAW PLAN เดิมยังอยู่) · เลือกชั้นไม้ = ขั้นที่ 2 · ลาก/ล็อก/ปลดล็อก = ต้องใส่รหัส (รหัสเดียวกับ 🔒 แท็บ)
+   ① ตัวจัดแผน (ทุกหน้า: Dashboard · Daily Plan · Excel · SAW PLAN):
+      ล็อก = lots/plan/adjust.json { mc, day, lock: 1 } (ไฟล์เดียวกับ “ปรับแผน ⋯” v1.39 — ทุกเครื่องเห็น)
+      · Lot ที่ล็อกลงก่อน Lot อื่นทั้งหมด (หลังค้างตัด) ที่เครื่อง/วันนั้น → Lot อื่น Auto เติมรอบ ๆ ตามลำดับเดิม · Auto ไม่ย้าย Lot ที่ล็อก
+      · วันนั้นเวลาไม่พอ = ส่วนที่เกินต่อวันถัดไปที่เครื่องเดิม (เต็มทั้งวันแล้ว = เริ่มวันถัดไป) · ไม้ยังไม่ครบ / ยังไม่เช็ค ก็ลงตามที่ล็อก (คนวางแผนตัดสินแล้ว)
+      · ล็อก “วันนี้” = เพิ่มเข้าแผนวันนี้ของเครื่องนั้น (แบบปักวันนี้ v1.39) · Lot ค้างตัด = ย้ายเครื่องได้ (ตัดก่อน Lot ใหม่ในวันแรกเสมอ)
+   ② หน้าแท็บ: ซ้าย = ตารางเครื่อง × วัน (วันนี้ + 6 / 13 วันทำงาน) แถบเวลาใช้ / เวลาเครื่องทุกช่อง · การ์ด 🔒 ล็อก / 🤖 Auto / ✂ ค้างตัด
+      ขวา = Lot ทั้งหมดที่ยังไม่จบ (ค้นหา · กรองวัตถุดิบ · กรองสถานะแผน · เลยกำหนดตัด · ไม่มี .saw · เรียง) · ▸ = ชั้นไม้
+      ลากผ่านช่อง = บอกเวลาหลังวางทันที (พอ / เกิน → ต่อวันถัดไป) · ปล่อย = ล็อก · × / ลากกลับรายการ = ปลดล็อก · โหมดย่อ · 📊 Excel A4
+   ═══════════════════════════════════════════════════════════════════════ */
+function adjLock(g) { var a = adjOf(g); return a && a.lock && a.mc && a.day ? a : null; }
+var PLK = { forced: null };
+var adjOrderV266 = adjOrder;
+adjOrder = function (list) {
+  var r = adjOrderV266.apply(this, arguments);
+  try {
+    var lk = r.filter(function (g) { return !!adjLock(g); }); if (!lk.length) return r;
+    var rest = r.filter(function (g) { return !adjLock(g); });
+    lk.sort(function (a, b) { var x = adjLock(a), y = adjLock(b); return x.day < y.day ? -1 : x.day > y.day ? 1 : String(x.at || '') < String(y.at || '') ? -1 : String(x.at || '') > String(y.at || '') ? 1 : 0; });
+    return lk.concat(rest);   // ล็อกลงก่อน (จองเวลาวันนั้น) แล้ว Auto เติมรอบ ๆ
+  } catch (e) { console.warn('StarStock v2.66: ลำดับล็อก', e); return r; }
+};
+var bdAllocV266 = bdAlloc;
+bdAlloc = function (g, left, gate) {
+  var r = bdAllocV266.apply(this, arguments);
+  try { if (gate && PLK.forced && adjLock(g) && (g.mat === 'short' || (g.mat === 'unk' && B.set.needRm))) { g.lockForce = 1; PLK.forced.push(g); } } catch (e) { }
+  return r;
+};
+var wdOrderV266 = wdOrder;
+wdOrder = function (list) {
+  var r = wdOrderV266.apply(this, arguments);
+  try { if (PLK.forced && PLK.forced.length) { var add = PLK.forced.filter(function (g) { return r.indexOf(g) < 0; }); if (add.length) r = r.concat(add); } } catch (e) { }
+  return r;
+};
+var bdPlanV266 = bdPlan;
+bdPlan = function () {
+  PLK.forced = []; var P = null, F = null;
+  try { P = bdPlanV266.apply(this, arguments); } finally { F = PLK.forced; PLK.forced = null; }
+  try { if (P && F && F.length) P.blocked = P.blocked.filter(function (g) { return F.indexOf(g) < 0; }); } catch (e) { }
+  return P;
+};
+/* คิวรายวันของ Dashboard / Daily Plan (dbPackOf): ลงล็อกก่อน (หลังค้างตัด) — ตรงกับตัวจัดแผน */
+var dbPackOfV266 = dbPackOf;
+dbPackOf = function (pm) {
+  if (!pm || pm._dbp || !pm.q) return dbPackOfV266.apply(this, arguments);
+  var q = pm.q, lk = q.filter(function (e) { return !e.carry && e.adj && e.adj.lock && e.adj.day && !e.today; });
+  if (!lk.length) return dbPackOfV266.apply(this, arguments);
+  lk = lk.slice().sort(function (a, b) { return (a.dmin || 0) - (b.dmin || 0); });
+  var q2 = q.filter(function (e) { return e.carry; }).concat(lk, q.filter(function (e) { return !e.carry && lk.indexOf(e) < 0; }));
+  var own = Object.prototype.hasOwnProperty.call(pm, 'q');
+  pm.q = q2;
+  try { return dbPackOfV266.apply(this, arguments); }
+  finally { if (own) pm.q = q; else delete pm.q; }
+};
+
+/* ② แท็บ */
+var CP_K = 'sxlocaltrial:furnitech:cpUi';
+var CP = (function () { var o = lsGetJ(CP_K, {}) || {}; return { days: o.days === 13 ? 13 : 6, mini: !!o.mini, pool: o.pool !== false, sort: o.sort || 'due', mat: Array.isArray(o.mat) ? o.mat : [], st: o.st || '', late: !!o.late, nosaw: !!o.nosaw, q: '', open: {}, ok: false, drag: null, pend: false, busy: '', data: null, rows: null, mc: null }; })();
+function cpSave() { lsSetJ(CP_K, { days: CP.days, mini: CP.mini, pool: CP.pool, sort: CP.sort, mat: CP.mat, st: CP.st, late: CP.late, nosaw: CP.nosaw }); }
+function cpHm(m) { return m > 0.5 ? tgHms(m * 60) : '0:00:00'; }
+function cpHm2(m) { m = Math.max(0, Math.round(m || 0)); var h = Math.floor(m / 60), r = m % 60; return h + ':' + (r < 10 ? '0' : '') + r; }
+function cpDayMs(P, k) { return k < 0 ? P.today : bdMqDayMs(P, k); }
+function cpDayIso(P, k) { return tpKey(cpDayMs(P, k)); }
+function cpDayLbl(P, k) { var d = new Date(cpDayMs(P, k)); return (k < 0 ? 'วันนี้ ' : TH_D1[d.getDay()] + ' ') + d.getDate() + ' ' + TH_M3[d.getMonth()]; }
+function cpIsoK(P, iso) { if (!iso) return null; if (iso === tpKey(P.today)) return -1; for (var k = 0; k < 60; k++) { var s = cpDayIso(P, k); if (s === iso) return k; if (s > iso) return k; } return null; }
+function cpMatK(id) { var k = 'none'; try { k = dmfKind(id); } catch (e) { k = 'none'; } return k; }
+function cpMatC(k) { return k === 'full' ? 'ok' : k === 'miss' || k === 'buy' || k === 'nr' ? 'bad' : k === 'none' ? 'unk' : 'mid'; }
+function cpCapToday(x) {
+  if (!x.o.pm && !x.o.c) return 0;
+  var sn = null; try { sn = tpToday(B.plan); } catch (e) { sn = null; }
+  var ms = sn && sn.mcs ? sn.mcs[x.m.n] : null, mn = (ms && +ms.min) || (x.o.pm && x.o.pm.min) || bdMcMin(x.m);
+  try { var ov = typeof mcTodayOv2 === 'function' ? mcTodayOv2(x.m.n) : null; if (ov && ov.off) return 0; if (ov && ov.min > 0) mn = ov.min; } catch (e) { }
+  return mn;
+}
+/* ข้อมูลช่อง: [{ x, mc, k, cap, use, items: [{ g, id, p, t, lock, cy, pre, post, nx }] }] */
+function cpCells(P) {
+  var xs = dpMachines(P), D = CP.days, out = [], todayK = tpKey(P.today);
+  xs.forEach(function (x) {
+    var pm = x.o.pm, row = { x: x, mc: x.m.n, cells: [] };
+    for (var k = -1; k < D; k++) {
+      var c = { mc: x.m.n, k: k, cap: 0, use: 0, items: [] };
+      if (k < 0) {
+        c.cap = cpCapToday(x);
+        var R = null; try { R = dpRows(x, P, -1); } catch (e) { R = null; }
+        ((R && R.rows) || []).forEach(function (r) {
+          if (r.extra || r.moved) return; var g = r.g, a = g ? adjLock(g) : null;
+          c.items.push({ g: g, id: r.id, p: r.p || 0, t: r.t || 0, cy: !!r.carry, lock: !!(a && a.day === todayK && a.mc === x.m.n), pin: !!r.pin, nx: r.nx || 0, ns: !!r.ns, from: r.fromMc || null });
+          c.use += r.t || 0;
+        });
+      } else if (pm) {
+        var cp0 = bdCapD(pm, k); c.cap = cp0 === Infinity ? 0 : cp0; c.inf = cp0 === Infinity;
+        try { cyOfDay(pm, k).forEach(function (z) { c.items.push({ g: z.g, id: z.g.id, p: z.p, t: z.t, cy: true, lock: false, part: z.rem > z.p + 0.5 }); c.use += z.t || 0; }); } catch (e) { }
+        try { dbDayLots(pm, k).forEach(function (z) { var a = adjLock(z.g); c.items.push({ g: z.g, id: z.g.id, p: z.inD, t: z.tIn, cy: false, lock: !!(a && a.mc === x.m.n), pre: z.pre > 0.5, post: z.post > 0.5, all: z.p }); c.use += z.tIn || 0; }); } catch (e) { }
+      }
+      row.cells.push(c);
+    }
+    out.push(row);
+  });
+  return out;
+}
+/* Lot ทั้งหมดที่ยังไม่จบ (ค้างตัด · พร้อมตัด · ติดอยู่) */
+function cpLots(P) {
+  var seen = new Set(), out = [];
+  [['cy', P.cutting], ['rd', P.tomorrow], ['rd', P.next], ['bl', P.blocked]].forEach(function (z) {
+    (z[1] || []).forEach(function (g) {
+      if (!g || g.closed || seen.has(g)) return; seen.add(g);
+      var t = z[0] === 'cy' ? (g.left != null ? g.left : bdLotMin(g, g.remP || 0)) : bdLotMin(g, g.remP || 0), a = adjLock(g), mk = cpMatK(g.id);
+      var at = '', atK = null, atMc = '';
+      if (z[0] === 'cy') { atMc = g.mc || ''; at = '✂ ค้างตัด' + (atMc ? ' · ' + atMc : ''); atK = 0; }
+      else if (g.mq && g.mq.mark === bdPlan.mark) { atMc = g.mq.n; atK = g.mq.day; at = (a ? '🔒 ' : '🤖 ') + g.mq.n + ' · ' + cpDayLbl(P, g.mq.day); }
+      else if (z[0] === 'bl') at = 'ติด: ' + (g.why || 'ยังไม่พร้อม');
+      else at = 'ยังไม่ลงแผน';
+      if (a && a.day === tpKey(P.today)) { at = '🔒 ' + a.mc + ' · วันนี้'; atMc = a.mc; atK = -1; }
+      var due = null, late = null; try { due = bdDashDue(g); late = bdDashLate(g, P); } catch (e) { }
+      out.push({ g: g, id: g.id, typ: z[0], t: t || 0, p: Math.round(g.remP || 0), lock: !!a, lk: a, mk: mk, at: at, atK: atK, atMc: atMc, due: due, late: late, saw: xlSaw(g.id), pool: poolOf(g.id, g.pool) || '', prj: g.remark ? String(g.remark).replace(/\s+/g, ' ').trim() : '' });
+    });
+  });
+  return out;
+}
+function cpFilter(L) {
+  var q = CP.q.trim().toLowerCase();
+  return L.filter(function (o) {
+    if (CP.mat.length && CP.mat.indexOf(o.mk) < 0) return false;
+    if (CP.st === 'lock' && !o.lock) return false;
+    if (CP.st === 'auto' && !(o.typ === 'rd' && !o.lock && o.atK != null)) return false;
+    if (CP.st === 'none' && !(o.typ === 'bl' || o.atK == null)) return false;
+    if (CP.st === 'cy' && o.typ !== 'cy') return false;
+    if (CP.late && !(o.late != null && o.late >= 0)) return false;
+    if (CP.nosaw && o.saw) return false;
+    if (q) { var s = (o.id + ' ' + o.prj + ' ' + o.pool + ' ' + o.saw + ' ' + o.at).toLowerCase(); if (s.indexOf(q) < 0) return false; }
+    return true;
+  });
+}
+function cpSort(L) {
+  var k = CP.sort, n = function (v, d) { return v == null ? d : v; };
+  return L.slice().sort(function (a, b) {
+    if (k === 'end') return n(a.g.end, 9e15) - n(b.g.end, 9e15);
+    if (k === 't') return b.t - a.t;
+    if (k === 'p') return b.p - a.p;
+    if (k === 'id') return String(a.id).localeCompare(String(b.id), 'th', { numeric: true });
+    if (k === 'at') return n(a.atK, 999) - n(b.atK, 999) || String(a.atMc).localeCompare(String(b.atMc));
+    return n(a.due, 9e15) - n(b.due, 9e15) || n(a.g.end, 9e15) - n(b.g.end, 9e15);
+  });
+}
+function cpCard(P, it, mc, k) {
+  var g = it.g, id = it.id, mk = cpMatK(id), part = it.pre ? 'ต่อจากวันก่อน' : it.post ? 'ต่อวันถัดไป' : it.part ? 'บางส่วน' : '';
+  var tip = id + (g && g.remark ? '\nProject: ' + String(g.remark).replace(/\s+/g, ' ').trim().slice(0, 90) : '') + '\n' + fmtN(Math.round(it.p)) + ' ชิ้น · ' + cpHm(it.t) + (part ? ' · ' + part : '') + (it.nx > 0.5 ? ' · ไม่ทันวันนี้ ' + cpHm(it.nx) : '')
+    + '\n' + (it.lock ? '🔒 ล็อกไว้ (ลากเอง) — Auto ไม่ย้าย · ลากไปช่องอื่นได้ · × = ปลดล็อก' : it.cy ? '✂ ค้างตัด (ตัดก่อน Lot ใหม่) — ลากไปเครื่องอื่นได้' : '🤖 Auto จัด — ลากไปช่องไหน = ล็อกที่นั่น')
+    + (it.from ? '\n↩ โยกมาจากแผน ' + it.from.join(' · ') : '');
+  return '<div class="cpk ' + (it.lock ? 'lk' : it.cy ? 'cy' : 'au') + (it.ns ? ' ns' : '') + '" draggable="true" data-cpk="' + esc(id) + '" data-mc="' + esc(mc) + '" data-k="' + k + '" title="' + esc(tip) + '">'
+    + '<i class="cpm ' + cpMatC(mk) + '" aria-hidden="true"></i><span class="cpi">' + (it.lock ? '🔒' : it.cy ? '✂' : '') + '</span><b data-cpl="' + esc(id) + '">' + esc(id) + '</b>'
+    + '<small>' + fmtN(Math.round(it.p)) + ' ชิ้น · ' + esc(cpHm2(it.t)) + (part ? ' · ' + esc(part) : '') + (it.nx > 0.5 ? ' · <em>ไม่ทัน ' + esc(cpHm2(it.nx)) + '</em>' : '') + '</small>'
+    + (it.lock ? '<button type="button" class="cpx" data-cpx="' + esc(id) + '" title="ปลดล็อก — ให้ Auto จัด" aria-label="ปลดล็อก ' + esc(id) + '">×</button>' : '') + '</div>';
+}
+function cpCapHtml(c) {
+  if (!(c.cap > 0)) return '<div class="cpcap off"><span>' + (c.inf ? 'ไม่จำกัดเวลา · ' + esc(cpHm2(c.use)) : c.k < 0 && !c.items.length ? 'ไม่มีแผนวันนี้' : 'เครื่องปิด') + '</span></div>';
+  var u = c.use / c.cap, cls = u > 1.02 ? 'over' : u >= 0.95 ? 'full' : u >= 0.75 ? 'hi' : 'ok';
+  return '<div class="cpcap ' + cls + '" title="' + esc('ใช้ ' + cpHm(c.use) + ' จากเวลาเครื่อง ' + cpHm(c.cap) + (c.use > c.cap ? ' · เกิน ' + cpHm(c.use - c.cap) : ' · ว่าง ' + cpHm(c.cap - c.use))) + '"><i style="width:' + Math.min(100, u * 100).toFixed(1) + '%"></i><span>' + esc(cpHm2(c.use)) + ' / ' + esc(cpHm2(c.cap)) + ' · ' + Math.round(u * 100) + '%</span></div>';
+}
+function cpGridHtml(P) {
+  var D = CP.data, ks = []; for (var k = -1; k < CP.days; k++) ks.push(k);
+  var h = '<table class="cpgrid' + (CP.mini ? ' mini' : '') + '"><thead><tr><th class="cpmc">เครื่อง</th>' + ks.map(function (k) { var d = new Date(cpDayMs(P, k)); return '<th class="' + (k < 0 ? 'tdy' : d.getDay() === 0 || d.getDay() === 6 ? 'we' : '') + '"><b>' + esc(cpDayLbl(P, k)) + '</b></th>'; }).join('') + '</tr></thead><tbody>';
+  D.forEach(function (row) {
+    var tot = 0, cap = 0; row.cells.forEach(function (c) { tot += c.use; cap += c.cap; });
+    h += '<tr><th class="cpmc"><b>' + esc(row.mc) + '</b><small>' + esc(row.x.m.pc || '') + '</small><small>รวม ' + esc(cpHm2(tot)) + (cap ? ' / ' + esc(cpHm2(cap)) : '') + '</small></th>'
+      + row.cells.map(function (c) { return '<td class="cpc' + (c.k < 0 ? ' tdy' : '') + (!(c.cap > 0) && !c.inf && c.k >= 0 ? ' off' : '') + '" data-cpc="' + esc(row.mc) + '|' + c.k + '">' + cpCapHtml(c) + '<div class="cpcards">' + c.items.map(function (it) { return cpCard(P, it, row.mc, c.k); }).join('') + '</div></td>'; }).join('') + '</tr>';
+  });
+  return h + '</tbody></table>';
+}
+function cpPoolHtml(P) {
+  var L = CP.rows || [], F = cpSort(cpFilter(L)), cnt = {}, st = { lock: 0, auto: 0, none: 0, cy: 0 }, late = 0, nosaw = 0;
+  L.forEach(function (o) { cnt[o.mk] = (cnt[o.mk] || 0) + 1; if (o.lock) st.lock++; if (o.typ === 'rd' && !o.lock && o.atK != null) st.auto++; if (o.typ === 'bl' || o.atK == null) st.none++; if (o.typ === 'cy') st.cy++; if (o.late != null && o.late >= 0) late++; if (!o.saw) nosaw++; });
+  var chip = function (attr, val, on, txt, n) { return '<button type="button" ' + attr + '="' + esc(val) + '" class="' + (on ? 'on' : '') + '">' + esc(txt) + (n != null ? ' <i>' + n + '</i>' : '') + '</button>'; };
+  var h = '<div class="cpph"><input type="search" id="cpQ" placeholder="ค้นหา Lot · Project · .saw · Pool · เครื่อง" value="' + esc(CP.q) + '" aria-label="ค้นหา Lot">'
+    + '<select id="cpSort" aria-label="เรียง">' + [['due', 'เรียง: กำหนดตัด'], ['end', 'Enddate'], ['at', 'อยู่ที่ (เครื่อง/วัน)'], ['t', 'เวลามาก → น้อย'], ['p', 'ชิ้นมาก → น้อย'], ['id', 'ชื่อ Lot']].map(function (o) { return '<option value="' + o[0] + '"' + (CP.sort === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div>'
+    + '<div class="cpchips"><span class="lb">แผน</span>' + chip('data-cpst', '', !CP.st, 'ทั้งหมด', L.length) + chip('data-cpst', 'none', CP.st === 'none', 'ยังไม่ลงแผน / ติด', st.none) + chip('data-cpst', 'auto', CP.st === 'auto', '🤖 Auto', st.auto) + chip('data-cpst', 'lock', CP.st === 'lock', '🔒 ล็อก', st.lock) + chip('data-cpst', 'cy', CP.st === 'cy', '✂ ค้างตัด', st.cy)
+    + chip('data-cplate', '1', CP.late, 'เลยกำหนดตัด', late) + chip('data-cpns', '1', CP.nosaw, 'ไม่มี .saw', nosaw) + '</div>'
+    + '<div class="cpchips"><span class="lb">วัตถุดิบ</span>' + chip('data-cpmat', '', !CP.mat.length, 'ทั้งหมด') + DMF_O.filter(function (k) { return cnt[k] || CP.mat.indexOf(k) >= 0; }).map(function (k) { return chip('data-cpmat', k, CP.mat.indexOf(k) >= 0, dmfLbl(k), cnt[k] || 0); }).join('') + '</div>'
+    + '<div class="cpcount">แสดง <b>' + F.length + '</b> จาก ' + L.length + ' Lot · ลากแถวไปวางที่ช่องเครื่อง/วัน = 🔒 ล็อก</div><div class="cplist" id="cpList">';
+  var MAX = 400;
+  h += F.slice(0, MAX).map(function (o) {
+    var g = o.g, op = !!CP.open[o.id], due = o.due != null ? fD(o.due) : '', lt = o.late != null && o.late >= 0 ? (o.late ? 'เลย ' + o.late + ' วัน' : 'ครบกำหนดวันนี้') : '';
+    var M = { t: '', cls: '' }; try { M = w6CellTxt(dbMatCell(g)); } catch (e) { }
+    return '<div class="cpr ' + (o.lock ? 'lk' : o.typ) + '" draggable="true" data-cpr="' + esc(o.id) + '">'
+      + '<button type="button" class="cpe" data-cpe="' + esc(o.id) + '" aria-expanded="' + op + '" title="ชั้นไม้ / รายละเอียด">' + (op ? '▾' : '▸') + '</button>'
+      + '<div class="cprb"><div class="l1"><i class="cpm ' + cpMatC(o.mk) + '" aria-hidden="true"></i><b data-cpl="' + esc(o.id) + '">' + esc(o.id) + '</b>' + (o.pool ? '<span class="pl">' + esc(o.pool) + '</span>' : '') + '<span class="sw' + (o.saw ? '' : ' no') + '">' + (o.saw ? '.saw ' + esc(o.saw) : '⏸ ไม่มี .saw') + '</span><span class="tm">' + fmtN(o.p) + ' ชิ้น · ' + esc(cpHm2(o.t)) + '</span></div>'
+      + (CP.mini ? '' : '<div class="l2">' + esc(o.prj || '—') + '</div>')
+      + '<div class="l3"><span class="ed' + (lt ? ' late' : '') + '">ส่ง ' + esc(g.end != null ? fD(g.end) : '—') + (due ? ' · ตัดก่อน ' + esc(due) : '') + (lt ? ' · ' + esc(lt) : '') + '</span>'
+      + (CP.mini ? '' : '<span class="mt ' + cpMatC(o.mk) + '">' + esc(M.t || dmfLbl(o.mk)) + '</span>') + '<span class="at ' + (o.lock ? 'lk' : o.typ) + '">' + esc(o.at) + '</span></div>'
+      + (op ? '<div class="l4">' + (o.typ === 'bl' && g.why ? '<p class="why">ติด: ' + esc(g.why) + '</p>' : '') + (dpBoardsHtml(o.id) || '<p class="muted">ไม่มีข้อมูลชั้นไม้ (ยังไม่มี .saw)</p>') + '<p class="muted">เลือกชั้นไม้ลากแยกเครื่อง/วัน = ขั้นถัดไป · ตอนนี้ลากได้ทั้ง Lot</p></div>' : '')
+      + '</div></div>';
+  }).join('') + (F.length > MAX ? '<p class="muted cpmore">+ อีก ' + (F.length - MAX) + ' Lot — พิมพ์ค้นหา / กรองให้แคบลง</p>' : '') + (!F.length ? '<p class="muted cpmore">ไม่มี Lot ตรงตัวกรอง</p>' : '') + '</div>';
+  return h;
+}
+function cpRender(P) {
+  var E = $('bdCp'); if (!E) return;
+  if (CP.drag) { CP.pend = true; return; }   // กำลังลาก = ไม่วาดทับ (วาดหลังปล่อย)
+  CP.data = cpCells(P); CP.rows = cpLots(P);
+  var gw = E.querySelector('.cpgw'), pl = E.querySelector('#cpList'), keep = { gl: gw ? gw.scrollLeft : 0, gt: gw ? gw.scrollTop : 0, pt: pl ? pl.scrollTop : 0 }, qf = document.activeElement && document.activeElement.id === 'cpQ';
+  var nLock = CP.rows.filter(function (o) { return o.lock; }).length;
+  E.innerHTML = '<div class="cpbar"><div class="cpttl"><b>🗂 วางแผนตัด</b><small>ลาก Lot จากรายการขวา → ช่องเครื่อง/วัน = 🔒 ล็อก (Dashboard / Auto ไม่ย้าย) · Lot อื่น 🤖 Auto จัดรอบ ๆ ตามเวลาเครื่อง</small></div><span class="sp"></span>'
+    + '<div class="cpseg" role="group" aria-label="ช่วงวัน"><button type="button" data-cpdays="6" class="' + (CP.days === 6 ? 'on' : '') + '">7 วัน</button><button type="button" data-cpdays="13" class="' + (CP.days === 13 ? 'on' : '') + '">14 วัน</button></div>'
+    + '<div class="cpseg" role="group" aria-label="มุมมอง"><button type="button" data-cpmini="0" class="' + (!CP.mini ? 'on' : '') + '">เต็ม</button><button type="button" data-cpmini="1" class="' + (CP.mini ? 'on' : '') + '">ย่อ</button></div>'
+    + '<button type="button" class="tbtn" data-cppool title="แสดง / ซ่อนรายการ Lot ด้านขวา">' + (CP.pool ? '⇥ ซ่อนรายการ' : '⇤ รายการ Lot') + '</button>'
+    + '<button type="button" class="tbtn" data-cpxl title="ออก Excel A4: แผนทุกเครื่อง × วันในช่วงที่เห็น (กรองได้) + สรุปเวลาเครื่อง">📊 Excel A4</button>'
+    + '<button type="button" class="tbtn cplock' + (CP.ok ? ' on' : '') + '" data-cplock title="' + (CP.ok ? 'แก้แผนได้ (ใส่รหัสแล้ว) — กดเพื่อล็อกกลับ (ดูอย่างเดียว)' : 'ดูอย่างเดียว — กดแล้วใส่รหัสเพื่อลาก / ล็อก / ปลดล็อก') + '">' + (CP.ok ? '🔓 แก้แผนได้' : '🔒 ดูอย่างเดียว') + '</button></div>'
+    + '<div class="cplg"><span><b class="k lk">🔒</b> ล็อก (ลากเอง) ' + nLock + ' Lot</span><span><b class="k au">🤖</b> Auto จัด</span><span><b class="k cy">✂</b> ค้างตัด</span><span><i class="cpm ok"></i>ไม้ครบ</span><span><i class="cpm mid"></i>จ่ายบางส่วน</span><span><i class="cpm bad"></i>ไม้ไม่ครบ</span><span><i class="cpm unk"></i>ไม่มีข้อมูล</span><span>แถบ = เวลาใช้ / เวลาเครื่อง (เกิน = ต่อวันถัดไป)</span>' + (CP.busy ? '<span class="busy">⏳ ' + esc(CP.busy) + '</span>' : '') + '</div>'
+    + '<div class="cpmain' + (CP.pool ? '' : ' nopool') + '"><div class="cpgw">' + cpGridHtml(P) + '</div>' + (CP.pool ? '<aside class="cppool" data-cppooldrop>' + cpPoolHtml(P) + '</aside>' : '') + '</div>';
+  var gw2 = E.querySelector('.cpgw'), pl2 = E.querySelector('#cpList');
+  if (gw2) { gw2.scrollLeft = keep.gl; gw2.scrollTop = keep.gt; } if (pl2) pl2.scrollTop = keep.pt;
+  if (qf) { var qi = $('cpQ'); if (qi) { qi.focus(); try { qi.setSelectionRange(qi.value.length, qi.value.length); } catch (e) { } } }
+  cpFit();
+}
+function cpPoolRender() {
+  var A = document.querySelector('#bdCp .cppool'); if (!A || !B.plan) return;
+  var pl = A.querySelector('#cpList'), pt = pl ? pl.scrollTop : 0, qf = document.activeElement && document.activeElement.id === 'cpQ';
+  A.innerHTML = cpPoolHtml(B.plan);
+  var pl2 = A.querySelector('#cpList'); if (pl2) pl2.scrollTop = pt;
+  if (qf) { var qi = $('cpQ'); if (qi) { qi.focus(); try { qi.setSelectionRange(qi.value.length, qi.value.length); } catch (e) { } } }
+}
+function cpFit() { var m = document.querySelector('#bdCp .cpmain'); if (!m) return; var top = m.getBoundingClientRect().top; m.style.height = Math.max(320, window.innerHeight - top - 10) + 'px'; }
+window.addEventListener('resize', function () { if (view() === 'board' && B.tab === 'cp') cpFit(); });
+
+/* แท็บ: ทะเบียน / ที่อยู่ #board-cp */
+var viewOfV266 = viewOf;
+viewOf = function () { var h = String(location.hash || '').replace(/^#\/?/, '').toLowerCase(); if (/^board-cp(-tv)?$/.test(h)) return 'board'; return viewOfV266.apply(this, arguments); };
+var bdTabHashV266 = bdTabHash;
+bdTabHash = function (k) { return k === 'cp' ? 'board-cp' : bdTabHashV266.apply(this, arguments); };
+var bdShowV266 = bdShow;
+bdShow = function () {
+  if (!/^#?\/?board-cp/i.test(location.hash)) return bdShowV266.apply(this, arguments);
+  document.body.classList.toggle('tv', /tv$/i.test(location.hash));
+  B.tab = 'cp'; bqSave(); bdRender();
+  if (!ensureFs()) return;
+  Promise.all([lotLoad({ quiet: L.loaded }), bdLoadAux()]).then(function () { if (view() === 'board') bdRender(); });
+};
+var BQ_IC_CP = '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="10.5" height="14" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M2 7.5h10.5M2 12h10.5M6.5 3v14" stroke="currentColor" stroke-width="1.4"/><rect x="14" y="3" width="4" height="3.4" rx="0.9" fill="currentColor"/><rect x="14" y="8.3" width="4" height="3.4" rx="0.9" fill="currentColor" opacity=".7"/><rect x="14" y="13.6" width="4" height="3.4" rx="0.9" fill="currentColor" opacity=".45"/></svg>';
+var bdTabsV266 = bdTabs;
+bdTabs = function (P) {
+  var r = bdTabsV266.apply(this, arguments);
+  try {
+    if (bdDeptOf(B.tab) !== 'cut') return r;
+    var b = '<button class="bdtab' + (B.tab === 'cp' ? ' on' : '') + '" data-btab="cp" role="tab" aria-selected="' + (B.tab === 'cp') + '" title="' + esc('ตารางเครื่อง × วัน: ลาก Lot จากรายการ (กรอง/ค้นหาได้) ลงช่อง = 🔒 ล็อกแผน (Dashboard / Auto ไม่ย้าย) · ที่เหลือ Auto จัดรอบ ๆ · Excel A4 (#board-cp)') + '">' + BQ_IC_CP + '<span><b>วางแผนตัด</b><small>ลาก Lot ลงเครื่อง · ล็อกแผน</small></span></button>';
+    ['bdTabs', 'bdTabsTop'].forEach(function (id) { var E = $(id); if (!E) return; var d = E.querySelector('[data-btab="dash"]'); if (d && !E.querySelector('[data-btab="cp"]')) d.insertAdjacentHTML('afterend', b); });
+  } catch (e) { console.warn('StarStock v2.66: ปุ่มแท็บวางแผนตัด', e); }
+  return r;
+};
+var bdRenderV266 = bdRender;
+bdRender = function () {
+  var E = $('board');
+  if (!E || view() !== 'board' || B.tab !== 'cp') { if (E) E.classList.remove('cp'); return bdRenderV266.apply(this, arguments); }
+  if (!$('bdCols')) E.innerHTML = '<div id="bdTabs"></div><div id="bdBar"></div><div id="bdMc"></div><div id="bdBanner" class="hide"></div><div id="bdFlt"></div><div id="bdCols"></div><div id="bdMq"></div><div id="bdDash"></div><div id="bdDay"></div><div id="bdDept"></div><div id="bdSelBar" class="hide"></div><aside id="bdDetail" class="hide"></aside>';
+  if (!$('bdCp')) { var anchor = $('bdDetail'); if (anchor) anchor.insertAdjacentHTML('beforebegin', '<div id="bdCp"></div>'); else E.insertAdjacentHTML('beforeend', '<div id="bdCp"></div>'); }
+  try { if (typeof SPX === 'object' && SPX.frame) spClose(); } catch (e) { }
+  try { if (typeof EDX === 'object' && EDX.frame) edClose(); } catch (e) { }
+  ['saw', 'day', 'dept', 'mq', 'dash'].forEach(function (c) { E.classList.remove(c); }); E.classList.add('cp');
+  bdTabs(null);
+  var C = $('bdCp');
+  if (!L.loaded && !L.rows.length) { C.innerHTML = '<div class="muted" style="padding:40px;text-align:center">กำลังอ่าน data 6 จาก Google Drive…</div>'; return; }
+  if (L.none) { C.innerHTML = '<div class="lempty"><h3>ยังไม่มีข้อมูล Lot ผลิต (data 6)</h3></div>'; return; }
+  var P = B.plan = bdPlan();
+  try { tpSaveMaybe(P); } catch (e) { }
+  bdTabs(P);
+  try { cpRender(P); } catch (e) { console.warn('StarStock v2.66: วาดแท็บวางแผนตัด', e); C.innerHTML = '<p class="mqnone">วาดหน้าไม่ได้: ' + esc(e && e.message || e) + '</p>'; }
+};
+
+/* รหัสแก้แผน (รหัสเดียวกับ 🔒 แท็บ v2.62) */
+function cpPw(then) {
+  if (CP.ok) { then(); return; }
+  openBox('<h2>🔓 แก้แผนตัด</h2><p>ใส่รหัสเพื่อลาก / ล็อก / ปลดล็อกแผน (รหัสเดียวกับปุ่ม 🔒 แท็บ หน้า HOME) — ใส่ครั้งเดียวจนปิดหน้านี้</p>'
+    + '<form id="cpF" class="tlf" autocomplete="off"><input type="password" id="cpPwI" inputmode="numeric" placeholder="รหัส" autocomplete="off" aria-label="รหัส"><button class="tbtn pri" type="submit">ตกลง</button></form><p class="tlerr" id="cpErr" role="alert"></p>'
+    + '<div class="acts"><button class="tbtn" type="button" id="cpX">ยกเลิก</button></div>', function (box, close) {
+      var inp = box.querySelector('#cpPwI'), er = box.querySelector('#cpErr'), busy = false; setTimeout(function () { try { inp.focus(); } catch (e) { } }, 30);
+      box.querySelector('#cpX').onclick = close;
+      box.querySelector('#cpF').onsubmit = async function (e) {
+        e.preventDefault(); if (busy) return; busy = true; er.textContent = 'กำลังตรวจรหัส…';
+        try { await tlLoad(true); if (!(await tlPwOk(inp.value))) { er.textContent = '✗ รหัสไม่ถูก'; inp.select(); return; } CP.ok = true; close(); toast('🔓 แก้แผนได้แล้ว'); then(); }
+        catch (x) { er.textContent = '✗ ' + ((x && x.message) || x); }
+        finally { busy = false; }
+      };
+    });
+}
+async function cpAdj(id, patch, msg) {
+  for (var n = 0; B.adj.saving && n < 60; n++) await new Promise(function (r) { setTimeout(r, 200); });
+  CP.busy = 'กำลังบันทึกแผน…'; try { if (B.plan) cpRender(B.plan); } catch (e) { }
+  var ok = false; try { ok = await adjSet(id, patch); } finally { CP.busy = ''; }
+  if (ok && msg) toast(msg, 3500);
+  if (view() === 'board') bdRender();
+  return ok;
+}
+function cpLockTo(id, mc, k) {
+  var P = B.plan, g = P && P.G ? P.G.get(id) : null; if (!g) return;
+  var iso = cpDayIso(P, k), isCy = P.cutting.indexOf(g) >= 0;
+  cpPw(function () {
+    cpAdj(id, { mc: mc, day: iso, lock: 1 }, isCy ? '🔒 ' + id + ' → ' + mc + ' (ค้างตัด: ตัดก่อน Lot ใหม่ในวันแรกของเครื่อง)' : '🔒 ล็อก ' + id + ' → ' + mc + ' · ' + cpDayLbl(P, k) + ' — Auto จัด Lot อื่นรอบ ๆ');
+  });
+}
+function cpUnlock(id) { cpPw(function () { cpAdj(id, { mc: null, day: null, lock: null }, '↺ ปลดล็อก ' + id + ' — ให้ Auto จัด'); }); }
+
+/* ลาก-วาง */
+function cpLotT(id) { var P = B.plan, g = P && P.G ? P.G.get(id) : null; if (!g) return 0; return P.cutting.indexOf(g) >= 0 ? (g.left != null ? g.left : bdLotMin(g, g.remP || 0)) : bdLotMin(g, g.remP || 0); }
+function cpCellOf(mc, k) { var R = (CP.data || []).filter(function (r) { return r.mc === mc; })[0]; return R ? R.cells.filter(function (c) { return c.k === k; })[0] || null : null; }
+function cpPrevTxt(id, mc, k) {
+  var c = cpCellOf(mc, k); if (!c) return null;
+  var t = cpLotT(id), mine = 0; c.items.forEach(function (it) { if (String(it.id).toUpperCase() === String(id).toUpperCase()) mine += it.t || 0; });
+  var u0 = c.use - mine, u1 = u0 + t;
+  if (!(c.cap > 0)) return { cls: c.inf ? 'ok' : 'bad', t: c.inf ? 'ไม่จำกัดเวลา · + ' + cpHm2(t) : 'เครื่องปิดวันนี้ — จะไปเริ่มวันทำงานถัดไปของเครื่องนี้' };
+  if (u0 >= c.cap - 0.5) return { cls: 'bad', t: 'วันนี้เต็มแล้ว (' + cpHm2(u0) + ' / ' + cpHm2(c.cap) + ') → เริ่มวันถัดไป · Lot ' + cpHm2(t) };
+  if (u1 > c.cap + 0.5) return { cls: 'warn', t: 'หลังวาง ' + cpHm2(u1) + ' / ' + cpHm2(c.cap) + ' — เกิน ' + cpHm2(u1 - c.cap) + ' → ต่อวันถัดไป' };
+  return { cls: 'ok', t: 'หลังวาง ' + cpHm2(u1) + ' / ' + cpHm2(c.cap) + ' · เหลือ ' + cpHm2(c.cap - u1) };
+}
+function cpClearOv() { document.querySelectorAll('#bdCp .cpc.dov').forEach(function (td) { td.classList.remove('dov', 'ok', 'warn', 'bad'); var p = td.querySelector('.cpprev'); if (p) p.remove(); }); var a = document.querySelector('#bdCp .cppool.dov'); if (a) a.classList.remove('dov'); }
+document.addEventListener('dragstart', function (e) {
+  var t = e.target && e.target.closest ? e.target.closest('#bdCp [data-cpr],#bdCp [data-cpk]') : null; if (!t) return;
+  var id = t.getAttribute('data-cpr') || t.getAttribute('data-cpk');
+  CP.drag = { id: id, card: t.hasAttribute('data-cpk'), mc: t.getAttribute('data-mc') || '', k: t.hasAttribute('data-k') ? +t.getAttribute('data-k') : null };
+  try { e.dataTransfer.setData('text/plain', id); e.dataTransfer.effectAllowed = 'move'; } catch (er) { }
+  t.classList.add('dragging');
+});
+document.addEventListener('dragover', function (e) {
+  if (!CP.drag) return;
+  var td = e.target && e.target.closest ? e.target.closest('#bdCp [data-cpc]') : null, pool = !td && e.target.closest ? e.target.closest('#bdCp .cppool') : null;
+  if (!td && !(pool && CP.drag.card)) return;
+  e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch (er) { }
+  if (pool) { if (!pool.classList.contains('dov')) { cpClearOv(); pool.classList.add('dov'); } return; }
+  if (td.classList.contains('dov')) return;
+  cpClearOv();
+  var a = td.getAttribute('data-cpc').split('|'), k = +a.pop(), mc = a.join('|'), pv = cpPrevTxt(CP.drag.id, mc, k);
+  td.classList.add('dov', pv ? pv.cls : 'ok');
+  if (pv) td.insertAdjacentHTML('afterbegin', '<div class="cpprev ' + pv.cls + '">' + esc(pv.t) + '</div>');
+});
+document.addEventListener('drop', function (e) {
+  if (!CP.drag) return;
+  var td = e.target && e.target.closest ? e.target.closest('#bdCp [data-cpc]') : null, pool = !td && e.target.closest ? e.target.closest('#bdCp .cppool') : null;
+  if (!td && !pool) return;
+  e.preventDefault();
+  var d = CP.drag; CP.drag = null; cpClearOv();
+  if (pool) { if (d.card) { var g0 = B.plan && B.plan.G ? B.plan.G.get(d.id) : null; if (g0 && adjLock(g0)) cpUnlock(d.id); else toast('Lot นี้ไม่ได้ล็อก (🤖 Auto) — ไม่ต้องปลด'); } if (CP.pend) { CP.pend = false; bdRender(); } return; }
+  var a = td.getAttribute('data-cpc').split('|'), k = +a.pop(), mc = a.join('|');
+  if (d.card && d.mc === mc && d.k === k) { var g1 = B.plan.G.get(d.id); if (g1 && adjLock(g1)) { if (CP.pend) { CP.pend = false; bdRender(); } return; } }
+  cpLockTo(d.id, mc, k);
+  if (CP.pend) { CP.pend = false; }
+});
+document.addEventListener('dragend', function () {
+  if (!CP.drag && !document.querySelector('#bdCp .dragging')) return;
+  CP.drag = null; cpClearOv(); document.querySelectorAll('#bdCp .dragging').forEach(function (x) { x.classList.remove('dragging'); });
+  if (CP.pend) { CP.pend = false; if (view() === 'board' && B.tab === 'cp') bdRender(); }
+});
+document.addEventListener('click', function (e) {
+  var t = e.target && e.target.closest ? e.target.closest('#bdCp [data-cpdays],#bdCp [data-cpmini],#bdCp [data-cppool],#bdCp [data-cpxl],#bdCp [data-cplock],#bdCp [data-cpe],#bdCp [data-cpx],#bdCp [data-cpl],#bdCp [data-cpst],#bdCp [data-cplate],#bdCp [data-cpns],#bdCp [data-cpmat]') : null; if (!t) return;
+  e.preventDefault(); var P = B.plan; if (!P) return;
+  if (t.hasAttribute('data-cpdays')) { CP.days = +t.getAttribute('data-cpdays') === 13 ? 13 : 6; cpSave(); cpRender(P); return; }
+  if (t.hasAttribute('data-cpmini')) { CP.mini = t.getAttribute('data-cpmini') === '1'; cpSave(); cpRender(P); return; }
+  if (t.hasAttribute('data-cppool')) { CP.pool = !CP.pool; cpSave(); cpRender(P); return; }
+  if (t.hasAttribute('data-cpxl')) { cpXl(t); return; }
+  if (t.hasAttribute('data-cplock')) { if (CP.ok) { CP.ok = false; toast('🔒 ดูอย่างเดียวแล้ว'); cpRender(P); } else cpPw(function () { cpRender(B.plan); }); return; }
+  if (t.hasAttribute('data-cpx')) { e.stopPropagation(); cpUnlock(t.getAttribute('data-cpx')); return; }
+  if (t.hasAttribute('data-cpe')) { var id = t.getAttribute('data-cpe'); CP.open[id] = !CP.open[id]; cpPoolRender(); return; }
+  if (t.hasAttribute('data-cpl')) { try { bdDetail(t.getAttribute('data-cpl')); } catch (er) { } return; }
+  if (t.hasAttribute('data-cpst')) { CP.st = t.getAttribute('data-cpst'); cpSave(); cpPoolRender(); return; }
+  if (t.hasAttribute('data-cplate')) { CP.late = !CP.late; cpSave(); cpPoolRender(); return; }
+  if (t.hasAttribute('data-cpns')) { CP.nosaw = !CP.nosaw; cpSave(); cpPoolRender(); return; }
+  if (t.hasAttribute('data-cpmat')) { var k = t.getAttribute('data-cpmat'); if (!k) CP.mat = []; else { var i = CP.mat.indexOf(k); if (i >= 0) CP.mat.splice(i, 1); else CP.mat.push(k); } cpSave(); cpPoolRender(); return; }
+});
+document.addEventListener('input', function (e) { if (e.target && e.target.id === 'cpQ') { CP.q = e.target.value; clearTimeout(CP.qt); CP.qt = setTimeout(cpPoolRender, 160); } });
+document.addEventListener('change', function (e) { if (e.target && e.target.id === 'cpSort') { CP.sort = e.target.value; cpSave(); cpPoolRender(); } });
+
+/* 📊 Excel A4: แผนทุกเครื่อง × วันในช่วงที่เห็น (ตารางเดียว กรองได้) + สรุปเวลาเครื่อง */
+function cpXlBook(P) {
+  var D = CP.data || cpCells(P), cols = [{ h: 'วันที่', w: 11, a: 'c' }, { h: 'เครื่อง', w: 10 }, { h: 'ลำดับ', w: 5, f: 'i', a: 'c' }, { h: 'Lot', w: 24 }, { h: 'Project', w: 26 }, { h: 'ประเภท', w: 9, a: 'c' }, { h: '.saw', w: 9, a: 'c' }, { h: 'Pool', w: 7, a: 'c' },
+    { h: 'Enddate', w: 9, a: 'c' }, { h: 'ชิ้น', w: 7, f: 'i', a: 'r' }, { h: 'เวลาเป้าหมาย', w: 10, f: 't', a: 'r' }, { h: 'วัตถุดิบ', w: 20 }, { h: 'หมายเหตุ', w: 16 }, { h: 'สถานะงานตัดจริง', w: 12 }];
+  var body = [], roles = [], ks = []; for (var k = -1; k < CP.days; k++) ks.push(k);
+  ks.forEach(function (k) {
+    D.forEach(function (row) {
+      var c = row.cells.filter(function (z) { return z.k === k; })[0]; if (!c) return;
+      c.items.forEach(function (it, i) {
+        var g = it.g, M = { t: '' }; try { M = g ? w6CellTxt(dbMatCell(g)) : M; } catch (e) { }
+        body.push([cpDayLbl(P, k), row.mc, i + 1, it.id, g && g.remark ? String(g.remark).replace(/\s+/g, ' ').trim().slice(0, 120) : '', it.lock ? 'ล็อก' : it.cy ? 'ค้างตัด' : 'Auto', xlSaw(it.id) || '-', poolOf(it.id, g && g.pool) || '', g && g.end != null ? fD(g.end) : '',
+          Math.round(it.p) || '', (it.t || 0) * 60 || '', xlNoEmoji(M.t || ''), [it.pre ? 'ต่อจากวันก่อน' : '', it.post ? 'ต่อวันถัดไป' : '', it.nx > 0.5 ? 'ไม่ทันวันนี้ ' + cpHm2(it.nx) : '', it.from ? 'โยกมาจาก ' + it.from.join(' · ') : ''].filter(Boolean).join(' · '), '']);
+        roles.push('b');
+      });
+    });
+  });
+  var n = body.length;
+  if (n) { body.push(new Array(cols.length).fill('')); roles.push('gap'); var tr = new Array(cols.length).fill(''); tr[0] = 'รวมที่แสดง'; tr[3] = n + ' Lot'; tr[9] = body.slice(0, n).reduce(function (a, r) { return a + (+r[9] || 0); }, 0); tr[10] = body.slice(0, n).reduce(function (a, r) { return a + (+r[10] || 0); }, 0); body.push(tr); roles.push('t'); }
+  var day0 = cpDayLbl(P, -1), day1 = cpDayLbl(P, CP.days - 1);
+  var s1 = { name: 'แผนตัด ' + (CP.days + 1) + ' วัน', spec: { title: 'แผนงานตัด · ' + day0 + ' – ' + day1 + ' · ทุกเครื่อง', orient: 'landscape', cols: cols, body: body, roles: roles,
+    info: ['ประเภท: ล็อก = ลากลงเอง (Dashboard / Auto ไม่ย้าย) · Auto = ระบบจัด · ค้างตัด = ตัดก่อน Lot ใหม่ · กดปุ่ม ▾ ที่หัวตาราง = กรอง วันที่ / เครื่อง / Lot / วัตถุดิบ … · แถวรวมนับเฉพาะที่กรอง', 'ตัวเลข ณ ' + fD(Date.now()) + ' ' + bdHM(Date.now()) + ' · StarStock v' + VER],
+    af: { n: n, tot: n ? 1 : 0, sum: [9, 10], cnt: 3, wrap: [3, 4, 11, 12] } } };
+  /* สรุปเวลาเครื่อง: เครื่อง × วัน */
+  var c2 = [{ h: 'เครื่อง', w: 12 }].concat(ks.map(function (k) { return { h: cpDayLbl(P, k), w: 12, a: 'c' }; }), [{ h: 'รวม', w: 12, a: 'c' }]), b2 = [], r2 = [];
+  D.forEach(function (row) { var tu = 0, tc = 0; b2.push([row.mc].concat(row.cells.filter(function (c) { return c.k < CP.days; }).map(function (c) { tu += c.use; tc += c.cap; return c.cap > 0 ? cpHm2(c.use) + ' / ' + cpHm2(c.cap) + ' (' + Math.round(c.use / c.cap * 100) + '%)' : c.items.length ? cpHm2(c.use) : 'ปิด'; }), [cpHm2(tu) + (tc ? ' / ' + cpHm2(tc) : '')])); r2.push('b'); });
+  var s2 = { name: 'สรุปเวลาเครื่อง', spec: { title: 'สรุปเวลาเครื่อง · ' + day0 + ' – ' + day1, orient: 'landscape', cols: c2, body: b2, roles: r2, info: ['ช่อง = เวลาตัดตามแผน / เวลาเครื่อง (%) · เกิน 100% = ส่วนที่เกินต่อวันถัดไป · ตัวเลข ณ ' + fD(Date.now()) + ' ' + bdHM(Date.now())] } };
+  return { file: 'CutPlan_' + xlYmd(P.today) + '_' + (CP.days + 1) + 'd_' + bdHM(Date.now()).replace(':', '') + '.xlsx', sheets: [s1, s2] };
+}
+async function cpXl(btn) {
+  var P = B.plan; if (!P) return;
+  if (btn) { btn.disabled = true; btn.dataset.t0 = btn.textContent; btn.textContent = 'กำลังทำไฟล์…'; }
+  try { var bk = cpXlBook(P), r = await xlSave(bk.file, bk.sheets); toast('📊 ส่งออก ' + r.name + ' แล้ว (' + r.sheets.length + ' ชีต · A4)'); }
+  catch (e) { console.warn('StarStock v2.66: Excel วางแผนตัด', e); toast('✗ ส่งออก Excel ไม่ได้: ' + (e && e.message || e), 7000); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = btn.dataset.t0 || '📊 Excel A4'; } }
+}
+/* ตารางกรองได้ทั่วไป (spec.af = { n แถวข้อมูล, tot แถวรวม, sum [คอลัมน์รวม], cnt คอลัมน์นับ, wrap [คอลัมน์ข้อความยาว] }) */
+var xlWsV266 = xlWs;
+xlWs = function (XL, sp) {
+  var o = xlWsV266.apply(this, arguments);
+  try {
+    if (!sp || !sp.af || !sp.af.n) return o;
+    var m = o.meta, ws = o.ws, af = sp.af, n = af.n, r0 = m.head + 2, r1 = m.head + 1 + n, col = function (c) { return XL.utils.encode_col(c); };
+    if (!ws['!rows']) ws['!rows'] = [];
+    ws['!autofilter'] = { ref: 'A' + (m.head + 1) + ':' + col(m.n - 1) + r1 };
+    if (af.tot) {
+      var rt = r1 + 2, sumOf = function (c) { var s = 0; for (var i = 0; i < n; i++) s += +sp.body[i][c] || 0; return s; };
+      (af.sum || []).forEach(function (c) { var f = m.cols[c] && m.cols[c].f; ws[col(c) + rt] = { t: 'n', v: f === 't' ? sumOf(c) / 86400 : sumOf(c), f: 'SUBTOTAL(109,' + col(c) + r0 + ':' + col(c) + r1 + ')' }; });
+      if (af.cnt != null) ws[col(af.cnt) + rt] = { t: 's', v: n + ' Lot', f: 'SUBTOTAL(103,' + col(af.cnt) + r0 + ':' + col(af.cnt) + r1 + ')&" Lot"' };
+      ws['!rows'][rt - 1] = { hpt: 22 };
+    }
+    var cw = m.cols.map(function (c) { return c.w || 10; });
+    for (var i = 0; i < n; i++) { var v = sp.body[i], kk = 1; (af.wrap || []).forEach(function (c) { var s = v[c]; if (s == null || s === '') return; kk = Math.max(kk, Math.ceil(woTxtLen(String(s)) / Math.max(4, cw[c] * 0.92 - 1))); }); ws['!rows'][m.head + 1 + i] = { hpt: Math.max(16, kk * 13.5 + 4) }; }
+    ws['!rows'][m.head] = { hpt: 30 };
+  } catch (e) { console.warn('StarStock v2.66: ตารางกรองได้', e); }
+  return o;
+};
+
+window.StarStock = { CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
