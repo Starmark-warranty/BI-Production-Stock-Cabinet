@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.11 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.12 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.12: มือถือ = หน้าเกจสถานะ (ยอดทุกขั้น) แตะเกจ = รายการชิ้นของขั้นนั้น
       · lots 1.11: คอลัมน์ State รวม ย้ายไปหลัง Site (ก่อนคอลัมน์ข้อมูล) · ชื่อบนจอเปลี่ยนเป็น “สถานะ”
       · lots 1.10: เข้าหน้า Lot ผลิต = หน้าสถานะ Part ก่อน · State รวม (ถึงขั้นไหน) · Delay No 1 = ขาดส่ง · แถวตัวกรองใต้หัวคอลัมน์แบบ AX · มือถือ = รายการสั้น แตะดูทีละขั้น
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
@@ -53,6 +54,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.12 (2026-10-26 11:17 ผู้ใช้ รูปแถวเกจ Part…Site: “ในโทรศัพท์หมายถึงให้แสดงเกจครับ กดแล้วค่อยพาไปดูรายการชิ้น ไม่กดคือแสดงสถานะ”)
+        UX มือถือ (≤ 760px) เปิดมา = หน้าเกจ: กล่องสถานะ (+ ขาดส่ง) + เกจ 8 ขั้น 2 คอลัมน์ ไม่มีรายการชิ้น (1.10 เดิม: รายการชิ้นเลย · เกจซ่อนไว้ต้องแตะกล่องสถานะ)
+           · แตะเกจ = รายการชิ้นที่ยังไม่ผ่านขั้นนั้น (ขั้นที่ครบแล้ว = ทุกชิ้น) · แตะกล่องสถานะ = ชิ้นที่อยู่ขั้นนั้น · ขาดส่ง = ชิ้นที่ขาดส่ง
+           · ปุ่ม 📋 ดูรายการชิ้นทั้งหมด · พิมพ์ค้นหา = ไปรายการ · หน้ารายการมีปุ่ม ← สถานะ (กลับหน้าเกจ ล้างตัวกรอง/คำค้น)
+        UI 11:18 รูปกล่องสถานะ: “ทำให้มันดูเด่นกว่าคนอื่นทีครับ” → กล่องสถานะพื้นทึบสีหลัก ตัวขาว ตัวเลขใหญ่ มีเงา (ครบทุกขั้น = พื้นเขียว) — คอมและมือถือ
     1.11 (2026-10-26 11:12 ผู้ใช้: “เอาสถานะรวมไปอยู่หลัง Site อยู่ตรงก่อนชื่อ Lot ครับ”)
         UI 11:13 “เปลี่ยนคำว่า State รวม เป็นคำว่า สถานะ”: หัวคอลัมน์ · กล่องบนแถวยอด · ป้าย Lot (หลาย Lot) · คำอธิบาย = “สถานะ” (ชื่อในโค้ดยังเป็น cur / pstCur…)
         UI คอลัมน์ State รวม: หลัง # (1.10) → หลังช่อง Site (ท้ายกลุ่ม State · ยังติดซ้ายตอนเลื่อนขวา) · แถวตัวกรองย้ายตาม · pstStick วัดตำแหน่งจากคอลัมน์จริง (ไม่ fix ลำดับ)
@@ -432,6 +438,33 @@
   .pst-md dt{color:var(--ink-dim);white-space:nowrap} .pst-md dd{margin:0;overflow-wrap:anywhere}
   .pst-md dd.mono{font:12px var(--mono)} .pst-md dd[data-cp]{cursor:copy;color:var(--accent);font-weight:600}
   .pst-sums > .pst-tools{margin-left:auto}   /* ยอดยาวจนช่องค้นหาตกบรรทัด = ยังชิดขวา (ผู้ใช้ขอค้นหาไว้ขวา) */
+  /* ───────── lots 1.12: กล่องสถานะเด่นกว่ากล่องขั้น (ผู้ใช้ 11:18) — พื้นทึบ ตัวขาว · ครบ = เขียวเข้ม (ธีมมืด --good สว่าง ตัวขาวอ่านยาก จึงผสมดำ) ───────── */
+  .pst-sum.pst-cur{background:var(--accent);border:1.5px solid var(--accent);color:#fff;min-width:118px;padding:6px 14px 7px 12px;
+    box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 38%,transparent)}
+  .pst-sum.pst-cur b{color:rgba(255,255,255,.88);letter-spacing:.04em}
+  .pst-sum.pst-cur .pst-st > span{color:#fff;font-size:19px;font-weight:800;line-height:1.15}
+  .pst-sum.pst-cur em{color:rgba(255,255,255,.88)}
+  .pst-sum.pst-cur.ok{background:color-mix(in srgb,var(--good) 78%,#06180d);border-color:color-mix(in srgb,var(--good) 78%,#06180d);box-shadow:0 4px 14px color-mix(in srgb,var(--good) 35%,transparent)}
+  .pst-sum.pst-cur.ok .pst-st > span{color:#fff}
+  .pst-sum.pst-cur:not(.na):hover{border-color:var(--accent);filter:brightness(1.1)}
+  .pst-sum.pst-cur.on{outline:2px solid var(--ink);outline-offset:2px}
+  .pst-sum.pst-cur .chev{color:rgba(255,255,255,.8)}
+  .pst-gg .pst-sum.pst-cur .pst-st > span{font-size:22px}
+  /* ───────── lots 1.12: มือถือ = หน้าเกจ (กล่องสถานะ + เกจ 8 ขั้น 2 คอลัมน์) · แตะ = รายการชิ้น ───────── */
+  .pst-sums.pst-gg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:6px 10px 8px}
+  .pst-gg .pst-sum{min-width:0;padding:10px 10px 10px 12px;gap:8px}
+  .pst-gg .pst-sum b{font-size:13px} .pst-gg .pst-sum .pst-st > span{font-size:15.5px}
+  .pst-gg .pst-ring{width:48px;height:48px}
+  .pst-gg .pst-ring text{font-size:8.5px}
+  .pst-gg .pst-sum.pst-cur,.pst-gg .pst-sum.pst-dly{grid-column:1 / -1}
+  .pst-gg .pst-sum.pst-cur .pst-st > span{font-size:18px}
+  .pst-gg .pst-sum .chev{font-size:20px;color:var(--ink-faint)}
+  .pst-gga{display:flex;flex-direction:column;gap:8px;padding:0 10px 10px}
+  .pst-gga .pst-mall{justify-content:center;padding:10px;font-weight:700}
+  .pst-gga .pst-q{width:100%;box-sizing:border-box}
+  .pst-mbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 10px 6px}
+  .pst-mbar .tbtn{font-weight:700}
+  .pst-mbar .pst-mf{flex:1;min-width:0;font-size:12.5px;color:var(--ink-dim)} .pst-mbar .pst-mf b{color:var(--ink)}
   @media (max-width: 760px){ .pst-sums > .pst-tools{width:100%;flex-wrap:wrap} .pst-sums > .pst-tools .pst-q{width:100%;flex:1 1 100%} .pst-sums > .sp{display:none} .pst-sum.pst-cur{flex:1 1 auto} }
 </style>
 </head>
@@ -487,7 +520,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.11';
+var LOTS_VER = '1.12';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1035,7 +1068,8 @@ var PST_AFTER = ['pk', 'pi', 'wh', 'dl', 'si'];   // lots 1.2: ผ่านข�
 /* lots 1.10 (ผู้ใช้ 10:58 “หน้านี้ไม่ว่าใครเปิด ให้อยู่หน้านี้ก่อนครับ สถานะ Part”): เปิดมา = แท็บสถานะเสมอ (เดิม 1.2 อ่านแท็บล่าสุดจาก PST_K) — ดู lotShowL12 */
 L.stMode = 'st';
 L.stQ = ''; L.stF = '';
-L.stCF = {}; L.stMo = new Set(); L.stMx = false;   // lots 1.10: ตัวกรองรายคอลัมน์ { ช่อง: ค่า } · มือถือ: ชิ้นที่แตะเปิด (rec) · แถวยอดทุกขั้นเปิดอยู่
+L.stCF = {}; L.stMo = new Set(); L.stMx = false;
+L.stMv = 'g';   // lots 1.12: มือถือ 'g' = หน้าเกจ · 'l' = รายการชิ้น (L.stMx ของ 1.10 ไม่ใช้แล้ว)   // lots 1.10: ตัวกรองรายคอลัมน์ { ช่อง: ค่า } · มือถือ: ชิ้นที่แตะเปิด (rec) · แถวยอดทุกขั้นเปิดอยู่
 L.stSel = (function () { try { var a = JSON.parse(localStorage.getItem(PST_SK) || '[]'); return Array.isArray(a) ? a.filter(function (s) { return typeof s === 'string' && s; }).slice(0, PST_MAXSEL) : []; } catch (e) { return []; } })();
 L.stPk = { open: false, q: '' };
 L.stKey = null;   // lots 1.1 (เก็บไว้ให้ของเก่าที่อ่านค่านี้): Lot แรกที่เลือก
@@ -1318,11 +1352,21 @@ function pstCurAgg(its) {   // ราย Lot / หลาย Lot → { min: ข�
 function pstCurBrk(a) { return PST_STEPS.map(function (S0, i) { return a.n[i] ? S0.h + ' ' + fmtN(a.n[i]) : ''; }).concat(a.n[PST_DONE] ? ['ครบ ' + fmtN(a.n[PST_DONE])] : []).filter(Boolean).join(' · '); }
 function pstCurChip(a, mob) {
   var on = a.min != null && L.stCF.cur === String(a.min), sub = a.min == null ? 'ไม่มีข้อมูล' : a.min >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'ค้าง ' + fmtN(a.n[a.min]) + '/' + fmtN(a.tot) + ' ชิ้น';
-  var tip = 'สถานะ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (แต่ละชิ้นอยู่ขั้นถัดจากขั้นล่าสุดที่ผ่าน)' + (a.tot ? '\nแต่ละขั้น: ' + pstCurBrk(a) : '') + (mob ? '\nแตะ = ดูยอดทุกขั้น' : a.min != null ? '\nกด = แสดงเฉพาะชิ้นที่อยู่ขั้นนี้' : '');
+  var tip = 'สถานะ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (แต่ละชิ้นอยู่ขั้นถัดจากขั้นล่าสุดที่ผ่าน)' + (a.tot ? '\nแต่ละขั้น: ' + pstCurBrk(a) : '') + (mob ? '\nแตะ = ดูชิ้นที่อยู่ขั้นนี้' : a.min != null ? '\nกด = แสดงเฉพาะชิ้นที่อยู่ขั้นนี้' : '');
   return '<button type="button" class="pst-sum pst-cur' + (a.min != null && a.min >= PST_DONE ? ' ok' : '') + (on ? ' on' : '') + '" data-pstcur="' + (a.min == null ? '' : a.min) + '" title="' + esc(tip) + '">'
     + '<span class="pst-st"><b>สถานะ</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + '</span><em>' + esc(sub) + '</em></span>'
-    + (mob ? '<span class="chev">' + (L.stMx ? '▴' : '▾') + '</span>' : '') + '</button>';
+    + (mob ? '<span class="chev">›</span>' : '') + '</button>';   // lots 1.12 (1.10: ▾/▴ เปิดยอดทุกขั้น)
 }
+/* lots 1.12: คำอธิบายตัวกรองบนหัวรายการชิ้น (มือถือ) */
+function pstCfDesc() {
+  var F = L.stCF, a = [], sv = function (k) { return String(F[k] == null ? '' : F[k]).trim(); };
+  if (sv('cur')) a.push('สถานะ ' + pstCurLbl(+sv('cur')));
+  PST_STEPS.forEach(function (S0) { if (sv(S0.k) === '0') a.push('ยังไม่ผ่าน ' + S0.h); else if (sv(S0.k) === '1') a.push('ผ่าน ' + S0.h); });
+  Object.keys(F).forEach(function (k) { var c = PST_COLK[k]; if (!c || !sv(k)) return; a.push(k === 'dly' && sv(k) === '<>0' ? 'ขาดส่ง' : c.h + ' ' + sv(k)); });
+  if (L.stQ.trim()) a.push('ค้น “' + L.stQ.trim() + '”');
+  return a.length ? a.join(' · ') : 'ทุกชิ้น';
+}
+function pstMobGo(F) { L.stCF = F || {}; L.stMv = 'l'; L.stMo = new Set(); pstRender(); }
 function pstDlyChip(a) {
   var on = String(L.stCF.dly || '').trim() === '<>0';
   return '<button type="button" class="pst-sum pst-dly' + (on ? ' on' : '') + '" data-pstdly title="Delay No ≠ 0 = มีขาดส่ง (0 = ปกติ) · กด = แสดงเฉพาะชิ้นที่ขาดส่ง"><span class="pst-st"><b>⚠ ขาดส่ง</b><span>' + fmtN(a.dly) + ' ชิ้น</span></span></button>';
@@ -1475,7 +1519,7 @@ function pstSelSet(ids) {
   var seen = {}, out = [];
   ids.forEach(function (s) { s = String(s || ''); var K = s.toUpperCase(); if (s && !seen[K]) { seen[K] = 1; out.push(s); } });
   if (out.length > PST_MAXSEL) toast('เลือกได้สูงสุด ' + PST_MAXSEL + ' Lot — ใช้ ' + PST_MAXSEL + ' Lot แรก');
-  L.stSel = out.slice(0, PST_MAXSEL); L.stF = ''; L.stCF = {}; L.stMo = new Set();   // lots 1.10 + ตัวกรองรายคอลัมน์ / ชิ้นที่เปิดในมือถือ
+  L.stSel = out.slice(0, PST_MAXSEL); L.stF = ''; L.stCF = {}; L.stMo = new Set(); L.stMv = 'g';   // lots 1.12: เปลี่ยน Lot = มือถือกลับหน้าเกจ   // lots 1.10 + ตัวกรองรายคอลัมน์ / ชิ้นที่เปิดในมือถือ
   try { localStorage.setItem(PST_SK, JSON.stringify(L.stSel)); } catch (e) { }
   var f = pstSelRows()[0]; L.stKey = f ? f.key : null;
 }
@@ -1555,12 +1599,23 @@ function pstRender(keep) {
       var hay = (p.lot + ' ' + p.nm + ' ' + p.cab + ' ' + (th ? th.n : '') + ' ' + p.art + ' ' + p.shelf + ' ' + p.pack + ' ' + p.bc1 + ' ' + p.mat + ' ' + p.room + ' ' + p.rec + ' ' + PST_EX.map(function (k) { return p[k] || ''; }).join(' ')).toLowerCase();   // lots 1.4 + ช่อง v1.17
       return qs.every(function (w) { return hay.indexOf(w) >= 0; });
     });
+    /* lots 1.12 (ผู้ใช้ 11:17 “ในโทรศัพท์ให้แสดงเกจ กดแล้วค่อยพาไปดูรายการชิ้น ไม่กดคือแสดงสถานะ”): มือถือ mv 'g' = หน้าเกจ · 'l' = รายการชิ้น (พิมพ์ค้นหา = รายการ) */
+    var mv = mob && all.length ? (L.stMv === 'l' || qs.length ? 'l' : 'g') : '';
+    var qbox = '<input type="search" class="pst-q" placeholder="🔍 ค้นหา Part · ตู้ · Shelf · Code Part" title="ค้นหาทุกช่อง: Part · ตู้ · Shelf · Code Part · Code Pack · Barcode · Order · Item · วัสดุ · Room · Rec Id" value="' + esc(L.stQ) + '">';
+    if (mv === 'g') {
+      h += '<div class="pst-sums pst-gg">' + pstCurChip(agg, mob) + (agg.dly ? pstDlyChip(agg) : '') + PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], false, subOf(S0.k)); }).join('') + '</div>'
+        + '<div class="pst-gga"><button type="button" class="tbtn pst-mall" data-pstml>📋 ดูรายการชิ้นทั้งหมด (' + fmtN(all.length) + ')</button>' + qbox + '</div>';
+    } else if (mv === 'l') {
+      h += '<div class="pst-mbar"><button type="button" class="tbtn" data-pstmg title="กลับหน้าเกจสถานะ">← สถานะ</button><span class="pst-mf">' + esc(pstCfDesc()) + ' · <b>' + fmtN(shown.length) + '</b> ชิ้น</span></div>'
+        + '<div class="pst-tools">' + qbox + '</div>';
+    } else {
     h += '<div class="pst-sums">' + (all.length ? pstCurChip(agg, mob) + (agg.dly ? pstDlyChip(agg) : '') : '')   // lots 1.10
-      + (!mob || L.stMx || !all.length ? PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], L.stCF[S0.k] === '0', subOf(S0.k)); }).join('') : '');
-    if (all.length) h += '<span class="sp"></span><div class="pst-tools"><input type="search" class="pst-q" placeholder="🔍 ค้นหา Part · ตู้ · Shelf · Code Part" title="ค้นหาทุกช่อง: Part · ตู้ · Shelf · Code Part · Code Pack · Barcode · Order · Item · วัสดุ · Room · Rec Id" value="' + esc(L.stQ) + '">'
+      + PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], L.stCF[S0.k] === '0', subOf(S0.k)); }).join('');
+    if (all.length) h += '<span class="sp"></span><div class="pst-tools">' + qbox
       + (ncf ? '<button type="button" class="tbtn" data-pstcfclr title="ล้างตัวกรองทุกช่อง (แถวใต้หัวคอลัมน์ · กล่องยอด)">✕ ล้างตัวกรอง (' + ncf + ')</button>' : '')   // lots 1.10 (เดิม ✕ ยังไม่ผ่าน …)
       + '<span class="pst-cnt">แสดง <b>' + fmtN(shown.length) + '</b> จาก ' + fmtN(all.length) + ' แถว</span></div>';
     h += '</div>';
+    }
     /* ข้อความแหล่งข้อมูล / เหตุที่ไม่มีรายชิ้น */
     var note = '', rng = PST.meta && PST.meta.from ? fD(lotDate(PST.meta.from)) + '–' + fD(lotDate(PST.meta.to) - DAY) : '?';
     if (PST.loading && !PST.lots) note = '⏳ กำลังโหลดสถานะรายชิ้นจาก Google Drive…';
@@ -1581,8 +1636,8 @@ function pstRender(keep) {
       var miss = PST_COLS.filter(function (c) { return c.ex && !(PST.has && PST.has.has(c.k)); }).map(function (c) { return c.h; });
       var missTxt = !miss.length ? '' : miss.length === PST_COLS.filter(function (c) { return c.ex; }).length ? 'คอลัมน์ ' + miss.join(' · ') + ' ขึ้นเมื่ออัปเดต StarSync เป็น v1.17'
         : 'StarSync หาคอลัมน์ไม่เจอ: ' + miss.join(' · ') + ' (ดู lots/pcols.json · ตั้ง stateCols ใน config.json)';
-      if (mob) h += pstMobHtml(part, multi) + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '')   // lots 1.10: มือถือ = รายการสั้น
-        + (!shown.length ? '<div class="pst-note">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง</div>' : '')
+      if (mob) h += (mv === 'g' ? '' : pstMobHtml(part, multi) + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '')   // lots 1.10: มือถือ = รายการสั้น · 1.12 หน้าเกจไม่มีรายการ
+        + (!shown.length && !(oth && oth.n) ? '<div class="pst-note">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง</div>' : ''))
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
       else
       h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th><th rowspan="2" class="cur stk" title="สถานะ — ขั้นที่ชิ้นอยู่ตอนนี้ (ขั้นถัดจากขั้นล่าสุดที่ผ่าน · ครบ = ผ่านทุกขั้น)">สถานะ</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
@@ -1679,9 +1734,18 @@ document.addEventListener('click', function (e) {
   if (view() !== 'lots') return;
   /* lots 1.2: คลิกนอกกล่องเลือก Lot (ลอย) = ปิด */
   if (L.stPk.open && e.target.closest && !e.target.closest('[data-pstpkbox],[data-pstpk],#lotSide,#lotCfBar,.lcfpop') && document.contains(e.target)) { L.stPk.open = false; pstRender(true); }
-  var t = e.target.closest && e.target.closest('[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall],[data-pstcur],[data-pstdly],[data-pstcfb],[data-pstcfclr],[data-pstmi]'); if (!t) return;
+  var t = e.target.closest && e.target.closest('[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall],[data-pstcur],[data-pstdly],[data-pstcfb],[data-pstcfclr],[data-pstmi],[data-pstml],[data-pstmg]'); if (!t) return;
+  /* lots 1.12: มือถือหน้าเกจ — แตะเกจ/กล่อง = รายการชิ้นของขั้นนั้น · 📋 = ทุกชิ้น · ← สถานะ = กลับหน้าเกจ */
+  if (pstMobile() && t.closest('.pst-gg')) {
+    e.preventDefault(); if (t.disabled) return;
+    if (t.dataset.pstcur != null) { var cv0 = t.dataset.pstcur; pstMobGo(cv0 === '' || +cv0 >= PST_DONE ? {} : { cur: cv0 }); return; }
+    if (t.hasAttribute('data-pstdly')) { pstMobGo({ dly: '<>0' }); return; }
+    if (t.dataset.pstf) { var F0 = {}; if (!t.classList.contains('ok')) F0[t.dataset.pstf] = '0'; pstMobGo(F0); return; }
+  }
+  if (t.hasAttribute('data-pstml')) { e.preventDefault(); pstMobGo({}); return; }
+  if (t.hasAttribute('data-pstmg')) { e.preventDefault(); L.stMv = 'g'; L.stCF = {}; L.stQ = ''; L.stMo = new Set(); pstRender(); return; }
   /* lots 1.10: State รวม (คอม = กรองขั้นนั้น · มือถือ = เปิด/ปิดยอดทุกขั้น) · ขาดส่ง · ช่องติ๊กในแถวตัวกรอง (วน ทั้งหมด → ✓ → ยังไม่ผ่าน) · ล้างตัวกรอง · มือถือแตะชิ้น */
-  if (t.dataset.pstcur != null) { e.preventDefault(); if (pstMobile()) L.stMx = !L.stMx; else if (t.dataset.pstcur !== '') { if (L.stCF.cur === t.dataset.pstcur) delete L.stCF.cur; else L.stCF.cur = t.dataset.pstcur; } pstRender(pstMobile() ? true : 'x'); return; }
+  if (t.dataset.pstcur != null) { e.preventDefault(); if (pstMobile()) { /* lots 1.12: จัดการด้านบน (.pst-gg) */ } else if (t.dataset.pstcur !== '') { if (L.stCF.cur === t.dataset.pstcur) delete L.stCF.cur; else L.stCF.cur = t.dataset.pstcur; } pstRender(pstMobile() ? true : 'x'); return; }
   if (t.hasAttribute('data-pstdly')) { e.preventDefault(); if (String(L.stCF.dly || '').trim() === '<>0') delete L.stCF.dly; else L.stCF.dly = '<>0'; pstRender('x'); return; }
   if (t.dataset.pstcfb) { e.preventDefault(); var ck = t.dataset.pstcfb, cv = L.stCF[ck] || ''; if (cv === '') L.stCF[ck] = '1'; else if (cv === '1') L.stCF[ck] = '0'; else delete L.stCF[ck]; pstRender('x'); return; }
   if (t.hasAttribute('data-pstcfclr')) { e.preventDefault(); L.stCF = {}; L.stF = ''; pstRender('x'); return; }
