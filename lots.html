@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.24 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.25 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.25: หลอดสถานะ (8 ช่อง · % ในหลอด) · เกจ / ช่อง State / กล่องสถานะ ใช้สีของขั้น — ขั้นที่ยังไม่ถึง = เทา
       · lots 1.24: แถบเครื่องมือหน้า Lot ผลิต (แท็บรายการ Lot / สถานะ Part · จำนวน · อัปเดต · ปิดว่าจบ) ย้ายขึ้นแถบหัวแถวเดียวกับ HOME · เอาปุ่ม CSV / นำเข้า CSV ออก
       · lots 1.23: ตารางชิ้น สีพื้นแถวอ่อน ๆ บอกสถานะของชิ้น (8 ขั้น 8 สี · หัวคอลัมน์ขั้น = ตัวบอกสี)
       · lots 1.22: วงกลม % (เกจ) ใหญ่ขึ้น
@@ -66,6 +67,12 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.25 (2026-10-26 13:28 ผู้ใช้ รูปแถวเกจ (สถานะ Edge · Part 20/20 100% · ที่เหลือ 0%): “เพิ่มเป็นหลอดสถานะ แล้วใส่ % ไปในหลอด เช่นตอนนี้ถึงปิดขอบ
+          สีหลอดก็ให้ตรง เกจก็ขึ้นสี 2 สี คือตัด แล้วก็ขอบ ยังไปไม่ถึงไหนก็ยังไม่ต้องมีสี ก็เทาไว้ครับ คอลัม State ด้วย”)
+        FEAT หลอดสถานะใต้แถวยอด: 8 ช่อง (ตัด · ปิดขอบ · เจาะ&CNC · แพ็ค · เตรียมส่งของเข้าคลัง · คลัง · จัดส่ง · หน้างาน) แต่ละช่องเติมสีของขั้นตาม % + เลข % ในช่อง
+           · ขั้นที่ไปถึงแล้ว (≤ ขั้นปัจจุบันของ Lot หรือมีชิ้นผ่านแล้ว) = สีของขั้น (ชุดเดียวกับสีแถว 1.23) · ยังไม่ถึง = เทา · ขั้นปัจจุบัน = กรอบสี
+        UI เกจ (กล่องยอด): ขั้นที่ถึงแล้ว = พื้น/กรอบ/วงกลมสีของขั้น (แทนเขียวเมื่อครบ) · ยังไม่ถึง = เทา · กล่องสถานะ = สีเข้มของขั้นปัจจุบัน (ครบ = เขียว)
+        UI ช่อง State ในตาราง: ✓ = สีของขั้นนั้น (เดิมเขียวทุกขั้น) · ยังไม่ผ่าน = เทาอ่อน · มือถือ (แตกทีละขั้น) สีเดียวกัน
     1.24 (2026-10-26 13:26 ผู้ใช้ รูปแถบ [รายการ Lot | สถานะ Part] 6,337 แถว … ปิดว่าจบ · CSV · นำเข้า CSV: “ย้ายตรงนี้ขึ้นไปอีกที่ แท็บเดียวกับ Home เลย แล้วเอาปุ่ม CSV กับนำเข้าออก”)
         UI #lotBar ย้ายเข้าแถบหัว (#top ของ index ต่อจากป้าย “Lot ผลิต · data 6”) ตอนเปิดโปรแกรม (lotBarPlace) — หน้า Lot ผลิตได้ที่สูงเพิ่มหนึ่งแถว
            · ตัวเดิม (id · ปุ่ม · ตัวรับคลิก) ย้ายทั้งก้อน ไม่ได้สร้างใหม่ · มีคลาส lotsOnly = หน้าอื่นไม่โชว์ · มือถือ (≤ 760px) อยู่ที่เดิม (แถบหัวแคบ)
@@ -588,6 +595,34 @@
   .pst-hd .pst-rm{flex:1 1 0;min-width:0}   /* lots 1.22: remark ไม่กันที่ตอนตัดบรรทัด (1.15 basis 140px) — ได้ที่เหลือ ยาวเกิน = … */
   .pst-hd{gap:8px}
   @media (max-width: 760px){ .pst-hd .pst-rm{flex:1 1 100%;white-space:normal;overflow:visible} }   /* มือถือ: remark บรรทัดของตัวเอง (ไม่หดเหลือ …) */
+  /* ───────── lots 1.25: หลอดสถานะ · สีของขั้นบนเกจ / ช่อง State / กล่องสถานะ · ยังไม่ถึง = เทา ───────── */
+  .pst-tube{display:flex;gap:3px;margin:0 14px 8px;height:24px;flex:none}
+  .pst-tube .tseg{position:relative;flex:1 1 0;min-width:0;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb,var(--ink-faint) 16%,var(--solid))}
+  .pst-tube .tseg:first-child{border-radius:12px 5px 5px 12px} .pst-tube .tseg:last-child{border-radius:5px 12px 12px 5px}
+  .pst-tube .tseg.rch{background:color-mix(in srgb,var(--stc) 14%,var(--solid))}
+  .pst-tube .tseg i{position:absolute;left:0;top:0;bottom:0;background:color-mix(in srgb,var(--stc) 58%,var(--solid))}
+  .pst-tube .tseg span{position:relative;font-size:11px;font-weight:600;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 5px}
+  .pst-tube .tseg span b{font:800 11px var(--mono)}
+  .pst-tube .tseg.rch span{color:color-mix(in srgb,var(--stc) 45%,#111)}
+  .pst-tube .tseg.cur{box-shadow:inset 0 0 0 2px var(--stc)}
+  .pst-sum.rch[data-pstf]{background:color-mix(in srgb,var(--stc) 9%,var(--solid));border-color:color-mix(in srgb,var(--stc) 50%,var(--line-strong))}
+  .pst-sum.rch[data-pstf] .pst-st > b{color:color-mix(in srgb,var(--stc) 60%,var(--ink))}
+  .pst-sum.rch[data-pstf] .pst-st > span{color:var(--ink)}
+  .pst-sum.rch[data-pstf] .pst-ring .fg{stroke:var(--stc)}
+  .pst-sum.rch[data-pstf] .pst-ring text{fill:color-mix(in srgb,var(--stc) 60%,var(--ink))}
+  .pst-sum.unr[data-pstf]{background:var(--bg2);border-color:var(--line)}
+  .pst-sum.unr[data-pstf] .pst-st > b,.pst-sum.unr[data-pstf] .pst-st > span,.pst-sum.unr[data-pstf] .pst-th{color:var(--ink-faint)}
+  .pst-sum.unr[data-pstf] .pst-ring .fg{stroke:var(--ink-faint)}
+  .pst-sum.pst-cur[class*=" cs"]{background:color-mix(in srgb,var(--stc) 72%,#0b1220);border-color:color-mix(in srgb,var(--stc) 72%,#0b1220);box-shadow:0 4px 14px color-mix(in srgb,var(--stc) 35%,transparent)}
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on{background:color-mix(in srgb,var(--stc) 18%,var(--solid))}
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on.inf{background:color-mix(in srgb,var(--stc) 9%,var(--solid))}
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on .cb{border-color:var(--stc);color:color-mix(in srgb,var(--stc) 78%,#000)}
+  #lotSt .pst-t tbody td.pck[class*=" cs"]:not(.on):not(.nc):not(.nd):not(.na){background:color-mix(in srgb,var(--ink-faint) 9%,var(--solid))}
+  .pst-msteps .ms.on[class*=" cs"],.pst-msteps .ms[class*="cs"].on{background:color-mix(in srgb,var(--stc) 16%,var(--solid))}
+  .pst-msteps .ms[class*="cs"].on i{border-color:var(--stc);color:color-mix(in srgb,var(--stc) 78%,#000)}
+  .pst-msteps .ms[class*="cs"].no{background:color-mix(in srgb,var(--ink-faint) 9%,var(--solid))}
+  @media (max-width: 760px){ .pst-tube{margin:0 10px 8px;height:22px} .pst-tube .tseg span{font-size:0} .pst-tube .tseg span b{font-size:10px} }
   /* ───────── lots 1.24: #lotBar ในแถบหัว · ไม่มีปุ่ม CSV / นำเข้า CSV ───────── */
   #top > #lotBar{flex:1 1 auto;min-width:0;padding:0;border:0;background:none;flex-wrap:nowrap;gap:8px}
   #top > #lotBar #lotCount{white-space:nowrap}
@@ -702,7 +737,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.24';
+var LOTS_VER = '1.25';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1439,11 +1474,20 @@ function pstSumAll(list) {
   return o;
 }
 function pstScanTip(S0, sc) { return (S0.k === 'si' ? 'ยิงถึงไซต์ ' : 'ยิงเริ่ม' + S0.th + ' ') + (fDT(lotDate(sc.at)) || sc.at) + (sc.by ? ' โดย ' + sc.by : '') + (sc.bc ? ' · รหัส ' + sc.bc : '') + ' (Scan-Link · ทั้ง Lot)'; }   // lots 1.6 + Site
-function pstChip(S0, z, on, sub) {
+function pstChip(S0, z, on, sub, rc) {   // lots 1.25: rc = ' cs{i} rch' (ถึงแล้ว = สีของขั้น) / ' cs{i} unr' (ยังไม่ถึง = เทา)
   var na = S0.na || !z, full = z && z.n > 0 && z.d >= z.n, p = z && z.n ? z.d / z.n : 0;
-  return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
+  return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + (rc || '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
     + '<span class="pst-st"><b>' + esc(S0.h) + '<span class="pst-th">' + esc(S0.th) + '</span></b><span>' + (S0.na ? 'รอจุดยิง' : z ? fmtN(z.d) + '/' + fmtN(z.n) : '—') + '</span>' + (sub ? '<em>' + esc(sub) + '</em>' : '') + '</span>'   // lots 1.15: ไทยใต้อังกฤษ (1.13: “Part/ตัด” บรรทัดเดียว)
     + pstRing(na ? null : p) + '<i style="width:' + (na ? 0 : Math.round(p * 100)) + '%"></i></button>';
+}
+/* ───────── lots 1.25: หลอดสถานะ (ผู้ใช้ 13:28 “เพิ่มเป็นหลอดสถานะ ใส่ % ในหลอด · ถึงขั้นไหนมีสี ยังไม่ถึงเทา”) ─────────
+   8 ช่องเรียงตามขั้น · เติมสีของขั้นตาม % ที่ผ่าน · % ปัดลง (ไม่ขึ้น 100 จนครบจริง) · ไม่มีข้อมูล = “—” */
+function pstTube(sum, agg, reach) {
+  return '<div class="pst-tube" role="img" aria-label="หลอดสถานะ">' + PST_STEPS.map(function (S0, i) {
+    var z = sum[S0.k], p = z && z.n ? Math.floor(Math.min(1, z.d / z.n) * 100) : null, r = reach(i);
+    return '<div class="tseg cs' + i + (r ? ' rch' : '') + (agg.min === i ? ' cur' : '') + '" title="' + esc(pstStepNm(S0) + ' · ' + (z ? fmtN(z.d) + '/' + fmtN(z.n) + ' ชิ้น' : 'ไม่มีข้อมูล') + (agg.min === i ? ' · ขั้นปัจจุบัน' : r ? '' : ' · ยังไม่ถึง')) + '">'
+      + '<i style="width:' + (r && p ? p : 0) + '%"></i><span>' + esc(S0.th) + ' <b>' + (p == null ? '—' : p + '%') + '</b></span></div>';
+  }).join('') + '</div>';
 }
 function pstShortT(at) { var t = lotDate(at); if (t == null) return ''; var d = new Date(t), p = function (n) { return (n < 10 ? '0' : '') + n; }, hm = p(d.getHours()) + ':' + p(d.getMinutes());
   return t >= lotToday() ? hm : p(d.getDate()) + '/' + p(d.getMonth() + 1); }   // วันนี้ = เวลา · วันอื่น = วันที่ (เวลาเต็มดูที่ช่องในตาราง)
@@ -1544,7 +1588,7 @@ function pstCurBrk(a) { return PST_STEPS.map(function (S0, i) { return a.n[i] ? 
 function pstCurChip(a, mob, solo, cx) {   // lots 1.21: cx = { cutD, cutN, why } — ขั้นตัด: กำลังตัด / รอตัด + เหตุจาก Dashboard   // lots 1.13: solo = ไม่มีกล่องขาดส่งข้าง ๆ (หน้าเกจคอม = เต็มแถว) · ส่ง solo มา (true/false) = อยู่หน้าเกจ
   var on = a.min != null && L.stCF.cur === String(a.min), sub = a.min == null ? 'ไม่มีข้อมูล' : a.min >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'ค้าง ' + fmtN(a.n[a.min]) + '/' + fmtN(a.tot) + ' ชิ้น';
   var tip = 'สถานะ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (แต่ละชิ้นอยู่ขั้นถัดจากขั้นล่าสุดที่ผ่าน)' + (a.tot ? '\nแต่ละขั้น: ' + pstCurBrk(a) : '') + (mob || solo != null ? '\nกด = ดูชิ้นที่อยู่ขั้นนี้' : a.min != null ? '\nกด = แสดงเฉพาะชิ้นที่อยู่ขั้นนี้' : '');
-  return '<button type="button" class="pst-sum pst-cur' + (a.min != null && a.min >= PST_DONE ? ' ok' : '') + (on ? ' on' : '') + (solo ? ' solo' : '') + '" data-pstcur="' + (a.min == null ? '' : a.min) + '" title="' + esc(tip) + '">'
+  return '<button type="button" class="pst-sum pst-cur' + (a.min != null && a.min >= PST_DONE ? ' ok' : '') + (a.min != null && a.min < PST_DONE ? ' cs' + a.min : '') /* lots 1.25 สีขั้น */ + (on ? ' on' : '') + (solo ? ' solo' : '') + '" data-pstcur="' + (a.min == null ? '' : a.min) + '" title="' + esc(tip) + '">'
     + (function () { if (a.min === 0 && cx) { var cut = cx.cutD > 0; return '<span class="pst-st"><b>สถานะ</b><span>' + (cut || cx.dashCut ? 'กำลังตัด' : 'รอตัด') + '</span><em>' + esc(cut ? 'ตัดแล้ว ' + fmtN(cx.cutD) + '/' + fmtN(cx.cutN) + ' ชิ้น' : (cx.why || 'ยังไม่ยิงตัดสักชิ้น')) + '</em></span>'; }   // lots 1.21
       return '<span class="pst-st"><b>สถานะ</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + (a.min != null && a.min < PST_DONE ? '<span class="pst-th">' + esc(PST_STEPS[a.min].th) + '</span>' : '') + '</span><em>' + esc(sub) + '</em></span>'; })()
     + (mob || solo != null ? '<span class="chev">›</span>' : '') + '</button>';   // lots 1.12 (1.10: ▾/▴ เปิดยอดทุกขั้น) · 1.13 หน้าเกจคอมด้วย
@@ -1653,7 +1697,7 @@ function pstMobHtml(part, multi) {
         ['Lot', p.lot, 'mono', 1], ['Product Name', th ? th.n : p.cab], ['Product Article', p.art, 'mono'], ['Proj Name', p.pjn], ['Shelf No', p.shelf, 'mono'], ['Room', p.room],
         ['Code Part', p.cpt, 'mono', 1], ['Code Pack', p.pack, 'mono'], ['Material', [p.mat, mn].filter(Boolean).join(' · ')], ['ขนาด', p.l || p.w ? PST_DEC2(p.l) + ' × ' + PST_DEC2(p.w) : '', 'mono'],
         ['Part Seq', p.psq, 'mono'], ['Item Part', p.ipt, 'mono'], ['Delay No', it.d ? it.d + ' — ขาดส่ง' : p.dly], ['Barcode', p.bc1, 'mono'], ['Rec Id', p.rec, 'mono']];
-      h += '<div class="pst-md"><div class="pst-msteps">' + PST_STEPS.map(function (S0, i) { return pstMStep(cu.q[i], S0, i === cu.i); }).join('') + '</div><dl>'
+      h += '<div class="pst-md"><div class="pst-msteps">' + PST_STEPS.map(function (S0, i) { return pstMStep(cu.q[i], S0, i === cu.i).replace('<span class="ms ', '<span class="ms cs' + i + ' '); }).join('') + '</div><dl>'
         + rows.filter(function (r) { return r[1] != null && String(r[1]).trim() !== ''; }).map(function (r) {
           return '<dt>' + esc(r[0]) + '</dt><dd' + (r[2] ? ' class="' + r[2] + '"' : '') + (r[3] ? ' data-cp="' + esc(r[1]) + '" title="แตะ = คัดลอก"' : '') + '>' + esc(r[1]) + '</dd>'; }).join('') + '</dl></div>';
     }
@@ -1859,6 +1903,9 @@ function pstRender(keep) {
       return qs.every(function (w) { return hay.indexOf(w) >= 0; });
     });
     /* lots 1.12 (ผู้ใช้ 11:17 “ในโทรศัพท์ให้แสดงเกจ กดแล้วค่อยพาไปดูรายการชิ้น ไม่กดคือแสดงสถานะ”): มือถือ mv 'g' = หน้าเกจ · 'l' = รายการชิ้น (พิมพ์ค้นหา = รายการ) */
+    /* lots 1.25: ขั้นที่ “ไปถึงแล้ว” = ≤ ขั้นปัจจุบันของ Lot (agg.min) หรือมีชิ้นผ่านแล้ว — สีของขั้น · ไม่ถึง = เทา */
+    var pstReach = function (i) { var z = sum[PST_STEPS[i].k]; return (agg.min != null && i <= agg.min) || !!(z && z.d > 0); };
+    var pstRc = function (i) { return ' cs' + i + (pstReach(i) ? ' rch' : ' unr'); };
     /* lots 1.21: ขั้นตัด = กำลังตัด / รอตัด (+ เหตุจาก Dashboard ตอนรอตัด · Lot เดียว) */
     var cx = null, dsh = '';
     if (agg.min === 0) { var zc = sum.cut || { d: 0, n: 0 }; cx = { cutD: zc.d, cutN: zc.n, why: '' };
@@ -1870,7 +1917,7 @@ function pstRender(keep) {
     var mv = mob && all.length ? (L.stMv === 'l' || qs.length ? 'l' : 'g') : '';   // lots 1.15 (ผู้ใช้ 11:33 “คอมกับแท็บเล็ตขอเป็นหน้ารายการชิ้น ในมือถือเป็นเกจ”): หน้าเกจเฉพาะมือถืออีกครั้ง (1.13 คอมด้วย)
     var qbox = '<input type="search" class="pst-q" placeholder="🔍 ค้นหา Part · ตู้ · Shelf · Code Part" title="ค้นหาทุกช่อง: Part · ตู้ · Shelf · Code Part · Code Pack · Barcode · Order · Item · วัสดุ · Room · Rec Id" value="' + esc(L.stQ) + '">';
     if (mv === 'g') {
-      h += '<div class="pst-sums pst-gg">' + pstCurChip(agg, mob, !agg.dly, cx) + (agg.dly ? pstDlyChip(agg) : '') + PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], false, subOf(S0.k)); }).join('') + '</div>'
+      h += '<div class="pst-sums pst-gg">' + pstCurChip(agg, mob, !agg.dly, cx) + (agg.dly ? pstDlyChip(agg) : '') + PST_STEPS.map(function (S0, si) { return pstChip(S0, sum[S0.k], false, subOf(S0.k), pstRc(si)); }).join('') + '</div>'
         + '<div class="pst-gga"><button type="button" class="tbtn pst-mall" data-pstml>📋 ดูรายการชิ้นทั้งหมด (' + fmtN(all.length) + ')</button>' + qbox + '</div>';
     } else if (mv === 'l' && mob) {
       h += '<div class="pst-mbar"><button type="button" class="tbtn" data-pstmg title="กลับหน้าเกจสถานะ">← เกจสถานะ</button><span class="pst-mf">' + esc(pstCfDesc()) + ' · <b>' + fmtN(shown.length) + '</b> ชิ้น</span></div>'
@@ -1878,7 +1925,7 @@ function pstRender(keep) {
     } else {
     h += '<div class="pst-sums">' + (mv === 'l' ? '<button type="button" class="tbtn pst-gback" data-pstmg title="กลับหน้าเกจสถานะ (Esc)">← เกจสถานะ</button>' : '')   // lots 1.13: ตาราง → กลับหน้าเกจ
       + (all.length ? pstCurChip(agg, mob, undefined, cx) + (agg.dly ? pstDlyChip(agg) : '') : '')   // lots 1.10 · 1.21 + cx
-      + PST_STEPS.map(function (S0) { return pstChip(S0, sum[S0.k], L.stCF[S0.k] === '0', subOf(S0.k)); }).join('');
+      + PST_STEPS.map(function (S0, si) { return pstChip(S0, sum[S0.k], L.stCF[S0.k] === '0', subOf(S0.k), pstRc(si)); }).join('');   // lots 1.25 + สีขั้น
     /* lots 1.15: คอม = ช่องค้นหา/จำนวนแถวขึ้นแถวชื่อ Lot (<!--pst-tools-->) — เดิมต่อท้ายแถวยอด ยอดยาวแล้วดันตกบรรทัด (ผู้ใช้ 11:33) · มือถือที่ไม่มีรายชิ้น = ไม่มีช่องค้นหาเหมือนเดิม */
     var toolsH = all.length ? '<div class="pst-tools pst-htools">' + qbox
       + (ncf ? '<button type="button" class="tbtn" data-pstcfclr title="ล้างตัวกรองทุกช่อง (แถวใต้หัวคอลัมน์ · กล่องยอด)">✕ ล้างตัวกรอง (' + ncf + ')</button>' : '')   // lots 1.10 (เดิม ✕ ยังไม่ผ่าน …)
@@ -1886,6 +1933,7 @@ function pstRender(keep) {
     if (!mob) h = h.replace('<!--pst-tools-->', toolsH); else if (all.length) h += '<span class="sp"></span>' + toolsH;
     h += '</div>';
     }
+    if (all.length) h += pstTube(sum, agg, pstReach);   // lots 1.25 หลอดสถานะ
     /* ข้อความแหล่งข้อมูล / เหตุที่ไม่มีรายชิ้น */
     var note = '', rng = PST.meta && PST.meta.from ? fD(lotDate(PST.meta.from)) + '–' + fD(lotDate(PST.meta.to) - DAY) : '?';
     if (PST.loading && !PST.lots) note = '⏳ กำลังโหลดสถานะรายชิ้นจาก Google Drive…';
@@ -1918,7 +1966,7 @@ function pstRender(keep) {
           var p = it.p, s = it.s;
           var ci = it.cu.i >= 0 && it.cu.i < PST_DONE ? ' csx cs' + it.cu.i : '';   // lots 1.23: สีแถวตามขั้นที่อยู่
           return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : ci ? ' class="' + ci.slice(1) + '" title="' + esc(pstCurTip(it.cu)) + '"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
-            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0); }).join('')   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
+            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0).replace('class="pck stk', 'class="pck stk cs' + k); }).join('')   /* lots 1.25 สีของขั้น */   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + (PST.anNone && !PST.an ? ' · ' + esc('Product Name เป็นชื่อไทยเมื่ออัปเดต StarSync เป็น v1.19 (ตั้ง lots.artName ใน config.json)') : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
