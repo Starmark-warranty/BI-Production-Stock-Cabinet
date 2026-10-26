@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.10 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.11 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.11: คอลัมน์ State รวม ย้ายไปหลัง Site (ก่อนคอลัมน์ข้อมูล) · ชื่อบนจอเปลี่ยนเป็น “สถานะ”
       · lots 1.10: เข้าหน้า Lot ผลิต = หน้าสถานะ Part ก่อน · State รวม (ถึงขั้นไหน) · Delay No 1 = ขาดส่ง · แถวตัวกรองใต้หัวคอลัมน์แบบ AX · มือถือ = รายการสั้น แตะดูทีละขั้น
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
@@ -52,6 +53,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.11 (2026-10-26 11:12 ผู้ใช้: “เอาสถานะรวมไปอยู่หลัง Site อยู่ตรงก่อนชื่อ Lot ครับ”)
+        UI 11:13 “เปลี่ยนคำว่า State รวม เป็นคำว่า สถานะ”: หัวคอลัมน์ · กล่องบนแถวยอด · ป้าย Lot (หลาย Lot) · คำอธิบาย = “สถานะ” (ชื่อในโค้ดยังเป็น cur / pstCur…)
+        UI คอลัมน์ State รวม: หลัง # (1.10) → หลังช่อง Site (ท้ายกลุ่ม State · ยังติดซ้ายตอนเลื่อนขวา) · แถวตัวกรองย้ายตาม · pstStick วัดตำแหน่งจากคอลัมน์จริง (ไม่ fix ลำดับ)
     1.10 (2026-10-26 10:58 ผู้ใช้ 4 ข้อ + รูปหน้าสถานะ FOREST-2026-0018 / รูปตาราง AX ที่มีแถวตัวกรอง)
         CHANGE “หน้านี้ไม่ว่าใครเปิด ให้อยู่หน้านี้ก่อน (สถานะ Part)”: เข้าหน้า Lot ผลิตทุกครั้ง (F5 · จาก HOME · ลิงก์ ↗ Lot ผลิต) = แท็บ ✅ สถานะ Part
            (เดิม 1.2: จำแท็บล่าสุดในเครื่อง) · ลิงก์จากหน้าอื่นที่ระบุ Lot = หน้าสถานะของ Lot นั้น (เดิมเปิดแผงรายละเอียด — ยังเปิดได้ที่ปุ่ม ⓘ รายละเอียด)
@@ -483,7 +487,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.10';
+var LOTS_VER = '1.11';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1314,9 +1318,9 @@ function pstCurAgg(its) {   // ราย Lot / หลาย Lot → { min: ข�
 function pstCurBrk(a) { return PST_STEPS.map(function (S0, i) { return a.n[i] ? S0.h + ' ' + fmtN(a.n[i]) : ''; }).concat(a.n[PST_DONE] ? ['ครบ ' + fmtN(a.n[PST_DONE])] : []).filter(Boolean).join(' · '); }
 function pstCurChip(a, mob) {
   var on = a.min != null && L.stCF.cur === String(a.min), sub = a.min == null ? 'ไม่มีข้อมูล' : a.min >= PST_DONE ? 'ผ่านครบทุกขั้น' : 'ค้าง ' + fmtN(a.n[a.min]) + '/' + fmtN(a.tot) + ' ชิ้น';
-  var tip = 'State รวม = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (แต่ละชิ้นอยู่ขั้นถัดจากขั้นล่าสุดที่ผ่าน)' + (a.tot ? '\nแต่ละขั้น: ' + pstCurBrk(a) : '') + (mob ? '\nแตะ = ดูยอดทุกขั้น' : a.min != null ? '\nกด = แสดงเฉพาะชิ้นที่อยู่ขั้นนี้' : '');
+  var tip = 'สถานะ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (แต่ละชิ้นอยู่ขั้นถัดจากขั้นล่าสุดที่ผ่าน)' + (a.tot ? '\nแต่ละขั้น: ' + pstCurBrk(a) : '') + (mob ? '\nแตะ = ดูยอดทุกขั้น' : a.min != null ? '\nกด = แสดงเฉพาะชิ้นที่อยู่ขั้นนี้' : '');
   return '<button type="button" class="pst-sum pst-cur' + (a.min != null && a.min >= PST_DONE ? ' ok' : '') + (on ? ' on' : '') + '" data-pstcur="' + (a.min == null ? '' : a.min) + '" title="' + esc(tip) + '">'
-    + '<span class="pst-st"><b>State รวม</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + '</span><em>' + esc(sub) + '</em></span>'
+    + '<span class="pst-st"><b>สถานะ</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + '</span><em>' + esc(sub) + '</em></span>'
     + (mob ? '<span class="chev">' + (L.stMx ? '▴' : '▾') + '</span>' : '') + '</button>';
 }
 function pstDlyChip(a) {
@@ -1352,11 +1356,11 @@ function pstCfRow(cols) {
   var F = L.stCF, n = pstCfN(), sv = function (k) { return String(F[k] == null ? '' : F[k]); };
   return '<tr class="cf"><th class="no stk">' + (n ? '<button type="button" class="pst-cfx" data-pstcfclr title="ล้างตัวกรองทุกช่อง (' + n + ' ช่อง)">✕</button>'
       : '<span class="pst-cfi" title="แถวตัวกรอง: พิมพ์ในช่องใต้หัวคอลัมน์ (ABC = มีคำนี้ · ตัวเลขใช้ = > < >= <= <> ได้) · ช่องสถานะกดวน ทั้งหมด → ✓ → ยังไม่ผ่าน">⧩</span>') + '</th>'
-    + '<th class="cur stk"><select class="pst-cf' + (sv('cur') ? ' on' : '') + '" data-pstcf="cur" title="กรองตาม State รวม (ขั้นที่ชิ้นอยู่ตอนนี้)"><option value="">ทั้งหมด</option>'
-    + PST_STEPS.map(function (S0, i) { return '<option value="' + i + '"' + (sv('cur') === String(i) ? ' selected' : '') + '>' + esc(S0.h) + '</option>'; }).join('')
-    + '<option value="' + PST_DONE + '"' + (sv('cur') === String(PST_DONE) ? ' selected' : '') + '>ครบ</option><option value="-1"' + (sv('cur') === '-1' ? ' selected' : '') + '>?</option></select></th>'
     + PST_STEPS.map(function (S0) { var v = sv(S0.k);
       return '<th class="pck stk"><button type="button" class="pst-cfb' + (v ? ' v' + v : '') + '" data-pstcfb="' + S0.k + '" title="' + esc(S0.h + ': ' + (v === '1' ? 'แสดงเฉพาะ ✓ (กด = เฉพาะยังไม่ผ่าน)' : v === '0' ? 'แสดงเฉพาะยังไม่ผ่าน (กด = ทั้งหมด)' : 'ทั้งหมด (กด = เฉพาะ ✓)')) + '"><span class="cb">' + (v === '1' ? '✓' : '') + '</span></button></th>'; }).join('')
+    + '<th class="cur stk"><select class="pst-cf' + (sv('cur') ? ' on' : '') + '" data-pstcf="cur" title="กรองตามสถานะ (ขั้นที่ชิ้นอยู่ตอนนี้)"><option value="">ทั้งหมด</option>'
+    + PST_STEPS.map(function (S0, i) { return '<option value="' + i + '"' + (sv('cur') === String(i) ? ' selected' : '') + '>' + esc(S0.h) + '</option>'; }).join('')
+    + '<option value="' + PST_DONE + '"' + (sv('cur') === String(PST_DONE) ? ' selected' : '') + '>ครบ</option><option value="-1"' + (sv('cur') === '-1' ? ' selected' : '') + '>?</option></select></th>'   // lots 1.11: หลังช่อง Site
     + cols.map(function (c) { var v = sv(c.k);
       return '<th' + (c.num ? ' class="num"' : '') + '><input type="search" class="pst-cf' + (v.trim() ? ' on' : '') + '" data-pstcf="' + c.k + '" value="' + esc(v) + '" placeholder="' + (c.num ? '=' : 'ABC') + '" title="' + esc(c.h + ' — ' + (c.num ? 'ตัวเลข: 567 = เท่ากับ · >100 · <=50 · <>0' : 'มีคำนี้ (ไม่สนตัวพิมพ์ · หลายคำคั่นด้วยเว้นวรรค)')) + '" autocomplete="off" spellcheck="false"></th>'; }).join('') + '</tr>';
 }
@@ -1431,19 +1435,23 @@ function pstOtherHtml(o, nHere) {
 }
 /* lots 1.4: # + State ติดซ้าย — วัดตำแหน่งจริงของหัวคอลัมน์แล้วเขียน left ให้ทั้งคอลัมน์ (CSS nth-child) · เส้นแบ่งหลังคอลัมน์สุดท้ายที่ติด */
 function pstStick(E) {
-  /* lots 1.10: วัดจากแถวตัวกรอง (ช่องละคอลัมน์ ครบทุกคอลัมน์ แม้กรองจนไม่เหลือแถว) · ติดซ้าย = # · State รวม · 8 ขั้น · แถวหัว 2–3 ติดบนตามความสูงจริง
+  /* lots 1.10: วัดจากแถวตัวกรอง (ช่องละคอลัมน์ ครบทุกคอลัมน์ แม้กรองจนไม่เหลือแถว) · ติดซ้าย = # · 8 ขั้น · State รวม (1.11 ย้ายมาหลัง Site) · แถวหัว 2–3 ติดบนตามความสูงจริง
      เดิม 1.4: วัดจากแถวหัวที่ 2 (# + 8 ขั้น) */
   var T = E.querySelector('.pst-t'); if (!T || !T.tHead || T.tHead.rows.length < 2) return;
   var H = T.tHead.rows, ref = H[2] || (T.tBodies[0] && T.tBodies[0].rows[0]); if (!ref) return;
   var P = '#lotSt .pst-t ', x0 = T.getBoundingClientRect().left, Lx = function (c) { return Math.round((c.getBoundingClientRect().left - x0) * 100) / 100; };
   var ns = 0; while (ns < ref.cells.length && ref.cells[ns].classList.contains('stk')) ns++;
   if (ns < 3) return;
-  var css = P + 'thead tr:first-child > th:nth-child(1){left:0}' + P + 'thead tr:first-child > th:nth-child(2){left:' + Lx(ref.cells[1]) + 'px}' + P + 'thead tr:first-child > th:nth-child(3){left:' + Lx(ref.cells[2]) + 'px}';
+  /* lots 1.11: ตำแหน่งหัวแถว 1–2 คิดจากคอลัมน์ที่ช่องนั้นคลุม (colspan) — ไม่ fix ว่า State รวม อยู่ช่องที่เท่าไร */
+  var css = '', col = 0, gs = -1, edge = [];
+  Array.prototype.forEach.call(H[0].cells, function (c, k) {
+    if (col < ns) { css += P + 'thead tr:first-child > th:nth-child(' + (k + 1) + '){left:' + Lx(ref.cells[col]) + 'px}'; if (col + c.colSpan - 1 === ns - 1) edge.push(P + 'thead tr:first-child > th:nth-child(' + (k + 1) + ')'); }
+    if (c.colSpan > 1 && gs < 0) gs = col; col += c.colSpan; });
   for (var i = 0; i < ns; i++) css += P + 'tbody td:nth-child(' + (i + 1) + '),' + P + 'thead tr:nth-child(3) > th:nth-child(' + (i + 1) + '){left:' + Lx(ref.cells[i]) + 'px}';
-  for (var j = 0; j < H[1].cells.length && 2 + j < ns; j++) css += P + 'thead tr:nth-child(2) > th:nth-child(' + (j + 1) + '){left:' + Lx(ref.cells[2 + j]) + 'px}';
+  for (var j = 0; gs >= 0 && j < H[1].cells.length && gs + j < ns; j++) { css += P + 'thead tr:nth-child(2) > th:nth-child(' + (j + 1) + '){left:' + Lx(ref.cells[gs + j]) + 'px}'; if (gs + j === ns - 1) edge.push(P + 'thead tr:nth-child(2) > th:nth-child(' + (j + 1) + ')'); }
   var h1 = Math.round(H[0].getBoundingClientRect().height * 100) / 100, h2 = Math.round(H[1].getBoundingClientRect().height * 100) / 100;
   css += P + 'thead tr:nth-child(2) > th{top:' + h1 + 'px}' + P + 'thead tr:nth-child(3) > th{top:' + (h1 + h2) + 'px}';
-  css += P + 'thead tr:first-child > th:nth-child(3),' + P + 'thead tr:nth-child(2) > th:nth-child(' + H[1].cells.length + '),' + P + 'thead tr:nth-child(3) > th:nth-child(' + ns + '),' + P + 'tbody td:nth-child(' + ns + '){box-shadow:inset -1px 0 0 var(--line-strong)}';
+  css += edge.concat([P + 'thead tr:nth-child(3) > th:nth-child(' + ns + ')', P + 'tbody td:nth-child(' + ns + ')']).join(',') + '{box-shadow:inset -1px 0 0 var(--line-strong)}';
   var st = E.querySelector('style.pst-stk'); if (!st) { st = document.createElement('style'); st.className = 'pst-stk'; E.appendChild(st); }
   if (st.textContent !== css) st.textContent = css;
 }
@@ -1524,7 +1532,7 @@ function pstRender(keep) {
     } else {
       h = '<div class="pst-hd">' + '<button type="button" class="tbtn pst-back" data-lstab="list" title="กลับตาราง Lot (Esc)">← รายการ Lot</button>' + '<span class="pst-lots">' + list.map(function (it) {
           var ag = it.rows ? pstCurAgg(it.rows.map(pstItem)) : null;   // lots 1.10: State รวมราย Lot
-          return '<span class="pst-chip"><b data-cp="' + esc(it.x.id) + '" title="กด = คัดลอกชื่อ Lot · ' + esc(it.x.remark || '') + '">' + esc(it.x.id) + '</b><small' + (ag && ag.tot ? ' title="' + esc('State รวม · ' + pstCurBrk(ag)) + '"' : '') + '>' + (it.rows ? fmtN(it.rows.length) + ' ชิ้น' + (ag && ag.min != null ? ' · ' + esc(pstCurLbl(ag.min)) : '') + (ag && ag.dly ? ' · <span class="pst-dl">ขาดส่ง ' + ag.dly + '</span>' : '') : 'ไม่มีรายชิ้น') + '</small>'
+          return '<span class="pst-chip"><b data-cp="' + esc(it.x.id) + '" title="กด = คัดลอกชื่อ Lot · ' + esc(it.x.remark || '') + '">' + esc(it.x.id) + '</b><small' + (ag && ag.tot ? ' title="' + esc('สถานะ · ' + pstCurBrk(ag)) + '"' : '') + '>' + (it.rows ? fmtN(it.rows.length) + ' ชิ้น' + (ag && ag.min != null ? ' · ' + esc(pstCurLbl(ag.min)) : '') + (ag && ag.dly ? ' · <span class="pst-dl">ขาดส่ง ' + ag.dly + '</span>' : '') : 'ไม่มีรายชิ้น') + '</small>'
             + '<button type="button" data-pstrm="' + esc(it.x.id) + '" title="เอา Lot นี้ออก">×</button></span>'; }).join('') + '</span>'
         + '<span class="sp"></span><button type="button" class="tbtn" data-pstpk="1" title="เพิ่ม/เอา Lot ออก">➕ เลือก Lot</button><button type="button" class="tbtn" data-pstclr title="เอา Lot ที่เลือกออกทั้งหมด">✕ ล้าง</button></div>';
     }
@@ -1577,13 +1585,13 @@ function pstRender(keep) {
         + (!shown.length ? '<div class="pst-note">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง</div>' : '')
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
       else
-      h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th rowspan="2" class="cur stk" title="State รวม — ขั้นที่ชิ้นอยู่ตอนนี้ (ขั้นถัดจากขั้นล่าสุดที่ผ่าน · ครบ = ผ่านทุกขั้น)">State รวม</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th>'
+      h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th><th rowspan="2" class="cur stk" title="สถานะ — ขั้นที่ชิ้นอยู่ตอนนี้ (ขั้นถัดจากขั้นล่าสุดที่ผ่าน · ครบ = ผ่านทุกขั้น)">สถานะ</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
         + cols.map(function (c) { return '<th rowspan="2"' + (c.num ? ' class="num"' : '') + (c.t ? ' title="' + esc(c.t) + '"' : '') + '>' + esc(c.h) + '</th>'; }).join('') + '</tr><tr>'
         + PST_STEPS.map(function (S0) { return '<th class="pck stk' + (S0.na ? ' na' : '') + '" title="' + esc(S0.t) + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง
         + part.map(function (it, i) {
           var p = it.p, s = it.s;
-          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : '') + '><td class="no stk">' + (i + 1) + '</td><td class="cur stk">' + pstCurBadge(it.cu, it.d) + '</td>'
-            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0); }).join('')
+          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
+            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0); }).join('') + '<td class="cur stk">' + pstCurBadge(it.cu, it.d) + '</td>'   // lots 1.11: State รวม หลัง Site
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (2 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + (PST.anNone && !PST.an ? ' · ' + esc('Product Name เป็นชื่อไทยเมื่ออัปเดต StarSync เป็น v1.19 (ตั้ง lots.artName ใน config.json)') : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
