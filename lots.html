@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.42 (2026-10-26 15:39 ผู้ใช้ รูปกล่อง “สถานะ · Pack แพ็ค · ค้าง 19/19 ชิ้น”: “เพิ่มคำว่า กำลัง เป็น สถานะกำลัง แล้วปรับตัวหนังสือในปุ่มใหญ่ขึ้นให้เด่นหน่อย ทำตัวหนาด้วยได้”)
+        UI กล่องสถานะ: หัว “สถานะกำลัง” เมื่ออยู่ขั้นหลังตัด (Edge … Site) — ขั้นตัดยังเป็น “สถานะ” (ค่าบอก กำลังตัด / ค้างตัด / รอตัด อยู่แล้ว) · ครบ = “สถานะ”
+           · ตัวอักษรใหญ่ + หนาขึ้น: ชื่อขั้น 19 → 24px (หนาสุด) · ชื่อไทย 18px · หัว 13px · บรรทัดล่าง 12.5px หนา · กล่องกว้างไม่เกิน 190 → 210px · ชื่อไทยยาวขึ้นบรรทัดใหม่ได้
     1.41 (2026-10-26 15:12 ผู้ใช้ รูป PTY_B_WC_FL24-25 (0 NoBom · enddate 22/01/70) ขึ้น “ไม่มีรายชิ้นในไฟล์หลัก … กด ⬇ ดึงข้อมูลย้อนหลัง”:
          “Lot ที่ NoBom มันคือไม่ใช่ดึงข้อมูลย้อนหลังนิครับ”)
         FIX เหตุที่ Lot ไม่มีรายชิ้นแยกตามจริง (pstNoRowWhy) — ปุ่ม ⬇ ดึงข้อมูลย้อนหลัง ขึ้นเฉพาะ Lot ที่ enddate เก่ากว่าช่วงไฟล์หลัก
@@ -740,6 +743,13 @@
   .pst-board > .pst-bl > .pst-sum.pst-cur{max-width:190px}
   .pst-board > .pst-bl > .pst-sum.pst-cur .pst-st{max-width:100%;overflow:hidden}
   .pst-board > .pst-bl > .pst-sum.pst-cur em{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  /* lots 1.42 (ผู้ใช้ 15:39 “ตัวหนังสือในปุ่มใหญ่ขึ้นให้เด่น ทำตัวหนาด้วย”) — เดิม ชื่อขั้น 19px · ชื่อไทยใช้ font shorthand ผิด (ไม่มีผล) · หัว/บรรทัดล่างตัวเล็กสีจาง */
+  .pst-board{grid-template-columns:minmax(124px,210px) minmax(0,1fr)}
+  .pst-board > .pst-bl > .pst-sum.pst-cur{max-width:210px}
+  .pst-sum.pst-cur .pst-st > b{font-size:13px;font-weight:800;letter-spacing:.02em;color:#fff}
+  .pst-sum.pst-cur .pst-st > span{font-size:24px;font-weight:900;line-height:1.12;white-space:normal;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .pst-sum.pst-cur .pst-st > span > span.pst-th{font-size:18px;font-weight:800;line-height:1.15;color:#fff;margin-left:7px}
+  .pst-sum.pst-cur .pst-st > em{font-size:12.5px;font-weight:700;color:#fff}
   #lotSt .lt-cut{--lt:#1d6fe0} #lotSt .lt-go{--lt:#15803d} #lotSt .lt-wait{--lt:#a16207} #lotSt .lt-bad{--lt:#c62828} #lotSt .lt-run,#lotSt .lt-idle{--lt:var(--accent)}
   #lotSt .lt-carry{--lt:#ea580c}   /* lots 1.40 ค้างตัด = ส้ม (Dashboard: ส้ม = ค้างตัด) · ไม้ยังไม่ครบ (lt-wait) เปลี่ยนเป็นเหลืองเข้ม แยกจากค้างตัด */
   #lotSt .pst-pkr .pst-cs.ck,#lotSt .pst-lsug .pst-cs.ck{--stc:#ea580c}
@@ -940,7 +950,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.41';
+var LOTS_VER = '1.42';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1888,7 +1898,7 @@ function pstCurChip(a, mob, solo, cx) {   // lots 1.21: cx = { cutD, cutN, why }
     + (function () { if (a.min === 0 && cx) {   // lots 1.21 · 1.37 ข้อความสั้น · 1.40 ค้างตัด
         var emT = ck === 'now' ? 'ตัดแล้ว ' + fmtN(cx.cutD) + '/' + fmtN(cx.cutN) + ' ชิ้น' : ck === 'carry' ? (cx.cutN ? 'เหลือ ' + fmtN(Math.max(0, cx.cutN - cx.cutD)) + ' ชิ้น · ' : '') + 'วันนี้ยังไม่ยิง' : pstPlanShort(cx);
         return '<span class="pst-st"><b><i class="pst-dot"></i>สถานะ</b><span>' + PST_CUTNM[ck] + '</span><em>' + esc(emT) + '</em></span>'; }
-      return '<span class="pst-st"><b>' + (lt ? '<i class="pst-dot"></i>' : '') /* lots 1.37 */ + 'สถานะ</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + (a.min != null && a.min < PST_DONE ? '<span class="pst-th">' + esc(PST_STEPS[a.min].th) + '</span>' : '') + '</span><em>' + esc(sub) + '</em></span>'; })()
+      return '<span class="pst-st"><b>' + (lt ? '<i class="pst-dot"></i>' : '') /* lots 1.37 */ + (a.min != null && a.min > 0 && a.min < PST_DONE ? 'สถานะกำลัง' : 'สถานะ') /* lots 1.42 */ + '</b><span>' + esc(a.min == null ? '—' : pstCurLbl(a.min)) + (a.min != null && a.min < PST_DONE ? '<span class="pst-th">' + esc(PST_STEPS[a.min].th) + '</span>' : '') + '</span><em>' + esc(sub) + '</em></span>'; })()
     + (mob || solo != null ? '<span class="chev">›</span>' : '<span class="chev pst-popc" aria-hidden="true">' + (L.stPop === 'pin' ? '▴' : '▾') + '</span>') /* lots 1.37 กดดูรายละเอียด */ + '</button>';   // lots 1.12 (1.10: ▾/▴ เปิดยอดทุกขั้น) · 1.13 หน้าเกจคอมด้วย
 }
 /* ───────── lots 1.21: รอตัด — Lot นี้อยู่ตรงไหนใน Dashboard (แผนเดียวกับคิวตัดงาน: B.plan = bdPlan() ของ index) ─────────
