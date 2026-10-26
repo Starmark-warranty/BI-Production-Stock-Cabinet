@@ -2101,7 +2101,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.52 · lots.html กำลังโหลด">v2.52</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.53 · lots.html กำลังโหลด">v2.53</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3220,10 +3220,11 @@ var GasFS = (function () {
    v2.50 (2026-10-24 16:59 ผู้ใช้: “ทำยังไงให้ตารางในกรอบแดงเห็นข้อมูลแผนได้เยอะกว่านี้ … ย่อขยายแผนด้านบนได้เพื่อให้เห็นแผนด้านล่าง”) Dashboard: ปุ่ม ⤢ ขยายตารางแผน (ซ่อนรายการค้างตัด · แถบเวลาตัด · แถวเปิด/ปิดเครื่อง · จำในคอมนี้) · กรอบค้างตัดมีปุ่ม ▴ ย่อ / ▾ แสดงรายการ เห็นชัด · ขีดลากใต้รายการค้างตัดปรับความสูงได้ (ดับเบิลคลิก = ปกติ)
    v2.51 (2026-10-24 17:04 ผู้ใช้: “ให้ไปอยู่ที่ปุ่มตั้งค่าดีกว่า” · รูปช่อง ⏱ เด้งกลับใน 20 วิ) ช่องเวลาเด้งกลับ (ตัวกรองวัตถุดิบ / การเรียง) ย้ายจากแถบเหนือตารางไป ⚙ ตั้งค่า → “Dashboard · เฉพาะคอมนี้” · มีผลทันที ไม่ต้องกดบันทึก · ตัวนับถอยหลังบนแถบยังอยู่
    v2.52 (2026-10-24 17:08 ผู้ใช้: “ทำให้มันไปอยู่แถวเดียวกันได้ไหม … ลองขยับปุ่มอื่น ๆ ให้ด้วย” · 17:09 “ของคุณเป็น 2.51 ทำไมผมเป็น 2.46”) Dashboard: แถบตัวกรอง/เรียง ย้ายขึ้นบรรทัดหัวกล่อง (ข้างชื่อวัน) · เรียงเป็นกล่องเลือก · ป้ายสั้นลง · หัวเว็บแสดงเลขรุ่นจาก VER (เดิมหัวเว็บใหม่ของ v2.46 เขียนตายตัว)
+   v2.53 (2026-10-26 08:18 ผู้ใช้: “โทนธีมปรับสีให้แยกกันระหว่าง dashboard กับ saw plan นะ ตอนนี้มันรวมกันอยู่”) SAW PLAN (sawplan.html): โทนสีแยกจาก StarStock/Dashboard — ไม่มี “ตาม StarStock” แล้ว (คอมที่เป็นแบบเดิม = ล็อกโทนที่เห็นอยู่) · ปุ่ม ◐ โทนสี ใน SAW PLAN กดวน ขาว → เทา → ดำ · ปุ่ม ◐ ของ StarStock เปลี่ยนเฉพาะ Dashboard
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.52';
+var VER = '2.53';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
