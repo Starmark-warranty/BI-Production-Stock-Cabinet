@@ -2362,7 +2362,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.72 · lots.html กำลังโหลด">v2.72</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.73 · lots.html กำลังโหลด">v2.73</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3501,10 +3501,11 @@ var GasFS = (function () {
    v2.70 (2026-10-26 14:15 วัดต่อจาก v2.69: ยัง ≈ 11 วิ — StarSync เขียนไฟล์ใหม่ทุก 5–10 นาที · lotLoad อ่านทีละไฟล์ แล้วตัวโหลดอื่นรอคิวต่อ) ได้รายการโฟลเดอร์ lots / items / lots/plan = ดาวน์โหลดไฟล์ที่เปลี่ยนทั้งหมดพร้อมกันทันที (หน้าคิวตัดงาน / HOME) · lotcsv.csv (1.3 MB ปิดขอบ/เจาะ) โหลดตามหลังหน้าพร้อม (แท็บ Edge / Drill รอเหมือนเดิม) · SAW PLAN ปุ่ม 📤 ส่งแผน (ผู้ใช้ 14:14–14:20 “มีปุ่มกดส่งไป starstock กับวางแผนผลิตตัด ติ๊กได้ว่าจะส่งไปไหน … ห้ามไปทับแผนที่ผมกดลง saw plan เด็ดขาด … ยึด sawplan เป็นหลัก”): ติ๊ก StarStock (แผนจริง) / วางแผนตัด (ร่าง) · 🤖 เติม cap / ✋ เอาแค่นี้ · บางชั้นไม้ = ล็อกเฉพาะชั้น · ของที่ส่งลงวันนั้นครบแม้เกินเวลาเครื่อง (Auto เติมเฉพาะที่เหลือ) · ส่งซ้ำ = แทนชุดเดิมของวันนั้น · เลิก popup ทุกครั้งที่ลงเครื่อง (v2.68) · แท็บวางแผนตัดซ่อนเป็นค่าตั้งต้น (เปิดที่ ⋯)
    v2.71 (2026-10-26 14:41 ผู้ใช้: “ตอนกดส่งหรือส่ง+auto ให้อยู่หน้านี้ ผมอยากจัดให้ครบก่อนค่อยส่งทีเดียว”) SAW PLAN แท็บ 🗓 จัดแผนเครื่องตัด: แถบ 📤 ส่งแผนวันที่ … เข้า StarStock บนสุด (เห็นตลอด) · 📤 ส่งตามแผน / 📤 ส่ง+Auto · สถานะ ✓ ตรงกับ StarStock แล้ว / ⚠ ยังไม่ได้ส่ง n Lot · ส่งล่าสุดเมื่อไร ใคร · ส่งแล้ววาดสถานะใหม่ทันที (ไม่ย้ายแท็บ)
    v2.72 (2026-10-26 14:44 ผู้ใช้: “หน้า dashboard ให้มีปุ่มจัดแผนใหม่ auto ทั้งหมด … กดแล้วกลับมา auto เหมือนเดิม แผนใน sawplan ให้ค้างตามที่จัด ไม่เอาค่อยกดล้างแผน”) Dashboard ปุ่ม 🤖 Auto ทั้งหมด ข้าง 🔄 จัดแผนวันนี้ใหม่ (ใส่รหัสทุกครั้ง · ล้างล็อก/ชั้นไม้/พักไว้/ช่องเอาแค่นี้ รวมที่ส่งจาก SAW PLAN) · แผนในหน้า SAW PLAN ไม่ถูกแตะ
+   v2.73 (2026-10-26 14:48 ผู้ใช้: “เพิ่มคำอธิบาย ส่งตามแผน กับ ส่ง+auto ตอนเอาเมาส์แตะทีนะ”) SAW PLAN (sawplan.html): เอาเมาส์ชี้ปุ่ม 📤 ส่งตามแผน / 📤 ส่ง+Auto = กล่องอธิบายความต่าง (ขึ้นได้แม้ปุ่มยังกดไม่ได้) — แถบบนกล่องลงล่าง · แถบล่างกล่องขึ้นบน · index.html เปลี่ยนแค่เลขรุ่น (ให้หน้า SAW PLAN โหลดรุ่นใหม่)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.72';
+var VER = '2.73';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
