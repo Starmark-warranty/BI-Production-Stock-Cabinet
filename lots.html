@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.5 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.6 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -15,6 +15,7 @@
       · lots 1.3: ตาราง Lot คอลัมน์ Amount → Barcode (10 หลักแรก) · ค้นหา Lot ด้วย Barcode ได้
       · lots 1.4: ตารางสถานะ Part คอลัมน์ครบตามหน้า AX progress (StarSync v1.17) · ค้นหาด้วย Code Part (สติกเกอร์ที่ยิง) · ไม่มี Barcode = Manual
       · lots 1.5: ช่องค้นหาในหน้าสถานะ หาข้าม Lot (Code Part / Code Pack / Barcode) → ปุ่มกดไปดู Lot นั้น
+      · lots 1.6: Site ยิงด้วย Scan-Link ได้ (ทั้ง Lot แบบ Edge/Drill)
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
     · เปิดไฟล์นี้ตรง ๆ = หน้าบอกวิธีใช้ (ไม่มีข้อมูล) — ดูหน้า Lot ผลิตที่ index.html#lots
@@ -47,6 +48,8 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.6 (2026-10-26 09:37 ผู้ใช้: “ปรับให้ผมเทสแสกน Edge Drill ได้ปะครับ … แล้วเพื่อแสกนแล้วติ๊ก Site ด้วยครับ” → ตอบ Site = “ทั้ง Lot (แบบ Edge/Drill)”)
+        FEAT Site: ยิงจาก Scan-Link (steps.json คีย์ site) = ✓ ทุกชิ้นของ Lot · AX (ST_STATUS) ✓ อยู่แล้วก็ยังโชว์ค่า AX · ยอด Site บอกเวลาที่ยิง
     1.5 (2026-10-26 09:35 ผู้ใช้ รูปหน้าสถานะ GHEB_BA1_B10_FL20_LOT1_HG ค้น “pd690000454” ได้ 0 แถว: “ต้องปรับหน้านี้ให้ช่องค้นหาหาไปที่ Lot อื่น เพื่อไปกดได้ครับ”)
         FEAT ช่องค้นหาในหน้าสถานะ (≥ 3 ตัว): หาใน Lot อื่นทั้งหมดด้วย — เทียบชื่อ Lot + Code Part · Code Pack · Barcode ทุกชิ้น (PST.bc.all)
              · ไม่เจอใน Lot ที่ดูอยู่ = “ไม่พบใน Lot นี้ — พบใน Lot อื่น” + ปุ่ม Lot (Code Part / ชื่อ Part ที่ตรง · กี่ชิ้น) · เจอทั้งสองที่ = “พบใน Lot อื่นด้วย”
@@ -376,7 +379,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.5';
+var LOTS_VER = '1.6';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -918,7 +921,7 @@ var PST_STEPS = [
   { k: 'pi', h: 'Pick', th: 'หยิบ', t: 'เบิก/หยิบแล้ว (CHECKPICK)' },
   { k: 'wh', h: 'Wh', th: 'เข้าคลัง', t: 'เข้าคลังแล้ว (WH_STATUS)' },
   { k: 'dl', h: 'Delivery', th: 'ส่ง', t: 'ส่งแล้ว (DL_STATUS — ค่าไม่ใช่ว่าง/0 = ✓)' },
-  { k: 'si', h: 'Site', th: 'ไซต์', t: 'ถึงไซต์/ติดตั้งแล้ว (ST_STATUS — ค่าไม่ใช่ว่าง/0 = ✓)' }];
+  { k: 'si', h: 'Site', th: 'ไซต์', t: 'ถึงไซต์/ติดตั้งแล้ว — ST_STATUS ใน AX (ค่าไม่ใช่ว่าง/0 = ✓) หรือยิงด้วยแอป Scan-Link (ทั้ง Lot · lots 1.6)' }];
 var PST_AFTER = ['pk', 'pi', 'wh', 'dl', 'si'];   // lots 1.2: ผ่านขั้นไหนในนี้แล้ว = ผ่าน Edge / Drill แล้ว
 L.stMode = (function () { try { return localStorage.getItem(PST_K) === 'st' ? 'st' : 'list'; } catch (e) { return 'list'; } })();
 L.stQ = ''; L.stF = '';
@@ -1018,7 +1021,9 @@ function pstParseSt(t) {
 /* lots 1.2: lots/steps.json → Map(LOTID ตัวใหญ่ → { edge?, drill? }) */
 function pstParseSteps(t) {
   var o = JSON.parse(t || '{}'), m = new Map(), ls = o && o.lots && typeof o.lots === 'object' ? o.lots : {};
-  Object.keys(ls).forEach(function (K) { var e = ls[K]; if (!e || typeof e !== 'object') return; var v = {}; ['edge', 'drill'].forEach(function (k) { if (e[k] && e[k].at) v[k] = e[k]; }); if (v.edge || v.drill) m.set(String(K).toUpperCase(), v); });
+  Object.keys(ls).forEach(function (K) { var e = ls[K]; if (!e || typeof e !== 'object') return; var v = {}; ['edge', 'drill'].forEach(function (k) { if (e[k] && e[k].at) v[k] = e[k]; });
+    if (e.site && e.site.at) v.si = e.site;   // lots 1.6: Scan-Link คีย์ site = ช่อง si (Site)
+    if (v.edge || v.drill || v.si) m.set(String(K).toUpperCase(), v); });
   PST.steps = m;
 }
 function pstScanOf(lot, k) { var e = PST.steps && PST.steps.get(String(lot || '').toUpperCase()); return (e && e[k]) || null; }
@@ -1030,6 +1035,12 @@ function pstVal(p, s, k) {
     var sc = pstScanOf(p.lot, k); if (sc) return { v: true, scan: sc };
     if (s && PST_AFTER.some(function (a) { return pstPassed(s, a); })) return { v: true, inf: 1 };
     return s ? { v: false } : { v: null };
+  }
+  if (k === 'si') {   // lots 1.6: AX ✓ = ค่า AX · ไม่ใช่ = ยิงจาก Scan-Link ทั้ง Lot
+    var a0 = s && s.si != null ? String(s.si).trim() : '';
+    if (a0 !== '' && a0 !== '0') return { v: true, raw: a0 };
+    var ss = pstScanOf(p.lot, 'si'); if (ss) return { v: true, scan: ss };
+    return a0 === '' && !s ? { v: null } : a0 === '' ? { v: null } : { v: false, raw: a0 };
   }
   if (!s) return { v: null };
   var v = s[k] == null ? '' : String(s[k]).trim();
@@ -1049,21 +1060,22 @@ function pstSum(x, rows) {
     var g = B.pg && B.pg.map ? B.pg.map.get(String(x.id).toUpperCase()) : null;
     if (g) { var tp = g.total_parts, ta = g.total_all, f = function (d, n) { return d == null || !n ? null : { d: d, n: n }; };
       o.cut = f(g.checked_parts, tp); o.pk = f(g.checked_pack, ta); o.pi = f(g.checked_pick, ta); o.wh = f(g.checked_wh, ta); o.src = 'lot';
-      ['edge', 'drill'].forEach(function (k) { if (pstScanOf(x.id, k) && tp) o[k] = { d: tp, n: tp }; }); }   // lots 1.2
+      ['edge', 'drill'].forEach(function (k) { if (pstScanOf(x.id, k) && tp) o[k] = { d: tp, n: tp }; });   // lots 1.2
+      if (pstScanOf(x.id, 'si') && ta) o.si = { d: ta, n: ta }; }   // lots 1.6
   }
-  o.scan = { edge: pstScanOf(x.id, 'edge'), drill: pstScanOf(x.id, 'drill') };   // lots 1.2
+  o.scan = { edge: pstScanOf(x.id, 'edge'), drill: pstScanOf(x.id, 'drill'), si: pstScanOf(x.id, 'si') };   // lots 1.2 · 1.6 + si
   return o;
 }
 /* lots 1.2: รวมยอดหลาย Lot */
 function pstSumAll(list) {
   if (list.length === 1) return pstSum(list[0].x, list[0].rows);
-  var o = { scanN: { edge: 0, drill: 0 }, n: list.length };
+  var o = { scanN: { edge: 0, drill: 0, si: 0 }, n: list.length };
   list.forEach(function (it) { var s = pstSum(it.x, it.rows);
     PST_STEPS.forEach(function (S0) { var z = s[S0.k]; if (!z) return; var a = o[S0.k] || (o[S0.k] = { d: 0, n: 0 }); a.d += z.d; a.n += z.n; });
-    if (s.scan.edge) o.scanN.edge++; if (s.scan.drill) o.scanN.drill++; });
+    if (s.scan.edge) o.scanN.edge++; if (s.scan.drill) o.scanN.drill++; if (s.scan.si) o.scanN.si++; });
   return o;
 }
-function pstScanTip(S0, sc) { return 'ยิงเริ่ม' + S0.th + ' ' + (fDT(lotDate(sc.at)) || sc.at) + (sc.by ? ' โดย ' + sc.by : '') + (sc.bc ? ' · บาร์โค้ด ' + sc.bc : '') + ' (Scan-Link)'; }
+function pstScanTip(S0, sc) { return (S0.k === 'si' ? 'ยิงถึงไซต์ ' : 'ยิงเริ่ม' + S0.th + ' ') + (fDT(lotDate(sc.at)) || sc.at) + (sc.by ? ' โดย ' + sc.by : '') + (sc.bc ? ' · รหัส ' + sc.bc : '') + ' (Scan-Link · ทั้ง Lot)'; }   // lots 1.6 + Site
 function pstChip(S0, z, on, sub) {
   var na = S0.na || !z, full = z && z.n > 0 && z.d >= z.n, p = z && z.n ? z.d / z.n : 0;
   return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
@@ -1189,10 +1201,10 @@ function pstPickHtml(inline) {
   if (!L.loaded && !L.rows.length) h += '<div class="pst-pkmore">กำลังอ่าน data 6…</div>';
   else if (!list.length) h += '<div class="pst-pkmore">ไม่มี Lot ที่ตรง — ลองล้างตัวกรองแถบซ้าย หรือพิมพ์คำอื่น</div>';
   list.slice(0, PST_PKLIM).forEach(function (x) {
-    var rows = pstRowsOf(x), on = !!selK[x.key], sc = pstScanOf(x.id, 'edge') || pstScanOf(x.id, 'drill');
+    var rows = pstRowsOf(x), on = !!selK[x.key], sc = pstScanOf(x.id, 'edge') || pstScanOf(x.id, 'drill') || pstScanOf(x.id, 'si');
     h += '<div class="pst-pkr' + (on ? ' on' : '') + '" data-pstpick="' + esc(x.id) + '" role="checkbox" aria-checked="' + on + '"><span class="ck">' + (on ? '✓' : '') + '</span>'
       + '<b>' + esc(x.id) + '</b>' + stgHtml(x) + '<span class="rm">' + esc(x.remark || '') + '</span>'
-      + (sc ? '<span class="sc" title="ยิง Edge/Drill แล้ว (Scan-Link)">⚡</span>' : '')
+      + (sc ? '<span class="sc" title="ยิง Edge/Drill/Site แล้ว (Scan-Link)">⚡</span>' : '')
       + '<span class="dt">' + (x.end != null ? esc(fD(x.end)) : '') + '</span>'
       + '<span class="pc' + (rows ? '' : ' no') + '">' + (rows ? fmtN(rows.length) + ' ชิ้น' : PST.lots ? 'ไม่มีรายชิ้น' : '') + '</span></div>';
   });
