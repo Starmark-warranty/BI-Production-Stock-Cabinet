@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.16 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.17 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.17: กล่องกำลังโหลด + เบลอด้านหลังตอนเข้าหน้า · เอาคอลัมน์สถานะรายชิ้นออกจากตาราง (กรองที่ช่อง State)
       · lots 1.16: ➕ เลือก Lot ตอนดู Lot อยู่ = หน้าเลือก Lot เต็มจอ (เดิมกล่องลอย)
       · lots 1.15: คอม/แท็บเล็ต = ตารางชิ้นทันที (มือถือ = หน้าเกจ) · ช่องค้นหาย้ายขึ้นแถวชื่อ Lot · ชื่อขั้นไทยใต้ชื่ออังกฤษ (กล่องแคบลง)
       · lots 1.14: หน้าเลือก Lot (แท็บสถานะ) มีหัวตาราง (Lot · Stage · remark · สถานะ · enddate · รายชิ้น) + คอลัมน์สถานะของ Lot
@@ -58,6 +59,14 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.17 (2026-10-26 11:40 ผู้ใช้ รูปตาราง Lot: “ตอนนี้เข้าหน้านี้ เพิ่มกล่องแสดงการโหลดข้อมูล แล้วเบลอด้านหลังไว้ให้รู้ว่ากำลังโหลด”
+          · 11:41 รูปคอลัมน์สถานะในตารางชิ้น: “เอาอันนี้ออกด้วยครับ ให้ไปกรองตรง State เองได้ครับ”)
+        UX เข้าหน้า Lot ผลิตแล้วข้อมูลยังมาไม่ครบ = กล่องกลางจอ “กำลังโหลดข้อมูล Lot ผลิต…” + เบลอหน้าด้านหลัง (#lotLd · z 60 ใต้หน้าต่าง/กล่องถาม)
+           · บอกทีละอย่าง: รายการ Lot (data 6) · สถานะรายชิ้น (pinfo · pstate) — ⏳ / ✓ n Lot / ยังไม่มีไฟล์ / อ่านไม่ได้ · ครบแล้วหายเอง
+           · เกิน 6 วิ = ปุ่ม “ใช้ไปก่อน” (ปิดกล่อง ข้อมูลขึ้นเองเมื่อโหลดเสร็จ) · เกิน 20 วิ = บอกว่าช้ากว่าปกติ · ไม่ได้เชื่อม Drive = ไม่ขึ้น (หน้าต่างเชื่อมต่อของ index ขึ้นแทน)
+           · เข้าหน้าซ้ำตอนข้อมูลอยู่ในเครื่องแล้ว = ไม่ขึ้น (รอบตรวจ 30 วิ ไม่ขึ้น)
+        CHANGE ตารางชิ้น (คอม): เอาคอลัมน์ “สถานะ” รายชิ้น + ช่องเลือกกรองของมันออก (1.10–1.11) — กรองด้วยช่องติ๊ก State แต่ละขั้นแทน
+           · ยังมี: กล่องสถานะของ Lot บนแถวยอด (กด = กรองชิ้นที่อยู่ขั้นนั้น) · ป้ายสถานะในรายการชิ้นของมือถือ · ⚠ ขาดส่งดูที่ช่อง Delay No
     1.16 (2026-10-26 11:37 ผู้ใช้ รูปกล่องเลือก Lot ลอยทับหน้าสถานะ + รูปหน้าเลือก Lot เต็มหน้า: “ตอนเลือก Lot อยู่แล้วพอจะไปดู Lot อื่น หน้าจอต้องเต็มเหมือนกัน”)
         UI ➕ เลือก Lot ตอนดู Lot อยู่ = หน้าเลือก Lot เต็มพื้นที่แบบตอนยังไม่เลือก (.pst-pk.full · แทนกล่องลอย 1.2) — ตัวหน้าสถานะซ่อนจนกว่าจะปิด
            · ติ๊กได้หลาย Lot (Lot ที่เลือกอยู่ขึ้นก่อน) · ปุ่ม ✓ ดู Lot ที่เลือก (n) = กลับหน้าสถานะ · Esc / คลิกนอกกล่อง = ปิด · ล้างที่เลือก / แสดงทุก Lot ที่ตรง เหมือนเดิม
@@ -531,6 +540,23 @@
   .pst-hd .pst-lots{flex:1 1 300px}
   .pst-hd .pst-htools{padding:0;flex:none;flex-wrap:nowrap;margin-left:auto}
   .pst-hd .pst-htools .pst-q{width:clamp(170px,16vw,280px)}
+  /* ───────── lots 1.17: กล่องกำลังโหลด + เบลอด้านหลัง (#lots เป็น position:absolute → กล่องคลุมเฉพาะหน้า Lot ผลิต ใต้แถบหัว) ───────── */
+  #lotLd{position:absolute;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;
+    background:color-mix(in srgb,var(--bg2) 45%,transparent);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+  #lotLd .box{display:flex;flex-direction:column;align-items:center;gap:10px;width:min(380px,100%);box-sizing:border-box;padding:22px 24px 18px;border-radius:14px;
+    background:var(--solid);color:var(--ink);border:.5px solid var(--line-strong);box-shadow:0 18px 44px rgba(20,32,60,.25);text-align:center}
+  #lotLd .spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--line-strong);border-top-color:var(--accent);animation:sp .9s linear infinite}
+  #lotLd b{font-size:15px}
+  #lotLd ul{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:7px;align-self:stretch;text-align:left;font-size:13px}
+  #lotLd li{display:flex;align-items:center;gap:9px}
+  #lotLd li i{flex:none;position:relative;width:16px;height:16px;box-sizing:border-box;border-radius:50%}
+  #lotLd li.run i{border:2px solid var(--line-strong);border-top-color:var(--accent);animation:sp .8s linear infinite}
+  #lotLd li.ok i{background:var(--good)} #lotLd li.ok i::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:900;font-style:normal}
+  #lotLd li.bad i{background:var(--bad)} #lotLd li.bad i::after{content:'!';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:900;font-style:normal}
+  #lotLd li small{margin-left:6px;color:var(--ink-dim);font-size:12px}
+  #lotLd li.run span{color:var(--ink)} #lotLd li.ok span{color:var(--ink-dim)}
+  #lotLd .slow{color:var(--warn);font-size:12px;line-height:1.45}
+  #lotLd .tbtn{margin-top:2px}
   @media (max-width: 760px){ .pst-sums > .pst-tools{width:100%;flex-wrap:wrap} .pst-sums > .pst-tools .pst-q{width:100%;flex:1 1 100%} .pst-sums > .sp{display:none} .pst-sum.pst-cur{flex:1 1 auto} }
 </style>
 </head>
@@ -586,7 +612,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.16';
+var LOTS_VER = '1.17';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1491,9 +1517,7 @@ function pstCfRow(cols) {
       : '<span class="pst-cfi" title="แถวตัวกรอง: พิมพ์ในช่องใต้หัวคอลัมน์ (ABC = มีคำนี้ · ตัวเลขใช้ = > < >= <= <> ได้) · ช่องสถานะกดวน ทั้งหมด → ✓ → ยังไม่ผ่าน">⧩</span>') + '</th>'
     + PST_STEPS.map(function (S0) { var v = sv(S0.k);
       return '<th class="pck stk"><button type="button" class="pst-cfb' + (v ? ' v' + v : '') + '" data-pstcfb="' + S0.k + '" title="' + esc(S0.h + ': ' + (v === '1' ? 'แสดงเฉพาะ ✓ (กด = เฉพาะยังไม่ผ่าน)' : v === '0' ? 'แสดงเฉพาะยังไม่ผ่าน (กด = ทั้งหมด)' : 'ทั้งหมด (กด = เฉพาะ ✓)')) + '"><span class="cb">' + (v === '1' ? '✓' : '') + '</span></button></th>'; }).join('')
-    + '<th class="cur stk"><select class="pst-cf' + (sv('cur') ? ' on' : '') + '" data-pstcf="cur" title="กรองตามสถานะ (ขั้นที่ชิ้นอยู่ตอนนี้)"><option value="">ทั้งหมด</option>'
-    + PST_STEPS.map(function (S0, i) { return '<option value="' + i + '"' + (sv('cur') === String(i) ? ' selected' : '') + '>' + esc(pstStepNm(S0)) + '</option>'; }).join('')
-    + '<option value="' + PST_DONE + '"' + (sv('cur') === String(PST_DONE) ? ' selected' : '') + '>ครบ</option><option value="-1"' + (sv('cur') === '-1' ? ' selected' : '') + '>?</option></select></th>'   // lots 1.11: หลังช่อง Site
+    /* lots 1.17: ช่องเลือกกรองสถานะรายชิ้นออกไปพร้อมคอลัมน์ (ผู้ใช้ 11:41) — L.stCF.cur ยังใช้ได้จากกล่องสถานะบนแถวยอด */
     + cols.map(function (c) { var v = sv(c.k);
       return '<th' + (c.num ? ' class="num"' : '') + '><input type="search" class="pst-cf' + (v.trim() ? ' on' : '') + '" data-pstcf="' + c.k + '" value="' + esc(v) + '" placeholder="' + (c.num ? '=' : 'ABC') + '" title="' + esc(c.h + ' — ' + (c.num ? 'ตัวเลข: 567 = เท่ากับ · >100 · <=50 · <>0' : 'มีคำนี้ (ไม่สนตัวพิมพ์ · หลายคำคั่นด้วยเว้นวรรค)')) + '" autocomplete="off" spellcheck="false"></th>'; }).join('') + '</tr>';
 }
@@ -1738,15 +1762,15 @@ function pstRender(keep) {
         + (!shown.length && !(oth && oth.n) ? '<div class="pst-note">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง</div>' : ''))
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
       else
-      h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th><th rowspan="2" class="cur stk" title="สถานะ — ขั้นที่ชิ้นอยู่ตอนนี้ (ขั้นถัดจากขั้นล่าสุดที่ผ่าน · ครบ = ผ่านทุกขั้น)">สถานะ</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
+      h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
         + cols.map(function (c) { return '<th rowspan="2"' + (c.num ? ' class="num"' : '') + (c.t ? ' title="' + esc(c.t) + '"' : '') + '>' + esc(c.h) + '</th>'; }).join('') + '</tr><tr>'
         + PST_STEPS.map(function (S0) { return '<th class="pck stk' + (S0.na ? ' na' : '') + '" title="' + esc(S0.t) + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง
         + part.map(function (it, i) {
           var p = it.p, s = it.s;
           return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
-            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0); }).join('') + '<td class="cur stk">' + pstCurBadge(it.cu, it.d) + '</td>'   // lots 1.11: State รวม หลัง Site
+            + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0); }).join('')   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
-        }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (2 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
+        }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
         + '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + (missTxt ? ' · ' + esc(missTxt) : '') + (PST.anNone && !PST.an ? ' · ' + esc('Product Name เป็นชื่อไทยเมื่ออัปเดต StarSync เป็น v1.19 (ตั้ง lots.artName ใน config.json)') : '') + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';
     } else {
       h += '<div class="pst-note big">' + esc(note || 'ไม่มีข้อมูล') + '</div>';
@@ -1796,10 +1820,30 @@ function pstTabs() {
   document.body.classList.toggle('lotStMode', L.stMode === 'st');
 }
 /* lots 1.2: เข้าหน้า Lot ผลิต (route / F5) ตอนอยู่แท็บสถานะ = หน้าสถานะเลย */
+/* ───────── lots 1.17: กล่องกำลังโหลด + เบลอด้านหลัง (ผู้ใช้ 11:40) ─────────
+   ขึ้นเมื่อเข้าหน้า Lot ผลิตแล้ว data 6 (L.loaded) หรือรายชิ้น (PST.lots) ยังไม่มา · ไม่ได้เชื่อม Drive = ไม่ขึ้น · ตรวจทุก 250 ms จนครบแล้วลบตัวเอง */
+var PST_LD = { el: null, tm: 0, t0: 0, off: false };
+function pstLdTick() {
+  var E = $('lots'); if (!E) return;
+  var d6 = L.err && !L.rows.length ? 'bad' : L.loaded ? 'ok' : 'run', ps = PST.lots ? 'ok' : PST.none ? 'none' : PST.err ? 'bad' : 'run';
+  var on = view() === 'lots' && !PST_LD.off && !!ensureFs() && (d6 === 'run' || ps === 'run');
+  if (!on) { if (PST_LD.el) { PST_LD.el.remove(); PST_LD.el = null; } clearInterval(PST_LD.tm); PST_LD.tm = 0; return; }
+  if (!PST_LD.el || !E.contains(PST_LD.el)) { PST_LD.el = document.createElement('div'); PST_LD.el.id = 'lotLd'; E.appendChild(PST_LD.el); }
+  var sec = Math.floor((Date.now() - PST_LD.t0) / 1000), li = function (k, t, sub) { return '<li class="' + k + '"><i></i><span>' + esc(t) + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span></li>'; };
+  var h = '<div class="box" role="status" aria-live="polite"><div class="spin"></div><b>กำลังโหลดข้อมูล Lot ผลิต…</b><ul>'
+    + li(d6, 'รายการ Lot (data 6)', d6 === 'ok' ? fmtN(L.rows.length) + ' Lot' : d6 === 'bad' ? 'อ่านไม่ได้' : '')
+    + li(ps === 'none' ? 'ok' : ps, 'สถานะรายชิ้น (pinfo · pstate)', ps === 'ok' ? fmtN(PST.lots.size) + ' Lot' : ps === 'none' ? 'ยังไม่มีไฟล์' : ps === 'bad' ? 'อ่านไม่ได้' : '')
+    + '</ul>' + (sec >= 20 ? '<small class="slow">ช้ากว่าปกติ (' + sec + ' วิ) — เน็ตช้า / ไฟล์ใหญ่ · ใช้ไปก่อนได้ ข้อมูลขึ้นเองเมื่อโหลดเสร็จ</small>' : '')
+    + (sec >= 6 ? '<button type="button" class="tbtn" data-lotldoff>ใช้ไปก่อน</button>' : '') + '</div>';
+  if (PST_LD.el.innerHTML !== h) PST_LD.el.innerHTML = h;
+}
+function pstLdStart() { PST_LD.off = false; PST_LD.t0 = Date.now(); pstLdTick(); if (PST_LD.el && !PST_LD.tm) PST_LD.tm = setInterval(pstLdTick, 250); }
+document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-lotldoff]')) { PST_LD.off = true; pstLdTick(); } });
 function lotShowL12() {
   /* lots 1.10: เพิ่งเข้าหน้า Lot ผลิต (F5 / จากหน้าอื่น) = แท็บสถานะ Part · ลิงก์ “ดู/ยกเลิก” Lot ที่ปิดเอง = ตาราง Lot (PST.entryList)
      route() ซ้ำตอนอยู่หน้านี้แล้ว (เชื่อม Drive ใหม่ · go('lots') ซ้ำ) = ไม่บังคับ แท็บที่เลือกไว้คงเดิม */
   if (!PST.inLots) { L.stMode = PST.entryList ? 'list' : 'st'; PST.entryList = 0; pstTabs(); }
+  if (!PST.inLots) pstLdStart();   // lots 1.17: กล่องกำลังโหลด (เฉพาะตอนเพิ่งเข้าหน้า)
   PST.inLots = true;
   lotShow(); if (L.stMode === 'st') pstShow(); pstBcLoad();   // lots 1.3 + pstBcLoad (คอลัมน์ Barcode)
 }
