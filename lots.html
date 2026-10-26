@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.15 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.16 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.16: ➕ เลือก Lot ตอนดู Lot อยู่ = หน้าเลือก Lot เต็มจอ (เดิมกล่องลอย)
       · lots 1.15: คอม/แท็บเล็ต = ตารางชิ้นทันที (มือถือ = หน้าเกจ) · ช่องค้นหาย้ายขึ้นแถวชื่อ Lot · ชื่อขั้นไทยใต้ชื่ออังกฤษ (กล่องแคบลง)
       · lots 1.14: หน้าเลือก Lot (แท็บสถานะ) มีหัวตาราง (Lot · Stage · remark · สถานะ · enddate · รายชิ้น) + คอลัมน์สถานะของ Lot
       · lots 1.13: คอมก็เปิดหน้าเกจก่อน (กดเกจ = ตารางชิ้น) · แถบซ้ายกรอง Lot ตามสถานะ (Part · Edge · Drill · Pack · Pick …)
@@ -57,6 +58,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.16 (2026-10-26 11:37 ผู้ใช้ รูปกล่องเลือก Lot ลอยทับหน้าสถานะ + รูปหน้าเลือก Lot เต็มหน้า: “ตอนเลือก Lot อยู่แล้วพอจะไปดู Lot อื่น หน้าจอต้องเต็มเหมือนกัน”)
+        UI ➕ เลือก Lot ตอนดู Lot อยู่ = หน้าเลือก Lot เต็มพื้นที่แบบตอนยังไม่เลือก (.pst-pk.full · แทนกล่องลอย 1.2) — ตัวหน้าสถานะซ่อนจนกว่าจะปิด
+           · ติ๊กได้หลาย Lot (Lot ที่เลือกอยู่ขึ้นก่อน) · ปุ่ม ✓ ดู Lot ที่เลือก (n) = กลับหน้าสถานะ · Esc / คลิกนอกกล่อง = ปิด · ล้างที่เลือก / แสดงทุก Lot ที่ตรง เหมือนเดิม
+           · Esc ในช่องพิมพ์ (โฟกัสอยู่ตอนเปิด): มีคำ = ล้างคำ · ว่าง = ปิด (เดิม Esc ในช่องพิมพ์ไม่ปิด — ตัวรับคีย์ของ index ข้ามช่องพิมพ์)
     1.15 (2026-10-26 11:33 ผู้ใช้ รูปแถวยอดที่ดันช่องค้นหาตกบรรทัด: “ปรับปุ่มให้มันไม่ดัน (ช่องค้นหา)” + “ดูในคอมกับในแท็บเล็ตขอเป็นหน้ารายการชิ้น ในมือถือเป็นเกจสถานะ”)
         CHANGE คอม/แท็บเล็ต (จอ > 760px) เปิด Lot = ตารางชิ้นทันทีเหมือน 1.11 (ยกเลิกหน้าเกจบนคอมของ 1.13 · ไม่มีปุ่ม ← เกจสถานะ · Esc = ตาราง Lot) · มือถือ ≤ 760px = หน้าเกจเหมือน 1.12
         UI ช่องค้นหา + จำนวนแถว + ✕ ล้างตัวกรอง ย้ายขึ้นแถวชื่อ Lot (ขวา ก่อน ⓘ รายละเอียด / ✕ ล้าง) — แถวยอดไม่ดันช่องค้นหาตกบรรทัดอีก · remark ยาว = … (ชี้ดูเต็ม)
@@ -334,7 +339,7 @@
   .pst-chip button:hover{background:var(--bg2);color:var(--bad)}
   .pst-pk{position:absolute;z-index:25;left:14px;top:50px;width:min(780px,calc(100% - 28px));max-height:min(70vh,640px);display:flex;flex-direction:column;
     background:var(--solid);border:.5px solid var(--line-strong);border-radius:12px;box-shadow:0 14px 36px rgba(20,32,60,.24)}
-  .pst-pk.inline{position:static;width:auto;max-height:none;flex:1;min-height:0;margin:10px 14px 14px;box-shadow:none}
+  .pst-pk.inline,.pst-pk.full{position:static;width:auto;max-height:none;flex:1;min-height:0;margin:10px 14px 14px;box-shadow:none}   /* lots 1.16 + full */
   .pst-pkhd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px 6px}
   .pst-pkt{font-size:15px;margin-right:4px}
   .pst-pq{flex:1;min-width:220px;border:.5px solid var(--line-strong);border-radius:8px;padding:7px 10px;background:var(--solid);color:var(--ink);font:inherit;font-size:13.5px}
@@ -365,7 +370,7 @@
   @media (max-width: 760px){
     .pst-sums > .pst-tools{width:100%;flex-wrap:wrap}
     .pst-sums > .pst-tools .pst-q{width:100%}
-    .pst-pk{left:8px;width:calc(100% - 16px)} .pst-pk.inline{margin:8px}
+    .pst-pk{left:8px;width:calc(100% - 16px)} .pst-pk.inline,.pst-pk.full{margin:8px;width:auto}
     .pst-pkr .dt,.pst-pkr .rm{display:none}
   }
   /* ───────── lots 1.3: คอลัมน์ Barcode (แทน Amount) ───────── */
@@ -581,7 +586,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.15';
+var LOTS_VER = '1.16';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1615,12 +1620,12 @@ function pstCands() {
 function pstPickHtml(inline) {
   var c = pstCands(), sel = pstSelRows(), selK = {}; sel.forEach(function (x) { selK[x.key] = 1; });
   var list = inline ? c : sel.concat(c.filter(function (x) { return !selK[x.key]; }));   // กล่องลอย: ที่เลือกอยู่ขึ้นก่อน
-  var h = '<div class="pst-pk' + (inline ? ' inline' : '') + '" data-pstpkbox>'
-    + '<div class="pst-pkhd">' + (inline ? '<b class="pst-pkt">เลือก Lot ที่จะดู</b>' : '')   /* lots 1.13: เอา ← รายการ Lot ออก (ใช้แท็บ 📋 รายการ Lot ด้านบน) */
+  var h = '<div class="pst-pk' + (inline ? ' inline' : ' full') + '" data-pstpkbox>'   // lots 1.16: ไม่ใช่หน้าแรก = เต็มพื้นที่ด้วย (เดิมกล่องลอย)
+    + '<div class="pst-pkhd">' + '<b class="pst-pkt">เลือก Lot ที่จะดู</b>'   // lots 1.16: หัวเรื่องทั้งสองแบบ   /* lots 1.13: เอา ← รายการ Lot ออก (ใช้แท็บ 📋 รายการ Lot ด้านบน) */
     + '<input type="search" class="pst-pq" placeholder="พิมพ์ชื่อ Lot / remark … (Enter = ดูทุก Lot ที่ตรง)" value="' + esc(L.stPk.q) + '" autocomplete="off">'
     + '<button type="button" class="tbtn pri" data-pstall' + (c.length ? '' : ' disabled') + ' title="ดูทุก Lot ในรายการนี้ (สูงสุด ' + PST_MAXSEL + ' Lot)">แสดง ' + fmtN(Math.min(c.length, PST_MAXSEL)) + (c.length > PST_MAXSEL ? '+' : '') + ' Lot ที่ตรง</button>'
     + (sel.length ? '<button type="button" class="tbtn" data-pstclr title="เอา Lot ที่เลือกออกทั้งหมด">ล้างที่เลือก (' + sel.length + ')</button>' : '')
-    + (!inline ? '<button type="button" class="tbtn" data-pstpk="0" title="ปิด (Esc)">ปิด</button>' : '') + '</div>'
+    + (!inline ? '<button type="button" class="tbtn pri" data-pstpk="0" title="กลับหน้าสถานะ (Esc)">✓ ดู Lot ที่เลือก (' + sel.length + ')</button>' : '') + '</div>'   // lots 1.16 (เดิม “ปิด”)
     + '<div class="pst-pkn">ตรง <b>' + fmtN(c.length) + '</b> Lot · รายการนี้ใช้ตัวกรองแถบซ้าย (Stage · enddate · Bu · pool · ค้นหา) ด้วย · ติ๊กได้หลาย Lot (สูงสุด ' + PST_MAXSEL + ')</div>'
     + '<div class="pst-pkl">';
   if (!L.loaded && !L.rows.length) h += '<div class="pst-pkmore">กำลังอ่าน data 6…</div>';
@@ -1649,7 +1654,8 @@ function pstRender(keep) {
   var W0 = E.querySelector('.pst-wrap') || E.querySelector('.pst-ml'), sc = keep && W0 ? [keep === 'x' ? 0 : W0.scrollTop, W0.scrollLeft] : null, P0 = E.querySelector('.pst-pkl'), psc = P0 ? P0.scrollTop : 0;
   var sel = pstSelRows(), h = '';
   L.stKey = sel[0] ? sel[0].key : null;
-  if (!sel.length) {
+  if (!sel.length || L.stPk.open) {   // lots 1.16: เปิดเลือก Lot ตอนมี Lot อยู่ = หน้าเลือกเต็มพื้นที่ (ไม่วาดหน้าสถานะใต้กล่อง)
+    if (sel.length) h = pstPickHtml(false); else
     h = (L.loaded && L.stSel.length ? '<div class="pst-note">Lot ที่เลือกไว้ไม่มีใน data 6 แล้ว — เลือกใหม่</div>' : '') + pstPickHtml(true);
     E.innerHTML = h;
   } else {
@@ -1745,8 +1751,7 @@ function pstRender(keep) {
     } else {
       h += '<div class="pst-note big">' + esc(note || 'ไม่มีข้อมูล') + '</div>';
     }
-    if (L.stPk.open) h += pstPickHtml(false);
-    E.innerHTML = h;
+    E.innerHTML = h;   // lots 1.16: กล่องเลือก Lot ไม่ต่อท้ายตรงนี้แล้ว (เต็มพื้นที่ — ดูบนสุดของ pstRender)
     pstStick(E);   // lots 1.4
     if (sc) { var W = E.querySelector('.pst-wrap') || E.querySelector('.pst-ml'); if (W) { W.scrollTop = sc[0]; W.scrollLeft = sc[1]; } }
   }
@@ -1871,6 +1876,13 @@ document.addEventListener('change', function (e) {
   var t = e.target; if (!t || !t.classList || !t.classList.contains('pst-cf') || t.tagName !== 'SELECT') return;
   if (t.value === '') delete L.stCF[t.dataset.pstcf]; else L.stCF[t.dataset.pstcf] = t.value; pstRender('x');
 });
+/* lots 1.16: Esc ในช่องพิมพ์ของหน้าเลือก Lot (โฟกัสอยู่ตอนเปิด) = มีคำ → ล้างคำ · ว่าง → ปิดหน้าเลือก (เมื่อมี Lot ที่ดูอยู่) — ตัวรับคีย์ของ index ข้ามช่องพิมพ์ */
+document.addEventListener('keydown', function (e) {
+  var t = e.target; if (e.key !== 'Escape' || !t || !t.classList || !t.classList.contains('pst-pq')) return;
+  e.preventDefault(); e.stopPropagation();
+  if (t.value) { L.stPk.q = ''; pstRender(true); var qi = $('lotSt').querySelector('.pst-pq'); if (qi) qi.focus(); }
+  else if (L.stPk.open && pstSelRows().length) { L.stPk.open = false; pstRender(true); }
+}, true);
 /* lots 1.10: Esc ในช่องตัวกรอง = ล้างช่องนั้น (ว่างอยู่แล้ว = ออกจากช่อง) — ไม่ให้หลุดไปตาราง Lot (Esc ของหน้าสถานะ) */
 document.addEventListener('keydown', function (e) {
   var t = e.target; if (e.key !== 'Escape' || !t || !t.classList || !t.classList.contains('pst-cf')) return;
