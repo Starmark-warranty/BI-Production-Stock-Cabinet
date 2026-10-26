@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.26 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.27 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.27: ช่อง State ที่ติ๊กแล้ว = พื้นเขียวทุกขั้น (หัวคอลัมน์ยังสีของขั้น)
       · lots 1.26: หน้าเลือก Lot คอลัมน์สถานะ = สีของขั้น + ชื่อไทย (Edge/ปิดขอบ …)
       · lots 1.25: หลอดสถานะ (8 ช่อง · % ในหลอด) · เกจ / ช่อง State / กล่องสถานะ ใช้สีของขั้น — ขั้นที่ยังไม่ถึง = เทา
       · lots 1.24: แถบเครื่องมือหน้า Lot ผลิต (แท็บรายการ Lot / สถานะ Part · จำนวน · อัปเดต · ปิดว่าจบ) ย้ายขึ้นแถบหัวแถวเดียวกับ HOME · เอาปุ่ม CSV / นำเข้า CSV ออก
@@ -68,6 +69,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.27 (2026-10-26 13:36 ผู้ใช้ รูปคอลัมน์ State: “เฉพาะตรงที่ติ๊กถูก ถ้าครบให้พื้นหลังเขียวครับ ไม่ต้องแยกตามสี” · “แต่หัวคอลัมน์ให้เป็นสีถูกแล้ว”)
+        UI ช่อง State ที่ ✓ = พื้นเขียว + ✓ เขียวทุกขั้น (ยกเลิกสีของขั้นในช่อง ✓ ของ 1.25) · ยังไม่ผ่าน = เทาอ่อนเหมือน 1.25 · หัวคอลัมน์ Part…Site ยังสีของขั้น (1.23)
+           · ✓ ที่ถือว่าผ่าน (Pack แล้ว · กรอบประ) = เขียวอ่อนกว่า · มือถือ (แตกทีละขั้น) เขียวเหมือนกัน
     1.26 (2026-10-26 13:30 ผู้ใช้ รูปคอลัมน์สถานะในหน้าเลือก Lot (Pick · Edge · Site · รอตัด …): “หน้านี้ตรงสถานะก็ใส่สีตามไป พร้อม / ภาษาไทย”)
         UI ป้ายสถานะในหน้าเลือก Lot = สีของขั้น (ชุดเดียวกับหลอดสถานะ 1.25) + ชื่อ “Edge/ปิดขอบ” · ขั้นตัด = “Part/กำลังตัด” หรือ “Part/รอตัด” · ครบ = เขียว
            · คอลัมน์กว้างขึ้น (ชื่อยาวสุด Pick/เตรียมส่งของเข้าคลัง) · ป้ายสถานะรายชิ้นในมือถือก็ใช้สีของขั้นด้วย
@@ -76,7 +80,7 @@
         FEAT หลอดสถานะใต้แถวยอด: 8 ช่อง (ตัด · ปิดขอบ · เจาะ&CNC · แพ็ค · เตรียมส่งของเข้าคลัง · คลัง · จัดส่ง · หน้างาน) แต่ละช่องเติมสีของขั้นตาม % + เลข % ในช่อง
            · ขั้นที่ไปถึงแล้ว (≤ ขั้นปัจจุบันของ Lot หรือมีชิ้นผ่านแล้ว) = สีของขั้น (ชุดเดียวกับสีแถว 1.23) · ยังไม่ถึง = เทา · ขั้นปัจจุบัน = กรอบสี
         UI เกจ (กล่องยอด): ขั้นที่ถึงแล้ว = พื้น/กรอบ/วงกลมสีของขั้น (แทนเขียวเมื่อครบ) · ยังไม่ถึง = เทา · กล่องสถานะ = สีเข้มของขั้นปัจจุบัน (ครบ = เขียว)
-        UI ช่อง State ในตาราง: ✓ = สีของขั้นนั้น (เดิมเขียวทุกขั้น) · ยังไม่ผ่าน = เทาอ่อน · มือถือ (แตกทีละขั้น) สีเดียวกัน
+        UI ช่อง State ในตาราง: ✓ = สีของขั้นนั้น (เดิมเขียวทุกขั้น) · ยังไม่ผ่าน = เทาอ่อน · มือถือ (แตกทีละขั้น) สีเดียวกัน — 1.27 ช่อง ✓ กลับเป็นเขียว (ผู้ใช้ 13:36)
     1.24 (2026-10-26 13:26 ผู้ใช้ รูปแถบ [รายการ Lot | สถานะ Part] 6,337 แถว … ปิดว่าจบ · CSV · นำเข้า CSV: “ย้ายตรงนี้ขึ้นไปอีกที่ แท็บเดียวกับ Home เลย แล้วเอาปุ่ม CSV กับนำเข้าออก”)
         UI #lotBar ย้ายเข้าแถบหัว (#top ของ index ต่อจากป้าย “Lot ผลิต · data 6”) ตอนเปิดโปรแกรม (lotBarPlace) — หน้า Lot ผลิตได้ที่สูงเพิ่มหนึ่งแถว
            · ตัวเดิม (id · ปุ่ม · ตัวรับคลิก) ย้ายทั้งก้อน ไม่ได้สร้างใหม่ · มีคลาส lotsOnly = หน้าอื่นไม่โชว์ · มือถือ (≤ 760px) อยู่ที่เดิม (แถบหัวแคบ)
@@ -619,12 +623,13 @@
   .pst-sum.unr[data-pstf] .pst-st > b,.pst-sum.unr[data-pstf] .pst-st > span,.pst-sum.unr[data-pstf] .pst-th{color:var(--ink-faint)}
   .pst-sum.unr[data-pstf] .pst-ring .fg{stroke:var(--ink-faint)}
   .pst-sum.pst-cur[class*=" cs"]{background:color-mix(in srgb,var(--stc) 72%,#0b1220);border-color:color-mix(in srgb,var(--stc) 72%,#0b1220);box-shadow:0 4px 14px color-mix(in srgb,var(--stc) 35%,transparent)}
-  #lotSt .pst-t tbody td.pck[class*=" cs"].on{background:color-mix(in srgb,var(--stc) 18%,var(--solid))}
-  #lotSt .pst-t tbody td.pck[class*=" cs"].on.inf{background:color-mix(in srgb,var(--stc) 9%,var(--solid))}
-  #lotSt .pst-t tbody td.pck[class*=" cs"].on .cb{border-color:var(--stc);color:color-mix(in srgb,var(--stc) 78%,#000)}
+  /* lots 1.27 (ผู้ใช้ 13:36 “ตรงที่ติ๊กถูก ให้พื้นหลังเขียว ไม่ต้องแยกตามสี”): ช่อง ✓ = เขียวทุกขั้น (1.25 เคยเป็นสีของขั้น) */
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on{background:color-mix(in srgb,var(--good) 18%,var(--solid))}
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on.inf{background:color-mix(in srgb,var(--good) 9%,var(--solid))}
+  #lotSt .pst-t tbody td.pck[class*=" cs"].on .cb{border-color:var(--good);color:var(--good)}
   #lotSt .pst-t tbody td.pck[class*=" cs"]:not(.on):not(.nc):not(.nd):not(.na){background:color-mix(in srgb,var(--ink-faint) 9%,var(--solid))}
-  .pst-msteps .ms.on[class*=" cs"],.pst-msteps .ms[class*="cs"].on{background:color-mix(in srgb,var(--stc) 16%,var(--solid))}
-  .pst-msteps .ms[class*="cs"].on i{border-color:var(--stc);color:color-mix(in srgb,var(--stc) 78%,#000)}
+  .pst-msteps .ms.on[class*=" cs"],.pst-msteps .ms[class*="cs"].on{background:color-mix(in srgb,var(--good) 14%,var(--solid))}   /* lots 1.27 เขียว */
+  .pst-msteps .ms[class*="cs"].on i{border-color:var(--good);color:var(--good)}
   .pst-msteps .ms[class*="cs"].no{background:color-mix(in srgb,var(--ink-faint) 9%,var(--solid))}
   @media (max-width: 760px){ .pst-tube{margin:0 10px 8px;height:22px} .pst-tube .tseg span{font-size:0} .pst-tube .tseg span b{font-size:10px} }
   /* ───────── lots 1.24: #lotBar ในแถบหัว · ไม่มีปุ่ม CSV / นำเข้า CSV ───────── */
@@ -743,7 +748,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.26';
+var LOTS_VER = '1.27';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
