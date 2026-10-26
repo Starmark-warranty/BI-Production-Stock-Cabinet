@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.21 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.22 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.22: วงกลม % (เกจ) ใหญ่ขึ้น
       · lots 1.21: สถานะขั้นตัด = กำลังตัด (ยิงแล้ว ≥ 1 ชิ้น) / รอตัด + เหตุจาก Dashboard (ติดอะไร · คิวที่เท่าไร) + ปุ่มไป Dashboard
       · lots 1.20: ตารางชิ้นมีเส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (หัวยาวขึ้นสองบรรทัด · ช่องกรองไม่ดันคอลัมน์)
       · lots 1.19: ซ่อนป้าย “data 6 · n แถว · อัปเดต … · StarSync (AX)” บนแถบหัว
@@ -63,6 +64,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.22 (2026-10-26 13:11 ผู้ใช้ รูปวงกลม 99%: “ปรับเกจใหญ่ขึ้นหน่อยครับ”)
+        UI วงกลม % ในกล่องยอด: คอม 31 → 40 px (ตัวเลขในวงใหญ่ตาม) · หน้าเกจมือถือ 48 → 58 px · เส้นวงหนาขึ้นเล็กน้อย
+           · แถวชื่อ Lot อยู่บรรทัดเดียว (1.21 ปุ่ม ↗ Dashboard ดัน ⓘ รายละเอียด ตก): จำนวนแถว “63/63 แถว” (เดิม “แสดง 63 จาก 63 แถว”) · ช่องค้นหาแคบลงนิด
+           · ให้แถวยอดยังอยู่บรรทัดเดียวที่จอ 1366 + แถบซ้าย: ช่องในกล่องแคบลง · ชื่อไทยยาวตัดบรรทัด (กว้างสุด 96px)
     1.21 (2026-10-26 13:03 ผู้ใช้ รูปกล่องสถานะ “Part ตัด · ค้าง 126/128” + รูปแถว Dashboard “กำลังตัด”:
           “1. สถานะเฉพาะงานตัด ถ้ามียิง 1 ชิ้นให้ขึ้นกำลังตัด ไม่ก็ล้อกับหน้า Dashboard · 2. ถ้ายังไม่ยิงสักชิ้นให้เขียนว่ารอตัด ไม่ก็ link ไป Dashboard ว่า Lot นี้ติดอะไร”)
         FEAT กล่องสถานะตอนอยู่ขั้นตัด (Part): ยิงตัดแล้ว ≥ 1 ชิ้น = “กำลังตัด · ตัดแล้ว n/m ชิ้น” · ยังไม่ยิงเลย = “รอตัด” + เหตุจาก Dashboard
@@ -568,7 +573,17 @@
   .pst-hd > .sp{flex:0 0 0;min-width:0}   /* remark / ป้ายหลาย Lot กินที่ว่างแทน → ช่องค้นหาชิดขวาเสมอ */
   .pst-hd .pst-lots{flex:1 1 300px}
   .pst-hd .pst-htools{padding:0;flex:none;flex-wrap:nowrap;margin-left:auto}
-  .pst-hd .pst-htools .pst-q{width:clamp(170px,16vw,280px)}
+  .pst-hd .pst-htools .pst-q{width:clamp(140px,12vw,260px)}   /* lots 1.22 (เดิม 170px/16vw/280px) */
+  .pst-hd .pst-rm{flex:1 1 0;min-width:0}   /* lots 1.22: remark ไม่กันที่ตอนตัดบรรทัด (1.15 basis 140px) — ได้ที่เหลือ ยาวเกิน = … */
+  .pst-hd{gap:8px}
+  @media (max-width: 760px){ .pst-hd .pst-rm{flex:1 1 100%;white-space:normal;overflow:visible} }   /* มือถือ: remark บรรทัดของตัวเอง (ไม่หดเหลือ …) */
+  /* ───────── lots 1.22: เกจใหญ่ขึ้น (ผู้ใช้ 13:11) ───────── */
+  .pst-sums:not(.pst-gg) .pst-ring{width:40px;height:40px}
+  .pst-sums:not(.pst-gg) > .pst-sum{gap:5px;padding:5px 6px 5px 8px}
+  .pst-sums:not(.pst-gg) > .pst-sum .pst-st > b > span.pst-th{white-space:normal;max-width:96px}   /* ชื่อไทยยาว (เตรียมส่งของเข้าคลัง) ตัดบรรทัด — กล่องไม่ดันแถวตกบรรทัด */
+  .pst-ring circle{stroke-width:4}
+  .pst-ring text{font-size:9.5px}
+  .pst-gg .pst-ring{width:58px!important;height:58px!important}
   /* ───────── lots 1.21: ปุ่ม ↗ Dashboard ข้างกล่องสถานะ ───────── */
   .pst-hd .pst-dashl{flex:none;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
   .pst-hd ~ .pst-sums .pst-sum.pst-cur em{max-width:220px;overflow:hidden;text-overflow:ellipsis}
@@ -659,7 +674,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.21';
+var LOTS_VER = '1.22';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1839,7 +1854,7 @@ function pstRender(keep) {
     /* lots 1.15: คอม = ช่องค้นหา/จำนวนแถวขึ้นแถวชื่อ Lot (<!--pst-tools-->) — เดิมต่อท้ายแถวยอด ยอดยาวแล้วดันตกบรรทัด (ผู้ใช้ 11:33) · มือถือที่ไม่มีรายชิ้น = ไม่มีช่องค้นหาเหมือนเดิม */
     var toolsH = all.length ? '<div class="pst-tools pst-htools">' + qbox
       + (ncf ? '<button type="button" class="tbtn" data-pstcfclr title="ล้างตัวกรองทุกช่อง (แถวใต้หัวคอลัมน์ · กล่องยอด)">✕ ล้างตัวกรอง (' + ncf + ')</button>' : '')   // lots 1.10 (เดิม ✕ ยังไม่ผ่าน …)
-      + '<span class="pst-cnt">แสดง <b>' + fmtN(shown.length) + '</b> จาก ' + fmtN(all.length) + ' แถว</span></div>' : '';
+      + '<span class="pst-cnt" title="แสดง ' + fmtN(shown.length) + ' จาก ' + fmtN(all.length) + ' แถว"><b>' + fmtN(shown.length) + '</b>/' + fmtN(all.length) + ' แถว</span></div>' : '';   // lots 1.22 สั้นลง (แถวชื่อ Lot มีปุ่ม Dashboard เพิ่ม)
     if (!mob) h = h.replace('<!--pst-tools-->', toolsH); else if (all.length) h += '<span class="sp"></span>' + toolsH;
     h += '</div>';
     }
