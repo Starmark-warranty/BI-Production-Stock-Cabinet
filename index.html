@@ -2129,7 +2129,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.60 · lots.html กำลังโหลด">v2.60</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.61 · lots.html กำลังโหลด">v2.61</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3256,10 +3256,11 @@ var GasFS = (function () {
    v2.58 (2026-10-26 09:58 ผู้ใช้: “เวลาตามแผนหน้านี้รวมเวลาอะไรบ้าง … ทำเป็นดรอปดาวน์ลงมาก็ได้ ว่าแยกเป็นเวลาอะไรบ้าง”) ตารางวันนี้ แถวรวม: ปุ่ม “แยกเวลา ▾” = กล่องแยก เวลาทำงานเครื่อง · ค้างตัด · Lot ใหม่ · = เวลาตามแผน (ว่าง/เกิน) · ที่ไม่นับ (ไปตัดเครื่องอื่น · ต่อวันถัดไป · นอกแผน) · ตอนนี้ (ตัดแล้ววันนี้ · ยังค้างทั้ง Lot) + ความหมายตัวเลขฟ้า/ส้ม
    v2.59 (2026-10-26 ตรวจข้อมูลจริงหลัง v2.58) กล่องแยกเวลา: เครื่องที่ปิดวันนี้ ไม่บอก “ว่าง …” (เดิม 300/3 ปิดวันนี้ ขึ้นว่าง 2:06 จากเวลาทำงานปกติ) → “เครื่องปิดวันนี้ (แผนเดิม)”
    v2.60 (2026-10-26 10:12 ผู้ใช้: “รวมเวลาที่ Lot นั้นไปตัดเครื่องอื่นไหม · งานที่ 300/1 เอาไปตัดแทนจริง ๆ ทำไมไม่ถูกโยกไปอยู่ในแผน 300/1 + โน้ตเล็ก ๆ ว่าโยกมาจากแผน 300/3 · เวลารวมล่างสุด = รวมงานทั้งหมด”) Lot ในแผนวันนี้ที่วันนี้ยิงตัดที่เครื่องอื่น (ไม่ได้ยิงที่เครื่องเดิม) = โยกไปแผนเครื่องที่ตัดจริง: เครื่องเดิมแถวจาง “⇢ โยกไปแผน …” ไม่นับในแถวรวม · เครื่องที่ตัด “↩ โยกมาจากแผน …” นับเป็นค้างตัด (ไม่เกินชิ้นที่เหลือจริง) · จัดเวลาใหม่ทั้งเครื่อง · แถวรวม = งานทั้งหมดของเครื่อง · กล่องแยกเวลา / แผงซ้าย / Daily Plan / Excel บอกโยก
+   v2.61 (2026-10-26 ตรวจข้อมูลจริงหลัง v2.60) แผงซ้าย “แผนวันนี้ต่อจากนี้”: หักทุก Lot ที่โยกออก (เดิมหักเฉพาะแถวที่เห็น — 300/1 BO69-0928_Mc อยู่แถวที่ 19 เกิน 15 แถวแรก ยังขึ้น ≈ 7 ชม.) · กล่องแยกเวลา ↩ โยกมา 0 = บอกว่าชิ้นที่เหลืออยู่ในค้างตัดแล้ว
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.60';
+var VER = '2.61';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -16389,12 +16390,12 @@ dbTodayPlan = function (x, P) {
     dpRows(x, P, -1).rows.forEach(function (r) { var K = dpMvU(r.id); if (r.mvAuto) { MO[K] = r; nO++; } else if (r.fromMc && !r.moved) { MI[K] = r; nI++; } });
     if (!nO && !nI) return h;
     var dN = 0, dP = 0, dT = 0;
+    /* v2.61 หัว “แผนวันนี้ต่อจากนี้” นับทุก Lot ในแผน (รวมที่เกิน 15 แถวแรกที่แสดง) → หักทุก Lot ที่โยกออก (ยังไม่จบ) ไม่ใช่เฉพาะแถวที่เห็น */
+    Object.keys(MO).forEach(function (K) { var o = MO[K], fin = false; try { fin = dbTpFin(o.g, P); } catch (e) { fin = false; } if (!fin) { dN++; dP += Math.round(o.p || 0); dT += o.t || 0; } });
     h = h.replace(/<li class="([^"]*)"([^>]*)>([\s\S]*?)<\/li>/g, function (m0, cls, at, inner) {
       var m = inner.match(/<b data-cp="([^"]+)"/); if (!m) return m0;
       var K = dpMvU(tpUnesc(m[1])), o = MO[K], q = MI[K];
       if (o && /(^|\s)pl(\s|$)/.test(cls)) {
-        var fin = false; try { fin = dbTpFin(o.g, P); } catch (e) { fin = false; }
-        if (!fin) { dN++; dP += Math.round(o.p || 0); dT += o.t || 0; }
         var tg = '<span class="tg oth" title="' + esc('วันนี้ยิงตัดที่ ' + o.mvTo + ' → โยกไปอยู่ในแผนของ ' + o.mvTo + ' (ไม่นับในแผนเครื่องนี้)') + '">⇢ โยกไป ' + esc(o.mvTo) + '</span>';
         inner = inner.indexOf('<span class="tg oth">ตัดที่เครื่องอื่น</span>') >= 0 ? inner.replace('<span class="tg oth">ตัดที่เครื่องอื่น</span>', tg) : inner.replace(/(<\/b>)/, '$1' + tg);
         return '<li class="' + cls + ' mvo"' + at + '>' + inner + '</li>';
@@ -16469,7 +16470,7 @@ tmbHtml = function (x, P) {   // v2.60 แทน v2.58/v2.59 (เพิ่ม �
     + row('🕖 เวลาทำงานของเครื่องวันนี้', o.off ? 'ปิดวันนี้' : o.cap > 0 && o.cap !== Infinity ? esc(tmbHm(o.cap)) : 'ไม่จำกัด', o.off ? 'แผนเดิมยังแสดงอยู่ — ปรับเครื่องครบแล้วกด 🔄 จัดแผนวันนี้ใหม่' : '⚙ ตั้งค่า / เปิด-ปิดเครื่องรายวัน')
     + '<tr class="grp"><td colspan="3">งานในแผนวันนี้ของเครื่องนี้ (นับ)</td></tr>'
     + row('✂ ค้างตัด (ตัดก่อน Lot ใหม่)', esc(tmbHm(cyT)), cyN + ' Lot · ชิ้นที่ค้างตอนวางแผน ใส่เท่าที่เวลาวันนี้พอ')
-    + (o.miN ? row('↩ โยกมาจากแผนเครื่องอื่น', esc(tmbHm(miT)), o.miN + ' Lot · ' + lst(o.mi) + ' · วันนี้ยิงตัดที่เครื่องนี้ · นับไม่เกินชิ้นที่ยังเหลือจริงของ Lot (ไม่นับซ้ำ)') : '')
+    + (o.miN ? row('↩ โยกมาจากแผนเครื่องอื่น', esc(tmbHm(miT)), o.miN + ' Lot · ' + lst(o.mi) + ' · วันนี้ยิงตัดที่เครื่องนี้ · ' + (miT >= 0.5 ? 'นับไม่เกินชิ้นที่ยังเหลือจริงของ Lot (ไม่นับซ้ำ)' : 'ชิ้นที่ยังเหลือจริงของ Lot อยู่ใน ✂ ค้างตัดของเครื่องนี้แล้ว — ไม่เพิ่มเวลา (ไม่นับซ้ำ)')) : '')
     + row('🆕 Lot ใหม่ตามแผน', esc(tmbHm(o.nwT)), o.nwN + ' Lot · ตามลำดับจนเต็มเวลา')
     + row('= เวลาตามแผน (รวมงานทั้งหมด)', '<b>' + esc(tmbHm(sum)) + '</b>', '= ตัวเลขรวมท้ายตาราง (ผลรวมเวลาทุกแถว)' + (o.off ? ' · เครื่องปิดวันนี้ (แผนเดิม)' : '') + (free != null ? (free >= 0.5 ? ' · ว่าง ' + esc(tmbHm(free)) : free <= -0.5 ? ' · <b class="neg">เกิน ' + esc(tmbHm(-free)) + '</b>' : ' · เต็มเวลา') : ''), 'sum');
   var nx = [];
