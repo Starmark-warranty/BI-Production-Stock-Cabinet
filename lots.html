@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.19 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.20 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.20: ตารางชิ้นมีเส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (หัวยาวขึ้นสองบรรทัด · ช่องกรองไม่ดันคอลัมน์)
       · lots 1.19: ซ่อนป้าย “data 6 · n แถว · อัปเดต … · StarSync (AX)” บนแถบหัว
       · lots 1.18: แถวกล่องยอดยืดเต็มความกว้าง (ไม่มีที่ว่างขวา)
       · lots 1.17: กล่องกำลังโหลด + เบลอด้านหลังตอนเข้าหน้า · เอาคอลัมน์สถานะรายชิ้นออกจากตาราง (กรองที่ช่อง State)
@@ -61,6 +62,14 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.20 (+ 12:59 ผู้ใช้ รูปป้าย “● 2 PD”: “เพิ่มคำอธิบาย โดยเอาเมาส์ไปจี้แล้วเกิด Box อธิบาย”)
+        UX ชี้ป้าย Stage (0 NoBom · 1 Open · 2 PD · 3 Finish) ทุกที่ในหน้า Lot ผลิต + ปุ่ม Stage ในแถบซ้าย = กล่องอธิบาย (#stgTip แบบกล่องชื่อไม้ 1.7)
+           0 NoBom = ยังไม่มี BOM ใน AX · 1 Open = เปิด Lot แล้ว ยังไม่แตกชิ้นงาน (TotalPart 0) · 2 PD = แตกชิ้นงานแล้ว อยู่ระหว่างผลิต · 3 Finish = จบใน AX
+           · ยังไม่จบ / ✓ ปิดเอง / ทั้งหมด (ปุ่มแถบซ้าย) มีคำอธิบายด้วย
+    1.20 (2026-10-26 12:58 ผู้ใช้ รูปตารางชิ้น (Finish Width … Barcode): “เพิ่มเส้นคอลัมน์ได้ไหมครับ และกระชับคอลัมน์หน่อย”)
+        UI เส้นแนวตั้งแบ่งทุกคอลัมน์ (หัว + แถวตัวกรอง + ข้อมูล) · ช่องขอบในน้อยลง (6px)
+        UI คอลัมน์กระชับ: ตาราง width max-content (1.1) → min-content = หัวยาวตัดสองบรรทัด คอลัมน์กว้างตามข้อมูล · ช่องกรอง size="2" (เดิมตั้งต้น 20 ตัวอักษร) ไม่ดันคอลัมน์
+           · หัวคอลัมน์ที่ยาว (Product Seq Total · Finish Length …) ตัดเป็นสองบรรทัดได้ — คอลัมน์กว้างตามข้อมูลจริง (หัวแถว 2–3 ติดบนตามความสูงจริงด้วย pstStick)
     1.19 (2026-10-26 12:54 ผู้ใช้ รูปแถบหัว “Lot ผลิต · data 6 | data 6 · 6,337 แถว · อัปเดต 26/10/69 11:57 · StarSync (AX)”: “เอาข้อมูลที่แสดงตรงนี้ออกทีครับ”)
         UI ซ่อนป้าย #lotFresh บนแถบหัว (ของ index · lotRenderFresh ยังเติมข้อความไว้ — เปิดคืนได้ที่ CSS บรรทัด lots 1.19)
            · เวลาอัปเดต/ข้อมูลเก่าเกิน ยังดูได้ที่ “อัปเดตเองทุก 30 วิ · ตรวจ …” บนแถบเครื่องมือ และแถบเตือน (lotBanner) เมื่อ StarSync ไม่ส่งเกิน 40 นาที
@@ -419,6 +428,9 @@
   @media (max-width: 760px){ .pst-oth{margin:0 8px 8px} }
   /* ───────── lots 1.7: กล่องชื่อไม้ (ชี้ Material Code) ───────── */
   .pst-t td.matc[data-mat]{cursor:help;text-decoration:underline dotted var(--ink-faint);text-underline-offset:3px}
+  #stgTip{position:fixed;z-index:300;display:none;max-width:min(360px,calc(100vw - 16px));padding:9px 12px;border-radius:10px;background:var(--solid);color:var(--ink);
+    border:.5px solid var(--line-strong);box-shadow:0 10px 28px rgba(20,32,60,.24);font-size:13px;line-height:1.5;pointer-events:none}   /* lots 1.20 กล่องอธิบาย Stage */
+  #stgTip b{display:block;font-size:14px} #stgTip small{display:block;margin-top:3px;font-size:11.5px;color:var(--ink-dim)}
   #pstTip{position:fixed;z-index:300;display:none;max-width:min(380px,calc(100vw - 16px));padding:8px 12px;border-radius:10px;background:var(--solid);color:var(--ink);
     border:.5px solid var(--line-strong);box-shadow:0 10px 28px rgba(20,32,60,.24);font-size:13px;line-height:1.45;pointer-events:none}
   #pstTip code{display:block;font:11.5px var(--mono);color:var(--ink-dim)}
@@ -548,6 +560,15 @@
   .pst-hd .pst-lots{flex:1 1 300px}
   .pst-hd .pst-htools{padding:0;flex:none;flex-wrap:nowrap;margin-left:auto}
   .pst-hd .pst-htools .pst-q{width:clamp(170px,16vw,280px)}
+  /* ───────── lots 1.20: เส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (ผู้ใช้ 12:58) ───────── */
+  .pst-t th,.pst-t td{border-right:.5px solid var(--line)}
+  .pst-t td{padding:3px 6px}
+  .pst-t th{padding:5px 6px}
+  .pst-t td.pck{border-left:0}
+  .pst-t thead tr:first-child > th:not(.grp):not(.no){white-space:normal;line-height:1.2;vertical-align:bottom;min-width:38px}
+  .pst-t thead tr.cf th{padding:3px 3px}
+  input.pst-cf{min-width:34px}
+  .pst-t{width:min-content}   /* เดิม 1.1 max-content = ทุกคอลัมน์กว้างเท่าหัวแบบบรรทัดเดียว · min-content = หัวยาวตัดบรรทัด คอลัมน์กว้างตามข้อมูล (min-width:100% เดิมยังเต็มกล่องเมื่อคอลัมน์น้อย) */
   /* ───────── lots 1.19: ซ่อนป้าย data 6 บนแถบหัว (ผู้ใช้ 12:54 “เอาข้อมูลที่แสดงตรงนี้ออก”) ───────── */
   #lotFresh{display:none!important}
   /* ───────── lots 1.18: แถวกล่องยอดยืดเต็มความกว้าง (ผู้ใช้ 11:46 “จัดให้เต็ม เอาช่องว่างออก”) ───────── */
@@ -625,7 +646,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.19';
+var LOTS_VER = '1.20';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1532,7 +1553,7 @@ function pstCfRow(cols) {
       return '<th class="pck stk"><button type="button" class="pst-cfb' + (v ? ' v' + v : '') + '" data-pstcfb="' + S0.k + '" title="' + esc(S0.h + ': ' + (v === '1' ? 'แสดงเฉพาะ ✓ (กด = เฉพาะยังไม่ผ่าน)' : v === '0' ? 'แสดงเฉพาะยังไม่ผ่าน (กด = ทั้งหมด)' : 'ทั้งหมด (กด = เฉพาะ ✓)')) + '"><span class="cb">' + (v === '1' ? '✓' : '') + '</span></button></th>'; }).join('')
     /* lots 1.17: ช่องเลือกกรองสถานะรายชิ้นออกไปพร้อมคอลัมน์ (ผู้ใช้ 11:41) — L.stCF.cur ยังใช้ได้จากกล่องสถานะบนแถวยอด */
     + cols.map(function (c) { var v = sv(c.k);
-      return '<th' + (c.num ? ' class="num"' : '') + '><input type="search" class="pst-cf' + (v.trim() ? ' on' : '') + '" data-pstcf="' + c.k + '" value="' + esc(v) + '" placeholder="' + (c.num ? '=' : 'ABC') + '" title="' + esc(c.h + ' — ' + (c.num ? 'ตัวเลข: 567 = เท่ากับ · >100 · <=50 · <>0' : 'มีคำนี้ (ไม่สนตัวพิมพ์ · หลายคำคั่นด้วยเว้นวรรค)')) + '" autocomplete="off" spellcheck="false"></th>'; }).join('') + '</tr>';
+      return '<th' + (c.num ? ' class="num"' : '') + '><input type="search" size="2" class="pst-cf' + (v.trim() ? ' on' : '') + '" data-pstcf="' + c.k + '" value="' + esc(v) + '" placeholder="' + (c.num ? '=' : 'ABC') + '" title="' + esc(c.h + ' — ' + (c.num ? 'ตัวเลข: 567 = เท่ากับ · >100 · <=50 · <>0' : 'มีคำนี้ (ไม่สนตัวพิมพ์ · หลายคำคั่นด้วยเว้นวรรค)')) + '" autocomplete="off" spellcheck="false"></th>'; }).join('') + '</tr>';
 }
 /* มือถือ: แถวสั้น (State รวม · ชื่อ Part · Code Part · Shelf) → แตะ = ทีละขั้น + รายละเอียด */
 function pstMStep(q, S0, cur) {
@@ -1574,6 +1595,29 @@ function pstTipShow(td) {
   if (!RX.info) { try { Promise.resolve(rxInfoLoad()).then(function () { if (PST_TIP.td === td && T.style.display === 'block') T.innerHTML = pstTipHtml(code); }); } catch (e) { } }
 }
 function pstTipHide() { if (PST_TIP.el) PST_TIP.el.style.display = 'none'; PST_TIP.td = null; }
+/* ───────── lots 1.20: กล่องอธิบาย Stage (ผู้ใช้ 12:59 รูปป้าย “● 2 PD”: “เพิ่มคำอธิบาย เอาเมาส์ไปจี้แล้วเกิด Box อธิบาย”) ─────────
+   ป้าย .stg (stgHtml ของ index: คลาส s0–s3) ทุกที่ใน #lots + ปุ่ม Stage แถบซ้าย ([data-lseg=stage]) · ความหมายจากโค้ดเดิม (v1.46 / pdIsProd): 1 Open TotalPart = 0 · 2 PD มีชิ้นงาน */
+var STG_INFO = {
+  0: ['0 NoBom', 'ยังไม่มี BOM ใน AX — ยังไม่มีรายการไม้/วัตถุดิบ ผลิตไม่ได้ (คิวตัดงานถือว่าติด)'],
+  1: ['1 Open', 'เปิด Lot แล้ว แต่ยังไม่แตกชิ้นงาน (TotalPart = 0) — รอแตก BOM'],
+  2: ['2 PD', 'แตกชิ้นงานแล้ว มีใบผลิต (Production) — อยู่ระหว่างผลิต: ตัด · ปิดขอบ · เจาะ · แพ็ค …'],
+  3: ['3 Finish', 'จบใน AX แล้ว (ผลิตเสร็จ / ปิด Lot)'],
+  all: ['ทั้งหมด', 'ทุก Lot ใน data 6'], open: ['ยังไม่จบ', 'ทุก Lot ที่ยังไม่ 3 Finish และยังไม่ได้กด ✓ ปิดว่าจบ เอง'],
+  closed: ['✓ ปิดเอง', 'Lot ที่มีคนกด ✓ ปิดว่าจบ ใน StarStock เอง (AX ยังไม่ Finish) — ไม่เข้าคิวตัดงาน'] };
+var STG_TIP = { el: null, at: null };
+function stgTipShow(el) {
+  var k = el.dataset && el.dataset.lseg === 'stage' ? el.dataset.v : (/\bs([0-3])\b/.exec(el.className) || [])[1];
+  var it = STG_INFO[k]; if (!it) return stgTipHide();
+  if (!STG_TIP.el) { STG_TIP.el = document.createElement('div'); STG_TIP.el.id = 'stgTip'; document.body.appendChild(STG_TIP.el); }
+  var T = STG_TIP.el; STG_TIP.at = el; T.innerHTML = '<b>' + esc(it[0]) + '</b>' + esc(it[1]) + '<small>' + (k === 'all' || k === 'open' || k === 'closed' ? 'ตัวกรองแถบซ้าย' : 'Stage ของ Lot จาก AX (data 6)') + '</small>'; T.style.display = 'block';
+  var r = el.getBoundingClientRect(), w = T.offsetWidth, h = T.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.bottom + 6;
+  if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
+  T.style.left = x + 'px'; T.style.top = y + 'px';
+}
+function stgTipHide() { if (STG_TIP.el) STG_TIP.el.style.display = 'none'; STG_TIP.at = null; }
+document.addEventListener('mouseover', function (e) { var el = e.target.closest && e.target.closest('#lots .stg, #lotSide [data-lseg=stage]'); if (el) { if (el !== STG_TIP.at) stgTipShow(el); } else if (STG_TIP.at) stgTipHide(); });
+document.addEventListener('scroll', function () { if (STG_TIP.at) stgTipHide(); }, true);
+window.addEventListener('hashchange', stgTipHide);
 document.addEventListener('mouseover', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { if (td !== PST_TIP.td) pstTipShow(td); } else if (PST_TIP.td) pstTipHide(); });
 document.addEventListener('click', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { if (PST_TIP.td === td && PST_TIP.el && PST_TIP.el.style.display === 'block') pstTipHide(); else pstTipShow(td); } else if (PST_TIP.td) pstTipHide(); });
 document.addEventListener('scroll', function () { if (PST_TIP.td) pstTipHide(); }, true);
