@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.4 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.5 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -14,6 +14,7 @@
       · lots 1.2: แท็บสถานะ Part เป็นหน้าของตัวเอง (เลือก/กรองได้หลาย Lot) · Edge / Drill จากการยิงบาร์โค้ดด้วยแอป Scan-Link (lots/steps.json)
       · lots 1.3: ตาราง Lot คอลัมน์ Amount → Barcode (10 หลักแรก) · ค้นหา Lot ด้วย Barcode ได้
       · lots 1.4: ตารางสถานะ Part คอลัมน์ครบตามหน้า AX progress (StarSync v1.17) · ค้นหาด้วย Code Part (สติกเกอร์ที่ยิง) · ไม่มี Barcode = Manual
+      · lots 1.5: ช่องค้นหาในหน้าสถานะ หาข้าม Lot (Code Part / Code Pack / Barcode) → ปุ่มกดไปดู Lot นั้น
     · แยกออกจาก StarStock v2.45 (index.html) ใน v2.46 ให้ 2 คนแก้พร้อมกันได้: คนแก้หน้า Lot ผลิต แก้/อัปไฟล์นี้ไฟล์เดียว
     · วางไว้โฟลเดอร์เดียวกับ index.html (คู่กับ sawplan.html / edgeplan.html / drillplan.html) — index.html โหลดไฟล์นี้เองตอนเปิดหน้า
     · เปิดไฟล์นี้ตรง ๆ = หน้าบอกวิธีใช้ (ไม่มีข้อมูล) — ดูหน้า Lot ผลิตที่ index.html#lots
@@ -46,6 +47,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.5 (2026-10-26 09:35 ผู้ใช้ รูปหน้าสถานะ GHEB_BA1_B10_FL20_LOT1_HG ค้น “pd690000454” ได้ 0 แถว: “ต้องปรับหน้านี้ให้ช่องค้นหาหาไปที่ Lot อื่น เพื่อไปกดได้ครับ”)
+        FEAT ช่องค้นหาในหน้าสถานะ (≥ 3 ตัว): หาใน Lot อื่นทั้งหมดด้วย — เทียบชื่อ Lot + Code Part · Code Pack · Barcode ทุกชิ้น (PST.bc.all)
+             · ไม่เจอใน Lot ที่ดูอยู่ = “ไม่พบใน Lot นี้ — พบใน Lot อื่น” + ปุ่ม Lot (Code Part / ชื่อ Part ที่ตรง · กี่ชิ้น) · เจอทั้งสองที่ = “พบใน Lot อื่นด้วย”
+             · กดปุ่ม = ไปดู Lot นั้น (คำค้นเดิมยังอยู่ → เห็นชิ้นที่ตรงเลย) · หลาย Lot = ปุ่ม “ดูทั้ง n Lot”
     1.4 (2026-10-26 09:12 ผู้ใช้ รูปตาราง AX progress 2 รูป: “เอาคอลัมน์ให้ครบเหมือน AX progress” · 09:20 รูปคอลัมน์ Code Part: “Code Part ครับ ที่มีทุกสติกเกอร์ที่แสกน”)
         FEAT ตารางสถานะ Part: คอลัมน์ตามลำดับ AX progress — Rec Id · Lot Id · Proj Id · Proj Name · OrderNumber · Build · Floor · Room · Shelf No · Product Article
              · Product Name · Item Fg · Item Part · Part Name · Code Pack · Code Part · Material Code · Finish Length · Finish Width · Part/Product/Pack Seq Total
@@ -307,6 +312,16 @@
   .pst-t td.cpt{cursor:copy;font-weight:600}
   .pst-t td.cpt:hover{color:var(--accent)}
   @media (max-width: 760px){ .pst-t .stk{left:auto!important} }
+  /* ───────── lots 1.5: ค้นหาข้าม Lot ───────── */
+  .pst-oth{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 14px 8px;padding:8px 12px;border-radius:9px;background:var(--accent-soft);font-size:12.5px;color:var(--ink)}
+  .pst-oth.big{padding:12px 14px;font-size:13.5px;border:1px solid var(--accent)}
+  .pst-oth > b{margin-right:4px}
+  .pst-jump{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;padding:5px 10px;border:.5px solid var(--line-strong);border-radius:8px;background:var(--solid);color:var(--ink);font:inherit;cursor:pointer;text-align:left;max-width:320px}
+  .pst-jump b{font:700 13px var(--mono)}
+  .pst-jump small{font-size:11px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+  .pst-jump:not(:disabled):hover{border-color:var(--accent)}
+  .pst-jump:disabled{opacity:.55;cursor:default}
+  @media (max-width: 760px){ .pst-oth{margin:0 8px 8px} }
 </style>
 </head>
 <body>
@@ -361,7 +376,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.4';
+var LOTS_VER = '1.5';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1095,6 +1110,31 @@ function pstTd(c, p) {
   var v = p[c.k]; if (c.f) v = c.f(v, p); v = v == null ? '' : String(v);
   return '<td' + (c.c ? ' class="' + c.c + '"' : '') + (c.cp && v ? ' data-cp="' + esc(v) + '" title="กด = คัดลอก"' : '') + '>' + esc(v) + '</td>';
 }
+/* lots 1.5: คำค้นในหน้าสถานะ → Lot อื่นที่มีรหัสตรง (ชื่อ Lot · Code Part · Code Pack · Barcode — ไม่เทียบชื่อ Part/ตู้ เพราะตรงเกือบทุก Lot) */
+var PST_OTHMAX = 12;
+function pstFindOther(qs, sel) {
+  if (!PST.lots || !qs.length) return null;
+  var skip = {}; sel.forEach(function (x) { skip[String(x.id).toUpperCase()] = 1; });
+  var idm = pstIdMap(), out = [];
+  PST.lots.forEach(function (rows, K) {
+    if (skip[K]) return;
+    var b = PST.bc && PST.bc.get(K), quick = K.toLowerCase() + ' ' + (b ? b.all : '');
+    for (var i = 0; i < qs.length; i++) if (quick.indexOf(qs[i]) < 0) return;
+    var hit = rows.filter(function (p) { var hy = (p.cpt + ' ' + p.pack + ' ' + p.bc1).toLowerCase(); return qs.every(function (w) { return hy.indexOf(w) >= 0; }); });
+    out.push({ K: K, x: idm.get(K) || null, lot: rows[0] ? rows[0].lot : K, n: hit.length, p: hit[0] || null, byName: !hit.length });
+  });
+  out.sort(function (a, b) { return b.n - a.n || (a.lot < b.lot ? -1 : 1); });
+  return { list: out, n: out.length };
+}
+function pstOtherHtml(o, nHere) {
+  var ok = o.list.filter(function (it) { return it.x; });
+  return '<div class="pst-oth' + (nHere ? '' : ' big') + '"><b>' + (nHere ? '🔎 พบใน Lot อื่นด้วย' : '🔎 ไม่พบใน Lot นี้ — พบใน Lot อื่น') + ' (' + fmtN(o.n) + ' Lot)</b>'
+    + o.list.slice(0, PST_OTHMAX).map(function (it) {
+        var p = it.p, sub = it.byName ? 'ชื่อ Lot ตรง' : (p.cpt || p.pack || p.bc1) + (p.nm ? ' · ' + p.nm : '') + (it.n > 1 ? ' · ' + fmtN(it.n) + ' ชิ้น' : '');
+        return '<button type="button" class="pst-jump"' + (it.x ? ' data-pstjump="' + esc(it.x.id) + '" title="ดู Lot นี้ (คำค้นเดิม)' + (it.x.remark ? ' · ' + esc(it.x.remark) : '') + '"' : ' disabled title="Lot นี้ไม่มีในตาราง Lot (data 6)"') + '><b>' + esc(it.lot) + '</b><small>' + esc(sub) + '</small></button>'; }).join('')
+    + (o.n > PST_OTHMAX ? '<span class="pst-cnt">และอีก ' + fmtN(o.n - PST_OTHMAX) + ' Lot — พิมพ์ให้ยาวขึ้น</span>' : '')
+    + (ok.length > 1 ? '<button type="button" class="tbtn" data-pstjumpall title="ดูทุก Lot ที่พบพร้อมกัน (สูงสุด ' + PST_MAXSEL + ')">ดูทั้ง ' + fmtN(Math.min(ok.length, PST_MAXSEL)) + ' Lot</button>' : '') + '</div>';
+}
 /* lots 1.4: # + State ติดซ้าย — วัดตำแหน่งจริงของหัวคอลัมน์แล้วเขียน left ให้ทั้งคอลัมน์ (CSS nth-child) · เส้นแบ่งหลังคอลัมน์สุดท้ายที่ติด */
 function pstStick(E) {
   var T = E.querySelector('.pst-t'); if (!T || !T.tHead || T.tHead.rows.length < 2) return;
@@ -1213,6 +1253,10 @@ function pstRender(keep) {
     if (PST.meta && PST.meta.full) note = (note ? note + ' · ' : '') + '⚠ ไฟล์ครบเพดาน ' + fmtN(PST.meta.max) + ' แถว (stateMax) — Lot เก่าบางส่วนถูกตัด';
     if (all.length) {
       if (note) h += '<div class="pst-note">' + esc(note) + '</div>';
+      /* lots 1.5: คำค้น ≥ 3 ตัว = หาใน Lot อื่นด้วย (ผู้ใช้ 09:35 “ให้ช่องค้นหาหาไปที่ Lot อื่น เพื่อไปกดได้”) */
+      var oth = q.length >= 3 ? pstFindOther(qs, sel) : null;
+      if (oth && oth.n) h += pstOtherHtml(oth, shown.length);
+      else if (oth && !shown.length) h += '<div class="pst-note">ไม่พบ “' + esc(L.stQ.trim()) + '” ใน Lot นี้ และใน Lot อื่น (ข้อมูลรายชิ้น ' + fmtN(PST.lots.size) + ' Lot · ค้นข้าม Lot ได้ด้วยชื่อ Lot / Code Part / Code Pack / Barcode)</div>';
       var LIM = 3000, part = shown.slice(0, LIM), multi = !one;
       /* lots 1.4: คอลัมน์ตามหัวตาราง AX progress (PST_COLS) — ช่องของ StarSync v1.17 ที่ไฟล์ยังไม่มี = ซ่อน · # + State ติดซ้ายตอนเลื่อนขวา (pstStick)
          เดิม 1.1–1.3: Shelf No · Product Article · Product Name · Part Name · ขนาด (ยาว × กว้าง) · วัสดุ · Code Pack · Barcode · Room · Rec Id (+ Lot เมื่อหลาย Lot) */
@@ -1297,7 +1341,10 @@ document.addEventListener('click', function (e) {
   if (view() !== 'lots') return;
   /* lots 1.2: คลิกนอกกล่องเลือก Lot (ลอย) = ปิด */
   if (L.stPk.open && e.target.closest && !e.target.closest('[data-pstpkbox],[data-pstpk],#lotSide,#lotCfBar,.lcfpop') && document.contains(e.target)) { L.stPk.open = false; pstRender(true); }
-  var t = e.target.closest && e.target.closest('[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm]'); if (!t) return;
+  var t = e.target.closest && e.target.closest('[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall]'); if (!t) return;
+  /* lots 1.5: ไปดู Lot ที่พบจากคำค้น (คำค้นเดิมยังอยู่) */
+  if (t.dataset.pstjump) { e.preventDefault(); pstSelSet([t.dataset.pstjump]); L.stPk.open = false; pstRender(); var W = $('lotSt').querySelector('.pst-wrap'); if (W) W.scrollTop = 0; return; }
+  if (t.hasAttribute('data-pstjumpall')) { e.preventDefault(); var o = pstFindOther(L.stQ.trim().toLowerCase().split(/\s+/), pstSelRows()); if (o) pstSelSet(o.list.filter(function (it) { return it.x; }).map(function (it) { return it.x.id; })); L.stPk.open = false; pstRender(); return; }
   if (t.dataset.lstab) { e.preventDefault(); pstModeSet(t.dataset.lstab); return; }
   if (t.dataset.pstgo) { e.preventDefault(); pstOpen(t.dataset.pstgo); return; }
   if (t.hasAttribute('data-pstdet')) { e.preventDefault(); var k = L.stKey; pstModeSet('list'); if (k) lotShowDetail(k); return; }
