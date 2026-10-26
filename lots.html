@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>StarStock · Lot ผลิต (ไฟล์เสริมของ index.html)</title>
 <!--
-  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.22 · 2026-10-26)
+  StarStock · หน้า Lot ผลิต — lots.html  (lots v1.23 · 2026-10-26)
 
   ไฟล์นี้คืออะไร
     · หน้า Lot ผลิต (ปุ่ม 2 ที่ HOME · #lots) ทั้งหน้า: โครงหน้า · CSS · แถบซ้าย (Stage / enddate / Bu / Pool) · ค้นหา/เรียง · ตาราง
@@ -19,6 +19,7 @@
       · lots 1.7: ชี้ Material Code = กล่องบอกชื่อไม้ (items/info.csv)
       · lots 1.8: ยอดแต่ละขั้นบนหน้าสถานะ = วงกลม % (แทนแถบล่าง)
       · lots 1.9: Product Name ในหน้าสถานะเป็นชื่อไทย (lots/artname.csv จาก StarSync v1.19 · ชื่อชุดเดียวกับ ReCheck Bom)
+      · lots 1.23: ตารางชิ้น สีพื้นแถวอ่อน ๆ บอกสถานะของชิ้น (8 ขั้น 8 สี · หัวคอลัมน์ขั้น = ตัวบอกสี)
       · lots 1.22: วงกลม % (เกจ) ใหญ่ขึ้น
       · lots 1.21: สถานะขั้นตัด = กำลังตัด (ยิงแล้ว ≥ 1 ชิ้น) / รอตัด + เหตุจาก Dashboard (ติดอะไร · คิวที่เท่าไร) + ปุ่มไป Dashboard
       · lots 1.20: ตารางชิ้นมีเส้นแบ่งคอลัมน์ + คอลัมน์กระชับ (หัวยาวขึ้นสองบรรทัด · ช่องกรองไม่ดันคอลัมน์)
@@ -64,6 +65,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.23 (2026-10-26 13:22 ผู้ใช้: “ถ้าให้สีมันบอกด้วยว่าถึงสถานะไหนดีไหม เอาโทนสีอ่อน ๆ ทั้งหมด 8 สถานะก็ 8 สี” · 13:23 “หมายถึงตารางนะครับ เฉพาะหน้าสถานะ Part”)
+        UI ตารางชิ้น (หน้าสถานะ Part): สีพื้นแถว (ช่องข้อมูล + #) อ่อน ๆ ตามขั้นที่ชิ้นอยู่ตอนนี้ (pstCur — ขั้นถัดจากขั้นล่าสุดที่ผ่าน)
+           Part ฟ้า · Edge เขียวน้ำทะเล · Drill เหลือง · Pack ม่วง · Pick ชมพู · Wh ส้ม · Delivery ฟ้าคราม · Site เขียวอ่อน · ครบทุกขั้น / ไม่มีข้อมูล = ไม่มีสี
+           · หัวคอลัมน์ Part…Site (แถวที่ 2 ของหัว) ใช้สีเดียวกัน = ตัวบอกว่าสีไหนขั้นอะไร · ช่องติ๊ก State ยังเขียวเหมือนเดิม · ชี้แถว = สีเข้มขึ้น
+           · มือถือ: รายการชิ้นสีเดียวกัน · ธีมมืดผสมกับพื้นมืด (color-mix) ไม่จ้า
     1.22 (2026-10-26 13:11 ผู้ใช้ รูปวงกลม 99%: “ปรับเกจใหญ่ขึ้นหน่อยครับ”)
         UI วงกลม % ในกล่องยอด: คอม 31 → 40 px (ตัวเลขในวงใหญ่ตาม) · หน้าเกจมือถือ 48 → 58 px · เส้นวงหนาขึ้นเล็กน้อย
            · แถวชื่อ Lot อยู่บรรทัดเดียว (1.21 ปุ่ม ↗ Dashboard ดัน ⓘ รายละเอียด ตก): จำนวนแถว “63/63 แถว” (เดิม “แสดง 63 จาก 63 แถว”) · ช่องค้นหาแคบลงนิด
@@ -577,6 +583,15 @@
   .pst-hd .pst-rm{flex:1 1 0;min-width:0}   /* lots 1.22: remark ไม่กันที่ตอนตัดบรรทัด (1.15 basis 140px) — ได้ที่เหลือ ยาวเกิน = … */
   .pst-hd{gap:8px}
   @media (max-width: 760px){ .pst-hd .pst-rm{flex:1 1 100%;white-space:normal;overflow:visible} }   /* มือถือ: remark บรรทัดของตัวเอง (ไม่หดเหลือ …) */
+  /* ───────── lots 1.23: สีแถวตามขั้นที่ชิ้นอยู่ (ผู้ใช้ 13:22–13:23 · 8 ขั้น 8 สีอ่อน · เฉพาะตารางหน้าสถานะ Part) ───────── */
+  #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#8a5cf5;--st4:#d6409f;--st5:#ef7d22;--st6:#0ea5c6;--st7:#6aa121}
+  #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
+  #lotSt .cs4{--stc:var(--st4)} #lotSt .cs5{--stc:var(--st5)} #lotSt .cs6{--stc:var(--st6)} #lotSt .cs7{--stc:var(--st7)}
+  .pst-t tbody tr.csx td:not(.pck){background:color-mix(in srgb,var(--stc) 11%,var(--solid))}
+  .pst-t tbody tr.csx:hover td:not(.pck){background:color-mix(in srgb,var(--stc) 22%,var(--solid))}
+  .pst-t thead th.pck[class*="cs"]{background:color-mix(in srgb,var(--stc) 24%,var(--card2));color:color-mix(in srgb,var(--stc) 55%,var(--ink))}
+  .pst-mi.csx{background:color-mix(in srgb,var(--stc) 11%,var(--solid))}
+  .pst-mi.csx.open{background:color-mix(in srgb,var(--stc) 18%,var(--solid))}
   /* ───────── lots 1.22: เกจใหญ่ขึ้น (ผู้ใช้ 13:11) ───────── */
   .pst-sums:not(.pst-gg) .pst-ring{width:40px;height:40px}
   .pst-sums:not(.pst-gg) > .pst-sum{gap:5px;padding:5px 6px 5px 8px}
@@ -674,7 +689,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.22';
+var LOTS_VER = '1.23';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1617,7 +1632,7 @@ function pstMStep(q, S0, cur) {
 function pstMobHtml(part, multi) {
   return '<div class="pst-ml">' + part.map(function (it) {
     var p = it.p, cu = it.cu, op = L.stMo.has(p.rec), th = pstArtTh(p.art);
-    var h = '<div class="pst-mi' + (op ? ' open' : '') + (it.s ? '' : ' nos') + '"><button type="button" class="pst-mh" data-pstmi="' + esc(p.rec) + '">' + pstCurBadge(cu, it.d)
+    var h = '<div class="pst-mi' + (op ? ' open' : '') + (it.s ? '' : ' nos') + (cu.i >= 0 && cu.i < PST_DONE ? ' csx cs' + cu.i : '') + '"><button type="button" class="pst-mh" data-pstmi="' + esc(p.rec) + '">' + pstCurBadge(cu, it.d)
       + '<span class="t"><b>' + esc(p.nm || '—') + '</b><small>' + esc([multi ? p.lot : '', p.cpt || p.pack, p.shelf].filter(Boolean).join(' · ')) + '</small></span>'
       + (it.d ? '<span class="pst-dl">ขาดส่ง</span>' : '') + '<span class="chev">' + (op ? '▴' : '▾') + '</span></button>';
     if (op) {
@@ -1885,10 +1900,11 @@ function pstRender(keep) {
       else
       h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
         + cols.map(function (c) { return '<th rowspan="2"' + (c.num ? ' class="num"' : '') + (c.t ? ' title="' + esc(c.t) + '"' : '') + '>' + esc(c.h) + '</th>'; }).join('') + '</tr><tr>'
-        + PST_STEPS.map(function (S0) { return '<th class="pck stk' + (S0.na ? ' na' : '') + '" title="' + esc(S0.t) + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง
+        + PST_STEPS.map(function (S0, si) { return '<th class="pck stk cs' + si + (S0.na ? ' na' : '') + '" title="' + esc(S0.t + ' · สีพื้นแถว = ชิ้นที่อยู่ขั้นนี้') + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง   // lots 1.23 สีหัว = ตัวบอกสีแถว
         + part.map(function (it, i) {
           var p = it.p, s = it.s;
-          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
+          var ci = it.cu.i >= 0 && it.cu.i < PST_DONE ? ' csx cs' + it.cu.i : '';   // lots 1.23: สีแถวตามขั้นที่อยู่
+          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : ci ? ' class="' + ci.slice(1) + '" title="' + esc(pstCurTip(it.cu)) + '"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
             + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0); }).join('')   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + (shown.length > LIM ? '<div class="pst-note">แสดง ' + fmtN(LIM) + ' แถวแรก — ค้นหาเพื่อดูที่เหลือ</div>' : '') + '</div>'
