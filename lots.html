@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.72 (2026-10-27 11:54 ผู้ใช้ รูปผิวล่าง N06H1066N ขึ้น “PP79 · จาก MD09G03P0059YN06H1066N (… PVC PP79 Alfonso Roma Noce / HPL 22381 Backing …)”: “ผิวนั้น มัน HPL 22381 ครับ”)
+        FIX ชื่อรหัสผิวจากชื่อไม้แผ่น: ชื่อไม้บอก 2 หน้าคั่นด้วย “ / ” (หน้าบน / หน้าล่าง) → ใช้ส่วนของหน้าที่รหัสนั้นอยู่ในรหัสไม้ (ตัวที่ 5–13 = บน · 14–22 = ล่าง) — เดิม 1.68 หยิบ PP ตัวแรกของทั้งชื่อ
+        FIX ชนิดผิวตามตัวที่ 4 ของรหัส: H = HPL → “HPL 22381” (HPL + เลข) · P (PVC) = PP/PT เหมือนเดิม · N00S = MU/HG + เทียบสี (1.66)
     1.71 (2026-10-27 11:49 ผู้ใช้ รูปแถว Pelmet1 (ME09N01M0034NxxxxxxxxN · ไม่มี FrontStyle) กรอบเคลือบ + “FrontShape:PCWx48\ Color:N00S0080N”:
          “งานเคลือบต้องจับ Frontstyle หลัง : Frontshape เป็น M แล้วไม้มีเปลือย 1 หน้า คืองานเคลือบครับ และถ้าแบบบานขึ้นต้นด้วย M แต่ไม้ไม่ใช่เปลือย 1 หน้า หรือ 2 หน้า แจ้งเตือนด้วยได้นะครับว่า BOM อาจจะผิด”)
         FIX งานเคลือบ = FrontShape ขึ้นต้น M (+ ไม้เปลือย) — ชิ้นที่ไม่มี FrontShape M ไม่ใช่เคลือบแล้ว แม้ไม้เปลือย 1 หน้า (เดิม 1.55 ดูรหัสไม้ทุก Lot → Pelmet ฯลฯ ขึ้นเคลือบ)
@@ -1204,7 +1207,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.71';
+var LOTS_VER = '1.72';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2821,10 +2824,10 @@ function pstClrLoaded() { return !!(RX.info || (S.byCode && S.byCode.size)); }
 function pstClrIdx() {
   var k = (S.byCode && S.byCode.size || 0) + ':' + (RX.info && RX.info.size || 0) + ':' + (B.rmNames && B.rmNames.size || 0);
   if (PST_CLRIX.k === k && PST_CLRIX.m) return PST_CLRIX.m;
-  var m = new Map(), add = function (key, code, names) { var a = m.get(key); if (!a) m.set(key, a = []); if (a.length < 16) a.push({ c: code, n: names }); };
+  var m = new Map(), add = function (key, code, names, face) { var a = m.get(key); if (!a) m.set(key, a = []); if (a.length < 16) a.push({ c: code, n: names, f: face }); };   // lots 1.72 + face (0 บน · 1 ล่าง ของรหัสไม้)
   var each = function (code, names) { code = String(code || '').toUpperCase(); var x;
     if ((x = /^([NG]\d\d[A-Z]\d{4})[A-Z]/.exec(code))) add('P:' + x[1], code, names);   // สินค้าผิว/ฟิล์ม: 8 ตัวแรก
-    if ((x = /^[A-Z]{2}\d\d([NG]\d\d[A-Z]\d{4}[A-Z])([NG]\d\d[A-Z]\d{4}[A-Z]|X{8}[A-Z])$/.exec(code))) { add('B:' + x[1], code, names); if (x[2].charAt(0) !== 'X' && x[2] !== x[1]) add('B:' + x[2], code, names); } };   // ไม้ที่มีผิวนี้
+    if ((x = /^[A-Z]{2}\d\d([NG]\d\d[A-Z]\d{4}[A-Z])([NG]\d\d[A-Z]\d{4}[A-Z]|X{8}[A-Z])$/.exec(code))) { add('B:' + x[1], code, names, 0); if (x[2].charAt(0) !== 'X' && x[2] !== x[1]) add('B:' + x[2], code, names, 1); } };   // ไม้ที่มีผิวนี้ · lots 1.72 จำว่าอยู่หน้าไหน
   try { if (S.byCode && S.byCode.forEach) S.byCode.forEach(function (it, code) { if (it) each(code, [it.nameTh, it.name]); }); } catch (e) { }
   try { if (RX.info) RX.info.forEach(function (it, code) { if (it) each(code, [it.name]); }); } catch (e) { }
   try { if (B.rmNames && B.rmNames.forEach) B.rmNames.forEach(function (it, code) { if (it) each(code, [it.name]); }); } catch (e) { }
@@ -2835,12 +2838,15 @@ function pstClrInfo(code) {   // → { sh: ชื่อสั้น, sub: บร
   var ix = pstClrIdx(); if (PST_CLRC.k !== PST_CLRIX.k) { PST_CLRC.k = PST_CLRIX.k; PST_CLRC.m = new Map(); }
   if (PST_CLRC.m.has(C)) return PST_CLRC.m.get(C);
   var paint = /^N00S/.test(C), r = null;
-  var tryN = function (nm, from) { nm = String(nm || '').trim(); if (!nm) return null;
-    if (paint) { var p = pstClrPaint(C, nm); return p ? { sh: p[0], sub: p[1], name: nm, from: from } : null; }
-    var m = /\b(P[PT])\s*-?\s*(\d{1,3}[A-Z]?)\b/i.exec(nm); return m ? { sh: (m[1] + m[2]).toUpperCase(), sub: '', name: nm, from: from } : null; };
+  /* lots 1.72 ชื่อไม้แผ่น “… หน้าบน / หน้าล่าง” → ส่วนของหน้าที่รหัสอยู่ (face) · ชนิดตามตัวที่ 4: S สี (MU/HG) · H HPL · อื่น ๆ PP/PT */
+  var tryN = function (nm, from, face) { nm = String(nm || '').trim(); if (!nm) return null;
+    var seg = nm; if (face != null) { var sg = nm.split(/\s+\/\s+/); if (sg.length >= 2) seg = sg[Math.min(face, sg.length - 1)]; }
+    if (paint) { var p = pstClrPaint(C, seg); return p ? { sh: p[0], sub: p[1], name: nm, from: from } : null; }
+    if (C.charAt(3) === 'H') { var h = /\bHPL\s*-?\s*([0-9]{3,6}[A-Z]{0,3})\b/i.exec(seg); return h ? { sh: 'HPL ' + h[1].toUpperCase(), sub: '', name: nm, from: from } : null; }
+    var m = /\b(P[PT])\s*-?\s*(\d{1,3}[A-Z]?)\b/i.exec(seg); return m ? { sh: (m[1] + m[2]).toUpperCase(), sub: '', name: nm, from: from } : null; };
   var n0 = (rxName(C) || {}).name, it0 = S.byCode && S.byCode.get ? S.byCode.get(C) : null;
   [n0, it0 && it0.nameTh, it0 && it0.name].some(function (nm) { return (r = tryN(nm, C)); });
-  if (!r) [ix.get('P:' + C.slice(0, 8)), ix.get('B:' + C)].some(function (L0) { return (L0 || []).some(function (e) { return e.n.some(function (nm) { return (r = tryN(nm, e.c)); }); }); });
+  if (!r) [ix.get('P:' + C.slice(0, 8)), ix.get('B:' + C)].some(function (L0) { return (L0 || []).some(function (e) { return e.n.some(function (nm) { return (r = tryN(nm, e.c, e.f)); }); }); });   // lots 1.72 + หน้า
   if (!r && n0) r = { sh: pstClrShort(n0), sub: '', name: n0, from: C };   // มีชื่อตรงตัวแต่ไม่มี PP/PT/MU = ชื่อเต็ม (TOA …)
   PST_CLRC.m.set(C, r); return r;
 }
