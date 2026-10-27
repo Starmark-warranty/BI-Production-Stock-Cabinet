@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.78 (2026-10-27 13:47 ผู้ใช้ รูปหน้าเลือก Lot มี ✓ ที่ RE-0069-0761-MU66 (ตรง 0 Lot): “จริง ๆ มันต้องไม่มีติ๊กถูกก่อนครับ พอไปกดเลือกหลาย Lot ค่อยขึ้นมา”)
+        UI หน้าเลือก Lot แบบกดทีเดียว (ปกติ): ไม่มีช่องติ๊ก/วงกลมหน้าแถว · ช่องติ๊กขึ้นเมื่อกด ☐ เลือกหลาย Lot (เดิม 1.38 = วงกลม + ✓ ที่ Lot ที่เปิดอยู่)
+        UI แบบกดทีเดียว: รายการ = Lot ที่ตรงตัวกรอง/คำค้นเท่านั้น (เดิมเอา Lot ที่เปิดอยู่ขึ้นก่อนเสมอ — ตรง 0 Lot แต่ยังมีแถว) · เลือกหลาย Lot = ที่ติ๊กไว้ขึ้นก่อนเหมือนเดิม
     1.77 (2026-10-27 13:43 ผู้ใช้ รูปกล่องสถานะ AL_E4060-3D_RW_19-10-69 “เครื่อง (แผน) HPP 300/1 · คิวที่ 21 … ลำดับรวม 8”: “คิวที่ 21 เอาออกครับ มันคิวที่ 8 ของเครื่องนั้นถูกแล้ว”)
         UI กล่องรายละเอียดสถานะ: แถว “เครื่อง (แผน)” เหลือชื่อเครื่อง (เอา “· คิวที่ N” ออก — เลขนี้ไม่ใช่คิวของเครื่อง)
             · แถว “ลำดับรวม” → “คิวของเครื่อง” เมื่อรู้เครื่องในแผน (เลขเดียวกับ “คิวถัดไป · ลำดับ N” บนกล่อง) · ไม่รู้เครื่อง = “ลำดับรวม” เหมือนเดิม
@@ -695,6 +698,7 @@
   .pst-pkhd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px 6px}
   /* lots 1.38 กดทีเดียว (single) = ช่องวงกลม · ☐/☑ เลือกหลาย Lot */
   .pst-pk.single .pst-pkr .ck{border-radius:50%}
+  .pst-pk.single .pst-pkr > .ck{display:none}   /* lots 1.78 กดทีเดียว = ไม่มีช่องติ๊ก (ขึ้นเมื่อกด ☐ เลือกหลาย Lot) */
   /* lots 1.39 มือถือ: ปุ่มสถานะในหน้าเลือก Lot (เลื่อนแนวนอน) */
   .pst-pkst{display:flex;gap:6px;overflow-x:auto;padding:2px 12px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .pst-pkst::-webkit-scrollbar{display:none}
@@ -1148,6 +1152,7 @@
   /* lots 1.39 มือถือ: แถวรายการ Lot 2 บรรทัด (ชื่อ Lot · สถานะ / Stage · จำนวนชิ้น) — เดิมช่องสถานะกว้าง 178px (1.26 อยู่หลังกฎมือถือ = ชนะ) บีบชื่อ Lot จนหายหมด */
   @media (max-width: 760px){
     .pst-pkr:not(.hd){display:grid;grid-template-columns:17px minmax(0,1fr) auto;grid-template-areas:"ck b cu" ". sg pc" ". ty ty";gap:3px 8px;align-items:center}   /* lots 1.45 + แถวประเภทงาน */
+    .pst-pk.single .pst-pkr:not(.hd){grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"b cu" "sg pc" "ty ty"}   /* lots 1.78 ไม่มีช่องติ๊ก */
     .pst-pkr:not(.hd) > .ty{grid-area:ty;width:auto} .pst-pkr:not(.hd) > .ty:empty{display:none}
     .pst-pkr:not(.hd) > .ck{grid-area:ck} .pst-pkr:not(.hd) > b{grid-area:b;overflow:hidden;text-overflow:ellipsis}
     .pst-pkr:not(.hd) > .cu{grid-area:cu;width:auto;text-align:right} .pst-pkr:not(.hd) > .sg{grid-area:sg;width:auto} .pst-pkr:not(.hd) > .pc{grid-area:pc;min-width:0}
@@ -1244,7 +1249,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.77';
+var LOTS_VER = '1.78';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -3181,8 +3186,8 @@ function pstPickRefresh() {
 }
 function pstPickHtml(inline) {
   var c = pstCands(), sel = pstSelRows(), selK = {}; sel.forEach(function (x) { selK[x.key] = 1; });
-  var list = inline ? c : sel.concat(c.filter(function (x) { return !selK[x.key]; }));   // กล่องลอย: ที่เลือกอยู่ขึ้นก่อน
   var mu = !!L.stPk.multi;   // lots 1.38: ปกติ = กดที่ Lot แล้วเปิดเลย · โหมดหลาย Lot = ติ๊กสะสม
+  var list = inline || !mu ? c : sel.concat(c.filter(function (x) { return !selK[x.key]; }));   // กล่องลอย: ที่เลือกอยู่ขึ้นก่อน · lots 1.78 เฉพาะโหมดเลือกหลาย Lot (กดทีเดียว = ตรงตัวกรองเท่านั้น)
   var h = '<div class="pst-pk' + (inline ? ' inline' : ' full') + (mu ? ' multi' : ' single') + '" data-pstpkbox>'   // lots 1.16: ไม่ใช่หน้าแรก = เต็มพื้นที่ด้วย (เดิมกล่องลอย)
     + '<div class="pst-pkhd">' + '<b class="pst-pkt">เลือก Lot ที่จะดู</b>'   // lots 1.16: หัวเรื่องทั้งสองแบบ   /* lots 1.13: เอา ← รายการ Lot ออก (ใช้แท็บ 📋 รายการ Lot ด้านบน) */
     + '<input type="search" class="pst-pq" placeholder="พิมพ์ชื่อ Lot / remark / สถานะ / ประเภท เช่น กำลังตัด · ทำสี (Enter = ดูทุก Lot ที่ตรง)" value="' + esc(L.stPk.q) + '" autocomplete="off" enterkeyhint="search">'   // lots 1.39 + สถานะ
