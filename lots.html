@@ -75,6 +75,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.67 (2026-10-27 11:13 ผู้ใช้ รูป Front Style “Color:G02M0149Y” ขีดเส้นใต้ทุกแถว: “อันไหนไม่พบชื่อไม่ต้องขึ้น Box ครับ”)
+        UX รหัสสี/ผิวที่ไม่มีชื่อใน items/info.csv = ตัวธรรมดา (ไม่ขีดเส้นใต้ · ชี้/กดไม่ขึ้นกล่อง) — เดิม 1.63 ขึ้นกล่อง “ไม่พบชื่อ”
+            · ชื่อวัสดุยังโหลดไม่เสร็จตอนวาดตาราง = โหลดเสร็จแล้วถอดเส้นใต้ของรหัสที่ไม่มีชื่อให้เอง
+        UI ช่อง Fin (สี·เคลือบ): เอาคำ “สี / เคลือบ” ใต้ช่องติ๊กออก → สีกรอบช่องติ๊กแทน: ชมพูแดง = งานสี · เขียวน้ำทะเล = งานเคลือบ (ผู้ใช้ 11:14 “อยากให้ช่องมันตรงกัน
+            เอาคำสีออก แต่เป็นสีกรอบติ๊กเอา จะได้ตรง เคลือบก็อีกสี สีก็อีกสี”) — แถวสูงเท่ากันทุกแถว · ชี้ช่อง = บอกชนิด · หัวช่อง Fin บอกความหมายสี
     1.66 (2026-10-27 10:50 ผู้ใช้ รูปกล่องรหัสสี N00S0222N ขึ้น “PT09 · MU192 TOA เทียบสี PT09”: “ถ้าเป็น N00S มันต้อง MU หรือ HG ครับ แล้วคำอธิบายมันคือเทียบสีอะไรครับ”)
         FIX รหัสสี N00S… (งานสี) → ชื่อใหญ่ = รหัส MU / HG ในชื่อวัสดุ (MU192) · บรรทัดรอง = “เทียบสี PT09” (+ ยี่ห้อ TOA) — เดิม 1.63 จับ PP/PT ก่อนทุกรหัส = ได้ PT09 ผิด
             · รหัสอื่น (N03P… ฟิล์ม) = PP19 / PT05 เหมือนเดิม
@@ -996,6 +1001,10 @@
   #lotSt .pst-t td.pck{padding:2px 1px;width:28px}
   #lotSt .pst-t tr.cf th.pck{padding:2px 1px} #lotSt .pst-cfb{padding:1px}
   #lotSt .pst-t td.pck small{margin-left:1px;font-size:9px} #lotSt .pst-t td.pck small.fk{margin-left:0;font-size:8.5px;letter-spacing:-.02em}
+  /* lots 1.67 ช่อง Fin: สีกรอบช่องติ๊ก = ชนิดงาน (แทนคำ สี / เคลือบ ใต้ช่อง) */
+  #lotSt .pst-t tbody td.pck.fk-paint .cb,#lotSt .pst-t tbody td.pck.fk-paint.on .cb,#lotSt .pst-t tbody td.pck[class*=" cs"].fk-paint.on .cb{border:2px solid #e11d48}
+  #lotSt .pst-t tbody td.pck.fk-coat .cb,#lotSt .pst-t tbody td.pck.fk-coat.on .cb,#lotSt .pst-t tbody td.pck[class*=" cs"].fk-coat.on .cb{border:2px solid #0d9488}
+  #lotSt .pst-t tbody td.pck.fk-paint.inf .cb,#lotSt .pst-t tbody td.pck.fk-coat.inf .cb{border-style:dashed}
   #lotSt .pst-t th.grp{font-size:11px;padding:3px 4px}
   /* lots 1.63 กล่องลอยแบบกล่องสถานะ (ห่อรายห้อง · สรุปไม้) */
   #pstPkPop{position:fixed;z-index:70;display:none;flex-direction:column;overflow:hidden;background:var(--solid);color:var(--ink);border:.5px solid var(--line-strong);border-radius:14px;
@@ -1172,7 +1181,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.66';
+var LOTS_VER = '1.67';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2382,10 +2391,12 @@ function pstCell(q, S0) {   // lots 1.4: + stk (ติดซ้ายตอน�
 }
 /* lots 1.43: ช่องสี·เคลือบ = ✓ + ป้ายเล็กชนิด (สี / เคลือบ / ?) · ไม่มีงาน = “–” ตามเดิม */
 var pstCellL143 = pstCell;
+PST_STEPS.forEach(function (S0) { if (S0.k === 'fin') S0.t += ' · lots 1.67 กรอบช่องติ๊ก: ชมพูแดง = งานทำสี · เขียวน้ำทะเล = งานเคลือบ'; });
 pstCell = function (q, S0) {
   var h = pstCellL143(q, S0);
   if (S0.k === 'fin') { if (q.nc) h = h.replace('ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || ''), q.fs ? esc('FrontStyle ' + q.fs + ' — ไม่ใช่งานสี (ผิวบน/ล่าง 34N) / เคลือบ (FrontShape M… · ผิวดิบ 1 ด้าน) = ไม่ต้อง') /* lots 1.45 · 1.60 สีดูผิว */ : PST.fsm ? 'ไม่ใช่งานสี (ผิว 34N) / เคลือบ — ไม่ต้องทำสี/เคลือบ' /* lots 1.60 (เดิม: ไม่มี FrontStyle — …) */ : 'ยังไม่มี lots/fstyle.csv (StarSync v1.22)');
-    else if (q.fk) h = h.replace(/<\/td>$/, '<small class="fk ' + q.fk + '">' + PST_FINNM[q.fk] + '</small></td>'); }
+    else if (q.fk) { var fkT = q.fk === 'paint' ? 'งานทำสี (กรอบชมพูแดง)' : q.fk === 'coat' ? 'งานเคลือบ (กรอบเขียวน้ำทะเล)' : 'สี/เคลือบ?';
+      h = h.replace('<td class="pck', '<td class="pck fk-' + q.fk); h = / title="/.test(h) ? h.replace(/ title="/, ' title="' + esc(fkT) + ' · ') : h.replace('<td ', '<td title="' + esc(fkT) + '" '); } }   // lots 1.67 สีกรอบช่องติ๊ก (เดิม 1.43: <small class="fk"> สี / เคลือบ ใต้ช่อง = แถวสูงไม่เท่ากัน)
   return h;
 };
 /* lots 1.4: คอลัมน์ตามหัวตาราง AX progress (Smart Production) · ex = ช่องของ StarSync v1.17 (ไม่มีในไฟล์ = ซ่อน) · cp = กดแล้วคัดลอก */
@@ -2769,7 +2780,12 @@ document.addEventListener('click', function (e) { var td = e.target.closest && e
 /* ───────── lots 1.63: รหัสสี / ผิว (N03P0057N · N00S0047N) → ชื่อสั้น (ผู้ใช้ 10:33 “กดที่รหัสสีนั้น … PP19 แสดงแค่ชื่อ PP19 พอ · PT05 ก็แสดงแค่นั้น · งานสีก็แสดงแค่ TOA อะไรก็พอ”) ─────────
    ชื่อจาก items/info.csv (rxName ของ index) → PP19 / PT05 (P P|T + เลข) · TOA … (คำหลัง TOA) · ไม่เข้า = ชื่อเต็ม · ชี้ (เมาส์) / กด (มือถือแตะ) = กล่องเล็ก */
 var PST_CLR_RE = /\b[NG]\d\d[A-Z]\d{4}[A-Z]\b/g;
-function pstClrWrap(v) { return esc(v).replace(PST_CLR_RE, function (c) { return '<span class="fsk" data-fsc="' + c + '">' + c + '</span>'; }); }
+function pstClrNo(c) { return !!RX.info && !(rxName(c) || {}).name; }   // lots 1.67 ชื่อวัสดุโหลดแล้วแต่ไม่มีรหัสนี้
+function pstClrWrap(v) { return esc(v).replace(PST_CLR_RE, function (c) { return pstClrNo(c) ? c /* lots 1.67 ไม่มีชื่อ = ตัวธรรมดา */ : '<span class="fsk" data-fsc="' + c + '">' + c + '</span>'; }); }
+function pstClrDeco() {   // lots 1.67 ถอดเส้นใต้รหัสที่ไม่มีชื่อ (ตารางวาดก่อนชื่อวัสดุโหลดเสร็จ)
+  if (!RX.info) { if (!pstClrDeco.w) { pstClrDeco.w = 1; try { Promise.resolve(rxInfoLoad()).then(function () { pstClrDeco.w = 0; if (RX.info) pstClrDeco(); }, function () { pstClrDeco.w = 0; }); } catch (e) { pstClrDeco.w = 0; } } return; }
+  document.querySelectorAll('#lotSt [data-fsc]').forEach(function (el) { if (pstClrNo(el.dataset.fsc)) { el.removeAttribute('data-fsc'); el.classList.remove('fsk'); } });
+}
 /* lots 1.66 งานสี N00S → [MU192, 'เทียบสี PT09 · TOA'] (ผู้ใช้ 10:50 “ถ้าเป็น N00S มันต้อง MU หรือ HG · คำอธิบายมันคือเทียบสีอะไร”) · null = ไม่ใช่สี / หาไม่เจอ */
 function pstClrPaint(code, name) {
   if (!/^N00S/i.test(String(code || ''))) return null; name = String(name || '').trim(); if (!name) return null;
@@ -2787,13 +2803,14 @@ var PST_CLR = { el: null, at: null };
 function pstClrShow(el) {
   var code = el.dataset.fsc; if (!code) return;
   if (!PST_CLR.el) { PST_CLR.el = document.createElement('div'); PST_CLR.el.id = 'pstClr'; document.body.appendChild(PST_CLR.el); }
+  if (pstClrNo(code)) { el.removeAttribute('data-fsc'); el.classList.remove('fsk'); return; }   // lots 1.67 ไม่มีชื่อ = ไม่ขึ้นกล่อง
   var T = PST_CLR.el, draw = function () { var n = rxName(code) || {}, pt = pstClrPaint(code, n.name) /* lots 1.66 สี N00S = MU/HG + เทียบสี */, sh = pt ? pt[0] : pstClrShort(n.name);
     T.innerHTML = '<b>' + esc(sh || (RX.info ? 'ไม่พบชื่อ' : 'กำลังโหลดชื่อ…')) + '</b>' + (pt && pt[1] ? '<em>' + esc(pt[1]) + '</em>' : '') + (n.name && sh !== n.name ? '<small>' + esc(n.name) + '</small>' : '') + '<code>' + esc(code) + '</code>'; };
   PST_CLR.at = el; draw(); T.style.display = 'block';
   var r = el.getBoundingClientRect(), w = T.offsetWidth, h = T.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.bottom + 6;
   if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
   T.style.left = x + 'px'; T.style.top = y + 'px';
-  if (!RX.info) { try { Promise.resolve(rxInfoLoad()).then(function () { if (PST_CLR.at === el && T.style.display === 'block') draw(); }); } catch (e) { } }
+  if (!RX.info) { try { Promise.resolve(rxInfoLoad()).then(function () { if (PST_CLR.at === el && T.style.display === 'block') { if (pstClrNo(code)) { pstClrHide(); pstClrDeco(); } else draw(); } }); } catch (e) { } }   // lots 1.67 โหลดเสร็จแล้วไม่มีชื่อ = ปิด
 }
 function pstClrHide() { if (PST_CLR.el) PST_CLR.el.style.display = 'none'; PST_CLR.at = null; }
 document.addEventListener('mouseover', function (e) { if (!pstHovOk()) return; var el = e.target.closest && e.target.closest('#lotSt [data-fsc]'); if (el) { if (el !== PST_CLR.at) pstClrShow(el); } else if (PST_CLR.at) pstClrHide(); });
@@ -3647,7 +3664,7 @@ function lotSideAuto() {   // เรียกหลัง pstRender: หน้�
   else if (LSIDE.auto && !(L.stPk && L.stPk.open)) lotSideSet(false);
 }
 var pstRenderL151 = pstRender;
-pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { lotSideAuto(); /* lots 1.59 */ } catch (e) { } try { pstCurRing(); if (PKP.mode) pkpRefresh(); /* lots 1.63 */ } catch (e) { console.warn('StarStock lots 1.63', e); } try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } try { pstFinDeco(); } catch (e) { console.warn('StarStock lots 1.54: ชื่อขั้นสี·เคลือบ', e); } return r; };   // 1.54 + pstFinDeco
+pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { lotSideAuto(); /* lots 1.59 */ } catch (e) { } try { pstCurRing(); pstClrDeco(); /* lots 1.67 */ if (PKP.mode) pkpRefresh(); /* lots 1.63 */ } catch (e) { console.warn('StarStock lots 1.63', e); } try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } try { pstFinDeco(); } catch (e) { console.warn('StarStock lots 1.54: ชื่อขั้นสี·เคลือบ', e); } return r; };   // 1.54 + pstFinDeco
 function pstEdMenuX() { var m = document.querySelector('.pst-edm'); if (m) m.remove(); }
 function pstEdMenu(x, y) {
   pstEdMenuX(); var n = pstEdChanges().n, m = document.createElement('div'); m.className = 'pst-edm'; m.setAttribute('role', 'menu');
