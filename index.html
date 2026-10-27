@@ -2396,6 +2396,21 @@ body.tv #bdDash details.dbmcd{display:none!important}
   .ce85a{display:flex!important;gap:6px;align-items:flex-start} .ce85i{display:block;margin:0 0 6px 24px;font-size:11.5px} label.ce85off{opacity:.45}
   /* v2.86 แผงรายละเอียด Lot: หัว (ชื่อ Lot + ✕) ติดบนตอนเลื่อน */
   #bdDetail > h2{position:sticky;top:-14px;z-index:4;background:var(--solid);margin:-14px -16px 0;padding:12px 16px 8px;box-shadow:0 1px 0 var(--line)}
+  /* v2.88 📤 แชร์ภาพแผนตัด */
+  #ov .box.shrbox{width:min(1040px,100%)}
+  .shrbox .shrmc{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 12px}
+  .shrbox .shrmc .tbtn{flex-direction:column;align-items:flex-start;gap:1px;padding:6px 12px;line-height:1.25}
+  .shrbox .shrmc .tbtn small{font-size:11px;color:var(--ink-faint,#64748b)}
+  .shrbox .shrmc .tbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .shrbox .shrmc .tbtn.on small{color:rgba(255,255,255,.85)}
+  .shrbox .shrpv{position:relative;max-height:56vh;min-height:120px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .shrbox .shrpv img{display:block;width:100%;height:auto;cursor:zoom-in}
+  .shrbox .shrpv img.full{width:auto;max-width:none;cursor:zoom-out}
+  .shrbox .shrld{position:absolute;left:12px;top:10px;font-size:13px}
+  .shrbox .shrbtns{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .shrbox .shrbtns .sp{flex:1}
+  .shrbox .shrhint{margin:8px 0 0;font-size:12px}
+  #bdDash .dbxl.dbshr{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -2406,7 +2421,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.87 · lots.html กำลังโหลด">v2.87</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.88 · lots.html กำลังโหลด">v2.88</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3560,10 +3575,11 @@ var GasFS = (function () {
    v2.85 (2026-10-27 09:31–09:51 ผู้ใช้: เลือกข้อ 2 “สูตรนาที/Lot + นาที/ชิ้น · คำนวณใหม่ทุกวันจาก Lot ที่มี .saw” → “ทำเลย”) เวลาประมาณ Lot ไม่มี .saw = นาที/Lot + นาที/ชิ้น × ชิ้น · ⚙ ☑ คำนวณจาก Lot ที่มี .saw ทุกวัน (ค่าเริ่มเปิด · เส้นตรงจาก Lot 1–300 ชิ้น) · ปิด = “ตัด ต่อ Lot” (ใหม่ ค่าเริ่ม 0) + “ตัด ต่อชิ้น” · ข้อความ “ประมาณ x นาที/ชิ้น” = สูตรที่ใช้จริง
    v2.86 (2026-10-27 09:59 ผู้ใช้: “กรอบนี้ทำให้ผมคลิกนอกกรอบตรงพื้นที่ว่างให้มันปิดอัตโนมัติได้ไหม ผมต้องเลื่อนขึ้นมาบนสุดเพื่อปิด”) แผงรายละเอียด Lot: คลิกนอกแผง = ปิด (ไม่ปิดเมื่อคลิกเปิด Lot อื่น / กล่องที่ซ้อน / ลากเลือกข้อความจากในแผง) · หัวแผง (ชื่อ Lot + ✕) ติดบนสุดตอนเลื่อน
    v2.87 (2026-10-27 10:18 ผู้ใช้: “บัคหรือเปล่า ผมกดตรงวัตถุดิบมันไม่มีกรอบขึ้นแล้ว”) แก้ v2.86: คลิกที่เปิดแผงรายละเอียด Lot (แถว Dashboard · ช่องวัตถุดิบ · การ์ด Lot · Daily Plan) ถูกนับเป็นคลิกนอกแผง → ปิดทันที · ตอนนี้ปิดเฉพาะคลิกเมาส์ที่แผงเปิดอยู่ก่อนแล้ว และคลิกนั้นไม่ได้เปิด Lot ใด · ② (10:22 “ในกรอบที่แสดงรายละเอียดช่วยเพิ่มเลข .saw เข้าไปให้ที”) แผงรายละเอียด Lot หมวด “แผน” แถวแรก = เลข .saw (คลิก = คัดลอก · หลาย Run บอกจำนวน · ไม่มี .saw บอกว่าเวลาเป็นค่าประมาณ)
+   v2.88 (2026-10-27 11:10–11:13 ผู้ใช้: “ข้างปุ่ม Excel A4 เพิ่มปุ่มแชร์ภาพจาก Excel ลง LINE หรือแชร์ไปที่อื่น · ตอนกดแชร์ให้มีชื่อเครื่องขึ้นว่าจะแชร์เครื่องไหน · หัวด้านบนเอาทุกเครื่อง” · “ข้อมูลใน Excel พวกนี้ไม่ต้องให้ออกมาก็ได้ ไม่มีใครอ่าน”) ① Dashboard ปุ่ม 📤 แชร์ภาพ: เลือกเครื่อง → ภาพชีตสรุปรวมเครื่อง (หัว = เวลาตัดทุกเครื่อง · ตาราง = Lot ของเครื่องที่เลือก + แถวรวม) · 📤 แชร์… / 📋 คัดลอกรูป (LINE คอม Ctrl+V) / ⬇ บันทึกรูป ② Excel A4 ไม่มีบรรทัด “กดปุ่ม ▾ …” และ “ความหมายหมายเหตุ …” · ตัวเลข ณ ต่อท้ายบรรทัดแรก
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.87';
+var VER = '2.88';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -20136,7 +20152,220 @@ window.addEventListener('click', function (e) {
 }, true);
 DO86.ok = function () { var c = DO86.c; return !!(c && c.open && c.real && c.n === DO86.n); };
 
-window.StarStock = { bdDetailV287: bdDetailV287, sw87Add: sw87Add /* v2.87 */,  DO86: DO86, bdCloseDetail: bdCloseDetail /* v2.86 */,  CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ───────── v2.88: 📤 แชร์ภาพแผนตัด (ข้างปุ่ม 📊 Excel A4 ใน Dashboard) · Excel ตัดบรรทัดคำอธิบายที่ไม่มีใครอ่าน (ผู้ใช้ 27/10/2026 11:10 · 11:13) ─────────
+   11:10 (รูปแถบ Dashboard + รูป Excel ชีตสรุปรวมเครื่องที่กรอง HPP 300/1): “ตรงข้าง ๆ ปุ่มออก Excel A4 เพิ่มปุ่มแชร์ภาพจาก Excel ลง LINE หรือแชร์ไปที่อื่น ๆ ได้ไหม
+     ตามตัวอย่าง อันนี้เครื่อง 300/1 · ตอนกดแชร์ให้มีชื่อเครื่องขึ้นว่าจะแชร์เครื่องไหน · แต่หัวด้านบนเอาแบบให้ติดไปด้วยทุกเครื่องนะ”
+   ① ปุ่ม “📤 แชร์ภาพ” ต่อจาก 📊 Excel A4 → หน้าต่าง: ปุ่มเลือกเครื่อง (ชื่อ · Lot · เวลาตัด) + ทุกเครื่อง · ภาพตัวอย่าง
+      ภาพ = ชีต “สรุปรวมเครื่อง” ของไฟล์ Excel A4 (ข้อมูลชุดเดียวกัน · วันเดียวกับที่ Dashboard แสดง)
+        หัวภาพ: แผนงานเครื่องตัด · เครื่อง · วันที่ตัด + กรอบเวลาตัดรายเครื่อง “ทุกเครื่อง” + รวม (แถวเครื่องที่แชร์ = แถบฟ้า “◀ ใบนี้”)
+        ตาราง: เฉพาะ Lot ของเครื่องที่เลือก (คอลัมน์เหมือน Excel · วัตถุดิบไม่ครบ = ตัวแดง) + แถวรวมของเครื่อง
+      ปุ่ม: 📤 แชร์… (หน้าต่างแชร์ของเครื่อง → LINE / แอปอื่น — มือถือ · Windows) · 📋 คัดลอกรูป (LINE บนคอม: เปิดแชทแล้ว Ctrl+V) · ⬇ บันทึกรูป (PNG)
+   11:13 (รูปท้ายหัวชีตสรุปรวมเครื่อง): “ข้อมูลใน Excel พวกนี้ไม่ต้องให้ออกมาก็ได้ ไม่มีใครอ่านหรอก”
+   ② Excel A4 (Dashboard · Daily Plan): ไม่มีบรรทัด “กดปุ่ม ▾ ที่หัวตาราง = กรอง …” (ชีตสรุปรวมเครื่อง) และ “ความหมายหมายเหตุ — ✂ ค้างตัด = … / แบ่งตัด = …” (v2.77 ทุกชีต)
+      · เวลาที่ดึงตัวเลขย้ายไปต่อท้ายบรรทัดแรก “เวลาตัดรายเครื่อง · วัน · ตัวเลข ณ …” · หมายเหตุในแถว Lot (ตัวเลขแบ่งตัด / ค้างตัด) ยังอยู่ */
+xn77Book = function (bk) { return bk; };   // v2.88 แทน v2.77 — ไม่เติมบรรทัดคำอธิบายหมายเหตุ (ตัวห่อ dbXlBook / dpXlBook v2.77 เรียกตัวนี้)
+var xlSum2BuildV288 = xlSum2Build;
+xlSum2Build = function () {
+  var o = xlSum2BuildV288.apply(this, arguments);
+  try {
+    var sp = o && o.spec; if (!sp || !Array.isArray(sp.info)) return o;
+    sp.info = sp.info.filter(function (s) { return !/^กดปุ่ม ▾/.test(String(s)); });
+    if (sp.info.length && !/ตัวเลข ณ/.test(sp.info[0])) sp.info[0] += ' · ตัวเลข ณ ' + fD(Date.now()) + ' ' + bdHM(Date.now());
+  } catch (e) { console.warn('StarStock v2.88: บรรทัดหัวชีตสรุปรวมเครื่อง', e); }
+  return o;
+};
+/* ── ① แชร์ภาพ ── */
+var SHR = { mc: '', o: null, blob: null, url: '', name: '', title: '', seq: 0 };
+var SHR_FF = "Tahoma, 'Leelawadee UI', 'Noto Sans Thai', 'Sarabun', sans-serif";
+/* ข้อมูลภาพ = ชีต “สรุปรวมเครื่อง” ของ Excel A4 (Dashboard) */
+function shrData() {
+  var P = B.plan; if (!P) return null;
+  var bk = dbXlBook(P), sh = bk && (bk.sheets || []).filter(function (s) { return s && s.name === 'สรุปรวมเครื่อง'; })[0];
+  var sp = sh && sh.spec; if (!sp || !Array.isArray(sp.body)) return null;
+  var day = String(sp.title || '').split('วันที่ตัด ')[1] || bdDayTxt(dpDayMs(P, woDbDay()));
+  var mcs = [], idx = {};
+  sp.body.forEach(function (r, i) {
+    if (sp.roles[i] !== 'b' || !Array.isArray(r) || !r[XS2.mc]) return;
+    var n = String(r[XS2.mc]), m = idx[n]; if (!m) { m = idx[n] = { n: n, lots: 0, t: 0 }; mcs.push(m); }
+    m.lots++; m.t += +r[XS2.t] || 0;
+  });
+  return { sp: sp, day: day, mcs: mcs, at: Date.now() };
+}
+/* ตัดบรรทัดตามความกว้าง (ภาษาไทยตัดตามคำ · คำยาวเกิน = ตัดทีละตัวอักษร) */
+function shrWrap(x, t, w, max) {
+  var out = [], segW = null, segG = null;
+  try { segW = new Intl.Segmenter('th', { granularity: 'word' }); segG = new Intl.Segmenter('th', { granularity: 'grapheme' }); } catch (e) { segW = segG = null; }
+  var toks = function (s, sg, word) { if (sg) { var a = []; for (var it of sg.segment(s)) a.push(it.segment); return a; } return word ? s.split(/(\s+|_|-)/).filter(function (z) { return z !== ''; }) : Array.from(s); };
+  String(t == null ? '' : t).split('\n').forEach(function (p) {
+    var line = '';
+    toks(p, segW, 1).forEach(function (tk) {
+      if (x.measureText(line + tk).width <= w) { line += tk; return; }
+      if (line.trim()) out.push(line.replace(/\s+$/, ''));
+      line = tk.replace(/^\s+/, '');
+      if (x.measureText(line).width > w) {   // คำเดียวยาวกว่าช่อง
+        var part = ''; toks(line, segG).forEach(function (g) { if (x.measureText(part + g).width > w && part) { out.push(part); part = g; } else part += g; }); line = part;
+      }
+    });
+    out.push(line.replace(/\s+$/, ''));
+  });
+  if (max && out.length > max) { out = out.slice(0, max); var l = out[max - 1]; while (l && x.measureText(l + '…').width > w) l = l.slice(0, -1); out[max - 1] = l + '…'; }
+  return out.length ? out : [''];
+}
+/* วาดภาพ → canvas (mc = '' = ทุกเครื่อง) */
+function shrDraw(o, mc, sc) {
+  var sp = o.sp, cols = sp.cols, N = cols.length, U = 8.4, PAD = 22, SC = sc || 1.5;
+  var cw = cols.map(function (c) { return Math.round((c.w || 10) * U); }), TW = cw.reduce(function (a, b) { return a + b; }, 0), W = TW + PAD * 2;
+  var cx = []; cw.reduce(function (a, b, i) { cx[i] = a; return a + b; }, PAD);
+  var red = {}; (sp.red || []).forEach(function (z) { red[z[0] + ':' + z[1]] = 1; });
+  var rows = []; sp.body.forEach(function (r, i) { if (sp.roles[i] !== 'b' || !Array.isArray(r) || !r[XS2.mc]) return; if (mc && String(r[XS2.mc]) !== mc) return; rows.push({ r: r, i: i }); });
+  var mx = document.createElement('canvas').getContext('2d');
+  var F = { t: 'bold 24px ' + SHR_FF, s: '13px ' + SHR_FF, hb: 'bold 14px ' + SHR_FF, h: '14px ' + SHR_FF, th: 'bold 13px ' + SHR_FF, td: '13px ' + SHR_FF, tb: 'bold 13px ' + SHR_FF, f: '11px ' + SHR_FF };
+  var fmt = function (v, c) { if (v == null || v === '') return ''; if (typeof v === 'number') return c.f === 't' ? tgHms(v) : (c.f === 'i' || c.f === 'd') ? fmtN(v) : String(v); return String(v); };
+  /* ── วัดขนาด ── */
+  var title = 'แผนงานเครื่องตัด · ' + (mc || 'ทุกเครื่อง') + ' · วันที่ตัด ' + o.day;
+  var info = (sp.info || []).filter(function (s) { return String(s).trim(); });
+  var head = info.slice(0, 1), lines = info.slice(1);
+  var isMine = function (s) { var t = String(s).trim(); return !!mc && (t.indexOf(mc + ' —') === 0 || t.indexOf(mc + ' (') === 0); };
+  var LH = 22, boxH = 12 + LH * (head.length + lines.length) + 8;
+  /* หัวคอลัมน์: ตัดบรรทัดที่ช่องว่าง (“สะสม / (เครื่อง)”) · ยาวเกิน = ย่อตัวอักษร 13 → 11 px · ยังเกิน = ตัดตามคำ */
+  var thF = [], thL = cols.map(function (c, i) {
+    var w = cw[i] - 10, fs = 13, L = null, fit = function (a) { return a.every(function (l) { return mx.measureText(l).width <= w; }); };
+    for (; fs >= 11; fs--) {
+      mx.font = 'bold ' + fs + 'px ' + SHR_FF; L = []; var cur = '';
+      String(c.h || '').split(' ').forEach(function (p) { var t = cur ? cur + ' ' + p : p; if (!cur || mx.measureText(t).width <= w) cur = t; else { L.push(cur); cur = p; } }); L.push(cur);
+      if (L.length <= 2 && fit(L)) break;
+    }
+    if (fs < 11) { fs = 11; mx.font = 'bold 11px ' + SHR_FF; L = shrWrap(mx, c.h, w, 2); }
+    thF[i] = 'bold ' + fs + 'px ' + SHR_FF; return L;
+  }), thH = Math.max.apply(null, thL.map(function (a) { return a.length; })) * 17 + 14;
+  var RL = 18, body = rows.map(function (z) {
+    var cells = cols.map(function (c, j) {
+      var v = z.r[j], s = fmt(v, c); mx.font = j === XS2.lot ? F.tb : F.td;
+      var wrapOk = typeof v === 'string' && (c.a || 'l') === 'l';
+      return { s: s, L: wrapOk ? shrWrap(mx, s, cw[j] - 10, 4) : [s], red: !!red[z.i + ':' + j] };
+    });
+    return { cells: cells, h: Math.max(30, Math.max.apply(null, cells.map(function (c) { return c.L.length; })) * RL + 12) };
+  });
+  var tot = { n: rows.length, q: 0, p: 0, t: 0, cut: 0, left: 0 };
+  rows.forEach(function (z) { ['q', 'p', 't', 'cut', 'left'].forEach(function (k) { tot[k] += +z.r[XS2[k]] || 0; }); });
+  var totH = 32, stamp = 'StarStock v' + VER + ' · ภาพจาก 📊 Excel A4 ชีตสรุปรวมเครื่อง · ทำภาพ ' + fD(o.at) + ' ' + bdHM(o.at);
+  var y0 = PAD, yT = y0 + 30, yS = yT + 8, yB = yS + 22, yH = yB + boxH + 14, yR = yH + thH;
+  var H = yR + body.reduce(function (a, b) { return a + b.h; }, 0) + (rows.length ? totH : 40) + 30 + PAD;
+  /* ── วาด ── */
+  var cv = document.createElement('canvas'); cv.width = Math.round(W * SC); cv.height = Math.round(H * SC);
+  var x = cv.getContext('2d'); x.scale(SC, SC); x.textBaseline = 'middle';
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
+  var txt = function (s, X, Y, font, col, al) { x.font = font; x.fillStyle = col || '#111827'; x.textAlign = al || 'left'; x.fillText(s, X, Y); };
+  var line = function (x1, y1, x2, y2, col, lw) { x.strokeStyle = col; x.lineWidth = lw || 1; x.beginPath(); x.moveTo(x1, y1); x.lineTo(x2, y2); x.stroke(); };
+  txt(title, PAD, y0 + 14, F.t, '#1F3864');
+  txt('สรุปรวมเครื่อง · ' + rows.length + ' Lot' + (mc ? ' ของ ' + mc : ''), PAD, yS + 10, F.s, '#64748b');
+  /* กรอบเวลาตัดรายเครื่อง (ทุกเครื่อง) */
+  x.fillStyle = '#F3F6FA'; x.fillRect(PAD, yB, TW, boxH); x.strokeStyle = '#C9D3E0'; x.lineWidth = 1; x.strokeRect(PAD + .5, yB + .5, TW - 1, boxH - 1);
+  var yy = yB + 12 + LH / 2;
+  head.forEach(function (s) { txt(String(s).trim(), PAD + 12, yy, F.hb, '#1F3864'); yy += LH; });
+  lines.forEach(function (s) {
+    var t = String(s).replace(/^\s+/, ''), mine = isMine(s), tot1 = /^รวม /.test(t);
+    if (mine) { x.fillStyle = '#DDEBF7'; x.fillRect(PAD + 4, yy - LH / 2 + 1, TW - 8, LH - 2); x.fillStyle = '#2F5597'; x.fillRect(PAD + 4, yy - LH / 2 + 1, 4, LH - 2); }
+    txt(t, PAD + 26, yy, mine || tot1 ? F.hb : F.h, mine ? '#1F3864' : '#111827');
+    if (mine) { x.font = F.hb; txt('◀ ใบนี้', PAD + 26 + x.measureText(t).width + 12, yy, F.hb, '#2F5597'); }
+    yy += LH;
+  });
+  /* หัวตาราง */
+  x.fillStyle = '#D9E1F2'; x.fillRect(PAD, yH, TW, thH);
+  cols.forEach(function (c, i) { var L = thL[i], y = yH + thH / 2 - (L.length - 1) * 17 / 2; L.forEach(function (s, k) { txt(s, cx[i] + cw[i] / 2, y + k * 17, thF[i], '#1F2937', 'center'); }); });
+  /* แถว Lot */
+  var y = yR;
+  body.forEach(function (b, ri) {
+    if (ri % 2) { x.fillStyle = '#F7F9FC'; x.fillRect(PAD, y, TW, b.h); }
+    b.cells.forEach(function (c, j) {
+      var col = cols[j], al = col.a === 'r' ? 'right' : col.a === 'c' ? 'center' : 'left', X = al === 'right' ? cx[j] + cw[j] - 6 : al === 'center' ? cx[j] + cw[j] / 2 : cx[j] + 6;
+      var y1 = y + b.h / 2 - (c.L.length - 1) * RL / 2;
+      c.L.forEach(function (s, k) { txt(s, X, y1 + k * RL, j === XS2.lot ? F.tb : F.td, c.red ? '#C00000' : '#111827', al); });
+    });
+    line(PAD, y + b.h, PAD + TW, y + b.h, '#D5DCE6');
+    y += b.h;
+  });
+  var yTot = y;
+  if (!rows.length) { txt('ไม่มี Lot ในแผน', PAD + 10, y + 20, F.td, '#64748b'); y += 40; }
+  else {
+    x.fillStyle = '#FFF2CC'; x.fillRect(PAD, y, TW, totH);
+    txt('รวม ' + (mc || 'ทุกเครื่อง') + ' · ' + tot.n + ' Lot', PAD + 6, y + totH / 2, F.tb, '#111827');
+    [['q', 'i'], ['p', 'i'], ['t', 't'], ['cut', 'i'], ['left', 'i']].forEach(function (k) { var j = XS2[k[0]]; txt(k[1] === 't' ? tgHms(tot[k[0]]) : fmtN(Math.round(tot[k[0]])), cx[j] + cw[j] - 6, y + totH / 2, F.tb, '#111827', 'right'); });
+    y += totH;
+  }
+  /* เส้นตาราง */
+  x.strokeStyle = '#9FB2CC'; x.lineWidth = 1; x.strokeRect(PAD + .5, yH + .5, TW - 1, y - yH - 1);
+  cols.forEach(function (c, i) { if (i) line(cx[i] + .5, yH, cx[i] + .5, i <= XS2.prj || !rows.length ? yTot : y, '#C9D3E0'); });   // แถวรวม: 4 ช่องแรกเป็นช่องเดียว (ข้อความ “รวม เครื่อง · n Lot”)
+  line(PAD, yR + .5, PAD + TW, yR + .5, '#9FB2CC');
+  txt(stamp, PAD + TW, y + 18, F.f, '#94a3b8', 'right');
+  return cv;
+}
+function shrName(o, mc) { return 'CuttingPlan_' + (String(mc || 'All').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'MC') + '_' + xlYmd(o.at) + '_' + bdHM(o.at).replace(':', '') + '.png'; }   // ชื่อไฟล์ภาษาอังกฤษ (บางเครื่องตั้งชื่อไฟล์ไทยไม่ได้)
+async function shrMake(mc) {
+  var o = SHR.o; if (!o) return null;
+  var my = ++SHR.seq, cv = shrDraw(o, mc);
+  var blob = await new Promise(function (res) { cv.toBlob(function (b) { res(b); }, 'image/png'); });
+  if (my !== SHR.seq || !blob) return null;
+  if (SHR.url) try { URL.revokeObjectURL(SHR.url); } catch (e) { }
+  SHR.mc = mc; SHR.blob = blob; SHR.url = URL.createObjectURL(blob); SHR.name = shrName(o, mc); SHR.title = 'แผนตัด ' + (mc || 'ทุกเครื่อง') + ' · ' + o.day;
+  return blob;
+}
+function shrCanFiles() { try { var f = new File([new Blob(['x'], { type: 'image/png' })], 'a.png', { type: 'image/png' }); return !!(navigator.canShare && navigator.share && navigator.canShare({ files: [f] })); } catch (e) { return false; } }
+async function shrBox(btn) {
+  if (!B.plan) { toast('ยังไม่มีแผน — รอโหลดข้อมูลก่อน'); return; }
+  if (btn) { btn.disabled = true; btn.dataset.t0 = btn.textContent; btn.textContent = 'กำลังทำภาพ…'; }
+  try { await w7Prep(true); SHR.o = shrData(); }
+  catch (e) { console.warn('StarStock v2.88: แชร์ภาพ', e); SHR.o = null; }
+  finally { if (btn) { btn.disabled = false; btn.textContent = btn.dataset.t0 || '📤 แชร์ภาพ'; } }
+  var o = SHR.o; if (!o || !o.mcs.length) { toast('ยังไม่มี Lot ในแผนวันนี้ให้แชร์'); return; }
+  var pick = DB.mc && o.mcs.some(function (m) { return m.n === DB.mc; }) ? DB.mc : SHR.mc && o.mcs.some(function (m) { return m.n === SHR.mc; }) ? SHR.mc : o.mcs[0].n;
+  var can = shrCanFiles();
+  openBox('<h2>📤 แชร์ภาพแผนตัด</h2><p class="muted">วันที่ตัด <b>' + esc(o.day) + '</b> · เลือกเครื่องที่จะแชร์ — หัวภาพมีเวลาตัดของทุกเครื่อง · ตารางเฉพาะ Lot ของเครื่องที่เลือก (ข้อมูลเดียวกับ 📊 Excel A4)</p>'
+    + '<div class="shrmc" role="group" aria-label="เลือกเครื่อง">' + o.mcs.map(function (m) { return '<button type="button" class="tbtn" data-shrmc="' + esc(m.n) + '"><b>' + esc(m.n) + '</b><small>' + m.lots + ' Lot · ' + tgHms(m.t) + '</small></button>'; }).join('')
+    + '<button type="button" class="tbtn" data-shrmc=""><b>ทุกเครื่อง</b><small>' + o.mcs.reduce(function (a, m) { return a + m.lots; }, 0) + ' Lot</small></button></div>'
+    + '<div class="shrpv" title="คลิกที่ภาพ = ดูขนาดจริง / ย่อกลับ"><div class="shrld muted">กำลังทำภาพ…</div><img id="shrImg" alt="ภาพแผนตัด"></div>'
+    + '<div class="shrbtns">' + (can ? '<button type="button" class="tbtn pri" id="shrGo" title="หน้าต่างแชร์ของเครื่อง — เลือก LINE หรือแอปอื่น">📤 แชร์… (LINE / แอปอื่น)</button>' : '')
+    + '<button type="button" class="tbtn' + (can ? '' : ' pri') + '" id="shrCp" title="คัดลอกรูปไว้ แล้วไปวางในแชท LINE (Ctrl+V)">📋 คัดลอกรูป</button><button type="button" class="tbtn" id="shrDl">⬇ บันทึกรูป</button><span class="sp"></span><button type="button" class="tbtn" id="shrX">ปิด</button></div>'
+    + '<p class="muted shrhint">LINE บนคอม: กด <b>📋 คัดลอกรูป</b> → เปิดแชท LINE → กด <b>Ctrl+V</b> แล้วส่ง' + (can ? ' · หรือกด <b>📤 แชร์…</b> เลือก LINE (มือถือ / แท็บเล็ต / Windows ที่ลง LINE)' : ' · เบราว์เซอร์นี้เปิดหน้าต่างแชร์ไฟล์ไม่ได้ — ใช้คัดลอกรูป / บันทึกรูปแทน') + '</p>', function (box, close) {
+      box.classList.add('shrbox');
+      var img = box.querySelector('#shrImg'), ld = box.querySelector('.shrld'), acts = ['#shrGo', '#shrCp', '#shrDl'].map(function (s) { return box.querySelector(s); }).filter(Boolean);
+      var busy = function (on) { acts.forEach(function (b) { b.disabled = on; }); ld.style.display = on ? '' : 'none'; };
+      var show = async function (mc) {
+        box.querySelectorAll('[data-shrmc]').forEach(function (b) { var on = b.getAttribute('data-shrmc') === mc; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+        busy(true);
+        try { var bl = await shrMake(mc); if (bl) { img.src = SHR.url; busy(false); } }
+        catch (e) { console.warn('StarStock v2.88: ทำภาพ', e); ld.textContent = '✗ ทำภาพไม่ได้: ' + (e && e.message || e); }
+      };
+      box.querySelector('.shrmc').onclick = function (e) { var b = e.target.closest('[data-shrmc]'); if (b) show(b.getAttribute('data-shrmc')); };
+      img.onclick = function () { img.classList.toggle('full'); };
+      box.querySelector('#shrX').onclick = close;
+      var go = box.querySelector('#shrGo');
+      if (go) go.onclick = async function () {
+        if (!SHR.blob) return;
+        try { await navigator.share({ files: [new File([SHR.blob], SHR.name, { type: 'image/png' })], title: SHR.title }); }
+        catch (e) { if (e && e.name === 'AbortError') return; console.warn('StarStock v2.88: แชร์', e); toast('✗ แชร์ไม่ได้ (' + (e && e.message || e) + ') — ใช้ 📋 คัดลอกรูป แล้ววางใน LINE แทน', 6000); }
+      };
+      box.querySelector('#shrCp').onclick = async function () {
+        if (!SHR.blob) return;
+        try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': SHR.blob })]); toast('📋 คัดลอกรูป ' + (SHR.mc || 'ทุกเครื่อง') + ' แล้ว — เปิดแชท LINE แล้วกด Ctrl+V', 5000); }
+        catch (e) { console.warn('StarStock v2.88: คัดลอกรูป', e); toast('✗ คัดลอกรูปไม่ได้ (' + (e && e.message || e) + ') — กด ⬇ บันทึกรูป แล้วแนบใน LINE แทน', 6000); }
+      };
+      box.querySelector('#shrDl').onclick = function () {
+        if (!SHR.url) return;
+        var a = document.createElement('a'); a.href = SHR.url; a.download = SHR.name; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 1500); toast('⬇ บันทึกรูป ' + SHR.name);
+      };
+      show(pick);
+    });
+}
+var dbMcPickV288 = dbMcPick;
+dbMcPick = function (S) {
+  var h = dbMcPickV288.apply(this, arguments);
+  try { if (h.indexOf('data-dbshr') < 0) h = h.replace(/(<button type="button" class="dbxl" data-dbxl[^>]*>[^<]*<\/button>)/, '$1<button type="button" class="dbxl dbshr" data-dbshr title="แชร์ภาพแผนตัดรายเครื่อง (ชีตสรุปรวมเครื่องของ Excel A4) ไป LINE / แอปอื่น · คัดลอกรูป · บันทึกรูป">📤 แชร์ภาพ</button>'); } catch (e) { }
+  return h;
+};
+document.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('[data-dbshr]') : null; if (!b || b.disabled) return; e.preventDefault(); e.stopPropagation(); shrBox(b); }, true);
+
+window.StarStock = { SHR: SHR, shrData: shrData, shrDraw: shrDraw, shrWrap: shrWrap, shrMake: shrMake, shrBox: shrBox, shrCanFiles: shrCanFiles /* v2.88 */,  bdDetailV287: bdDetailV287, sw87Add: sw87Add /* v2.87 */,  DO86: DO86, bdCloseDetail: bdCloseDetail /* v2.86 */,  CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
