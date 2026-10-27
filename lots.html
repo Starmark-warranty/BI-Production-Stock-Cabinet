@@ -75,6 +75,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.59 (2026-10-27 10:00 ผู้ใช้ รูปแผงซ้าย STAGE · สถานะ · ENDDATE · BU: “แผงซ้าย ทำปุ่มย่อให้ทีครับ แล้วก็ เมื่อคนเข้าใหม่ หรือ F5 ให้ปิดไว้ กดเปิดเองทีหลัง หรือ ตอนกดเลือก lot ก็ให้แสดงกลับมาครับ”)
+        UX ปุ่ม ☰ หัวแถบบน (ซ้ายสุดก่อนแท็บ) = ย่อ / แสดงแผงซ้าย · เปิดหน้า / F5 = ย่อไว้เสมอ (ไม่จำ)
+            · กด “➕ เลือก Lot” = แผงซ้ายกลับมาเอง (ไว้กรอง Lot) — ปิดหน้าเลือกแล้วย่อกลับ (ถ้าแผงเปิดเพราะปุ่มเลือก Lot) · เปิดเองด้วย ☰ = ค้างไว้
+            · มือถือ (≤760px) แผงซ้ายเป็นแผงเลื่อนอยู่แล้ว — ปุ่ม ☰ นี้ = เปิด/ปิดแผงเลื่อน (เหมือน ☰ หัวแอป)
     1.58 (2026-10-27 09:57 ผู้ใช้ รูปกล่อง 1.57 ห้อง 00K01–00K05 ห้องละ 32 ปุ่มห่อ: “ไม่ต้องบอกละเอียดขนาดนี้ครับ เอาแค่ว่า ห้อง กี่ห่อกี่ชิ้นพอครับ”
          · 09:58 รูปเกจ Site “0/1,640 · ห่อ 0/256”: “ตรงนี้ เอาห่อออกด้วยครับ แสดงชิ้นพอให้คนกดไปดูเอง”)
         UX กล่องห่อรายห้อง = ตาราง ห้อง · ห่อ · ชิ้น + แถวรวม (ยอดบน: ห้อง · ห่อ · ชิ้น · ผ่านขั้นที่กดกี่ห่อ) — เอาปุ่มรายห่อ (✓ ◐ ○) และแถบสลับขั้นออก
@@ -387,6 +391,9 @@
      เดิม: เปิดมาเจอคลังสินค้า (STOCK) ทันที มีหน้าเดียว
      ตอนนี้: เปิดมาที่ HOME เลือกเข้า STOCK หรือ Lot ผลิต · body[data-view] = home | stock | lots (จำใน #hash ของลิงก์) */
   #lotSide{width:256px;flex:none;overflow:auto;padding:12px;border-right:.5px solid var(--line-strong);background:var(--bg2)}
+  /* lots 1.59 ย่อแผงซ้าย (คอม) — body.lotSideX · เปิดหน้า / F5 = ย่อ · มือถือใช้ body.sideOpen (แผงเลื่อน) ตามเดิม */
+  @media (min-width: 761px){ body.lotSideX #lotSide{display:none} }
+  #lotSideBtn{flex:none;padding:5px 10px;font-size:15px;line-height:1} #lotSideBtn.on{background:var(--accent-soft);border-color:var(--accent)}
   #lotCenter{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
   #lotDetail{width:380px;flex:none;overflow:auto;border-left:.5px solid var(--line-strong);background:var(--solid);padding:14px 16px 30px}
   #lotBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:.5px solid var(--line-strong);background:var(--solid);flex-wrap:wrap}
@@ -1055,6 +1062,7 @@
   <aside id="lotSide"></aside>
   <section id="lotCenter">
     <div id="lotBar">
+      <button type="button" id="lotSideBtn" class="tbtn" aria-label="แสดง / ย่อแผงซ้าย" title="แสดงแผงซ้าย (ตัวกรอง Lot)">☰</button><!-- lots 1.59 ผู้ใช้ 10:00 “แผงซ้าย ทำปุ่มย่อให้ที” -->
       <span class="pst-tabs" role="tablist" aria-label="มุมมอง"><button type="button" data-lstab="list" role="tab" title="ตาราง Lot — กด Lot = แผงรายละเอียด">📋<span class="lbl"> รายการ Lot</span></button><button type="button" data-lstab="st" role="tab" title="หน้าสถานะทีละชิ้น (Part · Edge · Drill · Pack · Pick · Wh · Delivery · Site) — เลือกได้หลาย Lot">✅<span class="lbl"> สถานะ Part</span></button></span>
       <span id="lotCount"></span>
       <span class="sp"></span>
@@ -1095,7 +1103,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.58';
+var LOTS_VER = '1.59';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -3326,8 +3334,30 @@ function pstFinDeco() {
   if (!none && f.t !== 'สี·เคลือบ') E.querySelectorAll('.pst-cur').forEach(function (cu) {   // กล่องสถานะ “Finish สี·เคลือบ” → ชื่อตามงาน
     var w = document.createTreeWalker(cu, NodeFilter.SHOW_TEXT), nd; while ((nd = w.nextNode())) if (nd.nodeValue.indexOf('สี·เคลือบ') >= 0) nd.nodeValue = nd.nodeValue.replace('สี·เคลือบ', f.t); });
 }
+/* ───────── lots 1.59: ย่อ / แสดงแผงซ้าย (ผู้ใช้ 10:00) ─────────
+   เดิม: แผงซ้าย (STAGE · สถานะ · ENDDATE · BU …) กว้าง 256px เปิดตลอดบนคอม · มือถือเป็นแผงเลื่อน (☰ หัวแอป · body.sideOpen)
+   ตอนนี้: คอม = เปิดหน้า / F5 ย่อไว้ (body.lotSideX — ไม่จำในเครื่อง ตามที่ผู้ใช้ขอ) · ☰ หัวแถบบน = สลับ
+     กด “➕ เลือก Lot” (เปิดหน้าเลือก) = แผงกลับมาเอง (LSIDE.auto) → หน้าเลือกปิด (เลือกแล้ว / กดนอกกล่อง) = ย่อกลับ · เปิดเองด้วย ☰ = ไม่ย่อเอง */
+var LSIDE = { auto: false };
+function lotSideWide() { return !(window.matchMedia && matchMedia('(max-width: 760px)').matches); }
+function lotSideOpen() { return lotSideWide() ? !document.body.classList.contains('lotSideX') : document.body.classList.contains('sideOpen'); }
+function lotSideSet(open, auto) {
+  if (lotSideWide()) document.body.classList.toggle('lotSideX', !open); else document.body.classList.toggle('sideOpen', !!open);
+  LSIDE.auto = !!(open && auto);
+  var b = $('lotSideBtn'); if (b) { b.classList.toggle('on', !!open); b.setAttribute('aria-pressed', open ? 'true' : 'false'); b.title = open ? 'ย่อแผงซ้าย' : 'แสดงแผงซ้าย (ตัวกรอง Lot)'; }
+}
+document.body.classList.add('lotSideX'); lotSideSet(false);   // เปิดหน้า / F5 = ย่อ
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('#lotSideBtn'); if (!b) return;
+  e.preventDefault(); lotSideSet(!lotSideOpen(), false);
+}, true);
+function lotSideAuto() {   // เรียกหลัง pstRender: หน้าเลือก Lot เปิด = แสดงแผง · ปิดแล้ว (แผงเปิดเพราะหน้าเลือก) = ย่อกลับ
+  if (!lotSideWide()) return;
+  if (L.stPk && L.stPk.open && !lotSideOpen()) lotSideSet(true, true);
+  else if (LSIDE.auto && !(L.stPk && L.stPk.open)) lotSideSet(false);
+}
 var pstRenderL151 = pstRender;
-pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } try { pstFinDeco(); } catch (e) { console.warn('StarStock lots 1.54: ชื่อขั้นสี·เคลือบ', e); } return r; };   // 1.54 + pstFinDeco
+pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { lotSideAuto(); /* lots 1.59 */ } catch (e) { } try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } try { pstFinDeco(); } catch (e) { console.warn('StarStock lots 1.54: ชื่อขั้นสี·เคลือบ', e); } return r; };   // 1.54 + pstFinDeco
 function pstEdMenuX() { var m = document.querySelector('.pst-edm'); if (m) m.remove(); }
 function pstEdMenu(x, y) {
   pstEdMenuX(); var n = pstEdChanges().n, m = document.createElement('div'); m.className = 'pst-edm'; m.setAttribute('role', 'menu');
