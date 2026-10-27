@@ -2392,6 +2392,8 @@ body.tv #bdDash details.dbmcd{display:none!important}
   .tlg84{display:grid;gap:2px;margin:8px 0} .tlg84 .h,.tlg84 .r{display:grid;grid-template-columns:1fr 86px 86px;align-items:center;gap:6px}
   .tlg84 .h{font-size:12px;font-weight:800;color:var(--ink-dim);padding:2px 0 4px;border-bottom:1px solid var(--line-strong)} .tlg84 .h span:not(:first-child){text-align:center}
   .tlg84 .r{padding:5px 0;border-bottom:1px solid var(--line)} .tlg84 .r small{display:block;font-size:11px} .tlg84 .r label{display:flex;justify-content:center;cursor:pointer} .tlg84 input{width:18px;height:18px}
+  /* v2.85 ⚙ ค่าประมาณ นาที/Lot + นาที/ชิ้น */
+  .ce85a{display:flex!important;gap:6px;align-items:flex-start} .ce85i{display:block;margin:0 0 6px 24px;font-size:11.5px} label.ce85off{opacity:.45}
 </style>
 </head>
 <body>
@@ -2402,7 +2404,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.84 · lots.html กำลังโหลด">v2.84</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v2.85 · lots.html กำลังโหลด">v2.85</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3553,10 +3555,11 @@ var GasFS = (function () {
    v2.82 (2026-10-27 08:59 ผู้ใช้: “ห้ามเกิน 7 ดิ ให้จัดแผนใหม่วันนี้เลย เป็นกรณีพิเศษ” + “พื้นที่ช่องแผนมันน้อยไป … หมายเหตุด้านล่างมันปรับลงได้”) แผนวันนี้รวมไม่เกินเวลาเครื่องเสมอ: ค้างตัด → ล็อก/ปรับแผนเอง → ถึงกำหนดตัด → Lot อื่น · ใส่ไม่ทัน = ไปวันอื่น/เครื่องอื่น · หมายเหตุใต้ตารางย้ายเข้าท้ายตารางในกรอบเลื่อน (ตารางแผนสูงขึ้น)
    v2.83 (2026-10-27 09:09 ผู้ใช้: “ทำไมผมเลื่อนมาด้านล่างสุด พอแป๊ปนึง กรอบตารางมันขยับขึ้นไปเอง”) คืนตำแหน่งเลื่อนกรอบตารางอีกครั้งหลังย้ายหมายเหตุเข้าท้ายตาราง (v2.82) · อยู่ล่างสุด = ล่างสุดต่อไป
    v2.84 (2026-10-27 09:04–09:05 ผู้ใช้: “ตัวไม่มี .saw ผมหายไปไหน มันต้องตัดวันนี้” → “เครื่องอื่นก่อน แล้วค่อยเลื่อนค้างตัด” + “ถ้าผมระบุชื่อ ADMIN … เหมือนจัดกลุ่มคนเห็น tab”) Lot ถึงกำหนดที่เครื่องเดิมเต็ม → ท้ายแผนเครื่องอื่นที่ว่างวันนี้ (↪ จาก …) · ไม่มีที่ว่าง = เครื่องเดิมท้ายแผน ได้เวลาก่อนค้างตัด (ค้างตัดท้ายสุดต่อวันถัดไป) · 🔒 แท็บ แยก 👑 ADMIN / 👥 คนอื่น (hideA) · ตั้งชื่อ ADMIN ต้องใส่รหัสแท็บ
+   v2.85 (2026-10-27 09:31–09:51 ผู้ใช้: เลือกข้อ 2 “สูตรนาที/Lot + นาที/ชิ้น · คำนวณใหม่ทุกวันจาก Lot ที่มี .saw” → “ทำเลย”) เวลาประมาณ Lot ไม่มี .saw = นาที/Lot + นาที/ชิ้น × ชิ้น · ⚙ ☑ คำนวณจาก Lot ที่มี .saw ทุกวัน (ค่าเริ่มเปิด · เส้นตรงจาก Lot 1–300 ชิ้น) · ปิด = “ตัด ต่อ Lot” (ใหม่ ค่าเริ่ม 0) + “ตัด ต่อชิ้น” · ข้อความ “ประมาณ x นาที/ชิ้น” = สูตรที่ใช้จริง
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '2.84';
+var VER = '2.85';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -5338,7 +5341,7 @@ function bdPlan() {
     /* เวลา: ข้อมูลเพิ่ม > Cut Rite > ประมาณ */
     if (x && bdNum(x.cutMin) != null) { g.cut = bdNum(x.cutMin); g.cutSrc = 'x'; }
     else if (g.cr && g.cr.total_sec > 0) { g.cut = g.cr.total_sec / 60; g.cutSrc = 'cr'; }
-    else { g.cut = g.partsU != null ? g.partsU * st.cutPP : null; g.cutSrc = 'est'; }
+    else { g.cut = g.partsU != null ? bdEstMin(g.partsU, st) /* v2.85 นาที/Lot + นาที/ชิ้น · เดิม: g.partsU * st.cutPP */ : null; g.cutSrc = 'est'; }
     g.cutEst = g.cutSrc === 'est';
     /* v1.38 เวลาเป้าหมาย (สูตร SAW PLAN) แทนเวลา Cut Rite ล้วน — เฉพาะ Lot ที่เวลามาจาก Cut Rite · g.cutCr = เวลา Cut Rite เดิม (นาที) */
     g.tg = null; g.cutCr = null;
@@ -19949,7 +19952,146 @@ tlHomeDeco = function () {
   return r;
 };
 
-window.StarStock = { T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ───────── v2.85: เวลาประมาณ Lot ที่ยังไม่มี .saw = นาทีต่อ Lot + นาทีต่อชิ้น · คำนวณเองทุกวันจาก Lot ที่มี .saw (ผู้ใช้ 27/10/2026 09:31–09:51) ─────────
+   “ถ้าต้องการ ผมคำนวณค่าเฉลี่ยนาทีต่อชิ้นจริงจาก Lot ที่มี .saw แล้วให้ได้ … เอาแบบนี้” → เลือกข้อ 2 (สูตรนาที/Lot + นาที/ชิ้น · คำนวณใหม่ทุกวัน) → “ทำเลย”
+   ตรวจข้อมูลจริง 09:40 (3,326 Lot ที่มี .saw · เวลาเป้าหมาย SAW PLAN): นาที/ชิ้น ตามขนาด Lot 1–30 ชิ้น ≈ 0.89 · 31–100 ≈ 0.66 · 101–300 ≈ 0.57 · 300+ ≈ 0.32
+     · Lot ไม่มี .saw ที่ยังเปิด 357 Lot ค่ากลาง 18 ชิ้น (75% ≤ 48) · เดิม 0.8 × ชิ้น = รวมสูงกว่าจริง 14% (≤ 100 ชิ้น) / 33% (≤ 300)
+     · เส้นตรงที่ดีสุด (Lot ≤ 300 ชิ้น) ≈ 7.5 นาที/Lot + 0.52 นาที/ชิ้น · (≤ 100 ชิ้น) ≈ 4 + 0.6 — รวมตรงกับจริง
+   ตอนนี้:
+     ① Lot ที่ยังไม่มีเวลา Cut Rite: เวลา = นาทีต่อ Lot + นาทีต่อชิ้น × ชิ้น (เดิม นาทีต่อชิ้น × ชิ้น)
+     ② ⚙ “ค่าประมาณ”: ☑ คำนวณจาก Lot ที่มี .saw ทุกวัน (ค่าเริ่ม = เปิด) — เส้นตรงจาก Lot ที่มี .saw ขนาด 1–300 ชิ้น (enddate 180 วันล่าสุด + ที่ยังไม่ส่ง)
+          · ใช้เวลาเดียวกับที่แผนใช้ (เวลาเป้าหมาย SAW PLAN เมื่อเปิดสูตร) · ต้องมีอย่างน้อย 100 Lot · คำนวณครั้งแรกของวัน (จำในเครื่อง) แล้ววาดแผนใหม่
+          · ปิดติ๊ก = ใช้ค่าที่ตั้งเอง “ตัด ต่อ Lot” (ใหม่ · ค่าเริ่ม 0 = แบบเดิม) + “ตัด ต่อชิ้น”
+     ③ ข้อความ “ประมาณ 0.8 นาที/ชิ้น” ในตาราง/ป้าย = สูตรที่ใช้จริง เช่น “ประมาณ 7.5 นาที/Lot + 0.52 นาที/ชิ้น (จาก .saw)” */
+BD_DEF.cutPL = 0; BD_DEF.cutAuto = true;
+var CE85_K = 'sxlocaltrial:furnitech:cutEst';
+var CE85 = { fit: null, pend: null, last: null, t: null };
+(function () { try { var o = JSON.parse(localStorage.getItem(CE85_K) || 'null'); if (o && o.b > 0 && o.day) CE85.fit = o; } catch (e) { } })();
+function ce85Day() { var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
+function ce85Use(st) {   // { a นาที/Lot, b นาที/ชิ้น, auto }
+  st = st || B.set || {};
+  var f = CE85.fit, auto = st.cutAuto !== false;
+  if (auto && f && f.b > 0 && f.tg === !!st.tgOn) return { a: f.a, b: f.b, auto: true, n: f.n, at: f.at };
+  return { a: +st.cutPL || 0, b: +st.cutPP || 0, auto: false };
+}
+function bdEstMin(n, st) { n = +n || 0; if (!(n > 0)) return 0; var u = ce85Use(st); return u.a + u.b * n; }   // v2.85 (เรียกจาก bdPlan · เดิม g.partsU * st.cutPP)
+function ce85Lbl(st) { var u = ce85Use(st), r = function (v, d) { return String(Math.round(v * d) / d); }; return (u.a > 0 ? r(u.a, 10) + ' นาที/Lot + ' : '') + r(u.b, 100) + ' นาที/ชิ้น' + (u.auto ? ' (จาก .saw)' : ''); }
+/* เส้นตรง เวลา = a + b × ชิ้น จาก Lot ที่มีเวลา Cut Rite */
+function ce85Fit(P) {
+  if (!P || !P.G) return null;
+  var now = Date.now(), pts = [], all = [];
+  P.G.forEach(function (g) {
+    if (!g || g.cutSrc !== 'cr' || !(g.cut > 0)) return;
+    var x = g.tg && g.tg.parts > 0 ? g.tg.parts : +g.partsU || 0; if (!(x >= 1 && x <= 300)) return;
+    var p = { x: x, y: +g.cut }; all.push(p); if (g.end == null || g.end >= now - 180 * 864e5) pts.push(p);
+  });
+  if (pts.length < 150) pts = all;
+  if (pts.length < 100) return null;
+  var n = pts.length, mx = 0, my = 0; pts.forEach(function (p) { mx += p.x; my += p.y; }); mx /= n; my /= n;
+  var sxy = 0, sxx = 0; pts.forEach(function (p) { sxy += (p.x - mx) * (p.y - my); sxx += (p.x - mx) * (p.x - mx); });
+  if (!(sxx > 0)) return null;
+  var b = sxy / sxx, a = my - b * mx;
+  if (!(b >= 0.05 && b <= 3)) return null;
+  a = Math.max(0, Math.min(30, a));
+  return { a: Math.round(a * 100) / 100, b: Math.round(b * 1000) / 1000, n: n, day: ce85Day(), at: nowIso(), tg: !!(B.set && B.set.tgOn) };
+}
+var bdPlanV285 = bdPlan;
+bdPlan = function () {
+  var P = bdPlanV285.apply(this, arguments);
+  try {
+    var st = B.set || {}, f = CE85.fit;
+    if (st.cutAuto !== false && P && P.G && (!f || f.day !== ce85Day() || f.tg !== !!st.tgOn)) {
+      var nf = ce85Fit(P);
+      if (nf) {
+        var ch = !f || f.tg !== nf.tg || Math.abs(f.a - nf.a) > 0.3 || Math.abs(f.b - nf.b) > 0.01;
+        CE85.fit = nf; try { localStorage.setItem(CE85_K, JSON.stringify(nf)); } catch (e) { }
+        if (ch) setTimeout(function () { try { if (view() === 'board') bdRender(); } catch (e) { } }, 30);   // วาดแผนใหม่ด้วยค่าใหม่ (ครั้งเดียวต่อวัน)
+      }
+    }
+  } catch (e) { console.warn('StarStock v2.85: คำนวณนาที/Lot + นาที/ชิ้น', e); }
+  return P;
+};
+/* ค่าตั้ง (board.json): cutPL · cutAuto */
+var bdNormSetV285 = bdNormSet;
+bdNormSet = function (o) {
+  var s = bdNormSetV285.apply(this, arguments), src = o || {};
+  try {
+    if (CE85.last && src.at && CE85.last.at === src.at) src = CE85.last;   // ⚙ บันทึก: ค่าที่ต่อท้ายตอนเขียนไฟล์
+    var n = bdNum(src.cutPL); s.cutPL = n != null && n >= 0 ? n : 0;
+    s.cutAuto = typeof src.cutAuto === 'boolean' ? src.cutAuto : true;
+  } catch (e) { }
+  return s;
+};
+try { if (B.set) { if (B.set.cutPL == null) B.set.cutPL = 0; if (B.set.cutAuto == null) B.set.cutAuto = true; } } catch (e) { }
+function ce85Patch(fs) {
+  if (!fs || fs._ce85 || typeof fs.write !== 'function') return fs;
+  fs._ce85 = 1; var W = fs.write;
+  fs.write = function (p, n, bytes) {
+    try {
+      if (CE85.pend && p === LOT_DIR && n === BD_SETF && bytes) {
+        var o = JSON.parse(new TextDecoder().decode(bytes)); Object.assign(o, CE85.pend); CE85.pend = null; CE85.last = o;
+        arguments[2] = new TextEncoder().encode(JSON.stringify(o));
+      }
+    } catch (e) { console.warn('StarStock v2.85: ต่อค่าประมาณใน board.json', e); }
+    return W.apply(this, arguments);
+  };
+  return fs;
+}
+var ensureFsV285 = ensureFs;
+ensureFs = function () { return ce85Patch(ensureFsV285.apply(this, arguments)); };
+try { if (S.fs) ce85Patch(S.fs); } catch (e) { }
+/* ⚙ กล่องตั้งค่า: ช่อง “ตัด ต่อ Lot” + ☑ คำนวณจาก .saw */
+function ce85Info() {
+  var f = CE85.fit;
+  return f ? 'ค่าที่คำนวณล่าสุด ' + String(f.at || '').replace('T', ' ').slice(0, 16) + ' จาก ' + fmtN(f.n) + ' Lot ที่มี .saw (1–300 ชิ้น): ≈ ' + (Math.round(f.a * 10) / 10) + ' นาที/Lot + ' + (Math.round(f.b * 100) / 100) + ' นาที/ชิ้น' + (f.tg ? ' · เวลาเป้าหมาย SAW PLAN' : ' · เวลา Cut Rite')
+    : 'ยังไม่ได้คำนวณ — ต้องมี Lot ที่มี .saw อย่างน้อย 100 Lot (คำนวณเองตอนเปิดคิวตัดงาน)';
+}
+var bdSettingsV285 = bdSettings;
+bdSettings = function () {
+  var r = bdSettingsV285.apply(this, arguments);
+  try {
+    var ov = $('ov'), c = ov && ov.querySelector('#bsCut'); if (!c || ov.querySelector('#bsCutL')) return r;
+    var st = B.set || {}, lab = c.closest('label');
+    if (lab) lab.insertAdjacentHTML('beforebegin', '<label class="ce85a"><input type="checkbox" id="bsCutAuto"' + (st.cutAuto !== false ? ' checked' : '') + '> <span>ตัด: คำนวณ นาที/Lot + นาที/ชิ้น จาก Lot ที่มี .saw ทุกวัน (แนะนำ)</span></label>'
+      + '<small class="muted ce85i" id="bsCutInfo">' + esc(ce85Info()) + '</small>');
+    if (lab) lab.insertAdjacentHTML('beforebegin', '<label><span>ตัด ต่อ Lot (คงที่)</span><input type="number" id="bsCutL" min="0" step="0.5" value="' + (+st.cutPL || 0) + '"> <small class="muted" style="width:56px">นาที</small></label>');
+    var sync = function () { var a = ov.querySelector('#bsCutAuto'), on = !!(a && a.checked); ['#bsCutL', '#bsCut'].forEach(function (s) { var e = ov.querySelector(s); if (e) { var l = e.closest('label'); if (l) l.classList.toggle('ce85off', on); } }); };
+    var a = ov.querySelector('#bsCutAuto'); if (a) a.addEventListener('change', sync); sync();
+  } catch (e) { console.warn('StarStock v2.85: ช่องค่าประมาณใน ⚙', e); }
+  return r;
+};
+document.addEventListener('click', function (e) {
+  var t = e.target; if (!t || !t.closest) return;
+  if (t.closest('#bsGo')) {
+    var l = $('bsCutL'), a = $('bsCutAuto'); if (!l && !a) return;
+    var v = l ? +l.value : 0; if (!isFinite(v) || v < 0) v = 0;
+    CE85.pend = { cutPL: v, cutAuto: !!(a && a.checked) }; try { ce85Patch(S.fs); } catch (x) { }
+    clearTimeout(CE85.t); CE85.t = setTimeout(function () { CE85.pend = null; }, 20000);
+  } else if (t.closest('#bsDef')) {
+    setTimeout(function () { var l = $('bsCutL'), a = $('bsCutAuto'); if (l) l.value = BD_DEF.cutPL; if (a) { a.checked = BD_DEF.cutAuto; a.dispatchEvent(new Event('change')); } }, 0);
+  }
+}, true);
+/* ③ ข้อความ “ประมาณ x นาที/ชิ้น” = สูตรที่ใช้จริง */
+function ce85Txt(root) {
+  try {
+    if (!root) return; var L = ce85Lbl(), re = /(ประมาณ|≈)\s*\d+(?:\.\d+)?\s*นาที\/ชิ้น/g, pp = '(' + (B.set && B.set.cutPP) + ' นาที/ชิ้น)';
+    var rep = function (s) { s = s.replace(re, function (m0, w) { return w === '≈' ? '≈ ' + L : 'ประมาณ ' + L; }); return s.indexOf(pp) >= 0 ? s.split(pp).join('(' + L + ')') : s; };   // + แผงรายละเอียด Lot “(0.8 นาที/ชิ้น)”
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, ns = [];
+    while ((n = tw.nextNode())) if (n.nodeValue && n.nodeValue.indexOf('นาที/ชิ้น') >= 0) ns.push(n);
+    ns.forEach(function (x) { var v = rep(x.nodeValue); if (v !== x.nodeValue) x.nodeValue = v; });
+    root.querySelectorAll('[title*="นาที/ชิ้น"],[data-tip*="นาที/ชิ้น"]').forEach(function (el) { ['title', 'data-tip'].forEach(function (k) { var v = el.getAttribute(k); if (v) { var w = rep(v); if (w !== v) el.setAttribute(k, w); } }); });
+  } catch (e) { }
+}
+var bdRenderV285 = bdRender;
+bdRender = function () { var r = bdRenderV285.apply(this, arguments); ce85Txt($('board')); return r; };
+var dpRenderV285 = dpRender;
+dpRender = function () { var r = dpRenderV285.apply(this, arguments); ce85Txt($('board')); return r; };
+var bdDetailV285 = bdDetail;
+bdDetail = function () { var r = bdDetailV285.apply(this, arguments); ce85Txt($('board')); return r; };
+var bdDashRenderV285 = bdDashRender;
+bdDashRender = function () { var r = bdDashRenderV285.apply(this, arguments); ce85Txt($('bdDash')); return r; };
+
+window.StarStock = { CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
