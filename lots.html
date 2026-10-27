@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.80 (2026-10-27 14:38 ผู้ใช้ รูปแถบซ้าย สถานะ “Part/ค้างตัด 62” + หน้าเลือก Lot: “ในประเภทหรือสถานะนึง เลือกกรองได้หลายตัวไหมครับ”)
+        FEAT กรองสถานะ / ประเภทงาน เลือกได้หลายปุ่ม — กดปุ่ม = เพิ่ม/เอาออก (Lot ที่ตรงปุ่มใดก็ได้) · กด “ทั้งหมด” = ล้างกลุ่มนั้น · เอาออกจนไม่เหลือ = ทั้งหมด
+            · แถบซ้าย (คอม) + แถวปุ่มมือถือในหน้าเลือก Lot · จำค่าที่เลือกไว้ (L.f.pst / L.f.pty = 'all' หรือ 'ค่า,ค่า') · Stage / enddate ยังเลือกได้ปุ่มเดียว
     1.79 (2026-10-27 13:53 ผู้ใช้ รูปแท็บ 📋 รายการ Lot (แผงซ้ายย่อ) + แถบ “ข้อมูลจาก AX (StarSync ทุก 10 นาที) · ช่อง Bu · Amount … ลากไฟล์ data 6 จาก BI มาวางเพื่อเติม”:
          “แถบรายการ Lot ไม่มีตัวกรอง ต้องกลับไปแถบสถานะ ปรับให้มีตัวกรองกับค้นหา Lot · เอาคำบอกด้านบนออกด้วย”)
         UI แท็บ 📋 รายการ Lot (คอม) = แผงซ้าย (ค้นหา Lot · Stage · สถานะ · ประเภทงาน · enddate · Bu · pool) เปิดเอง — เดิม 1.59 ย่อไว้ทุกหน้า ต้องกด ☰
@@ -1254,7 +1257,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.79';
+var LOTS_VER = '1.80';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1310,15 +1313,22 @@ function lotBanner() {
       : 'ช่อง Bu · Amount · แผน45 · ReqBom · PeConfirm ไม่มีใน AX — ลากไฟล์ data 6 จาก BI มาวางเพื่อเติม (ไม่ทับตาราง)');
   bn.classList.toggle('hide', !h); bn.classList.toggle('warn', warn); bn.innerHTML = h;
 }
-function lotSeg(key, opts) { return '<div class="seg">' + opts.map(function (o) { return '<button data-lseg="' + key + '" data-v="' + o[0] + '" class="' + (L.f[key] === o[0] ? 'on' : '') + '"' + (o[2] ? ' title="' + esc(o[2]) + '"' : '') /* lots 1.34 คำอธิบายรายปุ่ม */ + '>' + esc(o[1]) + '<span class="c" data-lc="' + key + ':' + o[0] + '"></span></button>'; }).join('') + '</div>'; }
+/* ───────── lots 1.80: สถานะ / ประเภทงาน เลือกได้หลายปุ่ม (ผู้ใช้ 14:38 “เลือกกรองได้หลายตัวไหม”) ─────────
+   เดิม: กดปุ่ม = แทนค่าเดิม (ปุ่มเดียว) · ตอนนี้: กลุ่มใน LOT_MULTI กด = เพิ่ม/เอาออก · ค่าใน L.f = 'all' หรือ 'ค่า,ค่า' · Lot ที่ตรงปุ่มใดก็ได้ */
+var LOT_MULTI = { pst: 1, pty: 1 };
+function lotFList(key, F) { var v = String((F || L.f)[key] || 'all'); return v === 'all' ? [] : v.split(','); }
+function lotFIs(key, v) { if (!LOT_MULTI[key]) return L.f[key] === v; var a = lotFList(key); return v === 'all' ? !a.length : a.indexOf(v) >= 0; }
+function lotFToggle(key, v) { if (!LOT_MULTI[key] || v === 'all') { L.f[key] = v; return; } var a = lotFList(key), i = a.indexOf(v); if (i >= 0) a.splice(i, 1); else a.push(v); L.f[key] = a.length ? a.join(',') : 'all'; }
+function lotFCut() { return lotFList('pst').some(function (v) { return /^0[a-z]$/.test(v); }); }   // เลือกกำลังตัด/ค้างตัด/รอตัดอยู่ (ใช้แผน Dashboard)
+function lotSeg(key, opts) { return '<div class="seg">' + opts.map(function (o) { return '<button data-lseg="' + key + '" data-v="' + o[0] + '" class="' + (lotFIs(key, o[0]) /* lots 1.80 */ ? 'on' : '') + '"' + (o[2] ? ' title="' + esc(o[2]) + '"' : '') /* lots 1.34 คำอธิบายรายปุ่ม */ + '>' + esc(o[1]) + '<span class="c" data-lc="' + key + ':' + o[0] + '"></span></button>'; }).join('') + '</div>'; }
 function lotRenderSide() {
   var h = '<div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="lq" type="search" placeholder="ค้นหา Lot / remark / Code Part" title="ค้นหา LotId · remark · Shelf · Bu · pool · Code Part / Code Pack / Barcode (เต็มหรือบางส่วน · ยิงสติกเกอร์ลงช่องนี้ได้)" value="' + esc(L.f.q) + '" autocomplete="off"></div>';
   h += '<div class="fgrp"><h4>Stage</h4>' + lotSeg('stage', [['all', 'ทั้งหมด'], ['open', 'ยังไม่จบ'], ['0', '0 NoBom'], ['1', '1 Open'], ['2', '2 PD'], ['3', '3 Finish'], ['closed', '✓ ปิดเอง']])   /* v1.10 ปิดเอง */ + '</div>';
   /* lots 1.13 (ผู้ใช้ 11:23 “เพิ่มให้ตรงนี้ มีกรอง Lot ที่กำลัง Part Edge Drill Pack Pick อื่น ๆ”): สถานะของ Lot = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (pstLotCur) */
-  h += '<div class="fgrp"><h4 title="ขั้นที่ Lot อยู่ตอนนี้ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (ตัวเดียวกับกล่องสถานะในแท็บสถานะ Part) · ไม่มีข้อมูล = Lot ที่ไม่มีรายชิ้นในไฟล์ของ StarSync (enddate นอกช่วง)">สถานะ</h4>'
+  h += '<div class="fgrp"><h4 title="กดได้หลายปุ่ม (Lot ที่ตรงปุ่มใดก็ได้ · ทั้งหมด = ล้าง) · ขั้นที่ Lot อยู่ตอนนี้ = ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง (ตัวเดียวกับกล่องสถานะในแท็บสถานะ Part) · ไม่มีข้อมูล = Lot ที่ไม่มีรายชิ้นในไฟล์ของ StarSync (enddate นอกช่วง)">สถานะ</h4>'
     + lotSeg('pst', [['all', 'ทั้งหมด']].concat(PST_LCUT, PST_STEPS.slice(1).map(function (S0, i) { return [String(i + 1), pstStepNm(S0)]; }), [[String(PST_DONE), 'ครบ'], ['none', 'ไม่มีข้อมูล']]))   /* lots 1.34: Part/ตัด → กำลังตัด · รอตัด */.replace('<div class="seg">', '<div class="seg pstseg">') + '</div>';
   /* lots 1.75 (ผู้ใช้ 13:22 “เพิ่มกรองประเภทด้วย”): ประเภทงานของ Lot (ป้ายเดียวกับหน้าเลือก Lot · Lot หนึ่งมีได้หลายประเภท) */
-  h += '<div class="fgrp"><h4 title="ประเภทงานของ Lot — ป้ายเดียวกับช่องประเภทงานในหน้าเลือก Lot · Lot ที่มีหลายประเภทอยู่ได้หลายปุ่ม · ไม่มีข้อมูล = ยังไม่มีรายชิ้น/FrontStyle/ใบปิดผิว">ประเภทงาน</h4>'
+  h += '<div class="fgrp"><h4 title="ประเภทงานของ Lot — ป้ายเดียวกับช่องประเภทงานในหน้าเลือก Lot · กดได้หลายปุ่ม (Lot ที่ตรงปุ่มใดก็ได้ · ทั้งหมด = ล้าง) · Lot ที่มีหลายประเภทอยู่ได้หลายปุ่ม · ไม่มีข้อมูล = ยังไม่มีรายชิ้น/FrontStyle/ใบปิดผิว">ประเภทงาน</h4>'
     + lotSeg('pty', PST_PTY_OPTS).replace('<div class="seg">', '<div class="seg pstseg">') + '</div>';
   var wk = weekNow();
   h += '<div class="fgrp"><h4 title="เทียบ enddate กับวันนี้ · เลยกำหนด = enddate ผ่านไปแล้วแต่ยังไม่ Finish · ' + esc(WEEK_TIP) + '">enddate</h4>' + lotSeg('due', [['all', 'ทั้งหมด'], ['late', 'เลยกำหนด'], ['wk0', 'สัปดาห์นี้ W' + wk.w0], ['wk1', 'สัปดาห์หน้า W' + wk.w1], ['30', '30 วันข้างหน้า']]) + '</div>';
@@ -1329,10 +1339,10 @@ function lotRenderSide() {
   $('lotSide').innerHTML = h;
   var qi = $('lq'); qi.oninput = function () { clearTimeout(qi._t); qi._t = setTimeout(function () { L.f.q = qi.value; lotRefresh(true); }, PST_TYPE_MS); };   // lots 1.39 รอหยุดพิมพ์ 1 วิ (เดิม 0.12)
   qi.onkeydown = function (e) { if (e.key === 'Enter' && !e.isComposing) { clearTimeout(qi._t); if (L.f.q !== qi.value) { L.f.q = qi.value; lotRefresh(true); } } };   // lots 1.39 Enter = ค้นทันที (ยิงบาร์โค้ดจบด้วย Enter)
-  $('lotSide').querySelectorAll('[data-lseg]').forEach(function (b) { b.onclick = function () { L.f[b.dataset.lseg] = b.dataset.v; if (b.dataset.lseg === 'stage') lotSavePref(); if (b.dataset.lseg === 'pty') pstPtySave() /* lots 1.75 */; if (b.dataset.lseg === 'pst') { pstFSave(); pstDashLot(); } /* lots 1.13 · 1.34 กำลังตัดใช้แผน Dashboard ด้วย */ lotSegOn(); lotRefresh(true); }; });
+  $('lotSide').querySelectorAll('[data-lseg]').forEach(function (b) { b.onclick = function () { lotFToggle(b.dataset.lseg, b.dataset.v) /* lots 1.80 (เดิม L.f[…] = ค่า) */; if (b.dataset.lseg === 'stage') lotSavePref(); if (b.dataset.lseg === 'pty') pstPtySave() /* lots 1.75 */; if (b.dataset.lseg === 'pst') { pstFSave(); pstDashLot(); } /* lots 1.13 · 1.34 กำลังตัดใช้แผน Dashboard ด้วย */ lotSegOn(); lotRefresh(true); }; });
   $('lfClear').onclick = function () { L.f = { q: '', stage: 'all', due: 'all', bu: null, pool: null, pst: 'all' /* lots 1.13 */, pty: 'all' /* lots 1.75 */ }; pstFSave(); pstPtySave(); L.cf = {}; lotCfClose(); lotSavePref(); lotRenderSide(); lotRefresh(true); };   // v1.9 ล้างตัวกรองรายคอลัมน์ด้วย
 }
-function lotSegOn() { $('lotSide').querySelectorAll('[data-lseg]').forEach(function (b) { b.classList.toggle('on', L.f[b.dataset.lseg] === b.dataset.v); }); }
+function lotSegOn() { $('lotSide').querySelectorAll('[data-lseg]').forEach(function (b) { b.classList.toggle('on', lotFIs(b.dataset.lseg, b.dataset.v) /* lots 1.80 */); }); }
 function lotMatch(x, F, skip) {
   /* v1.10: ยังไม่จบ = ไม่ Finish และไม่ได้ปิดเอง · ✓ ปิดเอง = เฉพาะที่ปิดเอง · Stage 0–3 = ตาม AX ที่ยังไม่ได้ปิดเอง */
   if (skip !== 'stage' && F.stage !== 'all') { var cl = !!ldOf(x.id); if (F.stage === 'open') { if (x.st === 3 || cl) return false; } else if (F.stage === 'closed') { if (!cl) return false; } else if (cl || String(x.st) !== F.stage) return false; }
@@ -1340,8 +1350,8 @@ function lotMatch(x, F, skip) {
     if (F.due === 'late') { if (!(!lotFin(x) && x.end != null && x.end < t)) return false; }
     else if (F.due === 'wk0' || F.due === 'wk1') { var wk = L._wk || weekNow(); if (F.due === 'wk0' ? (x.ew !== wk.w0 || x.ey !== wk.y0) : (x.ew !== wk.w1 || x.ey !== wk.y1)) return false; }
     else if (x.end == null || x.end < t || x.end > t + (+F.due) * DAY) return false; }
-  if (skip !== 'pst' && F.pst && F.pst !== 'all' && pstLotKey(x) !== F.pst) return false;   // lots 1.13: สถานะของ Lot (แถบซ้าย) · 1.34 pstLotKey (ขั้นตัดแยก 0c/0w)
-  if (skip !== 'pty' && F.pty && F.pty !== 'all' && pstLotTyKeys(x).indexOf(' ' + F.pty + ' ') < 0) return false;   // lots 1.75 ประเภทงาน
+  if (skip !== 'pst' && F.pst && F.pst !== 'all' && lotFList('pst', F).indexOf(pstLotKey(x)) < 0) return false;   // lots 1.80 หลายค่า   // lots 1.13: สถานะของ Lot (แถบซ้าย) · 1.34 pstLotKey (ขั้นตัดแยก 0c/0w)
+  if (skip !== 'pty' && F.pty && F.pty !== 'all') { var tk = pstLotTyKeys(x); if (!lotFList('pty', F).some(function (k) { return tk.indexOf(' ' + k + ' ') >= 0; })) return false; }   // lots 1.80 หลายค่า   // lots 1.75 ประเภทงาน
   if (skip !== 'bu' && F.bu != null && x.bu !== F.bu) return false;
   if (skip !== 'pool' && F.pool != null && x.pool !== poolNorm(F.pool)) return false;   // v1.52 ค่าที่จำไว้ก่อนหน้านี้ (mp323) = ตรงกับ MP323
   /* v1.9 ตัวกรองรายคอลัมน์ (skip 'cf:<คอลัมน์>' = นับค่าของคอลัมน์นั้นในกล่องกรอง แบบ Excel) */
@@ -2654,7 +2664,7 @@ function pstDashEnsure() {
   if (!ensureFs() || !L.loaded || L.none) return;
   PST_DB.busy = Promise.resolve().then(function () { return bdLoadAux(); }).then(function () { B.plan = bdPlan(); PST_DB.at = Date.now(); PST_DB.err = null; })
     .catch(function (e) { PST_DB.err = e; PST_DB.at = Date.now(); console.warn('StarStock lots 1.21: คิดแผนคิวตัด (Dashboard) ไม่ได้', e); })
-    .then(function () { PST_DB.busy = null; if (view() === 'lots') { if (/^0[a-z]$/.test(L.f.pst || '')) lotRefresh(); else lotSideCounts(); } /* lots 1.34 ตัวเลข กำลังตัด/รอตัด ใช้แผนนี้ */ if (view() === 'lots' && L.stMode === 'st') pstRenderSoon(); });
+    .then(function () { PST_DB.busy = null; if (view() === 'lots') { if (lotFCut() /* lots 1.80 */) lotRefresh(); else lotSideCounts(); } /* lots 1.34 ตัวเลข กำลังตัด/รอตัด ใช้แผนนี้ */ if (view() === 'lots' && L.stMode === 'st') pstRenderSoon(); });
 }
 /* ───────── lots 1.37: ไฟสถานะ + กล่องแผนตัดจาก Dashboard (ผู้ใช้ 14:27 · 14:31 · 14:39) ─────────
    เดิม: กล่องสถานะสีน้ำเงินนิ่ง · ขั้นตัดบอกเหตุจาก Dashboard ในกล่องตรง ๆ (pstDashWhy — เหตุ “ติด — ขาด MDF-HMR …” ยาวจนกล่องดันเกจทั้งแถว) · กดกล่อง = กรองชิ้นที่ค้างขั้นนั้น
@@ -2778,7 +2788,7 @@ function pstFSave() { try { localStorage.setItem(PST_PF, L.f.pst || 'all'); } ca
 /* lots 1.75 ตัวกรองประเภทงาน (แถบซ้าย / แถวปุ่มมือถือ) — จำค่าแยกจากสถานะ */
 var PST_PTF = 'sxlocaltrial:furnitech:lotPtyF';
 function pstPtySave() { try { localStorage.setItem(PST_PTF, L.f.pty || 'all'); } catch (e) { } }
-L.f.pty = (function () { try { var v = localStorage.getItem(PST_PTF) || 'all'; return /^(all|paint|coat|lam|mel|warn|none)$/.test(v) ? v : 'all'; } catch (e) { return 'all'; } })();
+L.f.pty = (function () { try { var v = localStorage.getItem(PST_PTF) || 'all'; return /^(all|(paint|coat|lam|mel|warn|none)(,(paint|coat|lam|mel|warn|none))*)$/.test(v) ? v : 'all'; } catch (e) { return 'all'; } })();   // lots 1.80 จำได้หลายค่า
 var PST_TYF = { v: '', r: null, m: new Map() };
 function pstLotTyKeys(x) {   // ' paint coat ' · ' none ' = ไม่มีป้าย · จำราย Lot จนกว่าข้อมูลเปลี่ยน
   var v = [PST.iu, PST.fu, PST_AX.v, B.paint && B.paint.u, B.lam && B.lam.u, B.lc && B.lc.u, pstNamesV()].join(':');
@@ -2812,9 +2822,9 @@ function pstCpEnsure() {   // การยิงวันนี้ (ไม่ต
   if (B.cp.at && Date.now() - B.cp.at < 60000) return;
   if (!ensureFs() || !L.loaded) return;
   var p0 = B.cp.busy = bdLoadCp();
-  Promise.resolve(p0).then(function () { if (view() !== 'lots') return; if (/^0[a-z]$/.test(L.f.pst || '')) lotRefresh(); else lotSideCounts(); if (L.stMode === 'st' && document.body.classList.contains('lotStOn')) pstRenderSoon(); }, function () { });
+  Promise.resolve(p0).then(function () { if (view() !== 'lots') return; if (lotFCut() /* lots 1.80 */) lotRefresh(); else lotSideCounts(); if (L.stMode === 'st' && document.body.classList.contains('lotStOn')) pstRenderSoon(); }, function () { });
 }
-function pstDashLot() { if (!/^0[a-z]$/.test(L.f.pst || '')) return; /* lots 1.40 + 0k */ if (PST_DB.at && Date.now() - PST_DB.at < 120000) return; pstDashEnsure(); }   // เลือกกำลังตัด/รอตัดอยู่ = โหลดแผน Dashboard (ไม่เกิน 2 นาที/ครั้ง แม้โหลดพลาด)
+function pstDashLot() { if (!lotFCut() /* lots 1.80 */) return; /* lots 1.40 + 0k */ if (PST_DB.at && Date.now() - PST_DB.at < 120000) return; pstDashEnsure(); }   // เลือกกำลังตัด/รอตัดอยู่ = โหลดแผน Dashboard (ไม่เกิน 2 นาที/ครั้ง แม้โหลดพลาด)
 function pstLotKey(x) { var k = pstLotCur(x); return k === '0' ? ({ now: '0c', carry: '0k', wait: '0w' })[pstLotCutKind(x)] : k; }   // lots 1.40 + 0k ค้างตัด
 L.f.pst = (function () { try { var v = localStorage.getItem(PST_PF) || 'all';
   if (/^[2-8]$/.test(v) && !localStorage.getItem(PST_PF + ':9')) { v = String(+v + 1); localStorage.setItem(PST_PF, v); }   /* lots 1.43 ขั้นที่ 2 ใหม่ (สี·เคลือบ) — ค่าที่จำไว้ (Drill … ครบ) เลื่อน 1 ครั้งเดียว */
@@ -3174,9 +3184,9 @@ function pstPkStHtml() {
   var c = { all: 0 }; for (var i = 0; i < L.rows.length; i++) { var x = L.rows[i]; if (!lotMatch(x, L.f, 'pst')) continue; c.all++; var k = pstLotKey(x); c[k] = (c[k] || 0) + 1; }
   var opts = [['all', 'ทั้งหมด']].concat(PST_LCUT, PST_STEPS.slice(1).map(function (S0, i) { return [String(i + 1), pstStepNm(S0)]; }), [[String(PST_DONE), 'ครบ'], ['none', 'ไม่มีข้อมูล']]);
   var ct = { all: 0 }; for (var j = 0; j < L.rows.length; j++) { var y = L.rows[j]; if (!lotMatch(y, L.f, 'pty')) continue; ct.all++; pstLotTyKeys(y).trim().split(' ').forEach(function (k) { ct[k] = (ct[k] || 0) + 1; }); }   // lots 1.75 แถวปุ่มประเภทงาน
-  return '<div class="pst-pkst" role="group" aria-label="กรองสถานะของ Lot">' + opts.map(function (o) { var on = (L.f.pst || 'all') === o[0], n = c[o[0]] || 0;
+  return '<div class="pst-pkst" role="group" aria-label="กรองสถานะของ Lot">' + opts.map(function (o) { var on = lotFIs('pst', o[0]) /* lots 1.80 */, n = c[o[0]] || 0;
     return '<button type="button" class="tbtn' + (on ? ' on' : '') + '" data-pstst="' + o[0] + '" aria-pressed="' + on + '"' + (n || on ? '' : ' disabled') + '>' + esc(o[1]) + ' <small>' + fmtN(n) + '</small></button>'; }).join('') + '</div>'
-    + '<div class="pst-pkst" role="group" aria-label="กรองประเภทงานของ Lot">' + PST_PTY_OPTS.map(function (o) { var on = (L.f.pty || 'all') === o[0], n = ct[o[0]] || 0;
+    + '<div class="pst-pkst" role="group" aria-label="กรองประเภทงานของ Lot">' + PST_PTY_OPTS.map(function (o) { var on = lotFIs('pty', o[0]) /* lots 1.80 */, n = ct[o[0]] || 0;
     return '<button type="button" class="tbtn' + (on ? ' on' : '') + '" data-pstty="' + o[0] + '" aria-pressed="' + on + '"' + (n || on ? '' : ' disabled') + '>' + esc(o[1]) + ' <small>' + fmtN(n) + '</small></button>'; }).join('') + '</div>';
 }
 /* lots 1.39: พิมพ์ในช่องค้นหาหน้าเลือก Lot = วาดใหม่เฉพาะตัวเลข/ปุ่มแสดง/รายการ (ไม่แทนที่ช่องที่กำลังพิมพ์ — มือถือคีย์บอร์ดไม่สะดุด) */
@@ -3514,8 +3524,8 @@ document.addEventListener('click', function (e) {
     /* lots 1.38: โหมดหลาย Lot = ติ๊กสะสมทั้งหน้าแรกและหน้าเลือก (เดิม หน้าแรก: ติ๊กแรก = เข้าตารางเลย) */
     pstRender(true); return; }
   if (t.hasAttribute('data-pstax')) { e.preventDefault(); var axIds = pstSelRows().filter(function (x) { return !pstRowsOf(x) && pstNoRowWhy(x) === 'old'; }).map(function (x) { return x.id; });   /* 1.41 เฉพาะ Lot เก่า */ if (axIds.length) pstAxGo(axIds); return; }   // lots 1.35
-  if (t.dataset.pstty) { e.preventDefault(); if (t.disabled) return; L.f.pty = t.dataset.pstty; pstPtySave(); if ($('lotSide') && $('lotSide').querySelector('[data-lseg]')) lotSegOn(); lotRefresh(true); pstRender(true); return; }   // lots 1.75 มือถือ: ปุ่มประเภทงาน
-  if (t.dataset.pstst) { e.preventDefault(); if (t.disabled) return; L.f.pst = t.dataset.pstst; pstFSave(); pstDashLot(); if ($('lotSide') && $('lotSide').querySelector('[data-lseg]')) lotSegOn(); lotRefresh(true); pstRender(true); return; }   // lots 1.39 มือถือ: ปุ่มสถานะ
+  if (t.dataset.pstty) { e.preventDefault(); if (t.disabled) return; lotFToggle('pty', t.dataset.pstty) /* lots 1.80 */; pstPtySave(); if ($('lotSide') && $('lotSide').querySelector('[data-lseg]')) lotSegOn(); lotRefresh(true); pstRender(true); return; }   // lots 1.75 มือถือ: ปุ่มประเภทงาน
+  if (t.dataset.pstst) { e.preventDefault(); if (t.disabled) return; lotFToggle('pst', t.dataset.pstst) /* lots 1.80 */; pstFSave(); pstDashLot(); if ($('lotSide') && $('lotSide').querySelector('[data-lseg]')) lotSegOn(); lotRefresh(true); pstRender(true); return; }   // lots 1.39 มือถือ: ปุ่มสถานะ
   if (t.hasAttribute('data-pstmulti')) { e.preventDefault(); L.stPk.multi = !L.stPk.multi; pstRender(true); return; }   // lots 1.38
   if (t.hasAttribute('data-pstall')) { e.preventDefault(); if (t.disabled) return; pstSelSet(pstCands().map(function (x) { return x.id; })); L.stPk.open = false; L.stPk.multi = false; pstRender(); return; }
   if (t.hasAttribute('data-pstclr')) { e.preventDefault(); pstSelSet([]); L.stPk.open = false; pstRender(); return; }
