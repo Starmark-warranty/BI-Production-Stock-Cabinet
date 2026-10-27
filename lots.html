@@ -75,6 +75,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.79 (2026-10-27 13:53 ผู้ใช้ รูปแท็บ 📋 รายการ Lot (แผงซ้ายย่อ) + แถบ “ข้อมูลจาก AX (StarSync ทุก 10 นาที) · ช่อง Bu · Amount … ลากไฟล์ data 6 จาก BI มาวางเพื่อเติม”:
+         “แถบรายการ Lot ไม่มีตัวกรอง ต้องกลับไปแถบสถานะ ปรับให้มีตัวกรองกับค้นหา Lot · เอาคำบอกด้านบนออกด้วย”)
+        UI แท็บ 📋 รายการ Lot (คอม) = แผงซ้าย (ค้นหา Lot · Stage · สถานะ · ประเภทงาน · enddate · Bu · pool) เปิดเอง — เดิม 1.59 ย่อไว้ทุกหน้า ต้องกด ☰
+            · กลับแท็บ ✅ สถานะ Part = ย่อกลับ (ถ้าแผงเปิดเพราะเข้าแท็บรายการ) · ☰ ยังสลับเองได้ · มือถือเหมือนเดิม (แผงเลื่อน)
+        UI เอาแถบ “ข้อมูลจาก AX (StarSync ทุก 10 นาที) · ช่อง Bu · Amount · แผน45 …” ออก (แถบเตือนอ่าน Drive ไม่ได้ / ข้อมูลนำเข้าจาก CSV ยังขึ้น)
     1.78 (2026-10-27 13:47 ผู้ใช้ รูปหน้าเลือก Lot มี ✓ ที่ RE-0069-0761-MU66 (ตรง 0 Lot): “จริง ๆ มันต้องไม่มีติ๊กถูกก่อนครับ พอไปกดเลือกหลาย Lot ค่อยขึ้นมา”)
         UI หน้าเลือก Lot แบบกดทีเดียว (ปกติ): ไม่มีช่องติ๊ก/วงกลมหน้าแถว · ช่องติ๊กขึ้นเมื่อกด ☐ เลือกหลาย Lot (เดิม 1.38 = วงกลม + ✓ ที่ Lot ที่เปิดอยู่)
         UI แบบกดทีเดียว: รายการ = Lot ที่ตรงตัวกรอง/คำค้นเท่านั้น (เดิมเอา Lot ที่เปิดอยู่ขึ้นก่อนเสมอ — ตรง 0 Lot แต่ยังมีแถว) · เลือกหลาย Lot = ที่ติ๊กไว้ขึ้นก่อนเหมือนเดิม
@@ -1249,7 +1254,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.78';
+var LOTS_VER = '1.79';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1300,7 +1305,7 @@ function lotBanner() {
     + ' — ยังไม่ได้ดึงจาก AX อัตโนมัติ · ตารางเปลี่ยนเมื่อมีคนนำเข้าไฟล์ใหม่ หรือเมื่อ StarSync เริ่มส่ง (sync-ax-lots.ps1 + lots.sql)';
   else if (false /* lots 1.49 ผู้ใช้ 20:24 “เอาคำเตือนออกทีครับ” — เดิม: L.loaded && !L.none && s.age != null && s.age > 40 (StarSync ไม่ส่งเกิน 40 นาที = แถบส้ม) */) { h = '<b>StarSync ไม่ได้ส่งข้อมูล Lot มา ' + durTh(s.age) + 'แล้ว</b> — ดูหน้าต่าง StarSync ที่เครื่องออฟฟิศ (ปกติส่งทุก 10 นาทีเมื่อมีอะไรเปลี่ยน)'; warn = s.age > 120; }
   /* v1.7: ข้อมูลจาก AX — บอกว่าช่องที่ AX ไม่มีเติมจาก BI ได้กี่ Lot */
-  if (!h && L.loaded && !L.none && L.meta && /StarSync/i.test(L.meta.src || ''))
+  if (false /* lots 1.79 ผู้ใช้ 13:53 “เอาคำบอกด้านบนออกด้วย” — เดิม: */ && !h && L.loaded && !L.none && L.meta && /StarSync/i.test(L.meta.src || ''))
     h = '<b>ข้อมูลจาก AX (StarSync ทุก 10 นาที)</b> · ' + (L.bi ? 'Bu · Amount · แผน45 เติมจากไฟล์ BI ที่นำเข้าไว้ ' + L.biUsed.toLocaleString('th-TH') + ' Lot · Lot ที่ไม่มีในไฟล์ BI ช่องพวกนี้ว่าง (นำเข้าไฟล์ใหม่เมื่อไหร่ก็เติมให้)'
       : 'ช่อง Bu · Amount · แผน45 · ReqBom · PeConfirm ไม่มีใน AX — ลากไฟล์ data 6 จาก BI มาวางเพื่อเติม (ไม่ทับตาราง)');
   bn.classList.toggle('hide', !h); bn.classList.toggle('warn', warn); bn.innerHTML = h;
@@ -3407,7 +3412,7 @@ function pstModeSet(m) {
   L.stMode = m === 'st' ? 'st' : 'list'; try { localStorage.setItem(PST_K, L.stMode); } catch (e) { }
   pstTabs();
   if (view() !== 'lots') return;
-  if (L.stMode === 'st') pstShow(); else pstHide();
+  if (L.stMode === 'st') pstShow(); else { pstHide(); lotSideList(); }   // lots 1.79 แท็บรายการ Lot = แผงตัวกรองเปิดเอง
 }
 function pstTabs() {
   document.querySelectorAll('#lotBar [data-lstab]').forEach(function (b) { var on = b.dataset.lstab === L.stMode; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
@@ -3439,7 +3444,7 @@ function lotShowL12() {
   if (!PST.inLots) { L.stMode = PST.entryList ? 'list' : 'st'; PST.entryList = 0; pstTabs(); }
   if (!PST.inLots) pstLdStart();   // lots 1.17: กล่องกำลังโหลด (เฉพาะตอนเพิ่งเข้าหน้า)
   PST.inLots = true;
-  lotShow(); if (L.stMode === 'st') pstShow(); pstBcLoad();   // lots 1.3 + pstBcLoad (คอลัมน์ Barcode)
+  lotShow(); if (L.stMode === 'st') pstShow(); else lotSideList(); /* lots 1.79 */ pstBcLoad();   // lots 1.3 + pstBcLoad (คอลัมน์ Barcode)
 }
 window.addEventListener('hashchange', function () { setTimeout(function () { if (view() !== 'lots') PST.inLots = false; }, 0); });   // หลัง route() ของ index (view() เปลี่ยนแล้ว)
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-ldlist]')) PST.entryList = 1; }, true);   // HOME “ดู/ยกเลิก” Lot ที่ปิดเอง = อยากเห็นตาราง
@@ -3886,8 +3891,10 @@ document.addEventListener('click', function (e) {
   var b = e.target.closest && e.target.closest('#lotSideBtn'); if (!b) return;
   e.preventDefault(); lotSideSet(!lotSideOpen(), false);
 }, true);
+/* lots 1.79 (ผู้ใช้ 13:53 “แถบรายการ Lot ไม่มีตัวกรอง ต้องกลับไปแถบสถานะ”): เข้าแท็บ 📋 รายการ Lot บนคอม = แผงซ้ายเปิด (auto — กลับแท็บสถานะ = lotSideAuto ย่อกลับ) */
+function lotSideList() { try { if (view() === 'lots' && L.stMode === 'list' && lotSideWide() && !lotSideOpen()) lotSideSet(true, true); } catch (e) { } }
 function lotSideAuto() {   // เรียกหลัง pstRender: หน้าเลือก Lot เปิด = แสดงแผง · ปิดแล้ว (แผงเปิดเพราะหน้าเลือก) = ย่อกลับ
-  if (!lotSideWide()) return;
+  if (!lotSideWide() || L.stMode !== 'st') return;   // lots 1.79 แท็บรายการ Lot ไม่ย่อ
   if (L.stPk && L.stPk.open && !lotSideOpen()) lotSideSet(true, true);
   else if (LSIDE.auto && !(L.stPk && L.stPk.open)) lotSideSet(false);
 }
