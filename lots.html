@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.61 (2026-10-27 10:19 ผู้ใช้ รูปกล่อง “สถานะ: กำลังตัด RE-0069-0827-MU19”: “ดึงเลข SAW มาขึ้นตรง Box ให้ก่อนครับ”)
+        FEAT กล่องรายละเอียดสถานะ (กดกล่องสถานะ) + แถว SAW: เลข .saw (Run ล่าสุด — กติกา v1.37 ของ index) · เวลาตัด · แผ่น · กดเลข = คัดลอก
+            · Lot มีหลาย Run = บอก “มี n Run ใช้เลขล่าสุด” · ยังไม่มี = “ยังไม่มีเลข .saw (ยังไม่ได้ Optimize Cut Rite)” · ขึ้นทุกสถานะ (กำลังตัด / รอตัด / หลังตัด)
     1.60 (2026-10-27 10:10 ผู้ใช้ รูป RE-0069-0827-MU19 คอลัมน์ Front Style: “เราดึงข้อมูลผิวบนล่างของชิ้นงานมาได้ไหมครับ เพราะว่าชิ้นที่ทำสี น่าจะไปดูที่ Frontstyle ไม่ได้ครับ
          บางไม้มันออก Frontstyle ได้ก็จริง แต่ชิ้นนั้นมันไม่ได้ทำสีครับ งานเคลือบนะถูกต้องแล้ว แต่งานสีจะดูที่ผิวบนล่างของชิ้นนั้น ๆ เพิ่มอีก 2 คอลัมน์ต่อหลัง Frontstyle”)
         FEAT คอลัมน์ ผิวบน · ผิวล่าง ต่อหลัง Front Style — แยกจาก Material Code (Cut Rite: ไม้ 4 ตัว + ผิวบน 9 ตัว + ผิวล่าง 9 ตัว เช่น MD19 · N01M0034N · N01M0034N)
@@ -898,6 +901,7 @@
   .pst-pop .pp-msg{padding:7px 10px;border-radius:9px;background:var(--accent-soft);margin-bottom:8px} .pst-pop .pp-msg.ok{background:color-mix(in srgb,var(--good) 14%,var(--solid));color:var(--good);font-weight:700}
   .pst-pop .pp-dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0 0 8px}
   .pst-pop .pp-dl dt{color:var(--ink-dim);white-space:nowrap} .pst-pop .pp-dl dd{margin:0;overflow-wrap:anywhere;font-weight:600}
+  .pst-pop .pp-saw b{font-family:var(--mono);font-size:14px;cursor:copy;color:var(--accent)} .pst-pop .pp-saw span{font-weight:500;color:var(--ink-dim)} .pst-pop .pp-saw.no{font-weight:500;color:var(--ink-faint)}   /* lots 1.61 */
   .pst-pop .pp-wd.ok{color:var(--good)} .pst-pop .pp-wd.wait{color:#c2620a} .pst-pop .pp-wd.miss{color:#c62828}
   .pst-pop .pp-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:4px 0 8px}
   .pst-pop .pp-steps span{display:flex;flex-direction:column;padding:4px 7px;border-radius:7px;background:var(--accent-soft);font-family:var(--mono);font-size:11.5px;font-weight:600;min-width:0}
@@ -1113,7 +1117,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.60';
+var LOTS_VER = '1.61';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2376,6 +2380,15 @@ function pstPlanMcs(g, prev) {   // เครื่องที่ยิง Lot 
   var a = (g.mcs || []).filter(function (m) { return prev == null || !!m.prev === prev; }).map(function (m) { var t = String(m.last || ''); return m.n + (t.length >= 16 ? ' (' + (m.prev ? t.slice(8, 10) + '/' + t.slice(5, 7) + ' ' : '') + t.slice(11, 16) + ')' : ''); });
   return a.join(' · ');
 }
+/* lots 1.61 (ผู้ใช้ 10:19 “ดึงเลข SAW มาขึ้นตรง Box ให้ก่อน”): แถว SAW ในกล่องรายละเอียดสถานะ — crxOf ของ index (lots/cutrite.csv · Run ล่าสุดเลขเดียว v1.37) */
+function pstSawKv(id) {
+  var a = null; try { a = typeof crxOf === 'function' ? crxOf(id) : null; } catch (e) { a = null; }
+  if (!a || !a.length) return B.crx && B.crx.map ? '<dt>SAW</dt><dd class="pp-saw no">ยังไม่มีเลข .saw (ยังไม่ได้ Optimize Cut Rite)</dd>' : '';
+  var r = a[0], all = B.crx && B.crx.all ? B.crx.all.get(String(id).toUpperCase()) : null, tm = '';
+  try { tm = typeof crxDur === 'function' && typeof crxAgg === 'function' ? crxDur(crxAgg(a).total_sec / 60) : ''; } catch (e) { tm = ''; }
+  var ex = [tm, r.boards != null ? fmtN(r.boards) + ' แผ่น' : '', all && all.length > 1 ? 'มี ' + all.length + ' Run ใช้เลขล่าสุด' : ''].filter(Boolean).join(' · ');
+  return '<dt>SAW</dt><dd class="pp-saw"><b data-cp="' + esc(r.run) + '" title="กด = คัดลอกเลข .saw">' + esc(r.run) + '</b>' + (ex ? ' <span>' + esc(ex) + '</span>' : '') + '</dd>';
+}
 function pstPopHtml(c) {
   var a = c.agg, x = c.x, h = '<div class="pst-pop" role="dialog" aria-label="รายละเอียดสถานะ">';
   var ck = c.cx ? (c.cx.kind || (c.cx.cutD > 0 ? 'carry' : 'wait')) : 'wait';   // lots 1.40
@@ -2386,10 +2399,11 @@ function pstPopHtml(c) {
     var pl = c.cx && c.cx.pl;
     var whT = ck === 'now' ? 'กำลังตัด — ยิงตัดวันนี้' : ck === 'carry' ? '✂ ค้างตัด — ตัดไปแล้วบางส่วน วันนี้ยังไม่ยิง' : '', whL = ck === 'now' ? 'cut' : 'carry';   // lots 1.40
     if (!pl && whT) h += '<div class="pp-where lt-' + whL + '"><i class="pst-dot"></i>' + esc(whT) + '</div>' + (c.cx.cutN ? '<dl class="pp-dl">' + kv('ยิงตัดแล้ว (รายชิ้น)', fmtN(c.cx.cutD) + '/' + fmtN(c.cx.cutN) + ' ชิ้น · เหลือ ' + fmtN(Math.max(0, c.cx.cutN - c.cx.cutD)) + ' ชิ้น') + '</dl>' : '');
+    if (!pl && pstSawKv(x.id)) h += '<dl class="pp-dl">' + pstSawKv(x.id) + '</dl>';   // lots 1.61
     if (!pl) h += '<div class="pp-msg">' + esc(c.cx && c.cx.why && !/^กำลังเช็ค/.test(c.cx.why) ? c.cx.why : PST_DB.busy ? '⏳ กำลังเช็คแผนตัดใน Dashboard…' : PST_DB.err ? 'เช็คแผนตัดใน Dashboard ไม่ได้ — ' + netMsg(PST_DB.err) : 'ไม่พบ Lot นี้ในแผน Dashboard (คิวตัดงาน)') + '</div>';
     else {
       var g = pl.g;
-      h += '<div class="pp-where lt-' + (whT ? whL : pl.lt) + '"><i class="pst-dot"></i>' + esc(whT || pl.where) + '</div><dl class="pp-dl">';
+      h += '<div class="pp-where lt-' + (whT ? whL : pl.lt) + '"><i class="pst-dot"></i>' + esc(whT || pl.where) + '</div><dl class="pp-dl">' + pstSawKv(x.id) /* lots 1.61 */;
       if (ck !== 'wait') {   // lots 1.40 กำลังตัด: เครื่องที่ยิงวันนี้ · ค้างตัด: ยิงล่าสุด (วันก่อน) + เครื่องในแผนที่จะตัดต่อ
         if (ck === 'now') h += kv('เครื่องที่ยิงวันนี้', pstPlanMcs(g, false) || 'มีการยิงวันนี้ (ยังไม่รู้เครื่อง)');
         else { h += kv('ยิงล่าสุด', pstPlanMcs(g, true) ? pstPlanMcs(g, true) + ' (วันทำงานก่อน)' : 'ไม่ได้ยิงวันนี้และวันทำงานก่อน'); if (g.mc) h += kv('เครื่องในแผน (ตัดต่อ)', g.mc); }
@@ -2412,6 +2426,7 @@ function pstPopHtml(c) {
   } else if (c.one) {
     var zc = c.sum.cut;
     h += '<div class="pp-where lt-' + (a.min != null && a.min >= PST_DONE ? 'go' : 'run') + '"><i class="pst-dot"></i>' + esc(a.min == null ? 'ไม่มีข้อมูลรายชิ้น' : a.min >= PST_DONE ? 'ผ่านครบทุกขั้นแล้ว' : 'ตอนนี้ถึง ' + pstStepNm(PST_STEPS[a.min]) + ' · ค้าง ' + fmtN(a.n[a.min]) + '/' + fmtN(a.tot) + ' ชิ้น') + '</div>';
+    if (pstSawKv(x.id)) h += '<dl class="pp-dl">' + pstSawKv(x.id) + '</dl>';   // lots 1.61
     if (zc && zc.n > 0 && zc.d >= zc.n && a.min != null && a.min < PST_DONE) h += '<div class="pp-msg ok">✓ ตัดจบแล้ว (' + fmtN(zc.n) + ' ชิ้น)</div>';
   } else {
     h += '<div class="pp-lots">' + c.sel.map(function (y) { var pw = pstPlanOf(y.id), st = pstLotStat(y);
