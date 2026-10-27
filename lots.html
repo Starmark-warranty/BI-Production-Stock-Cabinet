@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.64 (2026-10-27 10:46 ผู้ใช้ รูปคอลัมน์ State: “เรากระชับช่อง State ให้แคบลงอีกได้ไหมครับ จะได้แสดงข้อมูลด้านขวาได้มากขึ้น”)
+        UI ช่อง State 9 ขั้นแคบลง (เดิม min 44px + เว้นข้าง 6px ≈ 56px/ช่อง → ≈ 30px/ช่อง · ทั้งกลุ่มแคบลง ~230px) — หัวตัวเล็กลง · Finish = “Fin” · Delivery = “Dlv” (ชี้ = ชื่อเต็ม)
+            · ป้ายสี/เคลือบใต้ช่อง Finish ตัวเล็กลง · มือถือ (การ์ด) ไม่เปลี่ยน
     1.63 (2026-10-27 10:24 ผู้ใช้ รูป Cut Rite ช่อง (31)SurfaceBeforeCutTopCode · (32)SurfaceBeforeCutBottomCode = N00S0047N: “2 ตัวนี้ครับ ผิวบน ล่าง”
          · 10:33 รูป Front Style “Color:N03P0057N”: “อยากให้แสดงตอนกดที่รหัสสีนั้นไปว่ามันคือ PP อะไร เช่น PP19 แสดงแค่ชื่อ PP19 พอ บางตัว PT05 ก็แสดงแค่นั้น งานสีก็แสดงแค่ TOA อะไรก็พอ”
          · 10:35–10:37 “กดแล้วยังไม่ขึ้นกล่องรวมไม้นะครับ” · “อ่อ ต้องกดที่ชิ้นหรอ”)
@@ -983,6 +986,12 @@
   #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#e11d48;--st4:#8a5cf5;--st5:#d6409f;--st6:#ef7d22;--st7:#0ea5c6;--st8:#6aa121}   /* lots 1.43 + st2 สี·เคลือบ (ชมพูแดง) — ขั้นหลังจากนั้นเลื่อน 1 สีเดิม · lots 1.56 สลับ st2 ↔ st3 (Drill ขั้นที่ 2 = เหลือง · สี·เคลือบ ขั้นที่ 3 = ชมพูแดง) */
   #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
   #lotSt .cs4{--stc:var(--st4)} #lotSt .cs5{--stc:var(--st5)} #lotSt .cs6{--stc:var(--st6)} #lotSt .cs7{--stc:var(--st7)} #lotSt .cs8{--stc:var(--st8)}   /* lots 1.43 + cs8 */
+  /* lots 1.64 ช่อง State แคบลง (ผู้ใช้ 10:46 “กระชับช่อง State ให้แคบลง จะได้แสดงข้อมูลด้านขวาได้มากขึ้น”) — เดิม th.pck min-width 44px · td padding 3px 6px */
+  #lotSt .pst-t th.pck{min-width:0;width:28px;padding:5px 2px;font-size:10.5px;letter-spacing:-.01em;text-align:center}
+  #lotSt .pst-t td.pck{padding:2px 1px;width:28px}
+  #lotSt .pst-t tr.cf th.pck{padding:2px 1px} #lotSt .pst-cfb{padding:1px}
+  #lotSt .pst-t td.pck small{margin-left:1px;font-size:9px} #lotSt .pst-t td.pck small.fk{margin-left:0;font-size:8.5px;letter-spacing:-.02em}
+  #lotSt .pst-t th.grp{font-size:11px;padding:3px 4px}
   /* lots 1.63 กล่องลอยแบบกล่องสถานะ (ห่อรายห้อง · สรุปไม้) */
   #pstPkPop{position:fixed;z-index:70;display:none;flex-direction:column;overflow:hidden;background:var(--solid);color:var(--ink);border:.5px solid var(--line-strong);border-radius:14px;
     box-shadow:0 14px 34px rgba(20,32,60,.26);font-size:13px}
@@ -1158,7 +1167,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.63';
+var LOTS_VER = '1.64';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1714,6 +1723,7 @@ var PST_STEPS = [
   { k: 'si', h: 'Site', th: 'หน้างาน', t: 'ถึงไซต์/ติดตั้งแล้ว — ST_STATUS ใน AX (ค่าไม่ใช่ว่าง/0 = ✓) หรือยิงด้วยแอป Scan-Link (ทั้ง Lot · lots 1.6)' }];
 /* lots 1.13 (ผู้ใช้ 11:27): th = ชื่อไทยตามที่ผู้ใช้ตั้ง (Drill = เจาะ&CNC · Pick = เตรียมส่งของเข้าคลัง · Wh = คลัง) · Delivery/Site เติมเอง (จัดส่ง · หน้างาน) — เดิม เจาะ · หยิบ · เข้าคลัง · ส่ง · ไซต์ */
 function pstStepNm(S0) { return S0.h + '/' + S0.th; }
+var PST_HS = { fin: 'Fin', dl: 'Dlv' };   // lots 1.64 หัวช่อง State แบบสั้น (ช่องแคบ) — ชี้ = ชื่อเต็ม
 var PST_PKK = { pk: 'แพ็คแล้ว', pi: 'เตรียมส่งแล้ว', wh: 'เข้าคลังแล้ว', dl: 'ส่งแล้ว', si: 'ถึงไซต์แล้ว' };   // lots 1.57 ขั้นที่กดเกจแล้วเปิดกล่องห่อรายห้อง (คำ = ผ่านขั้นนั้นแล้ว)
 var PST_AFTER = ['pk', 'pi', 'wh', 'dl', 'si'];   // lots 1.2: ผ่านขั้นไหนในนี้แล้ว = ผ่าน Edge / Drill แล้ว
 /* ───────── lots 1.43: งานทำสี / งานเคลือบ ราย Part (FrontStyle จาก lots/fstyle.csv · StarSync v1.22) ─────────
@@ -3094,7 +3104,7 @@ function pstRender(keep) {
       else
       h += '<div class="pst-wrap"><table class="pst-t"><thead><tr><th rowspan="2" class="no stk">#</th><th colspan="' + PST_STEPS.length + '" class="grp stk">State</th>'   // lots 1.11: สถานะ หลัง Site (1.10 อยู่หลัง #)
         + cols.map(function (c) { return '<th rowspan="2"' + (c.num ? ' class="num"' : '') + (c.k === 'mat' ? ' data-mtxh="1"' : '') /* lots 1.63 */ + (c.t ? ' title="' + esc(c.t) + '"' : '') + '>' + esc(c.h) + (c.k === 'mat' ? ' <span class="mtxh">Σ</span>' : '') + '</th>'; }).join('') + '</tr><tr>'
-        + PST_STEPS.map(function (S0, si) { return '<th class="pck stk cs' + si + (colOk[si] ? ' cok' : '') /* lots 1.30 ครบ = เขียว */ + (S0.na ? ' na' : '') + '" title="' + esc(S0.t + ' · สีพื้นแถว = ชิ้นที่อยู่ขั้นนี้') + '">' + esc(S0.h) + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง   // lots 1.23 สีหัว = ตัวบอกสีแถว
+        + PST_STEPS.map(function (S0, si) { return '<th class="pck stk cs' + si + (colOk[si] ? ' cok' : '') /* lots 1.30 ครบ = เขียว */ + (S0.na ? ' na' : '') + '" title="' + esc(S0.h + ' — ' + S0.t + ' · สีพื้นแถว = ชิ้นที่อยู่ขั้นนี้') + '">' + esc(PST_HS[S0.k] || S0.h) /* lots 1.64 หัวสั้น */ + '</th>'; }).join('') + '</tr>' + pstCfRow(cols) + '</thead><tbody>'   // lots 1.10 + แถวตัวกรอง   // lots 1.23 สีหัว = ตัวบอกสีแถว
         + part.map(function (it, i) {
           var p = it.p, s = it.s;
           var ci = it.cu.i >= 0 && it.cu.i < PST_DONE ? ' csx cs' + it.cu.i : '';   // lots 1.23: สีแถวตามขั้นที่อยู่
