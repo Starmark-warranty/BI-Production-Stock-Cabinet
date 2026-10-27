@@ -75,6 +75,14 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.82 (2026-10-27 15:27 ผู้ใช้ รูปแท็บ 📋 รายการ Lot (ตาราง data 6) เทียบหน้าเลือก Lot ของสถานะ Part: “หน้ารายการ Lot มันต้องแสดงเหมือนหน้า Lot ของสถานะ Part
+         แล้วเพิ่มจำนวน เช่น ทำสีกี่ชิ้นให้หน่อย เพิ่มแค่ตัวเลข ไม่ต้องใส่หน่วย” · เลือก “ใช้แบบหน้าเลือก Lot”)
+        UI แท็บ 📋 รายการ Lot = รายการแบบหน้าเลือก Lot (Lot · Stage · remark · สถานะ · ประเภทงาน · enddate · รายชิ้น) — กด Lot = ไปแท็บสถานะ Part ของ Lot นั้น
+            · ☐ เลือกหลาย Lot / แสดง N Lot ที่ตรง = ไปแท็บสถานะเหมือนหน้าเลือก · ใช้ตัวกรองแถบซ้าย + เรียง (LotCreate / enddate …) + CSV เดิม
+            · แสดงทีละ 300 Lot + ปุ่มแสดงเพิ่ม · ปุ่ม “▦ ตาราง data 6” ที่แถบบน = กลับไปตารางเดิม (Bu · Pool · WK · TotalPart · Barcode … · กดแถว = แผงรายละเอียด) — จำในเครื่อง
+        FEAT ป้ายประเภทงานมีจำนวนชิ้น: 🎨 ทำสี 25 · ✨ เคลือบ 16 · 📑 ปิดผิว (ชิ้นที่ใช้ไม้ปิดผิวเอง SP302) · เมลามีน · ⚠ BOM? — ชี้ป้าย = ที่มาเหมือนเดิม · เดา (?) = ไม่มีตัวเลข
+        FIX (บัคของ 1.76) จำนวนชิ้นสี / เมลามีน / เคลือบจากรหัสไม้ราย Lot ไม่คิดใหม่เมื่อข้อมูลเปลี่ยน — คอมเมนต์ // กลางบรรทัดกลืนบรรทัดล้างที่จำ (if (PST_TYx.v !== v) …)
+            → ค่าที่คิดก่อนรายชิ้นโหลดค้างตลอด (ป้ายทำสี/เมลามีนไม่ตรง) · ย้ายคอมเมนต์ไปท้ายบรรทัด
     1.81 (2026-10-27 15:04 ผู้ใช้ รูปตาราง RE-0069-0827-MU19 กรองอยู่ “70/372 แถว · ล้างตัวกรอง (1)” แต่ขวาล่าง “Total 372”: “ตรง Total มันต้องบอกของที่กรองไหมครับ · ขวาล่าง”)
         UI ขวาล่าง (ตาราง / รายการมือถือ): กรองอยู่ = “Total 70 จาก 372” (เดิม Total = ทุกชิ้นของ Lot เสมอ) · ไม่กรอง = Total 372 เหมือนเดิม · หน้าเกจไม่มีตัวกรอง = เหมือนเดิม
     1.80 (2026-10-27 14:38 ผู้ใช้ รูปแถบซ้าย สถานะ “Part/ค้างตัด 62” + หน้าเลือก Lot: “ในประเภทหรือสถานะนึง เลือกกรองได้หลายตัวไหมครับ”)
@@ -681,6 +689,11 @@
   /* ───────── lots 1.2: หน้าสถานะ Part แยกหน้า · เลือกหลาย Lot · ค้นหาชิดขวา · Edge/Drill จากการยิง ───────── */
   #lotSt{position:relative}
   body.lotStOn #lotSort{display:none}
+  /* lots 1.82 แท็บรายการ Lot แบบหน้าเลือก Lot (body.lotPkOn) — ใช้ #lotSt เป็นที่วาด · ปุ่มสลับตาราง data 6 เฉพาะแท็บรายการ */
+  body.lotPkOn #lotWrap{display:none!important}
+  body.lotStOn #lotPkTbl{display:none}
+  #lotPkTbl.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .lpk-more{display:flex;justify-content:center;padding:10px}
   .pst-hd h2[data-cp]{cursor:copy;border-radius:6px;padding:0 3px;margin-left:-3px}
   .pst-hd h2[data-cp]:hover{background:var(--accent-soft);color:var(--accent)}
   .pst-sums{align-items:stretch}
@@ -977,6 +990,7 @@
     background:color-mix(in srgb,var(--tyc) 14%,var(--solid));color:color-mix(in srgb,var(--tyc) 70%,var(--ink));border:1px solid color-mix(in srgb,var(--tyc) 45%,transparent)}
   .pst-ty.paint{--tyc:#e11d48} .pst-ty.coat{--tyc:#0d9488} .pst-ty.lam{--tyc:#7c3aed} .pst-ty.mel{--tyc:#78716c} .pst-ty.warn{--tyc:#d97706}   /* lots 1.71 + warn */
   .pst-ty.g{background:transparent;border-style:dashed}
+  .pst-ty .tyn{font:inherit;font-weight:800;margin-left:3px;font-variant-numeric:tabular-nums}   /* lots 1.82 จำนวนชิ้นในป้าย */
   .pst-pkr .ty{flex:none;width:150px;overflow:hidden;white-space:nowrap}
   .pst-lsug .it > .ty{flex:none;width:150px;overflow:hidden;white-space:nowrap}
   /* lots 1.75 (ผู้ใช้ 13:22 “เห็นไม่ครบ”): ป้ายประเภทงานเกินช่อง = ขึ้นบรรทัดใหม่ (เดิม 150px ตัดทิ้ง “เคลือบ ปิดผิว เ…”) */
@@ -1220,6 +1234,7 @@
     <div id="lotBar">
       <button type="button" id="lotSideBtn" class="tbtn" aria-label="แสดง / ย่อแผงซ้าย" title="แสดงแผงซ้าย (ตัวกรอง Lot)">☰</button><!-- lots 1.59 ผู้ใช้ 10:00 “แผงซ้าย ทำปุ่มย่อให้ที” -->
       <span class="pst-tabs" role="tablist" aria-label="มุมมอง"><button type="button" data-lstab="list" role="tab" title="ตาราง Lot — กด Lot = แผงรายละเอียด">📋<span class="lbl"> รายการ Lot</span></button><button type="button" data-lstab="st" role="tab" title="หน้าสถานะทีละชิ้น (Part · Edge · Drill · Pack · Pick · Wh · Delivery · Site) — เลือกได้หลาย Lot">✅<span class="lbl"> สถานะ Part</span></button></span>
+      <button type="button" id="lotPkTbl" class="tbtn" title="สลับ รายการแบบหน้าเลือก Lot ↔ ตาราง data 6 (lots 1.82)">▦<span class="lbl"> ตาราง data 6</span></button><!-- lots 1.82 -->
       <span id="lotCount"></span>
       <span class="sp"></span>
       <span id="lotLive"></span>
@@ -1259,7 +1274,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.81';
+var LOTS_VER = '1.82';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1586,6 +1601,7 @@ function lotBindUi() {
   /* v2.46: เปลี่ยนหน้าตาม # · ปุ่ม ⌂ · ชื่อโปรแกรม · การ์ด HOME · นาฬิกา = ของทั้งโปรแกรม → อยู่ที่ lotBindUi ใน index.html (ตอนเปิดโปรแกรม) */
 }
 function lotKey(e) {
+  if (lotPkOn() && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) return;   // lots 1.82 แท็บรายการแบบหน้าเลือก Lot ไม่มีแถวตาราง
   /* lots 1.2: หน้าสถานะ Part เป็นแท็บ (เดิม 1.1: Esc = กลับตาราง Lot) → Esc = ปิดกล่องเลือก Lot · ลูกศรไม่เลื่อนตาราง Lot ที่ซ่อนอยู่ */
   if (document.body.classList.contains('lotStOn')) {
     if (e.key === 'Escape' && L.stPk.open && $('ov').classList.contains('hide')) { L.stPk.open = false; L.stPk.multi = false; /* lots 1.38 */ pstRender(true); return; }
@@ -1926,7 +1942,7 @@ PST_FINRE.matCoat = /^[A-Z]{2}\d\d(?:[NG]\d\dM\d{4}[A-Z]x{8}[A-Z]|x{8}[A-Z][NG]\
 function pstLotHasFs(lot) { return !!(PST.fsLot && PST.fsLot.get(String(lot || '').toUpperCase())); }
 var PST_TYP = { v: '', m: new Map() };   // lots 1.60 จำจำนวนชิ้นสีราย Lot
 function pstLotPaintN(K) {   // ชิ้นสีของ Lot (pstFinKind) · null = ไม่มีรายชิ้น หรือไม่มีชิ้นไหนแยกผิวได้
-  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' + pstNamesV();   // lots 1.76 + ชื่อวัสดุ (PET) if (PST_TYP.v !== v) { PST_TYP.v = v; PST_TYP.m = new Map(); }
+  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' + pstNamesV(); if (PST_TYP.v !== v) { PST_TYP.v = v; PST_TYP.m = new Map(); }   // lots 1.76 + ชื่อวัสดุ (PET)
   if (PST_TYP.m.has(K)) return PST_TYP.m.get(K);
   var a = PST.lots ? PST.lots.get(K) : null, n = null;
   if (a && a.some(function (p) { return !!pstSurf(p.mat); })) { n = 0; a.forEach(function (p) { if (pstFinKind(p) === 'paint') n++; }); }
@@ -1937,7 +1953,7 @@ function pstLotWarnN(K) { var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' +
   var a = PST.lots ? PST.lots.get(K) : null, n = 0; if (a) a.forEach(function (p) { if (pstCoatWarn(p)) n++; }); PST_TYW.m.set(K, n); return n; }
 var PST_TYM = { v: '', m: new Map() };   // lots 1.62 จำจำนวนชิ้นเมลามีนราย Lot
 function pstLotMelN(K) {   // ชิ้นที่ไม่ใช่สี/เคลือบ และผิวบนหรือล่างเป็นเมลามีน (…M….) · null = ไม่มีรายชิ้น / ไม่มีชิ้นไหนแยกผิวได้
-  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' + pstNamesV();   // lots 1.76 if (PST_TYM.v !== v) { PST_TYM.v = v; PST_TYM.m = new Map(); }
+  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' + pstNamesV(); if (PST_TYM.v !== v) { PST_TYM.v = v; PST_TYM.m = new Map(); }   // lots 1.76
   if (PST_TYM.m.has(K)) return PST_TYM.m.get(K);
   var a = PST.lots ? PST.lots.get(K) : null, n = null;
   if (a && a.some(function (p) { return !!pstSurf(p.mat); })) { n = 0; a.forEach(function (p) { var sf = pstSurf(p.mat); if (sf && p.sz !== false && !pstFinKind(p) && (/^[A-Z]\d\dM\d{4}/i.test(sf[0]) || /^[A-Z]\d\dM\d{4}/i.test(sf[1]))) n++; }); }
@@ -1948,7 +1964,7 @@ function pstLotCoatN(K) { var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' +
   var a = PST.lots ? PST.lots.get(K) : null, n = null; if (a) { n = 0; a.forEach(function (p) { if (pstFinKind(p) === 'coat') n++; }); } PST_TYK.m.set(K, n); return n; }
 var PST_TYC = { v: '', m: new Map() };   // จำจำนวนชิ้นเคลือบจากรหัสไม้ ราย Lot (คิดใหม่เมื่อรายชิ้น / fstyle เปลี่ยน)
 function pstLotMatCoat(K) {
-  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' + pstNamesV();   // lots 1.76 if (PST_TYC.v !== v) { PST_TYC.v = v; PST_TYC.m = new Map(); }
+  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v + ':' + pstNamesV(); if (PST_TYC.v !== v) { PST_TYC.v = v; PST_TYC.m = new Map(); }   // lots 1.76
   if (PST_TYC.m.has(K)) return PST_TYC.m.get(K);
   var a = PST.lots ? PST.lots.get(K) : null, n = 0;
   if (a) a.forEach(function (p) { if (pstFinKind(p) === 'coat' && !PST_FINRE.coat.test(String(p.fs || ''))) n++; });   // lots 1.55 ทุก Lot (เดิม 1.47 เฉพาะ Lot ที่ไม่มี FrontStyle) · นับเฉพาะชิ้นที่รู้จากรหัสไม้ (FrontShape M นับใน F.c แล้ว)
@@ -1970,15 +1986,15 @@ function pstLotTypes(x) {
   var K = String(id).toUpperCase(), F = PST.fsLot ? PST.fsLot.get(K) || null : null, out = [], pt = null, lm = null;
   try { pt = typeof paintOf === 'function' ? paintOf(id) : null; } catch (e) { pt = null; }
   var fp = pstLotPaintN(K);   // lots 1.60 ชิ้นสีจากรายชิ้น (ผิว 34N) · null = ไม่มีรายชิ้น / รหัสไม้ไม่มีผิวให้ดู → แบบเดิม
-  if (fp != null) { if (fp) out.push({ k: 'paint', t: 'ผิวบน/ล่าง 34N (ไม้ทำสี) ' + fmtN(fp) + ' ชิ้น' }); }
-  else if (F && F.p) out.push({ k: 'paint', t: 'FrontStyle สี N00S ' + fmtN(F.p) + ' ชิ้น' });
+  if (fp != null) { if (fp) out.push({ k: 'paint', n: fp /* lots 1.82 */, t: 'ผิวบน/ล่าง 34N (ไม้ทำสี) ' + fmtN(fp) + ' ชิ้น' }); }
+  else if (F && F.p) out.push({ k: 'paint', n: F.p, t: 'FrontStyle สี N00S ' + fmtN(F.p) + ' ชิ้น' });
   else if (pt) out.push({ k: 'paint', t: pt.src === 'name' ? 'ชื่อ Lot มี MU / HG (ไม้ทำสี 34N)' : 'BOM มีสี N00S' });
   var mc = pstLotMatCoat(K), rmk = x && typeof x === 'object' ? String(x.remark || '') : '';   // lots 1.47 · 1.55 ทุก Lot (เดิม F ? 0 : …)
   var cN = pstLotCoatN(K);   // lots 1.76 มีรายชิ้น = นับชิ้นเคลือบจริง (FrontShape M บนไม้เมลามีน = ไม่นับ) · เดิม 1.45: นับแถว FrontShape M ใน fstyle.csv
-  if (cN != null) { if (cN) out.push({ k: 'coat', t: 'งานเคลือบ ' + fmtN(cN) + ' ชิ้น — FrontShape M + ผิวฟิล์ม G/N 03–05 P จาก Cut Rite ที่ต่างจากรหัสไม้ (หรือไม้เปลือย เมื่อยังไม่มีผิว Cut Rite)' + (mc ? ' · ในนี้ดูจากรหัสไม้ (FrontStyle ไม่บอก) ' + fmtN(mc) + ' ชิ้น' : '') }); }
-  else if (F && F.c) out.push({ k: 'coat', t: 'FrontShape ขึ้นต้น M (ฟิล์มบนผิวไม้ดิบ) ' + fmtN(F.c) + ' ชิ้น' + (mc ? ' + รหัสไม้ผิวดิบ 1 ด้าน (FrontStyle ไม่บอก) ' + fmtN(mc) + ' ชิ้น' : '') });
-  else if (mc && F) out.push({ k: 'coat', t: 'รหัสไม้ผิวดิบ 1 ด้าน + เมลามีน ' + fmtN(mc) + ' ชิ้น (FrontStyle ของ Lot นี้ไม่บอกงานเคลือบ)' });   // lots 1.55
-  else if (mc) out.push({ k: 'coat', t: 'ไม่มี FrontStyle — ดูจากรหัสไม้ (ผิวดิบ 1 ด้าน + เมลามีน) ' + fmtN(mc) + ' ชิ้น' });   // lots 1.47
+  if (cN != null) { if (cN) out.push({ k: 'coat', n: cN /* lots 1.82 */, t: 'งานเคลือบ ' + fmtN(cN) + ' ชิ้น — FrontShape M + ผิวฟิล์ม G/N 03–05 P จาก Cut Rite ที่ต่างจากรหัสไม้ (หรือไม้เปลือย เมื่อยังไม่มีผิว Cut Rite)' + (mc ? ' · ในนี้ดูจากรหัสไม้ (FrontStyle ไม่บอก) ' + fmtN(mc) + ' ชิ้น' : '') }); }
+  else if (F && F.c) out.push({ k: 'coat', n: F.c, t: 'FrontShape ขึ้นต้น M (ฟิล์มบนผิวไม้ดิบ) ' + fmtN(F.c) + ' ชิ้น' + (mc ? ' + รหัสไม้ผิวดิบ 1 ด้าน (FrontStyle ไม่บอก) ' + fmtN(mc) + ' ชิ้น' : '') });
+  else if (mc && F) out.push({ k: 'coat', n: mc, t: 'รหัสไม้ผิวดิบ 1 ด้าน + เมลามีน ' + fmtN(mc) + ' ชิ้น (FrontStyle ของ Lot นี้ไม่บอกงานเคลือบ)' });   // lots 1.55
+  else if (mc) out.push({ k: 'coat', n: mc, t: 'ไม่มี FrontStyle — ดูจากรหัสไม้ (ผิวดิบ 1 ด้าน + เมลามีน) ' + fmtN(mc) + ' ชิ้น' });   // lots 1.47
   else if (!F && PST_MC_RE.test(String(id))) out.push({ k: 'coat', g: 1, t: 'เดาจากชื่อ Lot (_MC) — ยังไม่มี FrontStyle ของ Lot นี้' });
   else if (!F && /เคลือบ/.test(rmk)) out.push({ k: 'coat', g: 1, t: 'เดาจาก remark “' + rmk.slice(0, 60) + '” — ไม่มี FrontStyle และไม่พบชิ้นเคลือบจากรหัสไม้' });   // lots 1.47
   try { lm = typeof lamOf === 'function' ? lamOf(id) : null; } catch (e) { lm = null; }
@@ -1986,15 +2002,17 @@ function pstLotTypes(x) {
      เดิม 1.45: มีใบสั่งผลิต SP302 ของ Lot = ปิดผิว · ตอนนี้ Lot ที่มีงานสี: ใบที่ทำไม้ 34N (…M0034… = ไม้รองพื้นทำสี) ไม่นับ — ชี้ป้าย = รหัสไม้ของใบที่นับ */
   var hasP = out.some(function (o) { return o.k === 'paint'; }), lmN = (lm || []).filter(function (r) { return !(hasP && /M0034/i.test(String(r.item || ''))); });
   if (lmN.length) { var lmC = []; lmN.forEach(function (r) { var c0 = String(r.item || '?'); if (lmC.indexOf(c0) < 0) lmC.push(c0); }); out.push({ k: 'lam', t: 'ไม้ปิดผิวเอง — ใบสั่งผลิต Pool SP302 ' + fmtN(lmN.length) + ' ใบ · ' + lmC.slice(0, 6).join(', ') + (lmC.length > 6 ? ' …' : '') + (lmN.length < lm.length ? ' (ไม่นับใบไม้ 34N ของงานสี ' + (lm.length - lmN.length) + ' ใบ)' : '') }); }
-  var wN = pstLotWarnN(K); if (wN) out.push({ k: 'warn', t: 'มีผิวฟิล์มเคลือบจาก Cut Rite แต่รหัสไม้ไม่เปลือยสักหน้า ' + fmtN(wN) + ' ชิ้น — BOM อาจผิด (ช่อง Front Style มี ⚠)' });   // lots 1.71
+  if (lmN.length) { var lo = out[out.length - 1], pa = PST.lots ? PST.lots.get(K) : null, ls = {}; (lmN || []).forEach(function (r) { ls[String(r.item || '').toUpperCase()] = 1; });   // lots 1.82 ชิ้นที่ใช้ไม้ปิดผิวเอง (รหัสไม้ตรงใบสั่งผลิต SP302)
+    if (lo && lo.k === 'lam' && pa) { var ln = 0; pa.forEach(function (p) { if (ls[String(p.mat || '').toUpperCase()]) ln++; }); if (ln) lo.n = ln; } }
+  var wN = pstLotWarnN(K); if (wN) out.push({ k: 'warn', n: wN /* lots 1.82 */, t: 'มีผิวฟิล์มเคลือบจาก Cut Rite แต่รหัสไม้ไม่เปลือยสักหน้า ' + fmtN(wN) + ' ชิ้น — BOM อาจผิด (ช่อง Front Style มี ⚠)' });   // lots 1.71
   var mlN = pstLotMelN(K);   // lots 1.62 ชิ้นเมลามีน (ผิว …M… ที่ไม่ใช่สี/เคลือบ) · null = แยกผิวไม่ได้ → แบบเดิม
-  if (mlN) out.push({ k: 'mel', t: 'ชิ้นเมลามีน ' + fmtN(mlN) + ' ชิ้น (ผิวบน/ล่างเป็นเมลามีน · ไม่ใช่สี / เคลือบ)' });
+  if (mlN) out.push({ k: 'mel', n: mlN /* lots 1.82 */, t: 'ชิ้นเมลามีน ' + fmtN(mlN) + ' ชิ้น (ผิวบน/ล่างเป็นเมลามีน · ไม่ใช่สี / เคลือบ)' });
   if (!out.length && mlN == null && (F || pstLotKnown(id, K))) out.push({ k: 'mel', g: F ? 0 : 1, t: F ? 'ไม่มีชิ้นสี / เคลือบ / ปิดผิว SP302 (FrontStyle ' + fmtN(F.n) + ' ชิ้น)' : 'ไม่มีชิ้นสี / ปิดผิว SP302 — ยังไม่มี FrontStyle ของ Lot นี้ (ยังบอกไม่ได้ว่ามีงานเคลือบไหม)' });
   return out;
 }
 function pstLotTypeTxt(x) { return pstLotTypes(x).map(function (o) { return PST_TYQ[o.k]; }).join(' '); }
 function pstLotTypeHtml(x) {
-  return pstLotTypes(x).map(function (o) { return '<span class="pst-ty ' + o.k + (o.g ? ' g' : '') + '" title="' + esc(PST_TYNM[o.k].replace(/^\S+ /, '') + (o.g ? ' (เดา)' : '') + ' — ' + o.t) + '">' + PST_TYNM[o.k] + (o.g ? '?' : '') + '</span>'; }).join('');
+  return pstLotTypes(x).map(function (o) { return '<span class="pst-ty ' + o.k + (o.g ? ' g' : '') + '" title="' + esc(PST_TYNM[o.k].replace(/^\S+ /, '') + (o.g ? ' (เดา)' : '') + ' — ' + o.t) + '">' + PST_TYNM[o.k] + (o.g ? '?' : '') + (o.n && !o.g ? ' <b class="tyn">' + fmtN(o.n) + '</b>' : '') /* lots 1.82 จำนวนชิ้น */ + '</span>'; }).join('');
 }
 function pstParseFs(t) {
   var R = parseCsv(t || ''), h = (R[0] || []).map(function (x) { return String(x).replace(/^\uFEFF/, '').trim().toLowerCase(); }), ix = {}; h.forEach(function (k, i) { ix[k] = i; });
@@ -3224,7 +3242,8 @@ function pstPickHtml(inline) {
   /* lots 1.14 (ผู้ใช้ 11:30 “ไม่มีหัวตารางบอกหรอว่ามันคือวันที่ของอะไร”): แถวหัว + คอลัมน์สถานะของ Lot */
   if (list.length) h += '<div class="pst-pkr hd" aria-hidden="true"><span class="ck"></span><b>Lot</b><span class="sg">Stage</span><span class="rm">remark</span><span class="sc"></span>'
     + '<span class="cu" title="ขั้นที่ Lot อยู่ตอนนี้ (ขั้นที่ช้าสุดที่ยังมีชิ้นค้าง)">สถานะ</span><span class="ty" title="ประเภทงานของ Lot (lots 1.45): 🎨 ทำสี · ✨ เคลือบ · 📑 ปิดผิว SP302 · เมลามีน — กรอบประ = เดา">ประเภทงาน</span><span class="dt" title="enddate ของ Lot (data 6)">enddate</span><span class="pc" title="จำนวนชิ้นในไฟล์รายชิ้นของ StarSync">รายชิ้น</span></div>';
-  list.slice(0, PST_PKLIM).forEach(function (x) {
+  var pkLim = lotPkOn() ? L.lpkLim || PST_PKLIM : PST_PKLIM;   // lots 1.82 แท็บรายการ = แสดงเพิ่มได้
+  list.slice(0, pkLim).forEach(function (x) {
     var rows = pstRowsOf(x), on = !!selK[x.key], sc = pstScanOf(x.id, 'edge') || pstScanOf(x.id, 'drill') || pstScanOf(x.id, 'si');
     h += '<div class="pst-pkr' + (on ? ' on' : '') + '" data-pstpick="' + esc(x.id) + '" role="checkbox" aria-checked="' + on + '"><span class="ck">' + (on ? '✓' : '') + '</span>'
       + '<b title="' + esc(x.id) + '">' + esc(x.id) + '</b><span class="sg">' + stgHtml(x) + '</span><span class="rm" title="' + esc(x.remark || '') + '">' + esc(x.remark || '') + '</span>'   // lots 1.14: ช่องกว้างคงที่ (ตรงหัว)
@@ -3234,7 +3253,7 @@ function pstPickHtml(inline) {
       + '<span class="dt">' + (x.end != null ? esc(fD(x.end)) : '') + '</span>'
       + '<span class="pc' + (rows ? '' : ' no') + '">' + (rows ? fmtN(rows.length) + ' ชิ้น' : PST.lots ? 'ไม่มีรายชิ้น' : '') + '</span></div>';
   });
-  if (list.length > PST_PKLIM) h += '<div class="pst-pkmore">แสดง ' + fmtN(PST_PKLIM) + ' Lot แรกจาก ' + fmtN(list.length) + ' — พิมพ์เพื่อกรอง</div>';
+  if (list.length > pkLim) h += '<div class="pst-pkmore">แสดง ' + fmtN(pkLim) + ' Lot แรกจาก ' + fmtN(list.length) + ' — พิมพ์เพื่อกรอง' + (lotPkOn() ? ' <button type="button" class="tbtn" data-lpkmore>แสดงเพิ่ม ' + fmtN(Math.min(PST_PKLIM, list.length - pkLim)) + ' Lot</button>' : '') + '</div>';
   return h + '</div></div>';
 }
 function pstRender(keep) {
@@ -3426,7 +3445,7 @@ function pstModeSet(m) {
   L.stMode = m === 'st' ? 'st' : 'list'; try { localStorage.setItem(PST_K, L.stMode); } catch (e) { }
   pstTabs();
   if (view() !== 'lots') return;
-  if (L.stMode === 'st') pstShow(); else { pstHide(); lotSideList(); }   // lots 1.79 แท็บรายการ Lot = แผงตัวกรองเปิดเอง
+  if (L.stMode === 'st') { document.body.classList.remove('lotPkOn'); pstShow(); } else { pstHide(); lotSideList(); lotPkShow(); }   // lots 1.79 แท็บรายการ Lot = แผงตัวกรองเปิดเอง · 1.82 แบบหน้าเลือก Lot
 }
 function pstTabs() {
   document.querySelectorAll('#lotBar [data-lstab]').forEach(function (b) { var on = b.dataset.lstab === L.stMode; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
@@ -3458,13 +3477,13 @@ function lotShowL12() {
   if (!PST.inLots) { L.stMode = PST.entryList ? 'list' : 'st'; PST.entryList = 0; pstTabs(); }
   if (!PST.inLots) pstLdStart();   // lots 1.17: กล่องกำลังโหลด (เฉพาะตอนเพิ่งเข้าหน้า)
   PST.inLots = true;
-  lotShow(); if (L.stMode === 'st') pstShow(); else lotSideList(); /* lots 1.79 */ pstBcLoad();   // lots 1.3 + pstBcLoad (คอลัมน์ Barcode)
+  lotShow(); if (L.stMode === 'st') pstShow(); else { lotSideList(); /* lots 1.79 */ lotPkShow(); /* lots 1.82 */ } pstBcLoad();   // lots 1.3 + pstBcLoad (คอลัมน์ Barcode)
 }
 window.addEventListener('hashchange', function () { setTimeout(function () { if (view() !== 'lots') PST.inLots = false; }, 0); });   // หลัง route() ของ index (view() เปลี่ยนแล้ว)
 document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('[data-ldlist]')) PST.entryList = 1; }, true);   // HOME “ดู/ยกเลิก” Lot ที่ปิดเอง = อยากเห็นตาราง
 /* ข้อมูล data 6 เปลี่ยน / ตัวกรองแถบซ้ายเปลี่ยน → วาดหน้าสถานะใหม่ (รายการให้เลือกใช้ L.shown) */
 var lotRefreshL12 = lotRefresh;
-lotRefresh = function () { pstAug(); /* lots 1.3 */ var r = lotRefreshL12.apply(this, arguments); if (L.stMode === 'st' && document.body.classList.contains('lotStOn')) pstRenderSoon(); return r; };
+lotRefresh = function () { pstAug(); /* lots 1.3 */ var r = lotRefreshL12.apply(this, arguments); if (L.stMode === 'st' && document.body.classList.contains('lotStOn')) pstRenderSoon(); else if (lotPkOn()) lotPkSoon(); /* lots 1.82 */ return r; };
 /* แผงรายละเอียด: ปุ่ม “✅ สถานะ Part ทีละชิ้น” (ใต้ชื่อ) */
 var lotShowDetailL11 = lotShowDetail;
 lotShowDetail = function (key) {
@@ -3905,6 +3924,50 @@ document.addEventListener('click', function (e) {
   var b = e.target.closest && e.target.closest('#lotSideBtn'); if (!b) return;
   e.preventDefault(); lotSideSet(!lotSideOpen(), false);
 }, true);
+/* ───────── lots 1.82: แท็บ 📋 รายการ Lot = แบบหน้าเลือก Lot (ผู้ใช้ 15:27 “หน้ารายการ Lot มันต้องแสดงเหมือนหน้า Lot ของสถานะ Part”) ─────────
+   เดิม: ตาราง data 6 (LOTID · REMARK · STAGE · BU · POOL · ENDDATE · WK · แผน45 · LOTCREATE · TOTALPART · SHELF · BARCODE …)
+   ตอนนี้: body.lotPkOn + วาด pstPickHtml(true) ลง #lotSt (ไม่ติด body.lotStOn = ตัววาดหน้าสถานะไม่ทับ) · ตัวกรองแถบซ้าย / เรียง / CSV ใช้ L.shown เดิม
+     กด Lot (กดทีเดียว) · แสดง N Lot ที่ตรง · ✓ ดู Lot ที่เลือก = ไปแท็บสถานะ (lotPkGo) · ติ๊กหลาย Lot = วาดรายการใหม่
+     ▦ ตาราง data 6 (#lotPkTbl) = สลับกลับตารางเดิม · จำใน sxlocaltrial:furnitech:lotListView */
+var LPK_K = 'sxlocaltrial:furnitech:lotListView';
+L.lpkView = (function () { try { return localStorage.getItem(LPK_K) === 'tbl' ? 'tbl' : 'pk'; } catch (e) { return 'pk'; } })(); L.lpkLim = 0;
+function lotPkOn() { try { return view() === 'lots' && L.stMode === 'list' && L.lpkView !== 'tbl'; } catch (e) { return false; } }
+function lotPkBtn() { var b = $('lotPkTbl'); if (!b) return; var tb = L.lpkView === 'tbl'; b.classList.toggle('on', tb); b.innerHTML = tb ? '☰<span class="lbl"> แบบรายการ</span>' : '▦<span class="lbl"> ตาราง data 6</span>'; b.title = tb ? 'กลับไปรายการแบบหน้าเลือก Lot (สถานะ · ประเภทงาน · รายชิ้น)' : 'ตาราง data 6 เดิม (Bu · Pool · WK · TotalPart · Barcode … · กดแถว = แผงรายละเอียด)'; }
+function lotPkShow() {
+  lotPkBtn(); var on = lotPkOn(); document.body.classList.toggle('lotPkOn', on);
+  var E = $('lotSt'); if (!E) return;
+  if (!on) { if (!document.body.classList.contains('lotStOn')) { E.classList.add('hide'); E.innerHTML = ''; } return; }
+  if (L.sel) { try { lotCloseDetail(); } catch (e) { } }
+  L.stPk.open = false; lotPkRender();
+}
+function lotPkRender() {
+  if (!lotPkOn()) return; var E = $('lotSt'); if (!E) return;
+  var Lr0 = E.querySelector('.pst-pkl'), st = Lr0 ? Lr0.scrollTop : 0, qa = document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('pst-pq');
+  E.classList.remove('hide'); E.innerHTML = pstPickHtml(true);
+  var Lr = E.querySelector('.pst-pkl'); if (Lr && st) Lr.scrollTop = st;
+  if (qa) { var qi = E.querySelector('.pst-pq'); if (qi) { qi.focus(); try { qi.setSelectionRange(qi.value.length, qi.value.length); } catch (e) { } } }
+}
+function lotPkSoon() { clearTimeout(lotPkSoon.t); lotPkSoon.t = setTimeout(lotPkRender, 60); }
+var pstRenderL182 = pstRender;
+pstRender = function () { var r = pstRenderL182.apply(this, arguments); if (lotPkOn() && !document.body.classList.contains('lotStOn')) lotPkSoon(); return r; };
+var pstPickRefreshL182 = pstPickRefresh;
+pstPickRefresh = function () { if (lotPkOn() && !document.body.classList.contains('lotStOn')) { L.lpkLim = 0; lotPkRender(); return; } return pstPickRefreshL182.apply(this, arguments); };
+function lotPkGo() { L.stPk.open = false; L.stPk.multi = false; pstModeSet('st'); }   // ไปแท็บสถานะ Part (Lot ที่เลือก)
+document.addEventListener('click', function (e) {   // ก่อนตัวรับคลิกของหน้าเลือก Lot (capture): ปุ่มที่ต้องไปแท็บสถานะ
+  if (!lotPkOn() || document.body.classList.contains('lotStOn')) return;
+  var b = e.target.closest && e.target.closest('#lotPkTbl'); if (b) return;
+  var m = e.target.closest && e.target.closest('#lotSt [data-lpkmore]'); if (m) { e.preventDefault(); e.stopPropagation(); L.lpkLim = (L.lpkLim || PST_PKLIM) + PST_PKLIM; lotPkRender(); return; }
+  var t = e.target.closest && e.target.closest('#lotSt [data-pstpick],#lotSt [data-pstall],#lotSt [data-pstpk]'); if (!t) return;
+  if (t.dataset.pstpick && L.stPk.multi) return;   // ติ๊กสะสม = ตัวรับเดิม (วาดใหม่ผ่าน pstRender)
+  if (t.dataset.pstpk != null && t.dataset.pstpk !== '0') return;
+  setTimeout(function () { if (L.stMode === 'list' && pstSelRows().length) lotPkGo(); }, 0);   // ตัวรับเดิมเลือก Lot แล้ว → ไปแท็บสถานะ
+}, true);
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('#lotPkTbl'); if (!b) return;
+  e.preventDefault(); L.lpkView = L.lpkView === 'tbl' ? 'pk' : 'tbl'; try { localStorage.setItem(LPK_K, L.lpkView); } catch (x) { }
+  if (L.lpkView === 'tbl') { document.body.classList.remove('lotPkOn'); var E = $('lotSt'); if (E && !document.body.classList.contains('lotStOn')) { E.classList.add('hide'); E.innerHTML = ''; } lotPkBtn(); lotRefresh(false); }
+  else lotPkShow();
+});
 /* lots 1.79 (ผู้ใช้ 13:53 “แถบรายการ Lot ไม่มีตัวกรอง ต้องกลับไปแถบสถานะ”): เข้าแท็บ 📋 รายการ Lot บนคอม = แผงซ้ายเปิด (auto — กลับแท็บสถานะ = lotSideAuto ย่อกลับ) */
 function lotSideList() { try { if (view() === 'lots' && L.stMode === 'list' && lotSideWide() && !lotSideOpen()) lotSideSet(true, true); } catch (e) { } }
 function lotSideAuto() {   // เรียกหลัง pstRender: หน้าเลือก Lot เปิด = แสดงแผง · ปิดแล้ว (แผงเปิดเพราะหน้าเลือก) = ย่อกลับ
