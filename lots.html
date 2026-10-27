@@ -75,6 +75,8 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.65 (2026-10-27 10:48 ผู้ใช้ รูปกล่องสถานะ “ตัดแล้ว 87/141 ชิ้_” วงกลม 61% ทับ: “ขยับเกจไปทางขวาอีกหน่อยครับ ไม่เห็นหน่วย”)
+        UI วงกลม % ในกล่องสถานะ (1.63) ย้ายไปมุมขวาบน (ข้าง ▾) ลอยทับมุม ไม่กินที่บรรทัด → “ตัดแล้ว … ชิ้น” ใช้ความกว้างเต็มกล่อง · วงเล็กลง 44 → 36px
     1.64 (2026-10-27 10:46 ผู้ใช้ รูปคอลัมน์ State: “เรากระชับช่อง State ให้แคบลงอีกได้ไหมครับ จะได้แสดงข้อมูลด้านขวาได้มากขึ้น”)
         UI ช่อง State 9 ขั้นแคบลง (เดิม min 44px + เว้นข้าง 6px ≈ 56px/ช่อง → ≈ 30px/ช่อง · ทั้งกลุ่มแคบลง ~230px) — หัวตัวเล็กลง · Finish = “Fin” · Delivery = “Dlv” (ชี้ = ชื่อเต็ม)
             · ป้ายสี/เคลือบใต้ช่อง Finish ตัวเล็กลง · มือถือ (การ์ด) ไม่เปลี่ยน
@@ -1001,7 +1003,7 @@
   #pstPkPop .pkx-t.mtx tr[data-mtxc]{cursor:pointer} #pstPkPop .pkx-t.mtx tr.on td{background:var(--accent-soft)} #pstPkPop .pkx-t.mtx tr.on td.c{font-weight:700}
   #lotSt .pst-sum[data-pkpon]{outline:2px solid var(--accent);outline-offset:1px} #lotSt th[data-pkpon] .mtxh{background:var(--accent);color:#fff}
   /* lots 1.63 วงกลม % ในกล่องสถานะ */
-  .pst-sum.pst-cur .pst-ring.cur{width:44px;height:44px;margin-left:auto;margin-right:2px} .pst-sum.pst-cur .pst-ring.cur .bg{stroke:rgba(255,255,255,.28)}
+  .pst-sum.pst-cur .pst-ring.cur{position:absolute;right:20px;top:7px;width:36px;height:36px;margin:0}   /* lots 1.65 มุมขวาบน (เดิม 1.63: อยู่ในแถว margin-left:auto 44px → บีบ “ตัดแล้ว … ชิ้น” จนตัดท้าย) */ .pst-sum.pst-cur .pst-ring.cur .bg{stroke:rgba(255,255,255,.28)}
   .pst-sum.pst-cur .pst-ring.cur .fg{stroke:#fff} .pst-sum.pst-cur .pst-ring.cur text{fill:#fff;font-size:9.5px}
   /* lots 1.63 รหัสสี → ชื่อสั้น · หัว Material Code Σ */
   #lotSt .fsk{cursor:pointer;text-decoration:underline dotted var(--ink-faint);text-underline-offset:3px}
@@ -1167,7 +1169,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.64';
+var LOTS_VER = '1.65';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
