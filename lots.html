@@ -75,6 +75,12 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.62 (2026-10-27 10:28 ผู้ใช้ รูปคอลัมน์ Material Code + ป้าย RE-0069-0827-MU19 “🎨 ทำสี · 📑 ปิดผิว”: “1. มีกดแล้ว Sum ให้ดูไหมครับ
+         2. ผมว่า Lot นี้ไม่มีปิดผิว มีแต่ไม้เมลามีน กับงานทำสีปะครับ”)
+        FEAT กด Material Code = กล่อง “สรุปไม้” ของ Lot ที่เลือก: รหัส · ชื่อไม้ · ชิ้น · ตร.ม. (ยาว×กว้าง) + รวม · ไม้ที่กด = แถวเด่น · ปุ่ม “ดูชิ้นของไม้นี้” = กรองคอลัมน์ Material Code
+            · ชี้ (เมาส์) = ชื่อไม้เหมือนเดิม (1.7) · มือถือ แตะ = กล่องสรุป (มีชื่อไม้ในตัว — เดิมแตะ = ชื่อไม้)
+        FIX ป้ายประเภท Lot: ปิดผิว SP302 ไม่นับใบสั่งผลิตที่ทำไม้ 34N (ไม้รองพื้นงานสี) ใน Lot ที่มีงานสี · ชี้ป้ายปิดผิว = เห็นรหัสไม้ของใบสั่งผลิต
+        FIX ป้าย “เมลามีน” ขึ้นคู่กับป้ายอื่นได้ เมื่อมีชิ้นเมลามีน (ผิว …M… ไม่ใช่สี/เคลือบ) — เดิมขึ้นเฉพาะ Lot ที่ไม่มีอย่างอื่น
     1.61 (2026-10-27 10:19 ผู้ใช้ รูปกล่อง “สถานะ: กำลังตัด RE-0069-0827-MU19”: “ดึงเลข SAW มาขึ้นตรง Box ให้ก่อนครับ”)
         FEAT กล่องรายละเอียดสถานะ (กดกล่องสถานะ) + แถว SAW: เลข .saw (Run ล่าสุด — กติกา v1.37 ของ index) · เวลาตัด · แผ่น · กดเลข = คัดลอก
             · Lot มีหลาย Run = บอก “มี n Run ใช้เลขล่าสุด” · ยังไม่มี = “ยังไม่มีเลข .saw (ยังไม่ได้ Optimize Cut Rite)” · ขึ้นทุกสถานะ (กำลังตัด / รอตัด / หลังตัด)
@@ -963,6 +969,10 @@
   #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#e11d48;--st4:#8a5cf5;--st5:#d6409f;--st6:#ef7d22;--st7:#0ea5c6;--st8:#6aa121}   /* lots 1.43 + st2 สี·เคลือบ (ชมพูแดง) — ขั้นหลังจากนั้นเลื่อน 1 สีเดิม · lots 1.56 สลับ st2 ↔ st3 (Drill ขั้นที่ 2 = เหลือง · สี·เคลือบ ขั้นที่ 3 = ชมพูแดง) */
   #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
   #lotSt .cs4{--stc:var(--st4)} #lotSt .cs5{--stc:var(--st5)} #lotSt .cs6{--stc:var(--st6)} #lotSt .cs7{--stc:var(--st7)} #lotSt .cs8{--stc:var(--st8)}   /* lots 1.43 + cs8 */
+  /* lots 1.62 กล่องสรุปไม้ */
+  #ov .box.pkx.mtxb{width:min(560px,100%)} .pkx-t.mtx td.c small{display:block;font-family:var(--font);font-size:11.5px;color:var(--ink-dim);white-space:normal}
+  .pkx-t.mtx tr[data-mtxc]{cursor:pointer} .pkx-t.mtx tr.on td{background:var(--accent-soft)} .pkx-t.mtx tr.on td.c{font-weight:700}
+  .pst-t td.matc[data-mat]{cursor:pointer}
   /* lots 1.60 ผิวบน / ผิวล่าง */
   #lotSt td.sfc{white-space:nowrap} #lotSt td.sfc.raw{color:var(--ink-faint)} #lotSt td.sfc.s34{font-weight:700}
   /* lots 1.57 กล่องห่อรายห้อง (อยู่ใน #ov ของ index — ไม่อยู่ใต้ #lotSt) */
@@ -1117,7 +1127,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.61';
+var LOTS_VER = '1.62';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1740,6 +1750,14 @@ function pstLotPaintN(K) {   // ชิ้นสีของ Lot (pstFinKind) · 
   if (a && a.some(function (p) { return !!pstSurf(p.mat); })) { n = 0; a.forEach(function (p) { if (pstFinKind(p) === 'paint') n++; }); }
   PST_TYP.m.set(K, n); return n;
 }
+var PST_TYM = { v: '', m: new Map() };   // lots 1.62 จำจำนวนชิ้นเมลามีนราย Lot
+function pstLotMelN(K) {   // ชิ้นที่ไม่ใช่สี/เคลือบ และผิวบนหรือล่างเป็นเมลามีน (…M….) · null = ไม่มีรายชิ้น / ไม่มีชิ้นไหนแยกผิวได้
+  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v; if (PST_TYM.v !== v) { PST_TYM.v = v; PST_TYM.m = new Map(); }
+  if (PST_TYM.m.has(K)) return PST_TYM.m.get(K);
+  var a = PST.lots ? PST.lots.get(K) : null, n = null;
+  if (a && a.some(function (p) { return !!pstSurf(p.mat); })) { n = 0; a.forEach(function (p) { var sf = pstSurf(p.mat); if (sf && p.sz !== false && !pstFinKind(p) && (/^[A-Z]\d\dM\d{4}/i.test(sf[0]) || /^[A-Z]\d\dM\d{4}/i.test(sf[1]))) n++; }); }
+  PST_TYM.m.set(K, n); return n;
+}
 var PST_TYC = { v: '', m: new Map() };   // จำจำนวนชิ้นเคลือบจากรหัสไม้ ราย Lot (คิดใหม่เมื่อรายชิ้น / fstyle เปลี่ยน)
 function pstLotMatCoat(K) {
   var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v; if (PST_TYC.v !== v) { PST_TYC.v = v; PST_TYC.m = new Map(); }
@@ -1773,8 +1791,13 @@ function pstLotTypes(x) {
   else if (!F && PST_MC_RE.test(String(id))) out.push({ k: 'coat', g: 1, t: 'เดาจากชื่อ Lot (_MC) — ยังไม่มี FrontStyle ของ Lot นี้' });
   else if (!F && /เคลือบ/.test(rmk)) out.push({ k: 'coat', g: 1, t: 'เดาจาก remark “' + rmk.slice(0, 60) + '” — ไม่มี FrontStyle และไม่พบชิ้นเคลือบจากรหัสไม้' });   // lots 1.47
   try { lm = typeof lamOf === 'function' ? lamOf(id) : null; } catch (e) { lm = null; }
-  if (lm && lm.length) out.push({ k: 'lam', t: 'ไม้ปิดผิวเอง — ใบสั่งผลิต Pool SP302 ' + fmtN(lm.length) + ' ใบ' });
-  if (!out.length && (F || pstLotKnown(id, K))) out.push({ k: 'mel', g: F ? 0 : 1, t: F ? 'ไม่มีชิ้นสี / เคลือบ / ปิดผิว SP302 (FrontStyle ' + fmtN(F.n) + ' ชิ้น)' : 'ไม่มีชิ้นสี / ปิดผิว SP302 — ยังไม่มี FrontStyle ของ Lot นี้ (ยังบอกไม่ได้ว่ามีงานเคลือบไหม)' });
+  /* lots 1.62 ผู้ใช้ 10:28 (RE-0069-0827-MU19 ขึ้น “ปิดผิว”): “ผมว่า Lot นี้ไม่มีปิดผิว มีแต่ไม้เมลามีน กับงานทำสี”
+     เดิม 1.45: มีใบสั่งผลิต SP302 ของ Lot = ปิดผิว · ตอนนี้ Lot ที่มีงานสี: ใบที่ทำไม้ 34N (…M0034… = ไม้รองพื้นทำสี) ไม่นับ — ชี้ป้าย = รหัสไม้ของใบที่นับ */
+  var hasP = out.some(function (o) { return o.k === 'paint'; }), lmN = (lm || []).filter(function (r) { return !(hasP && /M0034/i.test(String(r.item || ''))); });
+  if (lmN.length) { var lmC = []; lmN.forEach(function (r) { var c0 = String(r.item || '?'); if (lmC.indexOf(c0) < 0) lmC.push(c0); }); out.push({ k: 'lam', t: 'ไม้ปิดผิวเอง — ใบสั่งผลิต Pool SP302 ' + fmtN(lmN.length) + ' ใบ · ' + lmC.slice(0, 6).join(', ') + (lmC.length > 6 ? ' …' : '') + (lmN.length < lm.length ? ' (ไม่นับใบไม้ 34N ของงานสี ' + (lm.length - lmN.length) + ' ใบ)' : '') }); }
+  var mlN = pstLotMelN(K);   // lots 1.62 ชิ้นเมลามีน (ผิว …M… ที่ไม่ใช่สี/เคลือบ) · null = แยกผิวไม่ได้ → แบบเดิม
+  if (mlN) out.push({ k: 'mel', t: 'ชิ้นเมลามีน ' + fmtN(mlN) + ' ชิ้น (ผิวบน/ล่างเป็นเมลามีน · ไม่ใช่สี / เคลือบ)' });
+  if (!out.length && mlN == null && (F || pstLotKnown(id, K))) out.push({ k: 'mel', g: F ? 0 : 1, t: F ? 'ไม่มีชิ้นสี / เคลือบ / ปิดผิว SP302 (FrontStyle ' + fmtN(F.n) + ' ชิ้น)' : 'ไม่มีชิ้นสี / ปิดผิว SP302 — ยังไม่มี FrontStyle ของ Lot นี้ (ยังบอกไม่ได้ว่ามีงานเคลือบไหม)' });
   return out;
 }
 function pstLotTypeTxt(x) { return pstLotTypes(x).map(function (o) { return PST_TYQ[o.k]; }).join(' '); }
@@ -2249,7 +2272,7 @@ var PST_COLS = [
   { k: 'sfb', h: 'ผิวล่าง', c: 'mono sfc', f: function (v, p) { var s = pstSurf(p.mat); return s ? s[1] : ''; }, t: 'ผิวล่างของชิ้น — ตัวที่ 14–22 ของ Material Code (lots 1.60) · xxxxxxxxN = ไม่มีผิว (ไม้ดิบ) · 34N (N01M0034N) = ไม้ทำสี' },
   { k: 'pack', h: 'Code Pack', c: 'mono' },
   { k: 'cpt', h: 'Code Part', c: 'mono cpt', ex: 1, cp: 1, t: 'รหัสบนสติกเกอร์ที่ยิง (กด = คัดลอก)' },
-  { k: 'mat', h: 'Material Code', c: 'mono matc', t: 'ชี้ (มือถือ = แตะ) = ชื่อไม้' },   // lots 1.7: กล่องชื่อไม้
+  { k: 'mat', h: 'Material Code', c: 'mono matc', t: 'ชี้ = ชื่อไม้ · กด (มือถือ = แตะ) = สรุปไม้ของ Lot (ชิ้น · ตร.ม.) — lots 1.62' },   // lots 1.7: กล่องชื่อไม้
   { k: 'l', h: 'Finish Length', c: 'num mono', num: 1, f: PST_DEC2 },
   { k: 'w', h: 'Finish Width', c: 'num mono', num: 1, f: PST_DEC2 },
   { k: 'psq', h: 'Part Seq Total', c: 'mono', ex: 1 },
@@ -2603,7 +2626,42 @@ document.addEventListener('mouseover', function (e) { var el = e.target.closest 
 document.addEventListener('scroll', function () { if (STG_TIP.at) stgTipHide(); }, true);
 window.addEventListener('hashchange', stgTipHide);
 document.addEventListener('mouseover', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { if (td !== PST_TIP.td) pstTipShow(td); } else if (PST_TIP.td) pstTipHide(); });
-document.addEventListener('click', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { if (PST_TIP.td === td && PST_TIP.el && PST_TIP.el.style.display === 'block') pstTipHide(); else pstTipShow(td); } else if (PST_TIP.td) pstTipHide(); });
+document.addEventListener('click', function (e) { var td = e.target.closest && e.target.closest('#lotSt td[data-mat]'); if (td) { pstTipHide(); pstMatBox(td.dataset.mat); /* lots 1.62 กด = สรุปไม้ (เดิม 1.7: กด/แตะ = เปิดปิดกล่องชื่อไม้) */ } else if (PST_TIP.td) pstTipHide(); });
+/* ───────── lots 1.62: กด Material Code = กล่องสรุปไม้ของ Lot ที่เลือก (ผู้ใช้ 10:28 “มีกดแล้ว Sum ให้ดูไหมครับ”) ─────────
+   รหัสไม้ · ชื่อ (items/info.csv · rxName) · ชิ้น · ตร.ม. (Finish Length × Width ÷ 1,000,000) · รวม · ห่ออุปกรณ์ (ไม่มีขนาด) นับชิ้น ไม่นับพื้นที่ */
+function pstMatSum() {
+  var m = new Map(), T = { n: 0, a: 0 };
+  pstSelRows().forEach(function (x) { (pstRowsOf(x) || []).forEach(function (p) {
+    var c = String(p.mat || '').trim() || '(ไม่มีรหัสไม้)', o = m.get(c); if (!o) m.set(c, o = { code: c, n: 0, a: 0 });
+    var a = (+p.l || 0) * (+p.w || 0) / 1e6; o.n++; T.n++; if (a > 0) { o.a += a; T.a += a; } }); });
+  return { list: Array.from(m.values()).sort(function (a, b) { return b.a - a.a || b.n - a.n; }), T: T };
+}
+function pstMatBox(code) {
+  if (typeof openBox !== 'function') return;
+  try { rxInfoLoad(); } catch (e) { }
+  var S = pstMatSum(), nm = pstSelRows().map(function (x) { return x.id; }).join(' · '), f2 = function (v) { return v.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  var row = function (o) { var n = o.code.charAt(0) === '(' ? null : rxName(o.code) || {};
+    return '<tr class="' + (o.code === code ? 'on' : '') + '" data-mtxc="' + esc(o.code) + '"><td class="c">' + esc(o.code) + '<small>' + esc(n ? n.name || '' : '') + '</small></td><td class="n">' + fmtN(o.n) + '</td><td class="n">' + (o.a > 0 ? f2(o.a) : '–') + '</td></tr>'; };
+  openBox('<div class="pkx-hd"><h2>🪵 สรุปไม้<small title="' + esc(nm) + '">' + esc(nm) + '</small></h2><button type="button" class="pkx-x" data-mtxx="1" aria-label="ปิด">✕</button></div>'
+    + '<div class="pkx-bd"><div class="pkx-tot"><span><b>' + fmtN(S.list.length) + '</b>รหัสไม้</span><span><b>' + fmtN(S.T.n) + '</b>ชิ้น</span><span><b>' + f2(S.T.a) + '</b>ตร.ม.</span></div>'
+    + '<table class="pkx-t mtx"><thead><tr><th>Material Code · ชื่อไม้</th><th class="n">ชิ้น</th><th class="n">ตร.ม.</th></tr></thead><tbody>' + S.list.map(row).join('')
+    + '<tr class="sum"><td>รวม</td><td class="n">' + fmtN(S.T.n) + '</td><td class="n">' + f2(S.T.a) + '</td></tr></tbody></table></div>'
+    + '<div class="pkx-ft"><span class="lg">ตร.ม. = Finish Length × Width ของทุกชิ้น · กดแถว = เลือกไม้</span><button type="button" class="tbtn" data-mtxf="1">▤ ดูชิ้นของไม้นี้ในตาราง</button></div>',
+  function (box, close) {
+    box.classList.add('pkx', 'mtxb'); var cur = code;
+    var on = box.querySelector('tr.on'); if (on) try { on.scrollIntoView({ block: 'center' }); } catch (e) { }
+    var esc0 = function (e) { if (!document.contains(box)) { document.removeEventListener('keydown', esc0, true); return; } if (e.key === 'Escape') { e.stopPropagation(); fin(); } };
+    var fin = function () { document.removeEventListener('keydown', esc0, true); close(); };
+    document.addEventListener('keydown', esc0, true);
+    if (!RX.info) { try { Promise.resolve(rxInfoLoad()).then(function () { if (document.contains(box)) box.querySelectorAll('tr[data-mtxc]').forEach(function (tr) { var n = rxName(tr.dataset.mtxc) || {}, sm = tr.querySelector('small'); if (sm && n.name) sm.textContent = n.name; }); }); } catch (e) { } }
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-mtxx],[data-mtxf],tr[data-mtxc]'); if (!b) return; e.preventDefault();
+      if (b.dataset.mtxc) { cur = b.dataset.mtxc; box.querySelectorAll('tr[data-mtxc]').forEach(function (tr) { tr.classList.toggle('on', tr === b); }); return; }
+      fin();
+      if (b.dataset.mtxf && cur && cur.charAt(0) !== '(') { L.stCF = { mat: cur }; L.stLim = 0; if (L.stMv === 'g') L.stMv = 'l'; pstRender('x'); }
+    });
+  });
+}
 document.addEventListener('scroll', function () { if (PST_TIP.td) pstTipHide(); }, true);
 window.addEventListener('hashchange', pstTipHide);
 /* lots 1.5: คำค้นในหน้าสถานะ → Lot อื่นที่มีรหัสตรง (ชื่อ Lot · Code Part · Code Pack · Barcode — ไม่เทียบชื่อ Part/ตู้ เพราะตรงเกือบทุก Lot) */
@@ -3437,7 +3495,7 @@ sxmRegister('lots', {
   init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
-  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstPkData: pstPkData, pstPkBox: pstPkBox /* lots 1.57 */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
+  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstPkData: pstPkData, pstPkBox: pstPkBox /* lots 1.57 */, pstLamLoad: function () { return typeof lamLoad === 'function' ? lamLoad() : null; } /* lots 1.62 ไว้ทดสอบ */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
 });
 </script>
 <script>
