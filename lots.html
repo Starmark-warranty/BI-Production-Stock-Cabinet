@@ -75,6 +75,14 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.60 (2026-10-27 10:10 ผู้ใช้ รูป RE-0069-0827-MU19 คอลัมน์ Front Style: “เราดึงข้อมูลผิวบนล่างของชิ้นงานมาได้ไหมครับ เพราะว่าชิ้นที่ทำสี น่าจะไปดูที่ Frontstyle ไม่ได้ครับ
+         บางไม้มันออก Frontstyle ได้ก็จริง แต่ชิ้นนั้นมันไม่ได้ทำสีครับ งานเคลือบนะถูกต้องแล้ว แต่งานสีจะดูที่ผิวบนล่างของชิ้นนั้น ๆ เพิ่มอีก 2 คอลัมน์ต่อหลัง Frontstyle”)
+        FEAT คอลัมน์ ผิวบน · ผิวล่าง ต่อหลัง Front Style — แยกจาก Material Code (Cut Rite: ไม้ 4 ตัว + ผิวบน 9 ตัว + ผิวล่าง 9 ตัว เช่น MD19 · N01M0034N · N01M0034N)
+            · xxxxxxxxN = ไม่มีผิว (ไม้ดิบ · ตัวจาง) · ผิว 34N (…M0034…) = ตัวหนา · กรองคอลัมน์ได้
+        FIX งานสี = ผิวบน/ล่างเป็น 34N (N01M0034N) + (Lot MU/HG หรือ FrontStyle N00S) — เดิม FrontStyle มี N00S = สีเลย
+            → RE-0069-0827-MU19 ชิ้นไม้ดิบสองด้าน (Inner Box MD25xxxxxxxxNxxxxxxxxN …) ที่ FrontStyle Color:N00S0047N ไม่นับเป็นสีแล้ว (97 ชิ้น) · ชิ้นผิว 34N 76 ชิ้น = สี
+            ข้อมูลจริง (lotcsv.csv 26/10 · 138,011 ชิ้น): เปลี่ยนจากสี → ไม่มีงาน 275 ชิ้น (ไม้ดิบสองด้าน) · สีเหมือนเดิม 5,820 · เคลือบเหมือนเดิม 2,861
+            · ป้ายประเภท Lot “ทำสี” นับจากรายชิ้นด้วยกติกาเดียวกัน (ไม่มีรายชิ้น / รหัสไม้ไม่มีผิว = แบบเดิม FrontStyle N00S / ชื่อ MU HG / BOM)
     1.59 (2026-10-27 10:00 ผู้ใช้ รูปแผงซ้าย STAGE · สถานะ · ENDDATE · BU: “แผงซ้าย ทำปุ่มย่อให้ทีครับ แล้วก็ เมื่อคนเข้าใหม่ หรือ F5 ให้ปิดไว้ กดเปิดเองทีหลัง หรือ ตอนกดเลือก lot ก็ให้แสดงกลับมาครับ”)
         UX ปุ่ม ☰ หัวแถบบน (ซ้ายสุดก่อนแท็บ) = ย่อ / แสดงแผงซ้าย · เปิดหน้า / F5 = ย่อไว้เสมอ (ไม่จำ)
             · กด “➕ เลือก Lot” = แผงซ้ายกลับมาเอง (ไว้กรอง Lot) — ปิดหน้าเลือกแล้วย่อกลับ (ถ้าแผงเปิดเพราะปุ่มเลือก Lot) · เปิดเองด้วย ☰ = ค้างไว้
@@ -951,6 +959,8 @@
   #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#e11d48;--st4:#8a5cf5;--st5:#d6409f;--st6:#ef7d22;--st7:#0ea5c6;--st8:#6aa121}   /* lots 1.43 + st2 สี·เคลือบ (ชมพูแดง) — ขั้นหลังจากนั้นเลื่อน 1 สีเดิม · lots 1.56 สลับ st2 ↔ st3 (Drill ขั้นที่ 2 = เหลือง · สี·เคลือบ ขั้นที่ 3 = ชมพูแดง) */
   #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
   #lotSt .cs4{--stc:var(--st4)} #lotSt .cs5{--stc:var(--st5)} #lotSt .cs6{--stc:var(--st6)} #lotSt .cs7{--stc:var(--st7)} #lotSt .cs8{--stc:var(--st8)}   /* lots 1.43 + cs8 */
+  /* lots 1.60 ผิวบน / ผิวล่าง */
+  #lotSt td.sfc{white-space:nowrap} #lotSt td.sfc.raw{color:var(--ink-faint)} #lotSt td.sfc.s34{font-weight:700}
   /* lots 1.57 กล่องห่อรายห้อง (อยู่ใน #ov ของ index — ไม่อยู่ใต้ #lotSt) */
   #ov .box.pkx{width:min(780px,100%);padding:0;display:flex;flex-direction:column;overflow:hidden}
   .pkx-hd{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;border-bottom:.5px solid var(--line)}
@@ -1103,7 +1113,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.59';
+var LOTS_VER = '1.60';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1687,11 +1697,20 @@ var PST_FINNM = { paint: 'สี', coat: 'เคลือบ', unk: 'สี/เ�
 function pstPaintName(id) {   // ชื่อ Lot มี MU / HG (กฎ v2.76 ของ index · ⚙ ปิด “งานสีจากชื่อ Lot” ได้)
   try { return typeof pnbName === 'function' ? !!pnbName(id) : /(?:^|[_\-\s])(?:HG|MU)(?![A-Za-z])/i.test(String(id || '')); } catch (e) { return false; }
 }
+/* ───────── lots 1.60: ผิวบน / ผิวล่าง จาก Material Code · งานสีดูที่ผิว ─────────
+   Cut Rite material = ไม้+ความหนา 4 ตัว (MD19 · PB16 · ME15) + ผิวบน 9 ตัว + ผิวล่าง 9 ตัว — N01M0034N = เมลามีน 34N (ไม้ทำสี) · G02M0149Y = เมลามีนลาย · xxxxxxxxN = ไม่มีผิว (ไม้ดิบ)
+   รหัสแบบอื่น (FC05xxxxxxNxxxxxxN · FS00000… · FRAMEALUN… · MDF18W) = ไม่แยก (ช่องว่าง) */
+function pstSurf(mat) { var m = /^([A-Z]{2}\d{2})([A-Z0-9]{9})([A-Z0-9]{9})$/i.exec(String(mat || '').trim()); return m ? [m[2], m[3]] : null; }
+PST_FINRE.surf34 = /^[NG]\d\dM0034/i;
+function pstSurf34(p) { var sf = pstSurf(p && p.mat); return !!sf && (PST_FINRE.surf34.test(sf[0]) || PST_FINRE.surf34.test(sf[1])); }
 function pstFinKind(p) {
   var v = String(p && p.fs || '');
-  if (PST_FINRE.paint.test(v)) return 'paint';
+  /* lots 1.60 ผู้ใช้ 10:10 “งานสีจะดูที่ผิวบนล่างของชิ้นนั้น ๆ … บางไม้มันออก Frontstyle ได้ แต่ชิ้นนั้นมันไม่ได้ทำสี”
+     เดิม 1.45: if (N00S ใน FrontStyle) = สี ก่อนทุกอย่าง · แล้วไม้ 34N (N01M0034 ที่ไหนก็ได้ในรหัส) ใน Lot MU/HG = สี
+     ตอนนี้: ผิวบนหรือผิวล่างเป็น 34N + (Lot MU/HG หรือ FrontStyle N00S) = สี — ไม้ดิบสองด้านที่ FrontStyle N00S (Inner Box MD25xxxxxxxxN…) = ไม่ใช่สี
+       Lot อื่นที่ใช้ 34N แต่ FrontStyle ว่าง (นารากรีฑา · PTY … 37 Lot) = เมลามีนขาวธรรมดา ไม่ใช่สี (เหมือนเดิม) */
+  if (p && pstSurf34(p) && (pstPaintName(p.lot) || PST_FINRE.paint.test(v))) return 'paint';
   if (PST_FINRE.coat.test(v)) return 'coat';
-  if (p && PST_FINRE.mat34.test(String(p.mat || '')) && pstPaintName(p.lot)) return 'paint';   // ไม้ 34N ใน Lot MU / HG
   /* ───────── lots 1.55: รหัสไม้ผิวดิบ 1 ด้าน + เมลามีน = เคลือบ ทุก Lot ─────────
      เดิม 1.47: เฉพาะชิ้นที่ FrontStyle ว่าง ใน Lot ที่ไม่มี FrontStyle สักชิ้น (!pstLotHasFs) — StarSync 1.23 ส่ง FrontStyle ของ Lot จบแล้วมา
        → FOREST-2026-0017 มี FrontStyle แค่ “Color:N01M0029N” บางชิ้น (ไม่มี FrontShape) = ชิ้นเคลือบทั้ง 16 หาย (ผู้ใช้ 09:04 “P11 มันงานเคลือบนะ”)
@@ -1709,6 +1728,14 @@ function pstFinKind(p) {
      Lot ที่มี FrontStyle = ใช้ FrontStyle ตามเดิม (ชิ้นที่ไม่มีค่า = ไม่ต้องทำ) */
 PST_FINRE.matCoat = /^[A-Z]{2}\d\d(?:[NG]\d\dM\d{4}[A-Z]x{8}[A-Z]|x{8}[A-Z][NG]\d\dM\d{4}[A-Z])$/i;
 function pstLotHasFs(lot) { return !!(PST.fsLot && PST.fsLot.get(String(lot || '').toUpperCase())); }
+var PST_TYP = { v: '', m: new Map() };   // lots 1.60 จำจำนวนชิ้นสีราย Lot
+function pstLotPaintN(K) {   // ชิ้นสีของ Lot (pstFinKind) · null = ไม่มีรายชิ้น หรือไม่มีชิ้นไหนแยกผิวได้
+  var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v; if (PST_TYP.v !== v) { PST_TYP.v = v; PST_TYP.m = new Map(); }
+  if (PST_TYP.m.has(K)) return PST_TYP.m.get(K);
+  var a = PST.lots ? PST.lots.get(K) : null, n = null;
+  if (a && a.some(function (p) { return !!pstSurf(p.mat); })) { n = 0; a.forEach(function (p) { if (pstFinKind(p) === 'paint') n++; }); }
+  PST_TYP.m.set(K, n); return n;
+}
 var PST_TYC = { v: '', m: new Map() };   // จำจำนวนชิ้นเคลือบจากรหัสไม้ ราย Lot (คิดใหม่เมื่อรายชิ้น / fstyle เปลี่ยน)
 function pstLotMatCoat(K) {
   var v = PST.iu + ':' + PST.fu + ':' + PST_AX.v; if (PST_TYC.v !== v) { PST_TYC.v = v; PST_TYC.m = new Map(); }
@@ -1731,7 +1758,9 @@ function pstLotTypes(x) {
   var id = x && typeof x === 'object' ? x.id : x; if (id == null) return [];
   var K = String(id).toUpperCase(), F = PST.fsLot ? PST.fsLot.get(K) || null : null, out = [], pt = null, lm = null;
   try { pt = typeof paintOf === 'function' ? paintOf(id) : null; } catch (e) { pt = null; }
-  if (F && F.p) out.push({ k: 'paint', t: 'FrontStyle สี N00S ' + fmtN(F.p) + ' ชิ้น' });
+  var fp = pstLotPaintN(K);   // lots 1.60 ชิ้นสีจากรายชิ้น (ผิว 34N) · null = ไม่มีรายชิ้น / รหัสไม้ไม่มีผิวให้ดู → แบบเดิม
+  if (fp != null) { if (fp) out.push({ k: 'paint', t: 'ผิวบน/ล่าง 34N (ไม้ทำสี) ' + fmtN(fp) + ' ชิ้น' }); }
+  else if (F && F.p) out.push({ k: 'paint', t: 'FrontStyle สี N00S ' + fmtN(F.p) + ' ชิ้น' });
   else if (pt) out.push({ k: 'paint', t: pt.src === 'name' ? 'ชื่อ Lot มี MU / HG (ไม้ทำสี 34N)' : 'BOM มีสี N00S' });
   var mc = pstLotMatCoat(K), rmk = x && typeof x === 'object' ? String(x.remark || '') : '';   // lots 1.47 · 1.55 ทุก Lot (เดิม F ? 0 : …)
   if (F && F.c) out.push({ k: 'coat', t: 'FrontShape ขึ้นต้น M (ฟิล์มบนผิวไม้ดิบ) ' + fmtN(F.c) + ' ชิ้น' + (mc ? ' + รหัสไม้ผิวดิบ 1 ด้าน (FrontStyle ไม่บอก) ' + fmtN(mc) + ' ชิ้น' : '') });
@@ -2190,7 +2219,7 @@ function pstCell(q, S0) {   // lots 1.4: + stk (ติดซ้ายตอน�
 var pstCellL143 = pstCell;
 pstCell = function (q, S0) {
   var h = pstCellL143(q, S0);
-  if (S0.k === 'fin') { if (q.nc) h = h.replace('ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || ''), q.fs ? esc('FrontStyle ' + q.fs + ' — ไม่ใช่งานสี (N00S) / เคลือบ (FrontShape M…) = ไม่ต้อง') /* lots 1.45 */ : PST.fsm ? 'ไม่มี FrontStyle — ไม่ต้องทำสี/เคลือบ' : 'ยังไม่มี lots/fstyle.csv (StarSync v1.22)');
+  if (S0.k === 'fin') { if (q.nc) h = h.replace('ห่ออุปกรณ์ / ไม่มีขนาด — ไม่ต้อง' + esc(S0.th || ''), q.fs ? esc('FrontStyle ' + q.fs + ' — ไม่ใช่งานสี (ผิวบน/ล่าง 34N) / เคลือบ (FrontShape M… · ผิวดิบ 1 ด้าน) = ไม่ต้อง') /* lots 1.45 · 1.60 สีดูผิว */ : PST.fsm ? 'ไม่ใช่งานสี (ผิว 34N) / เคลือบ — ไม่ต้องทำสี/เคลือบ' /* lots 1.60 (เดิม: ไม่มี FrontStyle — …) */ : 'ยังไม่มี lots/fstyle.csv (StarSync v1.22)');
     else if (q.fk) h = h.replace(/<\/td>$/, '<small class="fk ' + q.fk + '">' + PST_FINNM[q.fk] + '</small></td>'); }
   return h;
 };
@@ -2212,6 +2241,8 @@ var PST_COLS = [
   { k: 'ipt', h: 'Item Part', c: 'mono', ex: 1 },
   { k: 'nm', h: 'Part Name', c: 'pn' },
   { k: 'fs', h: 'Front Style', c: 'fsc', ex: 1, t: 'FrontStyle จาก CSV ราย Lot ของ Cut Rite\\AX (StarSync v1.22 · lots/fstyle.csv · จับคู่ด้วย Barcode) — ป้าย สี / เคลือบ = ชนิดที่ใช้กับขั้น สี·เคลือบ' },   // lots 1.43
+  { k: 'sft', h: 'ผิวบน', c: 'mono sfc', f: function (v, p) { var s = pstSurf(p.mat); return s ? s[0] : ''; }, t: 'ผิวบนของชิ้น — ตัวที่ 5–13 ของ Material Code (lots 1.60) · xxxxxxxxN = ไม่มีผิว (ไม้ดิบ) · 34N (N01M0034N) = ไม้ทำสี' },   // lots 1.60 ผู้ใช้ 10:10
+  { k: 'sfb', h: 'ผิวล่าง', c: 'mono sfc', f: function (v, p) { var s = pstSurf(p.mat); return s ? s[1] : ''; }, t: 'ผิวล่างของชิ้น — ตัวที่ 14–22 ของ Material Code (lots 1.60) · xxxxxxxxN = ไม่มีผิว (ไม้ดิบ) · 34N (N01M0034N) = ไม้ทำสี' },
   { k: 'pack', h: 'Code Pack', c: 'mono' },
   { k: 'cpt', h: 'Code Part', c: 'mono cpt', ex: 1, cp: 1, t: 'รหัสบนสติกเกอร์ที่ยิง (กด = คัดลอก)' },
   { k: 'mat', h: 'Material Code', c: 'mono matc', t: 'ชี้ (มือถือ = แตะ) = ชื่อไม้' },   // lots 1.7: กล่องชื่อไม้
@@ -2225,7 +2256,8 @@ var PST_COLS = [
   { k: 'bc1', h: 'Barcode', c: 'mono dim', t: 'Barcode 1 ใน AX (ไม่อยู่ในหน้า AX progress — เก็บไว้ท้ายสุด)' }];
 function pstTd(c, p) {
   var v = p[c.k]; if (c.f) v = c.f(v, p); v = v == null ? '' : String(v);
-  if (c.k === 'fs') { var fk0 = pstFinKind(p); return '<td class="fsc"' + (fk0 ? ' title="' + esc('ชิ้นงาน' + (fk0 === 'paint' ? 'ทำสี' : 'เคลือบ') + (v ? '' : ' — ไม่มี FrontStyle ดูจากรหัสไม้ ' + (p.mat || ''))) + '"' : '') + '>' + esc(v) + '</td>'; }   // lots 1.43 · 1.50 ผู้ใช้ 07:51 “ไม่เอาคำว่าเคลือบ ข้อมูลของ Part นั้น” = ค่าอย่างเดียว (เดิมต่อท้ายป้าย pst-fk สี / เคลือบ) · ชนิดอยู่ที่ title
+  if (c.k === 'fs') { var fk0 = pstFinKind(p); return '<td class="fsc"' + (fk0 ? ' title="' + esc('ชิ้นงาน' + (fk0 === 'paint' ? 'ทำสี — ผิว 34N (ดูช่องผิวบน/ล่าง)' /* lots 1.60 */ : 'เคลือบ') + (v || fk0 === 'paint' ? '' : ' — ไม่มี FrontStyle ดูจากรหัสไม้ ' + (p.mat || ''))) + '"' : '') + '>' + esc(v) + '</td>'; }
+  if (c.k === 'sft' || c.k === 'sfb') { var raw = /^x{8}/i.test(v), s34 = PST_FINRE.surf34.test(v); return '<td class="mono sfc' + (raw ? ' raw' : '') + (s34 ? ' s34' : '') + '"' + (raw ? ' title="ไม่มีผิว (ไม้ดิบ)"' : s34 ? ' title="ผิว 34N — ไม้ทำสี"' : '') + '>' + esc(v) + '</td>'; }   // lots 1.60   // lots 1.43 · 1.50 ผู้ใช้ 07:51 “ไม่เอาคำว่าเคลือบ ข้อมูลของ Part นั้น” = ค่าอย่างเดียว (เดิมต่อท้ายป้าย pst-fk สี / เคลือบ) · ชนิดอยู่ที่ title
   if (c.k === 'dly') {   // lots 1.10: Delay No 0 = ปกติ · ≠ 0 = ขาดส่ง (ผู้ใช้ 10:58)
     var dv = pstDly(p);
     if (dv) return '<td class="num dly" title="Delay No ' + esc(dv) + ' = มีขาดส่ง"><span class="pst-dl">ขาดส่ง' + (dv !== '1' ? ' ' + esc(dv) : '') + '</span></td>';
