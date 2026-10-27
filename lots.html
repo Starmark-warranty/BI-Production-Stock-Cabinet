@@ -75,6 +75,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.74 (2026-10-27 13:03 ผู้ใช้ รูปกล่องรหัสผิว N01M0029N ขึ้น “PP34 · จาก MD09N01M0029NG03P0004Y (MDF 19 mm. ปิดผิว 1 หน้า PVC PP34 ลายไม้ / เมลามีน 1 หน้า MK630N (Pearl))”: “อันนี้มัน MK630 ครับ”)
+        FIX ชื่อรหัสผิวเลือกส่วนของชื่อไม้ตามชนิดผิว (ตัวที่ 4 ของรหัส) ไม่ใช่ตามตำแหน่งอย่างเดียว — ชื่อไม้บางตัวเรียงหน้าไม่ตรงกับรหัส
+            (รหัสหน้าบน N01M0029N = เมลามีน แต่ชื่อขึ้นต้นด้วย PVC PP34) · ลองส่วนตามตำแหน่งก่อน ไม่เข้าชนิดค่อยลองส่วนอื่น · คั่นด้วย “/” (ไม่ต้องมีเว้นวรรค)
+        FEAT ผิวเมลามีน (M) = รหัสสีเมลามีนในชื่อหลังคำ “เมลามีน” — MK630N · BT4 · MD291 · MFI599 · 073 … (เดิมหา PP/PT ทุกชนิด → ได้ PP ของอีกหน้า)
+        FIX หลายไม้มีผิวนี้ = ใช้ชื่อที่เจอบ่อยสุด (เดิม = ไม้ตัวแรกที่เจอ)
     1.73 (2026-10-27 11:59 ผู้ใช้ รูปกล่องสถานะ FOREST-2026-0017 ช่อง Paint/Membrane “–” + Excel ของ Lot: “lot ของ 0017 น่าจะมีปัญหา … น่าจะต้องดูจาก Excel ด้วย”)
         FIX FrontStyle / ผิวบน-ล่าง จับคู่ชิ้นด้วย Code Part ได้ด้วย (เดิมจับด้วย Barcode 1 ของ AX อย่างเดียว)
             · 0017 ใน AX มี Barcode 1 แค่ 45/167 ชิ้น (CSV ของ Cut Rite มีแค่ Barcode2 หรือไม่มีเลย) → บาน/หน้าลิ้นชักเคลือบ 16 ชิ้นจับไม่ได้
@@ -1214,7 +1219,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.73';
+var LOTS_VER = '1.74';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2863,20 +2868,35 @@ function pstClrIdx() {
   try { if (B.rmNames && B.rmNames.forEach) B.rmNames.forEach(function (it, code) { if (it) each(code, [it.name]); }); } catch (e) { }
   PST_CLRIX.k = k; PST_CLRIX.m = m; PST_CLRC.m = new Map(); return m;
 }
+var PST_CLR_KW = /HPL|PVC|PET|P[PT]\s*-?\d|เมลามีน|melamine|ปิดผิว|กระดาษ|paper|foil|\b(?:MU|HG)\s*\d|TOA/i;   // lots 1.74 ส่วนของชื่อไม้ที่บอกผิว
 function pstClrInfo(code) {   // → { sh: ชื่อสั้น, sub: บรรทัดรอง, name: ชื่อที่เจอ, from: รหัสที่เจอชื่อ } · null = ไม่เจอ
   var C = String(code || '').toUpperCase(); if (!C || !pstClrLoaded()) return null;
   var ix = pstClrIdx(); if (PST_CLRC.k !== PST_CLRIX.k) { PST_CLRC.k = PST_CLRIX.k; PST_CLRC.m = new Map(); }
   if (PST_CLRC.m.has(C)) return PST_CLRC.m.get(C);
   var paint = /^N00S/.test(C), r = null;
   /* lots 1.72 ชื่อไม้แผ่น “… หน้าบน / หน้าล่าง” → ส่วนของหน้าที่รหัสอยู่ (face) · ชนิดตามตัวที่ 4: S สี (MU/HG) · H HPL · อื่น ๆ PP/PT */
+  /* ───────── lots 1.74: เลือกส่วนของชื่อตามชนิดผิว (ผู้ใช้ 13:03 N01M0029N ขึ้น PP34: “อันนี้มัน MK630 ครับ”) ─────────
+     เดิม 1.72: เอาส่วนตามตำแหน่ง (หน้าบน = ส่วนแรก) แล้วหา PP/PT ทุกชนิดที่ไม่ใช่ S / H — MD09N01M0029NG03P0004Y ชื่อเรียง “PVC PP34 … / เมลามีน 1 หน้า MK630N”
+       (สลับกับรหัส) → ผิวเมลามีน N01M0029N ได้ PP34 ของอีกหน้า
+     ตอนนี้: ลองส่วนตามตำแหน่งก่อน ไม่เข้าชนิดของรหัสค่อยลองส่วนอื่น (เฉพาะเมื่ออีกหน้าเป็นผิวคนละชนิด — ชนิดเดียวกัน เช่น HPL / HPL 22381 = ส่วนอื่นเป็นของอีกหน้า) · M (เมลามีน) = รหัสสีหลังคำ “เมลามีน” (pstClrMel) · คั่นด้วย “/” ไม่ต้องมีเว้นวรรค */
+  var pick = function (seg) {
+    if (paint) return pstClrPaint(C, seg);
+    if (C.charAt(3) === 'H') { var h = /\bHPL\b(.*)$/i.exec(seg), hc = h && /(?:^|[^A-Za-z0-9])([A-Z]{0,3}\d{3,6}(?:-?[A-Z]{1,3})?)(?![A-Za-z0-9])/i.exec(h[1]); return hc ? ['HPL ' + hc[1].replace('-', '').toUpperCase(), ''] : null; }   // 1.74 + ตัวอักษรนำหน้า/ท้าย (CR7408NM · D421-M · KASHMIR DM1937 · 4104-EM)
+    if (C.charAt(3) === 'M') return pstClrMel(seg);
+    if (C.charAt(3) !== 'P') return null;   // 1.74 PP/PT เฉพาะผิว P (PVC/PET) — กระดาษ (F) ฯลฯ ไม่เอา PP ของอีกหน้า
+    var m = /\b(P[PT])\s*-?\s*(\d{1,3}[A-Z]?)\b/i.exec(seg); return m ? [(m[1] + m[2]).toUpperCase(), ''] : null; };
   var tryN = function (nm, from, face) { nm = String(nm || '').trim(); if (!nm) return null;
-    var seg = nm; if (face != null) { var sg = nm.split(/\s+\/\s+/); if (sg.length >= 2) seg = sg[Math.min(face, sg.length - 1)]; }
-    if (paint) { var p = pstClrPaint(C, seg); return p ? { sh: p[0], sub: p[1], name: nm, from: from } : null; }
-    if (C.charAt(3) === 'H') { var h = /\bHPL\s*-?\s*([0-9]{3,6}[A-Z]{0,3})\b/i.exec(seg); return h ? { sh: 'HPL ' + h[1].toUpperCase(), sub: '', name: nm, from: from } : null; }
-    var m = /\b(P[PT])\s*-?\s*(\d{1,3}[A-Z]?)\b/i.exec(seg); return m ? { sh: (m[1] + m[2]).toUpperCase(), sub: '', name: nm, from: from } : null; };
+    var sg = face != null ? nm.split(/\s*\/\s*/).filter(function (x) { return PST_CLR_KW.test(x); }) : [], segs = [nm];   // ส่วนที่ไม่มีคำบอกผิว (“PB 16 mm.” · “เปลือย”) = หัวชื่อ ไม่นับ
+    if (sg.length >= 2) { var f0 = Math.min(face, sg.length - 1), bx = /^[A-Z]{2}\d\d([A-Z0-9]{9})([A-Z0-9]{9})$/i.exec(String(from || '')), ot = bx ? String(bx[face ? 1 : 2]).charAt(3).toUpperCase() : '';
+      segs = [sg[f0]]; if (ot !== C.charAt(3)) segs = segs.concat(sg.filter(function (x, i) { return i !== f0; })); }   // อีกหน้าเป็นผิวชนิดเดียวกัน (HPL / HPL) = ส่วนอื่นเป็นของอีกหน้า → ไม่ลอง
+    for (var i = 0; i < segs.length; i++) { var x = pick(segs[i]); if (x) return { sh: x[0], sub: x[1] || '', name: nm, from: from }; }
+    return null; };
   var n0 = (rxName(C) || {}).name, it0 = S.byCode && S.byCode.get ? S.byCode.get(C) : null;
   [n0, it0 && it0.nameTh, it0 && it0.name].some(function (nm) { return (r = tryN(nm, C)); });
-  if (!r) [ix.get('P:' + C.slice(0, 8)), ix.get('B:' + C)].some(function (L0) { return (L0 || []).some(function (e) { return e.n.some(function (nm) { return (r = tryN(nm, e.c, e.f)); }); }); });   // lots 1.72 + หน้า
+  if (!r) [ix.get('P:' + C.slice(0, 8)), ix.get('B:' + C)].some(function (L0) {   // lots 1.72 + หน้า · 1.74 หลายตัว = ชื่อที่เจอบ่อยสุด (เดิม = ตัวแรก · MK630 / MK630N / MK63N ปนกัน)
+    var cnt = new Map(), best = null;
+    (L0 || []).forEach(function (e) { var x = null; e.n.some(function (nm) { return (x = tryN(nm, e.c, e.f)); }); if (!x) return; var c = (cnt.get(x.sh) || 0) + 1; cnt.set(x.sh, c); if (!best || c > cnt.get(best.sh)) best = x; });
+    return (r = best); });
   if (!r && n0) r = { sh: pstClrShort(n0), sub: '', name: n0, from: C };   // มีชื่อตรงตัวแต่ไม่มี PP/PT/MU = ชื่อเต็ม (TOA …)
   PST_CLRC.m.set(C, r); return r;
 }
@@ -2892,6 +2912,15 @@ function pstClrPaint(code, name) {
   var m = /\b(MU|HG)\s*-?\s*(\d{1,4}[A-Z]?)\b/i.exec(name); if (!m) return null;
   var c = /เทียบสี\s*:?\s*([^\s,()\/]+)/.exec(name), br = /\bTOA\b/i.test(name) ? 'TOA' : '';
   return [(m[1] + m[2]).toUpperCase(), [c ? 'เทียบสี ' + c[1] : '', br].filter(Boolean).join(' · ')];
+}
+/* lots 1.74 ส่วนของชื่อไม้ที่เป็นเมลามีน → [รหัสสีเมลามีน, ''] · ไม่มีคำ “เมลามีน” = null
+   ชื่อจริง (items/info.csv): “เมลามีน 2 หน้า MK630N White (Pearl)” · “BT4 Wood Oak” · “MD291 …” · “MFI599” · “AS6(R9)” · “สีขาว MK630” · “073 Sandstone”
+   = คำแรกหลัง “เมลามีน (n หน้า)” ที่มีทั้งตัวอักษรและตัวเลข · ไม่มี = ตัวเลขล้วน (073) */
+function pstClrMel(seg) {
+  seg = String(seg || ''); var k = /เมลามีน|melamine/i.exec(seg); if (!k) return null;
+  var t = seg.slice(k.index + k[0].length).replace(/^[\s,.]*\d\s*หน้า/, '');
+  var m = /(?:^|[^A-Za-z0-9])((?=[A-Z0-9]*\d)(?=[A-Z0-9]*[A-Z])[A-Z0-9]{2,8})(?![A-Za-z0-9])/.exec(t) || /(?:^|[^A-Za-z0-9])(\d{2,4})(?![A-Za-z0-9])/.exec(t);
+  return m ? [m[1], ''] : null;
 }
 function pstClrShort(name) {
   name = String(name || '').trim(); if (!name) return '';
@@ -3800,7 +3829,7 @@ sxmRegister('lots', {
   init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
-  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstPkData: pstPkData, pstPkBox: pstPkBox /* lots 1.57 */, pstLamLoad: function () { return typeof lamLoad === 'function' ? lamLoad() : null; } /* lots 1.62 ไว้ทดสอบ */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
+  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstPkData: pstPkData, pstPkBox: pstPkBox /* lots 1.57 */, pstLamLoad: function () { return typeof lamLoad === 'function' ? lamLoad() : null; } /* lots 1.62 ไว้ทดสอบ */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstClrInfo: pstClrInfo, pstClrMel: pstClrMel /* lots 1.74 ไว้ทดสอบ */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
 });
 </script>
 <script>
