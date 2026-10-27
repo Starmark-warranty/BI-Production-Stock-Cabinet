@@ -75,6 +75,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.84 (2026-10-27 16:59 ผู้ใช้ รูป RE-0069-0015_MU181 “⚠ ขาดส่ง 2 ชิ้น” แต่ชิ้นนั้น Pick ✓ แล้ว: “ตัวขาดส่ง ถ้า Pick แล้ว แสดงว่าไม่มีขาดส่งแล้ว”)
+        FIX ขาดส่ง = Delay No ≠ 0 และยังไม่ผ่าน Pick (เดิม = Delay No ≠ 0 อย่างเดียว · AX ไม่ล้างค่า Delay No ตอนของมาครบ)
+            · ผ่าน Pick / คลัง / จัดส่ง / หน้างาน แล้ว (AX · ยิง · ADMIN แก้) = ไม่นับขาดส่ง: กล่อง ⚠ ขาดส่ง · ป้ายแดงช่อง Delay No · ⚠ ในป้าย State · ตัวกรอง “ขาดส่ง”
+            · ช่อง Delay No ของชิ้นที่ Pick แล้ว = ตัวเลขจาง (ชี้ = “Pick แล้ว = ไม่ขาดส่งแล้ว”)
     1.83 (2026-10-27 15:37 ผู้ใช้ รูปเกจ Edge 588/602 · Drill 693/734 + แท็บ Edge Banding / Drill: “สถานะเจาะกับปิดขอบ ไปเอาข้อมูลจริงจากที่นั่นได้เลย จะรู้เลยปิดขอบกี่ชิ้น เจาะกี่ชิ้น · ของ Lot นั้น ๆ”)
         FIX ขั้น Edge / Drill นับเฉพาะชิ้นที่ต้องทำจริง (เดิม = ทุกชิ้นที่มีขนาด)
             · Edge = ชิ้นที่มีขอบใน CSV ราย Lot ของ Cut Rite (lots/lotcsv.csv ช่อง ef ≠ 0 — ตัวเดียวกับแท็บ Edge Banding) · ชิ้นสี/เคลือบยังไม่ปิดขอบเหมือนเดิม
@@ -1280,7 +1284,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.83';
+var LOTS_VER = '1.84';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2650,6 +2654,7 @@ function pstTd(c, p) {
   if (c.k === 'dly') {   // lots 1.10: Delay No 0 = ปกติ · ≠ 0 = ขาดส่ง (ผู้ใช้ 10:58)
     var dv = pstDly(p);
     if (dv) return '<td class="num dly" title="Delay No ' + esc(dv) + ' = มีขาดส่ง"><span class="pst-dl">ขาดส่ง' + (dv !== '1' ? ' ' + esc(dv) : '') + '</span></td>';
+    if (pstDlyRaw(p)) return '<td class="num mono dim" title="' + esc('Delay No ' + v + ' ใน AX — ผ่าน Pick แล้ว = ไม่ขาดส่งแล้ว') + '">' + esc(v) + '</td>';   // lots 1.84
     return '<td class="num mono dim" title="0 = ปกติ">' + esc(v) + '</td>';
   }
   if (c.k === 'cab' && PST.an) {   // lots 1.9: ชื่อไทย · ไม่พบ = ชื่อ AX (ตัวจาง)
@@ -2678,7 +2683,17 @@ function pstCur(p, s) {   // → { i: ขั้นที่อยู่ (-1 = �
   for (var j = last + 1; j < q.length; j++) if (!q[j].nc && !q[j].na && q[j].v !== true) return { i: j, last: last, q: q };
   return { i: PST_DONE, last: last, q: q };
 }
-function pstDly(p) { var v = String(p.dly == null ? '' : p.dly).trim(); return v !== '' && +v !== 0 && v !== '0' ? v : ''; }
+/* ───────── lots 1.84: ขาดส่ง = Delay No ≠ 0 และยังไม่ผ่าน Pick (ผู้ใช้ 16:59 “ตัวขาดส่ง ถ้า Pick แล้ว แสดงว่าไม่มีขาดส่งแล้ว”) ─────────
+   เดิม: pstDly(p) ดู p.dly อย่างเดียว → AX ค้าง Delay No 1 ไว้ทั้งที่ของมาครบ Pick แล้ว = ⚠ ขาดส่ง ค้าง (RE-0069-0015_MU181 ขาดส่ง 2 ชิ้น ทั้งที่ Pick ✓)
+   ตอนนี้: ผ่าน Pick หรือขั้นหลังจากนั้น (คลัง · จัดส่ง · หน้างาน — ค่าเดียวกับช่องติ๊ก: AX / ยิง / ADMIN แก้) = ไม่ขาดส่งแล้ว
+   s / cu ไม่ส่งมา = หาเอง (cu = pstCur ที่คิดไว้แล้วใน pstItem — ไม่ต้องคิด pstVal ซ้ำ) */
+var PST_DLY_OK = ['pi', 'wh', 'dl', 'si'];
+function pstDlyRaw(p) { var v = String(p.dly == null ? '' : p.dly).trim(); return v !== '' && +v !== 0 && v !== '0' ? v : ''; }
+function pstDlyPicked(p, s, cu) {
+  if (s === undefined) s = PST.st && PST.st.get(p.rec);
+  return PST_DLY_OK.some(function (k) { var q = cu && cu.q ? cu.q[PST_STEPI[k]] : pstVal(p, s, k); return !!q && q.v === true; });
+}
+function pstDly(p, s, cu) { var v = pstDlyRaw(p); return v && !pstDlyPicked(p, s, cu) ? v : ''; }
 function pstCurLbl(i) { return i < 0 ? '?' : i >= PST_DONE ? 'ครบ' : PST_STEPS[i].h; }
 function pstCurTip(cu) {
   if (cu.i < 0) return 'ไม่มีแถวสถานะของชิ้นนี้ (pstate.csv)';
@@ -2688,7 +2703,7 @@ function pstCurTip(cu) {
 function pstCurBadge(cu, d) {
   return '<span class="pst-cs' + (cu.i < 0 ? ' nd' : cu.i >= PST_DONE ? ' ok' : ' cs' + cu.i /* lots 1.26 สีของขั้น */) + '" title="' + esc(pstCurTip(cu) + (d ? '\n⚠ ขาดส่ง (Delay No ' + d + ')' : '')) + '">' + esc(pstCurLbl(cu.i)) + (d ? '<b class="dl">⚠</b>' : '') + '</span>';
 }
-function pstItem(p) { var s = PST.st && PST.st.get(p.rec); return { p: p, s: s, cu: pstCur(p, s), d: pstDly(p) }; }
+function pstItem(p) { var s = PST.st && PST.st.get(p.rec), cu = pstCur(p, s); return { p: p, s: s, cu: cu, d: pstDly(p, s, cu) /* lots 1.84 + Pick แล้ว = ไม่ขาดส่ง */ }; }
 function pstCurAgg(its) {   // ราย Lot / หลาย Lot → { min: ขั้นที่ช้าสุด, n: { ขั้น: จำนวนชิ้น }, tot, dly }
   var n = {}, min = null, tot = 0, dly = 0;
   its.forEach(function (it) { if (it.d) dly++; var i = it.cu.i; if (i < 0) return; tot++; n[i] = (n[i] || 0) + 1; if (min == null || i < min) min = i; });
@@ -2913,6 +2928,7 @@ function pstCfFns() {   // ตัวกรองที่ตั้งไว้ �
   Object.keys(L.stCF).forEach(function (k) {
     var f = String(L.stCF[k] == null ? '' : L.stCF[k]).trim(); if (!f) return;
     if (k === 'cur') { out.push(function (it) { return String(it.cu.i) === f; }); return; }
+    if (k === 'dly' && /^(<>|!=)\s*0$/.test(f)) { out.push(function (it) { return !!it.d; }); return; }   // lots 1.84 ตัวกรอง “ขาดส่ง” = ขาดส่งจริง (Pick แล้วไม่นับ)
     if (k in PST_STEPI) { var i = PST_STEPI[k]; out.push(function (it) { var v = it.cu.q[i].v; return f === '1' ? v === true : v === false; }); return; }
     var c = PST_COLK[k]; if (!c) return;
     if (c.num) {
