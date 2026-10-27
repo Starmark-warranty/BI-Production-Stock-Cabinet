@@ -75,6 +75,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.54 (2026-10-27 08:39 ผู้ใช้ รูปเกจ “Finish สี·เคลือบ 16/16”: “ชิ้นที่เป็นเคลือบต้องไม่มีติ๊กขอบถูกไหมครับ เพราะเคลือบเราจะไม่ปิดขอบ งานทำสีก็เช่นกัน
+         … สถานะด้านบนตรงนี้ งานนี้ไม่มีสีก็ให้ขึ้นแต่เคลือบได้ไหม แล้วถ้างานไหนไม่มีสี / เคลือบ ก็ให้ขึ้นบอกไปเลยว่าไม่มีงานสีหรือเคลือบ”)
+        FIX ชิ้นสี / ชิ้นเคลือบ = ไม่ปิดขอบ → ช่อง Edge “–” (ไม่นับในยอด Edge · สถานะของชิ้นข้าม Edge ไปขั้นสี·เคลือบ) · เดิมติ๊กจากการยิง Edge ทั้ง Lot
+        UX เกจ / หลอดขั้นสี·เคลือบ บอกตามงานของ Lot ที่เลือก: มีแต่เคลือบ = “เคลือบ” · มีแต่สี = “ทำสี” · มีทั้งคู่ = “สี·เคลือบ” · ไม่มี = “ไม่มีงานสี / เคลือบ”
     1.53 (2026-10-27 08:30 ต่อจาก 1.52 — Lot ที่ล้างไว้ด้วย 1.51 ตารางว่างแล้ว แต่การยิง/ตรวจห่อยังค้างใน steps.json)
         FIX โหมดแก้: กด ยกเลิกสถานะทั้งหมด / ☑ / แตะช่อง ในขั้นที่ยังมีการยิงหรือตรวจห่อค้าง (ค่าที่เห็นตรงกันแล้ว) = นับเป็นที่ต้อง Save (ล้างร่องรอย)
            เดิม: ค่าที่เห็นไม่เปลี่ยน = “ไม่มีช่องที่เปลี่ยน” → ล้างที่มาไม่ได้ · Scan-Link ยังขึ้นห่อ ✓ ถึงไซต์ครบ
@@ -1035,7 +1039,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.53';
+var LOTS_VER = '1.54';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1927,6 +1931,7 @@ function pstVal(p, s, k) {
     return s ? { v: false, fk: fk } : { v: null, fk: fk };
   }
   if (k === 'edge' || k === 'drill') {   // lots 1.2 (เดิม: { v: null, na: 1 } = รอจุดยิง)
+    if (k === 'edge') { var fkE = pstFinKind(p); if (fkE) return { v: null, nc: 1, noEdge: fkE }; }   // lots 1.54 ผู้ใช้ 08:39 “เคลือบเราจะไม่ปิดขอบ งานทำสีก็เช่นกัน” = Edge ไม่เกี่ยว
     if (p.sz === false) return { v: null, nc: 1 };                       // ห่ออุปกรณ์ ไม่ปิดขอบ/ไม่เจาะ
     var sc = pstScanOf(p.lot, k); if (sc) return { v: true, scan: sc };
     if (s && PST_AFTER.some(function (a) { return pstPassed(s, a); })) return { v: true, inf: 1 };
@@ -2576,7 +2581,7 @@ function pstRender(keep) {
       var S0 = PST_STEPS.filter(function (s) { return s.k === k; })[0];
       if (k === 'si' && sum.pkN) return 'ห่อ ' + fmtN(sum.pkC || 0) + '/' + fmtN(sum.pkN) + (sum.si && sum.si.ms ? ' · ขาด ' + fmtN(sum.si.ms) : '');   // lots 1.48 ห่อ ตรวจรับแล้ว / ทั้งหมด (+ ชิ้นขาด) — สั้นให้พอกล่องเกจ
       if (sum[k] && sum[k].ms) return '✗ ขาด ' + fmtN(sum[k].ms) + ' ชิ้น';   // lots 1.46 ตรวจห่อที่ไซต์แล้วไม่พบ
-      if (k === 'fin' && one && !(sum.fin && sum.fin.n)) return pstLotHasFs(x.id) ? 'ไม่มีชิ้นสี·เคลือบ' : PST.fsm ? 'ไม่มี FrontStyle' : '';   // lots 1.47 บอกเหตุ 0/0
+      if (k === 'fin' && !(sum.fin && sum.fin.n)) return PST.fsm ? 'ไม่มีงานสี / เคลือบ' : '';   /* lots 1.54 (เดิม 1.47: ไม่มีชิ้นสี·เคลือบ / ไม่มี FrontStyle · เฉพาะ Lot เดียว) */   // lots 1.47 บอกเหตุ 0/0
       if (one) { var z = sum.scan && sum.scan[k]; return z ? 'ยิง ' + pstShortT(z.at) : ''; }   // lots 1.8 สั้นลง (วันนี้ = เวลา) ให้กล่องแคบ
       return sum.scanN && sum.scanN[k] && S0 ? 'ยิงแล้ว ' + sum.scanN[k] + '/' + sum.n + ' Lot' : '';
     };
@@ -3013,6 +3018,7 @@ pstCell = function (q, S0) {
   var h;
   if (q.ed) h = '<td class="pck stk ed' + (q.v ? ' on' : '') + (q.v !== q.was ? ' chg' : '') + '" title="' + esc(q.v !== q.was ? (q.v ? 'จะติ๊ก' : 'จะเอาออก') + ' — คลิกขวา = Save' : 'แตะ = ' + (q.v ? 'เอาออก' : 'ติ๊ก')) + '"><span class="cb">' + (q.v ? '✓' : '') + '</span></td>';
   else if (q.adm) h = '<td class="pck stk adm' + (q.v ? ' on' : '') + '" title="' + esc('ADMIN แก้เป็น ' + (q.v ? '✓ ผ่าน' : 'ยังไม่ผ่าน') + ' — ' + (q.adm.by || 'ADMIN') + (q.adm.at ? ' · ' + (fDT(lotDate(q.adm.at)) || q.adm.at) : '')) + '"><span class="cb">' + (q.v ? '✓' : '') + '</span></td>';
+  else if (q.noEdge) h = '<td class="pck stk nc" title="' + esc('ชิ้น' + (q.noEdge === 'paint' ? 'ทำสี' : 'เคลือบ') + ' — ไม่ปิดขอบ (ไปขั้นสี·เคลือบเลย)') + '">–</td>';   // lots 1.54
   else h = pstCellL151(q, S0);
   if (PST_ED.on && PST_EDK[S0.k] && !q.nc && !q.na) { h = h.replace('<td class="pck', '<td data-pste="' + S0.k + '" class="pck'); if (!q.ed) h = h.replace('class="pck stk', 'class="pck stk ed'); }
   return h;
@@ -3169,8 +3175,24 @@ function pstEdDeco() {
     + '<button type="button" class="tbtn pri" data-pstem="save"' + (n && !PST_ED.busy ? '' : ' disabled') + '>' + (PST_ED.busy ? 'กำลังบันทึก…' : '💾 Save' + (n ? ' (' + fmtN(n) + ')' : '')) + '</button>'
     + '<button type="button" class="tbtn" data-pstem="exit">ออก</button>';
 }
+/* lots 1.54: ชื่อขั้นสี·เคลือบในเกจ / หลอด ตามงานของ Lot ที่เลือก (ผู้ใช้ 08:39 “งานนี้ไม่มีสีก็ให้ขึ้นแต่เคลือบ … ไม่มีก็ให้ขึ้นบอกไปเลย”) */
+function pstFinLbl() {
+  var a = 0, c = 0; (L.stSel || []).forEach(function (id) { (pstRowsOf({ id: id }) || []).forEach(function (p) { var k = pstFinKind(p); if (k === 'paint') a++; else if (k === 'coat') c++; }); });
+  return { a: a, c: c, t: a && c ? 'สี·เคลือบ' : c ? 'เคลือบ' : a ? 'ทำสี' : 'ไม่มีงานสี / เคลือบ' };
+}
+function pstFinDeco() {
+  var E = $('lotSt'); if (!E || !PST.fsm) return;
+  var g = E.querySelector('.pst-sum[data-pstf=fin]'), tb = E.querySelectorAll('.pst-tube .tseg')[PST_STEPS.findIndex(function (S0) { return S0.k === 'fin'; })]; if (!g && !tb) return;
+  var f = pstFinLbl(), none = !f.a && !f.c;
+  if (g) { var th = g.querySelector('.pst-th'); if (th) th.textContent = none ? 'สี·เคลือบ' : f.t;
+    var cnt = g.querySelector('.pst-st > span'); if (none && cnt) cnt.textContent = '—';
+    g.title = none ? 'Lot ที่เลือกไม่มีงานสี / เคลือบ (FrontStyle · รหัสไม้)' : 'งาน' + f.t + ' — ชิ้นทำสี ' + fmtN(f.a) + ' · ชิ้นเคลือบ ' + fmtN(f.c) + ' (ไม่ปิดขอบ)'; }
+  if (tb) { var sp = tb.querySelector('span'); if (sp && sp.firstChild && sp.firstChild.nodeType === 3) sp.firstChild.textContent = (none ? 'ไม่มีสี/เคลือบ' : f.t) + ' '; }
+  if (!none && f.t !== 'สี·เคลือบ') E.querySelectorAll('.pst-cur').forEach(function (cu) {   // กล่องสถานะ “Finish สี·เคลือบ” → ชื่อตามงาน
+    var w = document.createTreeWalker(cu, NodeFilter.SHOW_TEXT), nd; while ((nd = w.nextNode())) if (nd.nodeValue.indexOf('สี·เคลือบ') >= 0) nd.nodeValue = nd.nodeValue.replace('สี·เคลือบ', f.t); });
+}
 var pstRenderL151 = pstRender;
-pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } return r; };
+pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } try { pstFinDeco(); } catch (e) { console.warn('StarStock lots 1.54: ชื่อขั้นสี·เคลือบ', e); } return r; };   // 1.54 + pstFinDeco
 function pstEdMenuX() { var m = document.querySelector('.pst-edm'); if (m) m.remove(); }
 function pstEdMenu(x, y) {
   pstEdMenuX(); var n = pstEdChanges().n, m = document.createElement('div'); m.className = 'pst-edm'; m.setAttribute('role', 'menu');
