@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.53 (2026-10-27 08:30 ต่อจาก 1.52 — Lot ที่ล้างไว้ด้วย 1.51 ตารางว่างแล้ว แต่การยิง/ตรวจห่อยังค้างใน steps.json)
+        FIX โหมดแก้: กด ยกเลิกสถานะทั้งหมด / ☑ / แตะช่อง ในขั้นที่ยังมีการยิงหรือตรวจห่อค้าง (ค่าที่เห็นตรงกันแล้ว) = นับเป็นที่ต้อง Save (ล้างร่องรอย)
+           เดิม: ค่าที่เห็นไม่เปลี่ยน = “ไม่มีช่องที่เปลี่ยน” → ล้างที่มาไม่ได้ · Scan-Link ยังขึ้นห่อ ✓ ถึงไซต์ครบ
     1.52 (2026-10-27 08:23 ผู้ใช้ รูป Scan-Link ห่อ PD69000045189-PD08_2 ยังขึ้น “✓ ถึงไซต์ครบทั้งห่อ” + StarStock Site 0/169 · ห่อ 2/51: “ผมลองล้างสถานะแล้ว แล้วลองแสกนใหม่ ยังขึ้นอยู่ครับ”)
         FIX ADMIN ล้างสถานะ = ล้างที่มาด้วย (เดิม 1.51 แค่ทับค่า ov — Scan-Link ยังเห็นว่ายิง/ตรวจห่อไว้แล้ว)
            · ขั้นไหนเอาออกครบทุกชิ้นของ Lot = ลบการยิงทั้ง Lot ของขั้นนั้นใน steps.json (Edge · Drill · สี+เคลือบ · Site ทั้ง Lot + ห่อที่ตรวจรับทั้งหมด)
@@ -1032,7 +1035,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.52';
+var LOTS_VER = '1.53';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -3025,6 +3028,26 @@ function pstEdChanges() {
       var cur = pstOvOf(p, k), want = !!d[k], eff = cur ? cur.v : !!base.v; if (want === eff) return;
       var K = String(p.lot).toUpperCase(), o = out[K] || (out[K] = { lot: p.lot, ks: {} }), m = o.ks[k] || (o.ks[k] = {});
       m[rec] = want === !!base.v ? null : want ? 1 : 0; n++;
+    });
+  });
+  /* lots 1.53: ขั้นที่แตะแล้ว แต่ค่าที่เห็นตรงอยู่แล้ว — ยังมีการยิง / ตรวจห่อค้างที่ขัดกับค่าที่เห็น (เช่นล้างด้วย 1.51) = ต้อง Save เพื่อล้างที่มา */
+  var tl = {};
+  PST_ED.d.forEach(function (d, rec) { var p = P.get(rec); if (!p) return; var K = String(p.lot).toUpperCase(), o = tl[K] || (tl[K] = { lot: p.lot, ks: {} }); Object.keys(d).forEach(function (k) { o.ks[k] = 1; }); });
+  Object.keys(tl).forEach(function (K) {
+    var o = tl[K], e = PST.steps && PST.steps.get(K); if (!e) return;
+    var parts = pstRowsOf({ id: o.lot }) || [];
+    Object.keys(o.ks).forEach(function (k) {
+      if (out[K] && out[K].ks[k]) return;
+      var D = new Map(); parts.forEach(function (p) { var q = pstVal(p, PST.st && PST.st.get(p.rec), k); if (!q.nc && !q.na) D.set(p.rec, !!q.v); });
+      var none = !Array.from(D.values()).some(Boolean), stale = false;
+      if (k === 'edge' || k === 'drill') stale = none && !!e[k];
+      else if (k === 'fin') stale = none && !!(e.paint || e.coat);
+      else if (k === 'si') {
+        if (none) stale = !!(e.si || e.sitePk);
+        else if (e.sitePk) stale = Object.keys(e.sitePk).some(function (C) { var r = e.sitePk[C], ms = Array.isArray(r.miss) ? r.miss : [];
+          return parts.some(function (p) { return String(p.pack || '').trim().toUpperCase() === C && D.has(p.rec) && !D.get(p.rec) && ms.indexOf(pstSiteKey(p)) < 0; }); });
+      }
+      if (stale) { var oo = out[K] || (out[K] = { lot: o.lot, ks: {} }); oo.ks[k] = oo.ks[k] || {}; n++; }
     });
   });
   return { m: out, n: n };
