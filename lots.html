@@ -75,6 +75,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.51 (2026-10-27 08:10 ผู้ใช้ รูปตาราง State + ป้ายผู้ใช้ “ADMIN”: “เพิ่มให้ผม ADMIN คืนสถานะได้ EDGE Finish Drill และ Site หน่อยครับ ยกเลิกสถานะทั้งหมด
+         แล้วติ๊กได้รายบรรทัด หรือติ๊กหมดได้ แล้วกดคลิกขวา Save”)
+        FEAT ADMIN แก้สถานะรายชิ้น Edge · Finish · Drill · Site (ชื่อผู้ใช้ 👤 = ADMIN · คอมเท่านั้น)
+           · ปุ่ม ✏️ แก้สถานะ แถวชื่อ Lot → แตะช่อง = ติ๊ก/เอาออก · ☑ ใต้หัวคอลัมน์ = ทั้งคอลัมน์ · ยกเลิกสถานะทั้งหมด · คลิกขวา = เมนู 💾 Save
+           · บันทึกที่ lots/steps.json lots[LOT].ov (ทับทุกที่มา: AX · Scan-Link · Pack แล้ว) · ช่องที่แก้ไว้ = มุมม่วง (ชี้ = ใคร · เมื่อไร)
     1.50 (2026-10-27 07:51 ผู้ใช้ รูปตาราง FOREST-2026-0017 คอลัมน์ Front Style มีแต่ป้าย “เคลือบ”: “ช่อง Frontstyle ขอให้เอาข้อมูลมาลง ไม่เอาคำว่าเคลือบครับ ข้อมูลของ Part นั้นครับ”)
         UX คอลัมน์ Front Style = ค่า FrontStyle ของชิ้นอย่างเดียว (ไม่มีป้าย สี / เคลือบ ต่อท้าย · ชนิดดูได้ที่ช่อง สี·เคลือบ และชี้ที่ช่อง)
            · Lot ที่จบแล้วยังไม่มีค่า (StarSync อ่าน CSV เฉพาะ Lot ที่ยังไม่จบ) = ช่องว่าง จนกว่าจะใช้ StarSync v1.23 (อ่าน FrontStyle ของ Lot ที่จบแล้วในช่วงรายชิ้นด้วย)
@@ -492,6 +497,18 @@
   .pst-t td.pck.on{background:color-mix(in srgb,var(--good) 16%,transparent)}
   .pst-t tbody tr:hover td.pck.on{background:color-mix(in srgb,var(--good) 24%,transparent)}
   .pst-t td.pck.on .cb{border-color:var(--good)}
+  /* lots 1.51 ADMIN แก้สถานะ: ช่องแก้ได้ = กรอบประ · แก้แล้วยังไม่ Save = เหลือง · แก้ไว้แล้ว (บันทึก) = มุมม่วง */
+  #lotSt .pst-t td.pck.ed{cursor:pointer;outline:1px dashed color-mix(in srgb,var(--accent) 50%,transparent);outline-offset:-3px}
+  #lotSt .pst-t td.pck.ed:hover{background:var(--accent-soft)}
+  #lotSt .pst-t td.pck.ed.chg{outline:2px dashed #d97706;background:color-mix(in srgb,#f59e0b 22%,transparent)}
+  #lotSt .pst-t td.pck.adm{background-image:linear-gradient(135deg,#7c3aed 0 7px,transparent 7px)}   /* มุมม่วงบนซ้าย */
+  #lotSt .pst-t th .pst-ea{width:22px;height:20px;border-radius:5px;border:1.5px solid #d97706;background:color-mix(in srgb,#f59e0b 16%,var(--solid));color:#b45309;font-weight:900;font-size:12px;line-height:1;cursor:pointer;padding:0}
+  .pst-edbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:7px 10px;border-radius:10px;background:color-mix(in srgb,#f59e0b 13%,var(--solid));border:1px solid color-mix(in srgb,#f59e0b 45%,transparent);font-size:12.5px;color:var(--ink)}
+  .pst-edbar b{font-weight:800} .pst-edbar .sp{flex:1}
+  .pst-edbar .tbtn.pri{background:#d97706;border-color:#d97706;color:#fff}
+  .pst-edm{position:fixed;z-index:130;min-width:240px;background:var(--solid);border:1px solid var(--line-strong);border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.28);padding:4px}
+  .pst-edm button{display:block;width:100%;text-align:left;padding:8px 11px;border-radius:7px;background:none;border:0;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+  .pst-edm button:hover{background:var(--accent-soft)} .pst-edm button:disabled{opacity:.45;cursor:default} .pst-edm hr{border:0;border-top:1px solid var(--line);margin:3px 6px}
   .pst-t td.pck.miss{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad);font-weight:800}   /* lots 1.46 ตรวจห่อที่ไซต์แล้วไม่พบชิ้นนี้ */
   .pst-t td.pck.miss .cb{border-color:var(--bad);color:var(--bad)} .pst-t td.pck.miss small{color:var(--bad)}
   .pst-t td.pck small{margin-left:3px;font:700 10px var(--mono);color:var(--ink-dim)}
@@ -1009,7 +1026,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.50';
+var LOTS_VER = '1.51';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1864,7 +1881,8 @@ function pstParseSteps(t) {
   Object.keys(ls).forEach(function (K) { var e = ls[K]; if (!e || typeof e !== 'object') return; var v = {}; ['edge', 'drill', 'paint', 'coat'].forEach(function (k) { if (e[k] && e[k].at) v[k] = e[k]; });   // lots 1.43 + paint / coat (รับเข้างานทำสี / งานเคลือบ)
     if (e.site && e.site.at) v.si = e.site;   // lots 1.6: Scan-Link คีย์ site = ช่อง si (Site)
     if (e.sitePk && typeof e.sitePk === 'object') { var pk = {}, n = 0; Object.keys(e.sitePk).forEach(function (c) { var r = e.sitePk[c]; if (r && r.at) { pk[String(c).trim().toUpperCase()] = r; n++; } }); if (n) v.sitePk = pk; }   // lots 1.46 Site ราย Pack
-    if (v.edge || v.drill || v.si || v.paint || v.coat || v.sitePk) m.set(String(K).toUpperCase(), v); });
+    if (e.ov && typeof e.ov === 'object') { v.ov = e.ov; v.ovAt = e.ovAt || ''; v.ovBy = e.ovBy || ''; }   // lots 1.51 ADMIN แก้รายชิ้น
+    if (v.edge || v.drill || v.si || v.paint || v.coat || v.sitePk || v.ov) m.set(String(K).toUpperCase(), v); });
   PST.steps = m;
 }
 /* ───────── lots 1.9: Product Name เป็นชื่อไทย ─────────
@@ -2656,7 +2674,7 @@ function pstRender(keep) {
         + part.map(function (it, i) {
           var p = it.p, s = it.s;
           var ci = it.cu.i >= 0 && it.cu.i < PST_DONE ? ' csx cs' + it.cu.i : '';   // lots 1.23: สีแถวตามขั้นที่อยู่
-          return '<tr' + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : ci ? ' class="' + ci.slice(1) + '" title="' + esc(pstCurTip(it.cu)) + '"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
+          return '<tr data-rec="' + esc(p.rec) + '"' /* lots 1.51 ADMIN แก้รายชิ้น */ + (!s ? ' class="nos" title="ไม่มีแถวสถานะ (pstate.csv) ของชิ้นนี้"' : ci ? ' class="' + ci.slice(1) + '" title="' + esc(pstCurTip(it.cu)) + '"' : '') + '><td class="no stk">' + (i + 1) + '</td>'
             + PST_STEPS.map(function (S0, k) { return pstCell(it.cu.q[k], S0).replace('class="pck stk', 'class="pck stk cs' + k + (colOk[k] ? ' cok' : '')); }).join('')   /* lots 1.25 สีของขั้น */   // lots 1.17: เอาช่องสถานะรายชิ้นออก (1.11: หลัง Site) — ผู้ใช้ 11:41 กรองที่ State แทน
             + cols.map(function (c) { return pstTd(c, p); }).join('') + '</tr>';
         }).join('') + (!shown.length && !(oth && oth.n) ? '<tr><td class="empty" colspan="' + (1 + PST_STEPS.length + cols.length) + '">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง' + (ncf ? ' — กด ✕ ที่หัวแถวตัวกรองเพื่อล้าง' : '') + '</td></tr>' : '') + '</tbody></table>' + moreH + '</div>'
@@ -2952,12 +2970,161 @@ try { if (PST_MQ) { if (PST_MQ.addEventListener) PST_MQ.addEventListener('change
              = ชื่อเดิมที่ index ยังเรียก (route · รอบอัปเดต · คิวตัดงาน “↗ Lot ผลิต” · ปิด Lot เอง · คีย์ลัด) — index ส่งต่อมาที่นี่
      exports = ใส่ window.StarStock (ไว้ทดสอบ / เรียกจาก console — ชื่อชุดเดิมของ v2.45)
    ═══════════════════════════════════════════════════════════════════════ */
+/* ───────── lots 1.51: ADMIN แก้สถานะ Edge · Finish · Drill · Site รายชิ้น (คืนสถานะ / ติ๊กเอง) ─────────
+   ผู้ใช้ 27/10/2026 08:10 (รูปตาราง State + ป้ายผู้ใช้ “ADMIN”): “เพิ่มให้ผม ADMIN คืนสถานะได้ EDGE Finish Drill และ Site หน่อยครับ ยกเลิกสถานะทั้งหมด
+     แล้วติ๊กได้รายบรรทัด หรือติ๊กหมดได้ แล้วกดคลิกขวา Save”
+   เดิม: Edge / Drill / สี·เคลือบ / Site มาจาก Scan-Link (ทั้ง Lot / ราย Pack) + AX + ถือว่าผ่านเมื่อ Pack แล้ว — แก้รายชิ้นไม่ได้
+   ตอนนี้ (ชื่อผู้ใช้ 👤 บนหัวจอ = ADMIN · คอมเท่านั้น — StarStock ไม่มีระบบรหัสผ่าน ใครตั้งชื่อ ADMIN ก็แก้ได้):
+     · ปุ่ม ✏️ แก้สถานะ แถวชื่อ Lot → โหมดแก้: แตะช่อง Edge / Finish / Drill / Site = ติ๊ก / เอาออก (ยังไม่บันทึก = กรอบเหลือง)
+       ☑ ใต้หัวคอลัมน์ = ติ๊กทั้งคอลัมน์ (ติ๊กครบอยู่แล้ว = เอาออกทั้งคอลัมน์) · เฉพาะแถวที่แสดง (ตามตัวกรอง/คำค้น)
+       ปุ่ม/เมนู ยกเลิกสถานะทั้งหมด = เอาออกทั้ง 4 ขั้นทุกแถวที่แสดง · ติ๊กทั้งหมด = ติ๊กทั้ง 4 ขั้น
+     · คลิกขวาในตาราง = เมนู 💾 Save · ยกเลิกสถานะทั้งหมด · ติ๊กทั้งหมด · ทิ้งที่แก้ · ออกจากโหมดแก้ (แถบเหลืองมีปุ่ม Save ด้วย)
+     · Save → lots/steps.json lots[LOT].ov = { edge | fin | drill | si: { RecId: 1 ติ๊ก / 0 เอาออก } } + ovAt / ovBy · hist “แก้สถานะ (ADMIN)”
+       เขียนแบบกันทับ (ifU) เหมือน Scan-Link · แก้กลับให้ตรงค่าเดิม (ไม่มีการแก้) = ลบรายการแก้ของช่องนั้น
+     · ค่าที่แก้ทับทุกที่มา (AX · Scan-Link ทั้ง Lot / ราย Pack · ถือว่าผ่านเพราะ Pack แล้ว) · ช่องที่แก้ไว้ = มุมม่วง (ชี้ = ใครแก้ เมื่อไร)
+     · ชิ้นที่ไม่มีงานขั้นนั้น (–) แก้ไม่ได้ · Scan-Link (PR ถัดไป) เก็บ ov ไว้ตอนเขียน steps.json */
+var PST_EDK = { edge: 1, fin: 1, drill: 1, si: 1 };
+var PST_ED = { on: false, d: new Map(), busy: false };
+function pstAdmin() { try { return String(me() || '').trim().toUpperCase() === 'ADMIN'; } catch (e) { return false; } }
+function pstOvOf(p, k) {
+  var e = PST.steps && PST.steps.get(String(p.lot || '').toUpperCase()), o = e && e.ov && e.ov[k];
+  if (!o || !Object.prototype.hasOwnProperty.call(o, p.rec)) return null;
+  return { v: +o[p.rec] === 1, by: e.ovBy || '', at: e.ovAt || '' };
+}
+var pstValL151 = pstVal;
+pstVal = function (p, s, k) {
+  var q = pstValL151(p, s, k); if (!PST_EDK[k] || q.nc || q.na) return q;
+  var o = pstOvOf(p, k); if (o) q = { v: o.v, adm: o };
+  var d = PST_ED.on ? PST_ED.d.get(p.rec) : null;
+  if (d && Object.prototype.hasOwnProperty.call(d, k)) q = { v: !!d[k], ed: 1, was: !!q.v, adm: q.adm };
+  return q;
+};
+var pstCellL151 = pstCell;
+pstCell = function (q, S0) {
+  var h;
+  if (q.ed) h = '<td class="pck stk ed' + (q.v ? ' on' : '') + (q.v !== q.was ? ' chg' : '') + '" title="' + esc(q.v !== q.was ? (q.v ? 'จะติ๊ก' : 'จะเอาออก') + ' — คลิกขวา = Save' : 'แตะ = ' + (q.v ? 'เอาออก' : 'ติ๊ก')) + '"><span class="cb">' + (q.v ? '✓' : '') + '</span></td>';
+  else if (q.adm) h = '<td class="pck stk adm' + (q.v ? ' on' : '') + '" title="' + esc('ADMIN แก้เป็น ' + (q.v ? '✓ ผ่าน' : 'ยังไม่ผ่าน') + ' — ' + (q.adm.by || 'ADMIN') + (q.adm.at ? ' · ' + (fDT(lotDate(q.adm.at)) || q.adm.at) : '')) + '"><span class="cb">' + (q.v ? '✓' : '') + '</span></td>';
+  else h = pstCellL151(q, S0);
+  if (PST_ED.on && PST_EDK[S0.k] && !q.nc && !q.na) { h = h.replace('<td class="pck', '<td data-pste="' + S0.k + '" class="pck'); if (!q.ed) h = h.replace('class="pck stk', 'class="pck stk ed'); }
+  return h;
+};
+function pstEdParts() { var m = new Map(); (L.stSel || []).forEach(function (id) { (pstRowsOf({ id: id }) || []).forEach(function (p) { m.set(p.rec, p); }); }); return m; }
+/* ที่แก้ (เทียบกับค่าที่บันทึกไว้) → { m: { LOT: { lot, ks: { k: { rec: 1 | 0 | null (ลบการแก้) } } } }, n } */
+function pstEdChanges() {
+  var out = {}, n = 0, P = pstEdParts();
+  PST_ED.d.forEach(function (d, rec) {
+    var p = P.get(rec); if (!p) return; var s = PST.st && PST.st.get(rec);
+    Object.keys(d).forEach(function (k) {
+      var base = pstValL151(p, s, k); if (base.nc || base.na) return;
+      var cur = pstOvOf(p, k), want = !!d[k], eff = cur ? cur.v : !!base.v; if (want === eff) return;
+      var K = String(p.lot).toUpperCase(), o = out[K] || (out[K] = { lot: p.lot, ks: {} }), m = o.ks[k] || (o.ks[k] = {});
+      m[rec] = want === !!base.v ? null : want ? 1 : 0; n++;
+    });
+  });
+  return { m: out, n: n };
+}
+function pstEdSet(k, rec, v) { var d = PST_ED.d.get(rec); if (!d) PST_ED.d.set(rec, d = {}); d[k] = !!v; }
+function pstEdCells(k) { return [].slice.call(document.querySelectorAll('#lotSt .pst-t td[data-pste' + (k ? '="' + k + '"' : '') + ']')); }
+function pstEdBulk(k, v) {   // k = null = ทั้ง 4 ขั้น · v = null = สลับ (ครบอยู่ = เอาออก)
+  var cs = pstEdCells(k); if (!cs.length) return;
+  if (v == null) v = !cs.every(function (td) { return td.classList.contains('on'); });
+  cs.forEach(function (td) { var tr = td.closest('tr'); if (tr && tr.dataset.rec) pstEdSet(td.dataset.pste, tr.dataset.rec, v); });
+  pstRender(true);
+}
+function pstEdExit(force) {
+  if (!force && pstEdChanges().n && !confirm('ยังไม่ได้ Save การแก้สถานะ ' + pstEdChanges().n + ' ช่อง — ทิ้งแล้วออก?')) return false;
+  PST_ED.on = false; PST_ED.d.clear(); pstEdMenuX(); pstRender(true); return true;
+}
+async function pstEdSave() {
+  if (PST_ED.busy) return; var ch = pstEdChanges(); if (!ch.n) { toast('ไม่มีช่องที่เปลี่ยน'); return; }
+  var fs = ensureFs(); if (!fs) { toast('ยังไม่ได้เชื่อม Google Drive — บันทึกไม่ได้'); return; }
+  PST_ED.busy = true; pstEdMenuX(); pstEdDeco();
+  try {
+    for (var tryNo = 0; tryNo < 5; tryNo++) {
+      var Ld = await fs.list(LOT_DIR, true), f = Ld && Ld.files[PST_F.steps], base = { v: 1, lots: {}, hist: [] };
+      if (f) { var t = await readText(LOT_DIR, PST_F.steps);
+        try { base = JSON.parse(t); } catch (x) { throw new Error('lots/steps.json บน Drive อ่านไม่ออก — ไม่บันทึกทับ'); }
+        if (!base.lots || typeof base.lots !== 'object') base.lots = {}; if (!Array.isArray(base.hist)) base.hist = []; }
+      var at = nowIso(), by = me();
+      Object.keys(ch.m).forEach(function (K) { var o = ch.m[K], e = base.lots[K] || { lot: o.lot }, cnt = 0; e.ov = e.ov && typeof e.ov === 'object' ? e.ov : {};
+        Object.keys(o.ks).forEach(function (k) { var m = e.ov[k] || (e.ov[k] = {});
+          Object.keys(o.ks[k]).forEach(function (rec) { var v = o.ks[k][rec]; if (v == null) delete m[rec]; else m[rec] = v; cnt++; });
+          if (!Object.keys(m).length) delete e.ov[k]; });
+        if (!Object.keys(e.ov).length) { delete e.ov; delete e.ovAt; delete e.ovBy; } else { e.ovAt = at; e.ovBy = by; }
+        if (Object.keys(e).some(function (x) { return x !== 'lot'; })) base.lots[K] = e; else delete base.lots[K];
+        base.hist.unshift({ t: 'แก้สถานะ (ADMIN)', step: 'ov', lot: o.lot, n: cnt, at: at, by: by, ks: Object.keys(o.ks) }); });
+      base.hist = base.hist.slice(0, 2000); base.v = 1; base.at = at; base.by = by;
+      var c = await GasFS.gz(new TextEncoder().encode(JSON.stringify(base)));
+      var w = await fs.call({ a: 'fsWrite', p: LOT_DIR, n: PST_F.steps, c: c, ifU: f ? f.u : 0 });
+      if (w.files && w.files.length) {
+        try { fs._touch(LOT_DIR, PST_F.steps, w.files[0].u, c.length, c); } catch (x) { }
+        pstParseSteps(JSON.stringify(base)); PST.xu = w.files[0].u;
+        PST_ED.d.clear(); PST_ED.busy = false; toast('💾 บันทึกการแก้สถานะแล้ว ' + fmtN(ch.n) + ' ช่อง'); pstRender(true); return true;
+      }
+      await new Promise(function (r) { setTimeout(r, 400 + tryNo * 500); });   // มีคนบันทึกแทรก (Scan-Link) — อ่านใหม่แล้วลองอีกครั้ง
+    }
+    throw new Error('มีคนบันทึกพร้อมกันหลายครั้ง ลองใหม่อีกที');
+  } catch (e) { console.error(e); toast('บันทึกการแก้สถานะไม่สำเร็จ: ' + netMsg(e), 5000); }
+  finally { PST_ED.busy = false; pstEdDeco(); }
+}
+/* ปุ่ม / แถบ / ช่องหัวคอลัมน์ — ใส่หลังวาดหน้าสถานะ */
+function pstEdDeco() {
+  var E = $('lotSt'); if (!E) return;
+  var adm = pstAdmin() && !pstMobile(), tbl = E.querySelector('.pst-t');
+  if (!adm && PST_ED.on) { PST_ED.on = false; PST_ED.d.clear(); }
+  var hd = E.querySelector('.pst-hd');
+  if (hd && adm && tbl && !hd.querySelector('[data-psted]')) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'tbtn' + (PST_ED.on ? ' on' : ''); b.setAttribute('data-psted', '');
+    b.title = 'ADMIN: คืนสถานะ / ติ๊กเองรายชิ้น — Edge · Finish · Drill · Site'; b.textContent = PST_ED.on ? '✏️ กำลังแก้สถานะ' : '✏️ แก้สถานะ';
+    var ref = hd.querySelector('[data-pstdet]') || hd.querySelector('[data-pstclr]'); if (ref) hd.insertBefore(b, ref); else hd.appendChild(b);
+  }
+  var bar = E.querySelector('.pst-edbar');
+  if (!PST_ED.on || !tbl) { if (bar) bar.remove(); return; }
+  E.querySelectorAll('[data-pstcfb]').forEach(function (bt) { var k = bt.getAttribute('data-pstcfb'); if (!PST_EDK[k]) return;
+    var nb = document.createElement('button'); nb.type = 'button'; nb.className = 'pst-ea'; nb.setAttribute('data-pstea', k); nb.textContent = '☑'; nb.title = 'ติ๊กทั้งคอลัมน์ (ติ๊กครบอยู่ = เอาออกทั้งคอลัมน์) · เฉพาะแถวที่แสดง'; bt.replaceWith(nb); });
+  var n = pstEdChanges().n;
+  if (!bar) { bar = document.createElement('div'); bar.className = 'pst-edbar'; var W = E.querySelector('.pst-wrap'); if (W) W.parentNode.insertBefore(bar, W); else return; }
+  bar.innerHTML = '<b>✏️ แก้สถานะ (ADMIN)</b><span>แตะช่อง Edge · Finish · Drill · Site = ติ๊ก / เอาออก · ☑ ใต้หัว = ทั้งคอลัมน์ · คลิกขวา = เมนู Save</span><span class="sp"></span>'
+    + '<button type="button" class="tbtn" data-pstem="clear">ยกเลิกสถานะทั้งหมด</button><button type="button" class="tbtn" data-pstem="all">☑ ติ๊กทั้งหมด</button>'
+    + '<button type="button" class="tbtn" data-pstem="drop"' + (PST_ED.d.size ? '' : ' disabled') + '>ทิ้งที่แก้</button>'
+    + '<button type="button" class="tbtn pri" data-pstem="save"' + (n && !PST_ED.busy ? '' : ' disabled') + '>' + (PST_ED.busy ? 'กำลังบันทึก…' : '💾 Save' + (n ? ' (' + fmtN(n) + ')' : '')) + '</button>'
+    + '<button type="button" class="tbtn" data-pstem="exit">ออก</button>';
+}
+var pstRenderL151 = pstRender;
+pstRender = function () { var r = pstRenderL151.apply(this, arguments); try { pstEdDeco(); } catch (e) { console.warn('StarStock lots 1.51: แก้สถานะ', e); } return r; };
+function pstEdMenuX() { var m = document.querySelector('.pst-edm'); if (m) m.remove(); }
+function pstEdMenu(x, y) {
+  pstEdMenuX(); var n = pstEdChanges().n, m = document.createElement('div'); m.className = 'pst-edm'; m.setAttribute('role', 'menu');
+  m.innerHTML = '<button type="button" data-pstem="save"' + (n && !PST_ED.busy ? '' : ' disabled') + '>💾 Save' + (n ? ' (' + fmtN(n) + ' ช่อง)' : ' — ยังไม่มีที่แก้') + '</button><hr>'
+    + '<button type="button" data-pstem="clear">ยกเลิกสถานะทั้งหมด (Edge · Finish · Drill · Site)</button><button type="button" data-pstem="all">☑ ติ๊กทั้งหมด</button>'
+    + '<button type="button" data-pstem="drop"' + (PST_ED.d.size ? '' : ' disabled') + '>ทิ้งที่แก้</button><hr><button type="button" data-pstem="exit">ออกจากโหมดแก้</button>';
+  document.body.appendChild(m);
+  var r = m.getBoundingClientRect(); m.style.left = Math.max(4, Math.min(x, innerWidth - r.width - 6)) + 'px'; m.style.top = Math.max(4, Math.min(y, innerHeight - r.height - 6)) + 'px';
+}
+document.addEventListener('click', function (e) {
+  if (!e.target.closest) return;
+  var t = e.target.closest('[data-psted],[data-pste],[data-pstea],[data-pstem]');
+  if (!t) { if (!e.target.closest('.pst-edm')) pstEdMenuX(); return; }
+  if (t.hasAttribute('data-psted')) { e.preventDefault(); if (!pstAdmin()) return; if (PST_ED.on) pstEdExit(); else { PST_ED.on = true; PST_ED.d.clear(); pstRender(true); } return; }
+  if (!PST_ED.on || PST_ED.busy) return;
+  if (t.hasAttribute('data-pste')) { var tr = t.closest('tr'); if (!tr || !tr.dataset.rec) return; pstEdSet(t.dataset.pste, tr.dataset.rec, !t.classList.contains('on')); pstRender(true); return; }
+  if (t.hasAttribute('data-pstea')) { e.preventDefault(); e.stopPropagation(); pstEdBulk(t.dataset.pstea, null); return; }
+  var a = t.dataset.pstem; pstEdMenuX();
+  if (a === 'save') pstEdSave(); else if (a === 'clear') pstEdBulk(null, false); else if (a === 'all') pstEdBulk(null, true);
+  else if (a === 'drop') { PST_ED.d.clear(); pstRender(true); } else if (a === 'exit') pstEdExit();
+}, true);
+document.addEventListener('contextmenu', function (e) {
+  if (!PST_ED.on || !e.target.closest || !e.target.closest('#lotSt .pst-t, #lotSt .pst-edbar')) return;
+  e.preventDefault(); pstEdMenu(e.clientX, e.clientY);
+});
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && document.querySelector('.pst-edm')) { pstEdMenuX(); e.stopPropagation(); } }, true);
+window.addEventListener('scroll', pstEdMenuX, true);
 sxmRegister('lots', {
   ver: LOTS_VER, miss: LOTS_MISS,
   init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
-  exports: { pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
+  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
 });
 </script>
 <script>
