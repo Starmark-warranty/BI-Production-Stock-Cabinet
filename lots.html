@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.66 (2026-10-27 10:50 ผู้ใช้ รูปกล่องรหัสสี N00S0222N ขึ้น “PT09 · MU192 TOA เทียบสี PT09”: “ถ้าเป็น N00S มันต้อง MU หรือ HG ครับ แล้วคำอธิบายมันคือเทียบสีอะไรครับ”)
+        FIX รหัสสี N00S… (งานสี) → ชื่อใหญ่ = รหัส MU / HG ในชื่อวัสดุ (MU192) · บรรทัดรอง = “เทียบสี PT09” (+ ยี่ห้อ TOA) — เดิม 1.63 จับ PP/PT ก่อนทุกรหัส = ได้ PT09 ผิด
+            · รหัสอื่น (N03P… ฟิล์ม) = PP19 / PT05 เหมือนเดิม
     1.65 (2026-10-27 10:48 ผู้ใช้ รูปกล่องสถานะ “ตัดแล้ว 87/141 ชิ้_” วงกลม 61% ทับ: “ขยับเกจไปทางขวาอีกหน่อยครับ ไม่เห็นหน่วย”)
         UI วงกลม % ในกล่องสถานะ (1.63) ย้ายไปมุมขวาบน (ข้าง ▾) ลอยทับมุม ไม่กินที่บรรทัด → “ตัดแล้ว … ชิ้น” ใช้ความกว้างเต็มกล่อง · วงเล็กลง 44 → 36px
     1.64 (2026-10-27 10:46 ผู้ใช้ รูปคอลัมน์ State: “เรากระชับช่อง State ให้แคบลงอีกได้ไหมครับ จะได้แสดงข้อมูลด้านขวาได้มากขึ้น”)
@@ -1009,7 +1012,7 @@
   #lotSt .fsk{cursor:pointer;text-decoration:underline dotted var(--ink-faint);text-underline-offset:3px}
   #pstClr{position:fixed;z-index:300;display:none;max-width:min(320px,calc(100vw - 16px));padding:7px 12px;border-radius:10px;background:var(--solid);color:var(--ink);
     border:.5px solid var(--line-strong);box-shadow:0 10px 28px rgba(20,32,60,.24);font-size:13px;line-height:1.4;pointer-events:none}
-  #pstClr b{display:block;font-size:17px;font-weight:800} #pstClr small{display:block;font-size:11.5px;color:var(--ink-dim)} #pstClr code{display:block;font:11px var(--mono);color:var(--ink-faint)}
+  #pstClr b{display:block;font-size:17px;font-weight:800} #pstClr em{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--accent)}   /* lots 1.66 เทียบสี … */ #pstClr small{display:block;font-size:11.5px;color:var(--ink-dim)} #pstClr code{display:block;font:11px var(--mono);color:var(--ink-faint)}
   #lotSt th[data-mtxh]{cursor:pointer} #lotSt th .mtxh{display:inline-block;margin-left:4px;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:800}
   /* lots 1.62 กล่องสรุปไม้ */
   #ov .box.pkx.mtxb{width:min(560px,100%)} .pkx-t.mtx td.c small{display:block;font-family:var(--font);font-size:11.5px;color:var(--ink-dim);white-space:normal}
@@ -1169,7 +1172,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.65';
+var LOTS_VER = '1.66';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2767,6 +2770,13 @@ document.addEventListener('click', function (e) { var td = e.target.closest && e
    ชื่อจาก items/info.csv (rxName ของ index) → PP19 / PT05 (P P|T + เลข) · TOA … (คำหลัง TOA) · ไม่เข้า = ชื่อเต็ม · ชี้ (เมาส์) / กด (มือถือแตะ) = กล่องเล็ก */
 var PST_CLR_RE = /\b[NG]\d\d[A-Z]\d{4}[A-Z]\b/g;
 function pstClrWrap(v) { return esc(v).replace(PST_CLR_RE, function (c) { return '<span class="fsk" data-fsc="' + c + '">' + c + '</span>'; }); }
+/* lots 1.66 งานสี N00S → [MU192, 'เทียบสี PT09 · TOA'] (ผู้ใช้ 10:50 “ถ้าเป็น N00S มันต้อง MU หรือ HG · คำอธิบายมันคือเทียบสีอะไร”) · null = ไม่ใช่สี / หาไม่เจอ */
+function pstClrPaint(code, name) {
+  if (!/^N00S/i.test(String(code || ''))) return null; name = String(name || '').trim(); if (!name) return null;
+  var m = /\b(MU|HG)\s*-?\s*(\d{1,4}[A-Z]?)\b/i.exec(name); if (!m) return null;
+  var c = /เทียบสี\s*:?\s*([^\s,()\/]+)/.exec(name), br = /\bTOA\b/i.test(name) ? 'TOA' : '';
+  return [(m[1] + m[2]).toUpperCase(), [c ? 'เทียบสี ' + c[1] : '', br].filter(Boolean).join(' · ')];
+}
 function pstClrShort(name) {
   name = String(name || '').trim(); if (!name) return '';
   var m = /\b(P[PT])\s*-?\s*(\d{1,3}[A-Z]?)\b/i.exec(name); if (m) return (m[1] + m[2]).toUpperCase();
@@ -2777,8 +2787,8 @@ var PST_CLR = { el: null, at: null };
 function pstClrShow(el) {
   var code = el.dataset.fsc; if (!code) return;
   if (!PST_CLR.el) { PST_CLR.el = document.createElement('div'); PST_CLR.el.id = 'pstClr'; document.body.appendChild(PST_CLR.el); }
-  var T = PST_CLR.el, draw = function () { var n = rxName(code) || {}, sh = pstClrShort(n.name);
-    T.innerHTML = '<b>' + esc(sh || (RX.info ? 'ไม่พบชื่อ' : 'กำลังโหลดชื่อ…')) + '</b>' + (n.name && sh !== n.name ? '<small>' + esc(n.name) + '</small>' : '') + '<code>' + esc(code) + '</code>'; };
+  var T = PST_CLR.el, draw = function () { var n = rxName(code) || {}, pt = pstClrPaint(code, n.name) /* lots 1.66 สี N00S = MU/HG + เทียบสี */, sh = pt ? pt[0] : pstClrShort(n.name);
+    T.innerHTML = '<b>' + esc(sh || (RX.info ? 'ไม่พบชื่อ' : 'กำลังโหลดชื่อ…')) + '</b>' + (pt && pt[1] ? '<em>' + esc(pt[1]) + '</em>' : '') + (n.name && sh !== n.name ? '<small>' + esc(n.name) + '</small>' : '') + '<code>' + esc(code) + '</code>'; };
   PST_CLR.at = el; draw(); T.style.display = 'block';
   var r = el.getBoundingClientRect(), w = T.offsetWidth, h = T.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.bottom + 6;
   if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
