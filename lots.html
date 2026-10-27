@@ -75,6 +75,12 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.52 (2026-10-27 08:23 ผู้ใช้ รูป Scan-Link ห่อ PD69000045189-PD08_2 ยังขึ้น “✓ ถึงไซต์ครบทั้งห่อ” + StarStock Site 0/169 · ห่อ 2/51: “ผมลองล้างสถานะแล้ว แล้วลองแสกนใหม่ ยังขึ้นอยู่ครับ”)
+        FIX ADMIN ล้างสถานะ = ล้างที่มาด้วย (เดิม 1.51 แค่ทับค่า ov — Scan-Link ยังเห็นว่ายิง/ตรวจห่อไว้แล้ว)
+           · ขั้นไหนเอาออกครบทุกชิ้นของ Lot = ลบการยิงทั้ง Lot ของขั้นนั้นใน steps.json (Edge · Drill · สี+เคลือบ · Site ทั้ง Lot + ห่อที่ตรวจรับทั้งหมด)
+           · Site: ห่อที่เอาออกครบทุกชิ้น = ลบการตรวจห่อนั้น (Scan-Link ขึ้นยังไม่ตรวจ ตรวจใหม่ได้) · เอาออกบางชิ้น = ห่อนั้นขึ้น “ขาด” ชิ้นนั้น
+           · ที่เหลือ (ยังต่างจากค่าจริง เช่น Pack แล้ว = ถือว่าผ่าน · ค่าใน AX) = จดเป็นค่าที่ ADMIN แก้ (ov) เหมือนเดิม · ห่อ x/ทั้งหมด นับตามนี้ด้วย
+        UX ชี้ช่อง Site ที่ตรวจห่อ = บอกรุ่น Scan-Link ที่ใช้ตรวจ (v23 ขึ้นไป) · ห่อที่ ADMIN แก้ = บอกเวลา
     1.51 (2026-10-27 08:10 ผู้ใช้ รูปตาราง State + ป้ายผู้ใช้ “ADMIN”: “เพิ่มให้ผม ADMIN คืนสถานะได้ EDGE Finish Drill และ Site หน่อยครับ ยกเลิกสถานะทั้งหมด
          แล้วติ๊กได้รายบรรทัด หรือติ๊กหมดได้ แล้วกดคลิกขวา Save”)
         FEAT ADMIN แก้สถานะรายชิ้น Edge · Finish · Drill · Site (ชื่อผู้ใช้ 👤 = ADMIN · คอมเท่านั้น)
@@ -1026,7 +1032,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.51';
+var LOTS_VER = '1.52';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1993,11 +1999,11 @@ function pstPackCnt(id, rows) {
 }
 function pstPkTip(r, miss) {
   return (miss ? '✗ ขาด — ตรวจรับที่ไซต์ไม่พบชิ้นนี้ในห่อ ' : 'ตรวจรับที่ไซต์ (ห่อ ') + (r.pk || '') + (miss ? '' : ')') + ' · ' + (fDT(lotDate(r.at)) || r.at) + (r.by ? ' โดย ' + r.by : '')
-    + (r.n ? ' · ได้รับ ' + (r.ok != null ? r.ok : r.n) + '/' + r.n + ' รายการ' : '') + ' (Scan-Link)';
+    + (r.n ? ' · ได้รับ ' + (r.ok != null ? r.ok : r.n) + '/' + r.n + ' รายการ' : '') + ' (Scan-Link' + (r.v ? ' ' + r.v : '') + ')' + (r.adm ? ' · ADMIN แก้ ' + (fDT(lotDate(r.adm.at)) || r.adm.at || '') : '');   // lots 1.52 + รุ่น Scan-Link (v23+) · ADMIN แก้ห่อ
 }
 function pstScanTip(S0, sc) {
   if (sc && sc.pk) return pstPkTip(sc, false);   /* lots 1.46 ห่อที่ตรวจรับ */
-  return (S0.k === 'si' ? 'ยิงถึงไซต์ ' : 'ยิงเริ่ม' + S0.th + ' ') + (fDT(lotDate(sc.at)) || sc.at) + (sc.by ? ' โดย ' + sc.by : '') + (sc.bc ? ' · รหัส ' + sc.bc : '') + ' (Scan-Link · ทั้ง Lot)'; }   // lots 1.6 + Site
+  return (S0.k === 'si' ? 'ยิงถึงไซต์ ' : 'ยิงเริ่ม' + S0.th + ' ') + (fDT(lotDate(sc.at)) || sc.at) + (sc.by ? ' โดย ' + sc.by : '') + (sc.bc ? ' · รหัส ' + sc.bc : '') + ' (Scan-Link' + (sc.v ? ' ' + sc.v : '') /* lots 1.52 รุ่นแอป */ + ' · ทั้ง Lot)'; }   // lots 1.6 + Site
 function pstChip(S0, z, on, sub, rc) {   // lots 1.25: rc = ' cs{i} rch' (ถึงแล้ว = สีของขั้น) / ' cs{i} unr' (ยังไม่ถึง = เทา)
   var na = S0.na || !z || z.n === 0 /* lots 1.43 ไม่มีชิ้นของขั้นนี้ (เช่น ไม่มีงานสี/เคลือบ) */, full = z && z.n > 0 && z.d >= z.n, p = z && z.n ? z.d / z.n : 0;
   return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + (rc || '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
@@ -3035,8 +3041,64 @@ function pstEdExit(force) {
   if (!force && pstEdChanges().n && !confirm('ยังไม่ได้ Save การแก้สถานะ ' + pstEdChanges().n + ' ช่อง — ทิ้งแล้วออก?')) return false;
   PST_ED.on = false; PST_ED.d.clear(); pstEdMenuX(); pstRender(true); return true;
 }
+/* ───────── lots 1.52: ADMIN ล้างสถานะ = ล้างที่มาด้วย (ผู้ใช้ 08:23 “ลองล้างสถานะแล้ว แล้วลองแสกนใหม่ ยังขึ้นอยู่”) ─────────
+   เดิม 1.51: Save = จดค่าที่แก้ (ov) ทับอย่างเดียว — การยิงใน steps.json ยังอยู่ → Scan-Link ยังขึ้น ✓ เริ่มแล้ว / ห่อ ✓ ถึงไซต์ครบ · StarStock ห่อ 2/51
+   ตอนนี้ (pstEdPlan · ต่อ Lot ต่อขั้นที่แก้): ค่าที่ต้องการทุกชิ้น (D) = ค่าที่เห็นในตาราง (ค่าจริง + ที่แก้ไว้ + ที่เพิ่งแตะ)
+     ① เอาออกครบทุกชิ้น = ลบการยิงทั้ง Lot: Edge → edge · Drill → drill · สี·เคลือบ → paint + coat · Site → site + sitePk (ทุกห่อ)
+     ② Site บางส่วน: ห่อที่ตรวจไว้ — ไม่เหลือชิ้นที่ติ๊ก = ลบห่อนั้น · บางชิ้น = miss / ok / mn ใหม่ (Scan-Link ขึ้น “ขาด” ชิ้นนั้น)
+     ③ คิดค่าจริงใหม่จากที่มาที่เหลือ (pstStepEntry) → ชิ้นที่ยังต่างจาก D = ov (1 / 0) · ไม่ต่าง = ไม่จด */
+function pstStepEntry(e) {   // แถวของ steps.json → แบบ PST.steps (เหมือน pstParseSteps ทีละ Lot)
+  var v = {}; if (!e) return v;
+  ['edge', 'drill', 'paint', 'coat'].forEach(function (k) { if (e[k] && e[k].at) v[k] = e[k]; });
+  if (e.site && e.site.at) v.si = e.site;
+  if (e.sitePk && typeof e.sitePk === 'object') { var pk = {}, n = 0; Object.keys(e.sitePk).forEach(function (c) { var r = e.sitePk[c]; if (r && r.at) { pk[String(c).trim().toUpperCase()] = r; n++; } }); if (n) v.sitePk = pk; }
+  return v;
+}
+function pstEdDesired(ch) {   // { LOT: { lot, ks: { k: Map(rec → true/false) } } } — ทุกชิ้นของ Lot ในขั้นที่แก้ (ก่อนอ่าน Drive)
+  var out = {};
+  Object.keys(ch.m).forEach(function (K) { var o = ch.m[K], parts = pstRowsOf({ id: o.lot }) || [], ks = {};
+    Object.keys(o.ks).forEach(function (k) { var D = new Map();
+      parts.forEach(function (p) { var q = pstVal(p, PST.st && PST.st.get(p.rec), k); if (q.nc || q.na) return; D.set(p.rec, !!q.v); });
+      ks[k] = D; });
+    out[K] = { lot: o.lot, parts: parts, ks: ks }; });
+  return out;
+}
+function pstEdPlan(base, DS, at, by) {   // แก้ base.lots ตาม DS · คืนจำนวนช่องที่จดเป็น ov
+  var tot = 0;
+  Object.keys(DS).forEach(function (K) {
+    var o = DS[K], e = base.lots[K] || { lot: o.lot }, notes = [];
+    Object.keys(o.ks).forEach(function (k) {
+      var D = o.ks[k], vals = Array.from(D.values()), none = !vals.some(Boolean);
+      if (k === 'edge' || k === 'drill') { if (none && e[k]) { delete e[k]; notes.push('ลบยิง ' + k); } }
+      else if (k === 'fin') { if (none && (e.paint || e.coat)) { delete e.paint; delete e.coat; notes.push('ลบยิงสี/เคลือบ'); } }
+      else if (k === 'si') {
+        if (none) { if (e.site) { delete e.site; notes.push('ลบ Site ทั้ง Lot'); } if (e.sitePk) { notes.push('ลบตรวจห่อ ' + Object.keys(e.sitePk).length); delete e.sitePk; } }
+        else if (e.sitePk) Object.keys(e.sitePk).forEach(function (code) {
+          var C = String(code).trim().toUpperCase(), ps = o.parts.filter(function (p) { return String(p.pack || '').trim().toUpperCase() === C && D.has(p.rec); }); if (!ps.length) return;
+          var yes = ps.filter(function (p) { return D.get(p.rec); }), no = ps.filter(function (p) { return !D.get(p.rec); }), r = e.sitePk[code];
+          if (!yes.length) { delete e.sitePk[code]; notes.push('ลบตรวจห่อ ' + code); return; }
+          r.miss = no.map(pstSiteKey); r.mn = no.map(function (p) { return p.nm || p.cpt || ''; }); r.ok = Math.max(0, (r.n || ps.length) - no.length); r.adm = { at: at, by: by };
+        });
+        if (e.sitePk && !Object.keys(e.sitePk).length) delete e.sitePk;
+      }
+      /* ③ ค่าจริงจากที่มาที่เหลือ → ov */
+      var keep = PST.steps ? PST.steps.get(K) : undefined, tmp = pstStepEntry(e), ov = {};
+      if (!PST.steps) PST.steps = new Map();
+      PST.steps.set(K, tmp);
+      try { o.parts.forEach(function (p) { if (!D.has(p.rec)) return; var nat = !!pstValL151(p, PST.st && PST.st.get(p.rec), k).v, want = D.get(p.rec); if (nat !== want) { ov[p.rec] = want ? 1 : 0; tot++; } }); }
+      finally { if (keep === undefined) PST.steps.delete(K); else PST.steps.set(K, keep); }
+      e.ov = e.ov && typeof e.ov === 'object' ? e.ov : {};
+      if (Object.keys(ov).length) e.ov[k] = ov; else delete e.ov[k];
+    });
+    if (e.ov && !Object.keys(e.ov).length) { delete e.ov; delete e.ovAt; delete e.ovBy; } else if (e.ov) { e.ovAt = at; e.ovBy = by; }
+    if (Object.keys(e).some(function (x) { return x !== 'lot'; })) { e.lot = o.lot; base.lots[K] = e; } else delete base.lots[K];
+    base.hist.unshift({ t: 'แก้สถานะ (ADMIN)', step: 'ov', lot: o.lot, at: at, by: by, ks: Object.keys(o.ks), note: notes.join(' · ') });
+  });
+  return tot;
+}
 async function pstEdSave() {
   if (PST_ED.busy) return; var ch = pstEdChanges(); if (!ch.n) { toast('ไม่มีช่องที่เปลี่ยน'); return; }
+  var DS = pstEdDesired(ch);   // lots 1.52 ค่าที่ต้องการทุกชิ้น (คิดก่อนอ่าน Drive — ตารางที่เห็นตอนกด Save)
   var fs = ensureFs(); if (!fs) { toast('ยังไม่ได้เชื่อม Google Drive — บันทึกไม่ได้'); return; }
   PST_ED.busy = true; pstEdMenuX(); pstEdDeco();
   try {
@@ -3046,13 +3108,7 @@ async function pstEdSave() {
         try { base = JSON.parse(t); } catch (x) { throw new Error('lots/steps.json บน Drive อ่านไม่ออก — ไม่บันทึกทับ'); }
         if (!base.lots || typeof base.lots !== 'object') base.lots = {}; if (!Array.isArray(base.hist)) base.hist = []; }
       var at = nowIso(), by = me();
-      Object.keys(ch.m).forEach(function (K) { var o = ch.m[K], e = base.lots[K] || { lot: o.lot }, cnt = 0; e.ov = e.ov && typeof e.ov === 'object' ? e.ov : {};
-        Object.keys(o.ks).forEach(function (k) { var m = e.ov[k] || (e.ov[k] = {});
-          Object.keys(o.ks[k]).forEach(function (rec) { var v = o.ks[k][rec]; if (v == null) delete m[rec]; else m[rec] = v; cnt++; });
-          if (!Object.keys(m).length) delete e.ov[k]; });
-        if (!Object.keys(e.ov).length) { delete e.ov; delete e.ovAt; delete e.ovBy; } else { e.ovAt = at; e.ovBy = by; }
-        if (Object.keys(e).some(function (x) { return x !== 'lot'; })) base.lots[K] = e; else delete base.lots[K];
-        base.hist.unshift({ t: 'แก้สถานะ (ADMIN)', step: 'ov', lot: o.lot, n: cnt, at: at, by: by, ks: Object.keys(o.ks) }); });
+      pstEdPlan(base, DS, at, by);   // lots 1.52 ล้างที่มา + ov (เดิม 1.51: จด ov ของช่องที่แก้อย่างเดียว)
       base.hist = base.hist.slice(0, 2000); base.v = 1; base.at = at; base.by = by;
       var c = await GasFS.gz(new TextEncoder().encode(JSON.stringify(base)));
       var w = await fs.call({ a: 'fsWrite', p: LOT_DIR, n: PST_F.steps, c: c, ifU: f ? f.u : 0 });
