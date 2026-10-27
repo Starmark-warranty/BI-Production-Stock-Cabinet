@@ -75,6 +75,13 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.73 (2026-10-27 11:59 ผู้ใช้ รูปกล่องสถานะ FOREST-2026-0017 ช่อง Paint/Membrane “–” + Excel ของ Lot: “lot ของ 0017 น่าจะมีปัญหา … น่าจะต้องดูจาก Excel ด้วย”)
+        FIX FrontStyle / ผิวบน-ล่าง จับคู่ชิ้นด้วย Code Part ได้ด้วย (เดิมจับด้วย Barcode 1 ของ AX อย่างเดียว)
+            · 0017 ใน AX มี Barcode 1 แค่ 45/167 ชิ้น (CSV ของ Cut Rite มีแค่ Barcode2 หรือไม่มีเลย) → บาน/หน้าลิ้นชักเคลือบ 16 ชิ้นจับไม่ได้
+              → 1.71 (เคลือบต้องมี FrontShape M) ไม่เหลือชิ้นเคลือบ · เป็นแบบนี้ 9 Lot (FOREST-2026-0017/0018/0019_MC/0020_MC, BO69-0738_HG, RE-0069-0855/0856-MC …)
+            · ข้อมูลของ 0017 ขึ้น Drive ครบแล้ว (fstyle.csv 167 ชิ้น = Part summary ใน Excel ทุกชิ้น · SAW 2610051038 ตรง)
+            · ตอนนี้: Barcode 1 → Code Part (= (28)BarcodePart ของ Cut Rite · ช่อง bp ของ fstyle.csv จาก StarSync v1.25 · ตรงกัน 100%)
+              StarSync ยังไม่ถึง v1.25 (ไม่มีช่อง bp) = จับด้วย Item Part (P1 …) ใน Lot เดียวกัน เฉพาะที่เลขไม่ซ้ำใน Lot + ชื่อชิ้นตรงกัน
     1.72 (2026-10-27 11:54 ผู้ใช้ รูปผิวล่าง N06H1066N ขึ้น “PP79 · จาก MD09G03P0059YN06H1066N (… PVC PP79 Alfonso Roma Noce / HPL 22381 Backing …)”: “ผิวนั้น มัน HPL 22381 ครับ”)
         FIX ชื่อรหัสผิวจากชื่อไม้แผ่น: ชื่อไม้บอก 2 หน้าคั่นด้วย “ / ” (หน้าบน / หน้าล่าง) → ใช้ส่วนของหน้าที่รหัสนั้นอยู่ในรหัสไม้ (ตัวที่ 5–13 = บน · 14–22 = ล่าง) — เดิม 1.68 หยิบ PP ตัวแรกของทั้งชื่อ
         FIX ชนิดผิวตามตัวที่ 4 ของรหัส: H = HPL → “HPL 22381” (HPL + เลข) · P (PVC) = PP/PT เหมือนเดิม · N00S = MU/HG + เทียบสี (1.66)
@@ -1207,7 +1214,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.72';
+var LOTS_VER = '1.73';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1910,22 +1917,45 @@ function pstLotTypeHtml(x) {
 function pstParseFs(t) {
   var R = parseCsv(t || ''), h = (R[0] || []).map(function (x) { return String(x).replace(/^\uFEFF/, '').trim().toLowerCase(); }), ix = {}; h.forEach(function (k, i) { ix[k] = i; });
   var m = new Map(), fsl = new Map() /* lots 1.45 */, sfm = new Map(), sfl = new Set() /* lots 1.63 */, lot = '', n = 0, col = function (a, k) { var i = ix[k]; return i == null || a[i] == null ? '' : String(a[i]).trim(); };
+  /* ───────── lots 1.73: จับคู่ด้วย Code Part (ผู้ใช้ 11:59 FOREST-2026-0017 Paint/Membrane “–”) ─────────
+     เดิม: คีย์ = Barcode 1 / 2 ของ CSV เท่านั้น — Lot ที่ AX ไม่มี Barcode 1 (0017: มี 45/167 ชิ้น) จับไม่ได้ทั้ง Lot
+     ตอนนี้: + คีย์ Code Part จากช่อง bp (StarSync v1.25 · (28)BarcodePart เขียนย่อแบบ lotcsv.csv: ส่วนหน้า PD… + “-” + pid · ^ = ส่วนหน้าเหมือนแถวบน · =ค่า = ค่าเต็ม)
+       ไฟล์ยังไม่มีช่อง bp (StarSync < v1.25) = เก็บ Lot|pid ไว้ใน pm ให้ pstFsApply จับด้วย Item Part (pid ซ้ำใน Lot ใช้ได้เมื่อค่าเหมือนกันทุกแถว + จำนวนเท่ากับใน AX) */
+  var hasBp = ix.bp != null, bpv = '', pm = hasBp ? null : new Map();
   for (var r = 1; r < R.length; r++) { var a = R[r]; if (a.length === 1 && a[0] === '') continue;
     var l0 = col(a, 'lot'); if (l0 === '^') l0 = lot; else if (l0.charAt(0) === '=') l0 = l0.slice(1); lot = l0;
     var fs = col(a, 'fs'); if (fs.charAt(0) === '=') fs = fs.slice(1);
     var st = col(a, 'st'), sb = col(a, 'sb');   /* lots 1.63 StarSync v1.24 ผิวบน / ผิวล่าง (เฉพาะชิ้นที่ผิวต่างจากรหัสวัสดุ) — แถวที่ fs ว่างแต่มีผิว = ไม่นับเป็น FrontStyle */
-    if (l0 && (st || sb)) { var K1 = l0.toUpperCase(); sfl.add(K1); [col(a, 'bc1'), col(a, 'bc2')].forEach(function (b) { if (b && !/^manual$/i.test(b)) sfm.set(K1 + '|' + b.toUpperCase(), [st, sb]); }); }
+    var pid = col(a, 'pid'), ks = [col(a, 'bc1'), col(a, 'bc2')].filter(function (b) { return b && !/^manual$/i.test(b); });   // Manual (ห่ออุปกรณ์) ไม่ใช่บาร์โค้ดจริง
+    if (hasBp) { var bp = col(a, 'bp'), full = '';   // lots 1.73
+      if (bp === '^') full = bpv && pid ? bpv + '-' + pid : ''; else if (bp.charAt(0) === '=') { full = bp.slice(1); bpv = ''; } else if (bp) { bpv = bp; full = pid ? bp + '-' + pid : ''; } else bpv = '';
+      if (full) ks.push(full); }
+    else if (l0 && pid) { var kp = l0.toUpperCase() + '|' + pid.toUpperCase(), e0 = pm.get(kp), nm0 = col(a, 'nm');   // pid ซ้ำ (หลาย PD) ค่าเหมือนกันทุกแถว = ยังใช้ได้ (c = จำนวนแถว) · ต่างกัน = x
+      if (!e0) pm.set(kp, { fs: fs, st: st, sb: sb, nm: nm0, c: 1, x: false }); else { e0.c++; if (e0.fs !== fs || e0.st !== st || e0.sb !== sb) e0.x = true; if (e0.nm !== nm0) e0.nm = ''; } }
+    if (l0 && (st || sb)) { var K1 = l0.toUpperCase(); sfl.add(K1); ks.forEach(function (b) { sfm.set(K1 + '|' + b.toUpperCase(), [st, sb]); }); }
     if (!l0 || !fs) continue; n++;
     var K = l0.toUpperCase(), fl = fsl.get(K); if (!fl) fsl.set(K, fl = { n: 0, p: 0, c: 0 }); fl.n++; if (PST_FINRE.paint.test(fs)) fl.p++; else if (PST_FINRE.coat.test(fs)) fl.c++;   // lots 1.45 ราย Lot
-    [col(a, 'bc1'), col(a, 'bc2')].forEach(function (b) { if (b && !/^manual$/i.test(b)) m.set(K + '|' + b.toUpperCase(), fs); }); }   // Manual (ห่ออุปกรณ์) ไม่ใช่บาร์โค้ดจริง
+    ks.forEach(function (b) { m.set(K + '|' + b.toUpperCase(), fs); }); }
   PST.fsm = m; PST.fsN = n; PST.fsLot = fsl;   // lots 1.45 fsLot = Map(LOT → { n, p สี, c เคลือบ })
+  PST.fsp = pm; PST.fsBp = hasBp;   // lots 1.73 pm = Map('LOT|PID' → { fs, st, sb, nm, c จำนวนแถว, x ค่าไม่ตรงกัน }) เฉพาะไฟล์ที่ไม่มีช่อง bp
   PST.sfm = sfm; PST.sfLot = sfl; PST.sfOn = h.indexOf('st') >= 0;   // lots 1.63 ผิว (Cut Rite) ราย Part · Lot ที่มีข้อมูลผิว · ไฟล์มีช่อง st (StarSync v1.24+)
 }
 function pstFsApply() {   // ใส่ p.fs ให้ทุกชิ้น (รายชิ้นอ่านใหม่ / fstyle.csv เปลี่ยน / ดึงย้อนหลัง) · นับที่จับคู่ได้ (PST.fsHit)
-  var m = PST.fsm, hit = 0; if (!PST.lots) return;
-  PST.lots.forEach(function (a, K) { a.forEach(function (p) { var b0 = String(p.bc1 || '').trim().toUpperCase(), v = m && b0 && b0 !== 'MANUAL' ? m.get(K + '|' + b0) : null; p.fs = v || ''; if (v) hit++;
-    var sf = PST.sfm && b0 && b0 !== 'MANUAL' ? PST.sfm.get(K + '|' + b0) : null; p.st = sf ? sf[0] : ''; p.sb = sf ? sf[1] : ''; }); });   // lots 1.63 ผิวบน/ล่างจาก Cut Rite
-  PST.fsHit = hit; if (PST.has) { if (m && m.size) PST.has.add('fs'); else PST.has.delete('fs'); }
+  /* lots 1.73: คีย์ Barcode 1 → Code Part (p.cpt · ช่อง bp ของ StarSync v1.25) → (ไฟล์ไม่มีช่อง bp) Item Part (p.ipt) ที่ไม่ซ้ำทั้งใน fstyle.csv และ AX ของ Lot + ชื่อชิ้นตรงกัน
+     เดิม: Barcode 1 อย่างเดียว — FOREST-2026-0017 จับได้ 45/167 ชิ้น (ชิ้นเคลือบ 0/16) */
+  var m = PST.fsm, pm = PST.fsp, hit = 0, hitC = 0, hitP = 0; if (!PST.lots) return;
+  PST.lots.forEach(function (a, K) {
+    var ipc = null; if (pm) { ipc = new Map(); a.forEach(function (p) { var ip = String(p.ipt || '').trim().toUpperCase(); if (ip) ipc.set(ip, (ipc.get(ip) || 0) + 1); }); }   // จำนวน Item Part ใน Lot (หลาย PD = ซ้ำ) ต้องเท่ากับแถวใน fstyle.csv
+    a.forEach(function (p) {
+      var b0 = String(p.bc1 || '').trim().toUpperCase(), c0 = String(p.cpt || '').trim().toUpperCase(), v = null, sf = null, byC = false; if (b0 === 'MANUAL') { p.fs = ''; p.st = ''; p.sb = ''; return; }
+      if (b0) { v = m ? m.get(K + '|' + b0) || null : null; sf = PST.sfm ? PST.sfm.get(K + '|' + b0) || null : null; }   // lots 1.63 ผิวบน/ล่างจาก Cut Rite
+      if (c0 && (!v || !sf)) { var vc = m ? m.get(K + '|' + c0) || null : null, sc = PST.sfm ? PST.sfm.get(K + '|' + c0) || null : null; if (!v && vc) { v = vc; byC = true; } if (!sf) sf = sc; }
+      if (!v && !sf && pm) { var ip = String(p.ipt || '').trim().toUpperCase(), e = ip ? pm.get(K + '|' + ip) || null : null; if (e && (e.x || e.c !== ipc.get(ip))) e = null;
+        var n1 = String(e && e.nm || '').toLowerCase().replace(/[^a-z0-9]+/g, ''), n2 = String(p.nm || '').toLowerCase().replace(/[^a-z0-9]+/g, '');   // ชื่อเทียบเฉพาะ a-z 0-9 (CSV ของ Cut Rite ไม่ใช่ UTF-8: “·” “กระจก” กลายเป็น ?)
+        if (e && (!n1 || !n2 || n1 === n2)) { v = e.fs || null; sf = e.st || e.sb ? [e.st, e.sb] : null; if (v) hitP++; } }
+      p.fs = v || ''; if (v) { hit++; if (byC) hitC++; }
+      p.st = sf ? sf[0] : ''; p.sb = sf ? sf[1] : ''; }); });
+  PST.fsHit = hit; PST.fsHitC = hitC; PST.fsHitP = hitP; if (PST.has) { if (m && m.size) PST.has.add('fs'); else PST.has.delete('fs'); }
 }
 /* lots 1.10 (ผู้ใช้ 10:58 “หน้านี้ไม่ว่าใครเปิด ให้อยู่หน้านี้ก่อนครับ สถานะ Part”): เปิดมา = แท็บสถานะเสมอ (เดิม 1.2 อ่านแท็บล่าสุดจาก PST_K) — ดู lotShowL12 */
 L.stMode = 'st';
@@ -2454,7 +2484,7 @@ var PST_COLS = [
   { k: 'ifg', h: 'Item Fg', c: 'mono', ex: 1 },
   { k: 'ipt', h: 'Item Part', c: 'mono', ex: 1 },
   { k: 'nm', h: 'Part Name', c: 'pn' },
-  { k: 'fs', h: 'Front Style', c: 'fsc', ex: 1, t: 'FrontStyle จาก CSV ราย Lot ของ Cut Rite\\AX (StarSync v1.22 · lots/fstyle.csv · จับคู่ด้วย Barcode) — ป้าย สี / เคลือบ = ชนิดที่ใช้กับขั้น สี·เคลือบ' },   // lots 1.43
+  { k: 'fs', h: 'Front Style', c: 'fsc', ex: 1, t: 'FrontStyle จาก CSV ราย Lot ของ Cut Rite\\AX (StarSync v1.22 · lots/fstyle.csv · จับคู่ด้วย Barcode 1 หรือ Code Part) — ป้าย สี / เคลือบ = ชนิดที่ใช้กับขั้น สี·เคลือบ' },   // lots 1.43
   { k: 'sft', h: 'ผิวบน', c: 'mono sfc', f: function (v, p) { var s = pstSurfOf(p); return s ? s[0] : ''; }, t: 'ผิวบนของชิ้น — Cut Rite SurfaceBeforeCutTopCode (StarSync v1.24 · lots 1.63) · Lot ที่ยังไม่มี = ตัวที่ 5–13 ของ Material Code (1.60) · N00S… = สี · xxxxxxxxN = ไม่มีผิว · ชี้/กดรหัส = ชื่อสั้น' },   // lots 1.60 ผู้ใช้ 10:10
   { k: 'sfb', h: 'ผิวล่าง', c: 'mono sfc', f: function (v, p) { var s = pstSurfOf(p); return s ? s[1] : ''; }, t: 'ผิวล่างของชิ้น — Cut Rite SurfaceBeforeCutBottomCode (StarSync v1.24 · lots 1.63) · Lot ที่ยังไม่มี = ตัวที่ 14–22 ของ Material Code (1.60) · N00S… = สี · xxxxxxxxN = ไม่มีผิว · ชี้/กดรหัส = ชื่อสั้น' },
   { k: 'pack', h: 'Code Pack', c: 'mono' },
@@ -3195,7 +3225,7 @@ function pstRender(keep) {
       var missTxt = !miss.length ? '' : miss.length === PST_COLS.filter(function (c) { return c.ex && c.k !== 'fs'; }).length ? 'คอลัมน์ ' + miss.join(' · ') + ' ขึ้นเมื่ออัปเดต StarSync เป็น v1.17'
         : 'StarSync หาคอลัมน์ไม่เจอ: ' + miss.join(' · ') + ' (ดู lots/pcols.json · ตั้ง stateCols ใน config.json)';
       /* lots 1.43: Front Style (สี·เคลือบ) — ไฟล์ยังไม่มี / จับคู่ได้กี่ชิ้น */
-      missTxt += (missTxt ? ' · ' : '') + (PST.fsm ? 'Front Style จับคู่ด้วย Barcode ได้ ' + fmtN(PST.fsHit || 0) + ' จาก ' + fmtN(PST.fsN || 0) + ' ชิ้นที่มี FrontStyle (ทุก Lot)' : 'ขั้นสี·เคลือบ + คอลัมน์ Front Style ขึ้นเมื่ออัปเดต StarSync เป็น v1.22');
+      missTxt += (missTxt ? ' · ' : '') + (PST.fsm ? 'Front Style จับคู่ได้ ' + fmtN(PST.fsHit || 0) + ' จาก ' + fmtN(PST.fsN || 0) + ' ชิ้นที่มี FrontStyle (ทุก Lot' + (PST.fsHitC ? ' · ด้วย Code Part ' + fmtN(PST.fsHitC) : '') + (PST.fsHitP ? ' · ด้วย Item Part ' + fmtN(PST.fsHitP) : '') + ')' : 'ขั้นสี·เคลือบ + คอลัมน์ Front Style ขึ้นเมื่ออัปเดต StarSync เป็น v1.22');
       if (mv === 'g') h += '<div class="pst-ft"><span class="pst-src">' + esc(pstWhen()) + '</span><span class="sp"></span>' + (multi ? sel.length + ' Lot · ' : '') + 'Total <b>' + fmtN(all.length) + '</b></div>';   // lots 1.13: หน้าเกจ (คอม/มือถือ) ไม่มีตาราง
       else if (mob) h += (mv === 'g' ? '' : pstMobHtml(part, multi) + moreH   // lots 1.10: มือถือ = รายการสั้น · 1.12 หน้าเกจไม่มีรายการ
         + (!shown.length && !(oth && oth.n) ? '<div class="pst-note">ไม่มีชิ้นที่ตรงคำค้น / ตัวกรอง</div>' : ''))
