@@ -75,6 +75,10 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.56 (2026-10-27 09:12 ผู้ใช้ รูปคอลัมน์ State Edge · Finish · Drill: “สลับ Drill ไปอยู่ก่อนเคลือบและทำสีให้ทีครับ ผมลืมไปว่า เจาะก่อนทำสี เจาะก่อนเคลือบครับ ในโทรศัพท์ด้วยครับ”)
+        CHANGE ลำดับขั้น Part → Edge → Drill → Finish (สี·เคลือบ) → Pack … (เดิม 1.43–1.55: Edge → Finish → Drill) — ตาราง State · เกจ · หลอด · สถานะกำลัง · แถบซ้าย STAGE · หน้ามือถือ · เมนู ADMIN
+            · สีประจำขั้นตามไปด้วย (Drill เหลือง · Finish ชมพูแดง เหมือนเดิม) · ตัวกรองขั้นที่จำไว้ (Finish / Drill) สลับให้ครั้งเดียว
+        FIX ขั้นที่ “ถือว่าผ่าน”: เดิมยิง Drill แล้ว = สี·เคลือบผ่าน (เพราะเจาะอยู่หลัง) → ตอนนี้ ยิงสี / เคลือบแล้ว = Drill ผ่าน (ชิ้นนั้น) · ยิง Drill ไม่ทำให้สี·เคลือบผ่าน
     1.55 (2026-10-27 09:04 ผู้ใช้ รูป FOREST-2026-0017 หลัง StarSync 1.23 ส่ง FrontStyle ของ Lot จบแล้วขึ้นมา — เกจ Finish กลายเป็น “ไม่มีสี/เคลือบ”: “ชิ้นนี้ มันงานเคลือบนะ P11”)
         FIX ชิ้นเคลือบดูจากรหัสไม้ (ผิวดิบ 1 ด้าน xxxxxxxx + อีกด้านเมลามีน) ทุก Lot — เดิม 1.47 ดูเฉพาะ Lot ที่ไม่มี FrontStyle สักชิ้น
             → พอ Lot มี FrontStyle บางชิ้น (P5 Color:N01M0029N) ชิ้น P11 Drawer Front (MD19N01M0029NxxxxxxxxN · FrontStyle ว่าง) ไม่นับเป็นเคลือบ
@@ -926,7 +930,7 @@
   #lotExp,#lotImp{display:none!important}
   body:not([data-view="lots"]) #lotBar{display:none!important}   /* #lotBar (id) ชนะ .lotsOnly ของ index — ซ่อนเองเมื่ออยู่หน้าอื่น */
   /* ───────── lots 1.23: สีแถวตามขั้นที่ชิ้นอยู่ (ผู้ใช้ 13:22–13:23 · 8 ขั้น 8 สีอ่อน · เฉพาะตารางหน้าสถานะ Part) ───────── */
-  #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#e11d48;--st3:#d9a400;--st4:#8a5cf5;--st5:#d6409f;--st6:#ef7d22;--st7:#0ea5c6;--st8:#6aa121}   /* lots 1.43 + st2 สี·เคลือบ (ชมพูแดง) — ขั้นหลังจากนั้นเลื่อน 1 สีเดิม */
+  #lotSt{--st0:#2f7fe0;--st1:#12a594;--st2:#d9a400;--st3:#e11d48;--st4:#8a5cf5;--st5:#d6409f;--st6:#ef7d22;--st7:#0ea5c6;--st8:#6aa121}   /* lots 1.43 + st2 สี·เคลือบ (ชมพูแดง) — ขั้นหลังจากนั้นเลื่อน 1 สีเดิม · lots 1.56 สลับ st2 ↔ st3 (Drill ขั้นที่ 2 = เหลือง · สี·เคลือบ ขั้นที่ 3 = ชมพูแดง) */
   #lotSt .cs0{--stc:var(--st0)} #lotSt .cs1{--stc:var(--st1)} #lotSt .cs2{--stc:var(--st2)} #lotSt .cs3{--stc:var(--st3)}
   #lotSt .cs4{--stc:var(--st4)} #lotSt .cs5{--stc:var(--st5)} #lotSt .cs6{--stc:var(--st6)} #lotSt .cs7{--stc:var(--st7)} #lotSt .cs8{--stc:var(--st8)}   /* lots 1.43 + cs8 */
   /* lots 1.30 ปิด (ไม่ใช้ 8 สี): .pst-t tbody tr.csx td:not(.pck){background:color-mix(in srgb,var(--stc) 11%,var(--solid))} */
@@ -1044,7 +1048,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.55';
+var LOTS_VER = '1.56';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1587,11 +1591,12 @@ var PST_MAXSEL = 60, PST_PKLIM = 300;             // lots 1.2: เลือก�
 var PST = { lots: null, rec: null, st: null, steps: null, iu: 0, su: 0, mu: 0, xu: 0, meta: null, none: null, err: null, loading: null, at: 0, ver: 0,
   an: null, anC: null, au: 0, anWant: 0, anPend: 0, anNone: null };   // lots 1.9: ชื่อไทย Article (an = Map รหัสตัวใหญ่ → { n, s } · anC = ผลจับคู่ที่เคยหา)
 /* ขั้น: k = ช่องใน pstate.csv · th = ชื่อไทย · t = ที่มา */
+/* lots 1.56 (ผู้ใช้ 09:12 “เจาะก่อนทำสี เจาะก่อนเคลือบ”): Drill ย้ายมาก่อน Finish — เดิม 1.43 แทรก Finish ระหว่าง Edge กับ Drill */
 var PST_STEPS = [
   { k: 'cut', h: 'Part', th: 'ตัด', t: 'ยิงตัดแล้ว (CHECKPART) — ห่ออุปกรณ์ที่ไม่มีขนาด = “–” (ไม่ต้องตัด)' },
   { k: 'edge', h: 'Edge', th: 'ปิดขอบ', t: 'ปิดขอบ — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Edge = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
-  { k: 'fin', h: 'Finish', th: 'สี·เคลือบ', t: 'รับเข้างานทำสี / งานเคลือบ (lots 1.43) — เฉพาะชิ้นสี (FrontStyle N00S หรือไม้ 34N ใน Lot MU / HG) / ชิ้นเคลือบ (FrontShape ขึ้นต้น M) · lots 1.45 (StarSync v1.22 · lots/fstyle.csv) · ยิงด้วย Scan-Link: ทำสี / เคลือบ = ติ๊กชิ้นชนิดนั้นทั้ง Lot · ยิง Drill / Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
-  { k: 'drill', h: 'Drill', th: 'เจาะ&CNC', t: 'เจาะ & CNC — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Drill = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
+  { k: 'drill', h: 'Drill', th: 'เจาะ&CNC', t: 'เจาะ & CNC — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Drill = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ) · lots 1.56 ชิ้นสี/เคลือบที่ยิงรับเข้าสี·เคลือบแล้ว = เจาะแล้ว (✓ กรอบประ)' },
+  { k: 'fin', h: 'Finish', th: 'สี·เคลือบ', t: 'รับเข้างานทำสี / งานเคลือบ (lots 1.43) — เฉพาะชิ้นสี (FrontStyle N00S หรือไม้ 34N ใน Lot MU / HG) / ชิ้นเคลือบ (FrontShape ขึ้นต้น M) · lots 1.45 (StarSync v1.22 · lots/fstyle.csv) · lots 1.56 อยู่หลัง Drill (เจาะก่อนทำสี·เคลือบ) · ยิงด้วย Scan-Link: ทำสี / เคลือบ = ติ๊กชิ้นชนิดนั้นทั้ง Lot · Pack แล้วขึ้นไป = ติ๊กให้เอง (✓ กรอบประ)' },
   { k: 'pk', h: 'Pack', th: 'แพ็ค', t: 'แพ็คแล้ว (CHECKPACK)' },
   { k: 'pi', h: 'Pick', th: 'เตรียมส่งของเข้าคลัง', t: 'เตรียมส่งของเข้าคลัง (CHECKPICK)' },
   { k: 'wh', h: 'Wh', th: 'คลัง', t: 'เข้าคลังแล้ว (WH_STATUS)' },
@@ -1934,11 +1939,11 @@ function pstScanOf(lot, k) { var e = PST.steps && PST.steps.get(String(lot || ''
 function pstPassed(s, k) { var v = s && s[k] != null ? String(s[k]).trim() : ''; return k === 'dl' || k === 'si' ? v !== '' && v !== '0' : v === '1'; }
 /* ค่าในช่อง: true = ผ่าน · false = ยัง · null = ไม่มีข้อมูล/ไม่เกี่ยว · raw = ค่าดิบ (dl/si) · scan = ยิงจากโทรศัพท์ · inf = ถือว่าผ่านเพราะ Pack แล้ว */
 function pstVal(p, s, k) {
-  if (k === 'fin') {   // lots 1.43 สี/เคลือบ: เฉพาะชิ้นที่มี FrontStyle · ยิง paint / coat ตามชนิด · ยิง Drill / Pack แล้ว = ผ่าน
+  if (k === 'fin') {   // lots 1.43 สี/เคลือบ: เฉพาะชิ้นที่มี FrontStyle · ยิง paint / coat ตามชนิด · ยิง Drill / Pack แล้ว = ผ่าน (lots 1.56: Pack แล้วขึ้นไปเท่านั้น — เจาะอยู่ก่อนสี·เคลือบ)
     var fk = pstFinKind(p); if (!fk) return { v: null, nc: 1, fin: 1, fs: p.fs || '' };   // lots 1.45 + fs (มี FrontStyle แต่ไม่ใช่สี/เคลือบ)
     var fsc = fk === 'paint' ? pstScanOf(p.lot, 'paint') : fk === 'coat' ? pstScanOf(p.lot, 'coat') : (pstScanOf(p.lot, 'paint') || pstScanOf(p.lot, 'coat'));
     if (fsc) return { v: true, scan: fsc, fk: fk };
-    if (pstScanOf(p.lot, 'drill') || (s && PST_AFTER.some(function (a) { return pstPassed(s, a); }))) return { v: true, inf: 1, fk: fk };
+    if (s && PST_AFTER.some(function (a) { return pstPassed(s, a); })) return { v: true, inf: 1, fk: fk };   // lots 1.56 เดิม: pstScanOf(p.lot, 'drill') || … (Drill อยู่หลังสี·เคลือบ) — ตอนนี้เจาะก่อน = ยิง Drill ไม่ได้บอกว่าผ่านสี·เคลือบ
     return s ? { v: false, fk: fk } : { v: null, fk: fk };
   }
   if (k === 'edge' || k === 'drill') {   // lots 1.2 (เดิม: { v: null, na: 1 } = รอจุดยิง)
@@ -1946,6 +1951,7 @@ function pstVal(p, s, k) {
     if (p.sz === false) return { v: null, nc: 1 };                       // ห่ออุปกรณ์ ไม่ปิดขอบ/ไม่เจาะ
     var sc = pstScanOf(p.lot, k); if (sc) return { v: true, scan: sc };
     if (s && PST_AFTER.some(function (a) { return pstPassed(s, a); })) return { v: true, inf: 1 };
+    if (k === 'drill') { var fkD = pstFinKind(p); if (fkD && pstScanOf(p.lot, fkD)) return { v: true, inf: 1 }; }   // lots 1.56 เจาะก่อนสี·เคลือบ: ชิ้นสี/เคลือบที่ยิงรับเข้าแล้ว = เจาะแล้ว
     return s ? { v: false } : { v: null };
   }
   if (k === 'si') {   // lots 1.6: AX ✓ = ค่า AX · ไม่ใช่ = ยิงจาก Scan-Link ทั้ง Lot
@@ -2320,6 +2326,8 @@ function pstLotKey(x) { var k = pstLotCur(x); return k === '0' ? ({ now: '0c', c
 L.f.pst = (function () { try { var v = localStorage.getItem(PST_PF) || 'all';
   if (/^[2-8]$/.test(v) && !localStorage.getItem(PST_PF + ':9')) { v = String(+v + 1); localStorage.setItem(PST_PF, v); }   /* lots 1.43 ขั้นที่ 2 ใหม่ (สี·เคลือบ) — ค่าที่จำไว้ (Drill … ครบ) เลื่อน 1 ครั้งเดียว */
   try { localStorage.setItem(PST_PF + ':9', '1'); } catch (e1) { }
+  if ((v === '2' || v === '3') && !localStorage.getItem(PST_PF + ':10')) { v = v === '2' ? '3' : '2'; try { localStorage.setItem(PST_PF, v); } catch (e2) { } }   /* lots 1.56 Drill ↔ สี·เคลือบ สลับที่ — ค่าที่จำไว้สลับตาม 1 ครั้ง */
+  try { localStorage.setItem(PST_PF + ':10', '1'); } catch (e1) { }
   return v === '0' ? 'all' : v; /* lots 1.34: '0' (Part/ตัด รวม) ไม่มีปุ่มแล้ว */ } catch (e) { return 'all'; } })();
 function pstGauge() { L.stMv = 'g'; L.stCF = {}; L.stQ = ''; L.stMo = new Set(); pstRender(); }   // lots 1.13: กลับหน้าเกจ (ล้างตัวกรอง/คำค้น)
 function pstDlyChip(a) {
@@ -3008,7 +3016,7 @@ try { if (PST_MQ) { if (PST_MQ.addEventListener) PST_MQ.addEventListener('change
        เขียนแบบกันทับ (ifU) เหมือน Scan-Link · แก้กลับให้ตรงค่าเดิม (ไม่มีการแก้) = ลบรายการแก้ของช่องนั้น
      · ค่าที่แก้ทับทุกที่มา (AX · Scan-Link ทั้ง Lot / ราย Pack · ถือว่าผ่านเพราะ Pack แล้ว) · ช่องที่แก้ไว้ = มุมม่วง (ชี้ = ใครแก้ เมื่อไร)
      · ชิ้นที่ไม่มีงานขั้นนั้น (–) แก้ไม่ได้ · Scan-Link (PR ถัดไป) เก็บ ov ไว้ตอนเขียน steps.json */
-var PST_EDK = { edge: 1, fin: 1, drill: 1, si: 1 };
+var PST_EDK = { edge: 1, drill: 1, fin: 1, si: 1 };   // lots 1.56 เรียงตามขั้น (Drill ก่อนสี·เคลือบ)
 var PST_ED = { on: false, d: new Map(), busy: false };
 function pstAdmin() { try { return String(me() || '').trim().toUpperCase() === 'ADMIN'; } catch (e) { return false; } }
 function pstOvOf(p, k) {
