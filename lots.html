@@ -75,6 +75,11 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.68 (2026-10-27 11:22 ผู้ใช้ รูป STOCK ค้น N03P0057 → N03P0057NR14 “… PP77 MBP1424TC …” + ตาราง Front Style Color:N03P0057N ไม่ขึ้นชื่อ:
+         “ทำไมไม่ขึ้นชื่อ น่าจะเฉพาะงานเคลือบ คุณต้องเอา N หลังสุดออกแล้วไปหาชื่อก็จะได้ PP77”)
+        FIX ชื่อรหัสสี: ไม่มีรหัสตรงตัว = หาต่อ ① รหัสสินค้าที่ขึ้นต้นด้วยรหัสสีตัด N ท้าย (N03P0057 → N03P0057NR14 ฟิล์ม) ② รหัสไม้ที่มีผิวนี้ (MD12N03P0057NN03P0057N “… PVC PP77 …”)
+            · ดูทั้งชื่อสินค้าและชื่อค้นหา (STOCK โหลดแล้ว) / ชื่อใน items/info.csv · ได้ PP77 / PT05 · สี N00S = MU/HG + เทียบสี (1.66) · กล่องบอก “จาก รหัสที่เจอชื่อ”
+            · ดัชนีผิว → ชื่อ สร้างครั้งเดียวต่อชุดข้อมูล · หาไม่เจอเลย = ตัวธรรมดา (1.67)
     1.67 (2026-10-27 11:13 ผู้ใช้ รูป Front Style “Color:G02M0149Y” ขีดเส้นใต้ทุกแถว: “อันไหนไม่พบชื่อไม่ต้องขึ้น Box ครับ”)
         UX รหัสสี/ผิวที่ไม่มีชื่อใน items/info.csv = ตัวธรรมดา (ไม่ขีดเส้นใต้ · ชี้/กดไม่ขึ้นกล่อง) — เดิม 1.63 ขึ้นกล่อง “ไม่พบชื่อ”
             · ชื่อวัสดุยังโหลดไม่เสร็จตอนวาดตาราง = โหลดเสร็จแล้วถอดเส้นใต้ของรหัสที่ไม่มีชื่อให้เอง
@@ -1181,7 +1186,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.67';
+var LOTS_VER = '1.68';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2780,10 +2785,39 @@ document.addEventListener('click', function (e) { var td = e.target.closest && e
 /* ───────── lots 1.63: รหัสสี / ผิว (N03P0057N · N00S0047N) → ชื่อสั้น (ผู้ใช้ 10:33 “กดที่รหัสสีนั้น … PP19 แสดงแค่ชื่อ PP19 พอ · PT05 ก็แสดงแค่นั้น · งานสีก็แสดงแค่ TOA อะไรก็พอ”) ─────────
    ชื่อจาก items/info.csv (rxName ของ index) → PP19 / PT05 (P P|T + เลข) · TOA … (คำหลัง TOA) · ไม่เข้า = ชื่อเต็ม · ชี้ (เมาส์) / กด (มือถือแตะ) = กล่องเล็ก */
 var PST_CLR_RE = /\b[NG]\d\d[A-Z]\d{4}[A-Z]\b/g;
-function pstClrNo(c) { return !!RX.info && !(rxName(c) || {}).name; }   // lots 1.67 ชื่อวัสดุโหลดแล้วแต่ไม่มีรหัสนี้
+/* lots 1.68 ชื่อรหัสสี/ผิว: รหัสตรงตัว → รหัสขึ้นต้นเดียวกัน (ตัด N ท้าย · N03P0057 → N03P0057NR14) → รหัสไม้ที่มีผิวนี้ (MD12N03P0057NN03P0057N) — ผู้ใช้ 11:22 */
+var PST_CLRIX = { k: '', m: null }, PST_CLRC = { k: '', m: new Map() };
+function pstClrLoaded() { return !!(RX.info || (S.byCode && S.byCode.size)); }
+function pstClrIdx() {
+  var k = (S.byCode && S.byCode.size || 0) + ':' + (RX.info && RX.info.size || 0) + ':' + (B.rmNames && B.rmNames.size || 0);
+  if (PST_CLRIX.k === k && PST_CLRIX.m) return PST_CLRIX.m;
+  var m = new Map(), add = function (key, code, names) { var a = m.get(key); if (!a) m.set(key, a = []); if (a.length < 16) a.push({ c: code, n: names }); };
+  var each = function (code, names) { code = String(code || '').toUpperCase(); var x;
+    if ((x = /^([NG]\d\d[A-Z]\d{4})[A-Z]/.exec(code))) add('P:' + x[1], code, names);   // สินค้าผิว/ฟิล์ม: 8 ตัวแรก
+    if ((x = /^[A-Z]{2}\d\d([NG]\d\d[A-Z]\d{4}[A-Z])([NG]\d\d[A-Z]\d{4}[A-Z]|X{8}[A-Z])$/.exec(code))) { add('B:' + x[1], code, names); if (x[2].charAt(0) !== 'X' && x[2] !== x[1]) add('B:' + x[2], code, names); } };   // ไม้ที่มีผิวนี้
+  try { if (S.byCode && S.byCode.forEach) S.byCode.forEach(function (it, code) { if (it) each(code, [it.nameTh, it.name]); }); } catch (e) { }
+  try { if (RX.info) RX.info.forEach(function (it, code) { if (it) each(code, [it.name]); }); } catch (e) { }
+  try { if (B.rmNames && B.rmNames.forEach) B.rmNames.forEach(function (it, code) { if (it) each(code, [it.name]); }); } catch (e) { }
+  PST_CLRIX.k = k; PST_CLRIX.m = m; PST_CLRC.m = new Map(); return m;
+}
+function pstClrInfo(code) {   // → { sh: ชื่อสั้น, sub: บรรทัดรอง, name: ชื่อที่เจอ, from: รหัสที่เจอชื่อ } · null = ไม่เจอ
+  var C = String(code || '').toUpperCase(); if (!C || !pstClrLoaded()) return null;
+  var ix = pstClrIdx(); if (PST_CLRC.k !== PST_CLRIX.k) { PST_CLRC.k = PST_CLRIX.k; PST_CLRC.m = new Map(); }
+  if (PST_CLRC.m.has(C)) return PST_CLRC.m.get(C);
+  var paint = /^N00S/.test(C), r = null;
+  var tryN = function (nm, from) { nm = String(nm || '').trim(); if (!nm) return null;
+    if (paint) { var p = pstClrPaint(C, nm); return p ? { sh: p[0], sub: p[1], name: nm, from: from } : null; }
+    var m = /\b(P[PT])\s*-?\s*(\d{1,3}[A-Z]?)\b/i.exec(nm); return m ? { sh: (m[1] + m[2]).toUpperCase(), sub: '', name: nm, from: from } : null; };
+  var n0 = (rxName(C) || {}).name, it0 = S.byCode && S.byCode.get ? S.byCode.get(C) : null;
+  [n0, it0 && it0.nameTh, it0 && it0.name].some(function (nm) { return (r = tryN(nm, C)); });
+  if (!r) [ix.get('P:' + C.slice(0, 8)), ix.get('B:' + C)].some(function (L0) { return (L0 || []).some(function (e) { return e.n.some(function (nm) { return (r = tryN(nm, e.c)); }); }); });
+  if (!r && n0) r = { sh: pstClrShort(n0), sub: '', name: n0, from: C };   // มีชื่อตรงตัวแต่ไม่มี PP/PT/MU = ชื่อเต็ม (TOA …)
+  PST_CLRC.m.set(C, r); return r;
+}
+function pstClrNo(c) { return pstClrLoaded() && !pstClrInfo(c); }   // lots 1.67 ชื่อวัสดุโหลดแล้วแต่ไม่มีรหัสนี้ · 1.68 หาต่อจากรหัสขึ้นต้นเดียวกัน / ไม้ที่มีผิวนี้
 function pstClrWrap(v) { return esc(v).replace(PST_CLR_RE, function (c) { return pstClrNo(c) ? c /* lots 1.67 ไม่มีชื่อ = ตัวธรรมดา */ : '<span class="fsk" data-fsc="' + c + '">' + c + '</span>'; }); }
 function pstClrDeco() {   // lots 1.67 ถอดเส้นใต้รหัสที่ไม่มีชื่อ (ตารางวาดก่อนชื่อวัสดุโหลดเสร็จ)
-  if (!RX.info) { if (!pstClrDeco.w) { pstClrDeco.w = 1; try { Promise.resolve(rxInfoLoad()).then(function () { pstClrDeco.w = 0; if (RX.info) pstClrDeco(); }, function () { pstClrDeco.w = 0; }); } catch (e) { pstClrDeco.w = 0; } } return; }
+  if (!pstClrLoaded()) { if (!pstClrDeco.w) { pstClrDeco.w = 1; try { Promise.resolve(rxInfoLoad()).then(function () { pstClrDeco.w = 0; if (pstClrLoaded()) pstClrDeco(); }, function () { pstClrDeco.w = 0; }); } catch (e) { pstClrDeco.w = 0; } } return; }
   document.querySelectorAll('#lotSt [data-fsc]').forEach(function (el) { if (pstClrNo(el.dataset.fsc)) { el.removeAttribute('data-fsc'); el.classList.remove('fsk'); } });
 }
 /* lots 1.66 งานสี N00S → [MU192, 'เทียบสี PT09 · TOA'] (ผู้ใช้ 10:50 “ถ้าเป็น N00S มันต้อง MU หรือ HG · คำอธิบายมันคือเทียบสีอะไร”) · null = ไม่ใช่สี / หาไม่เจอ */
@@ -2804,13 +2838,13 @@ function pstClrShow(el) {
   var code = el.dataset.fsc; if (!code) return;
   if (!PST_CLR.el) { PST_CLR.el = document.createElement('div'); PST_CLR.el.id = 'pstClr'; document.body.appendChild(PST_CLR.el); }
   if (pstClrNo(code)) { el.removeAttribute('data-fsc'); el.classList.remove('fsk'); return; }   // lots 1.67 ไม่มีชื่อ = ไม่ขึ้นกล่อง
-  var T = PST_CLR.el, draw = function () { var n = rxName(code) || {}, pt = pstClrPaint(code, n.name) /* lots 1.66 สี N00S = MU/HG + เทียบสี */, sh = pt ? pt[0] : pstClrShort(n.name);
-    T.innerHTML = '<b>' + esc(sh || (RX.info ? 'ไม่พบชื่อ' : 'กำลังโหลดชื่อ…')) + '</b>' + (pt && pt[1] ? '<em>' + esc(pt[1]) + '</em>' : '') + (n.name && sh !== n.name ? '<small>' + esc(n.name) + '</small>' : '') + '<code>' + esc(code) + '</code>'; };
+  var T = PST_CLR.el, draw = function () { var ci = pstClrInfo(code) /* lots 1.68 (เดิม 1.66: rxName ตรงตัวอย่างเดียว) */, sh = ci ? ci.sh : '';
+    T.innerHTML = '<b>' + esc(sh || (pstClrLoaded() ? 'ไม่พบชื่อ' : 'กำลังโหลดชื่อ…')) + '</b>' + (ci && ci.sub ? '<em>' + esc(ci.sub) + '</em>' : '') + (ci && ci.name && sh !== ci.name ? '<small>' + esc(ci.name) + '</small>' : '') + '<code>' + esc(code) + (ci && ci.from && ci.from !== String(code).toUpperCase() ? ' · จาก ' + esc(ci.from) : '') + '</code>'; };
   PST_CLR.at = el; draw(); T.style.display = 'block';
   var r = el.getBoundingClientRect(), w = T.offsetWidth, h = T.offsetHeight, x = Math.max(8, Math.min(r.left, innerWidth - w - 8)), y = r.bottom + 6;
   if (y + h > innerHeight - 8) y = Math.max(8, r.top - h - 6);
   T.style.left = x + 'px'; T.style.top = y + 'px';
-  if (!RX.info) { try { Promise.resolve(rxInfoLoad()).then(function () { if (PST_CLR.at === el && T.style.display === 'block') { if (pstClrNo(code)) { pstClrHide(); pstClrDeco(); } else draw(); } }); } catch (e) { } }   // lots 1.67 โหลดเสร็จแล้วไม่มีชื่อ = ปิด
+  if (!pstClrLoaded()) { try { Promise.resolve(rxInfoLoad()).then(function () { if (PST_CLR.at === el && T.style.display === 'block') { if (pstClrNo(code)) { pstClrHide(); pstClrDeco(); } else draw(); } }); } catch (e) { } }   // lots 1.67 โหลดเสร็จแล้วไม่มีชื่อ = ปิด
 }
 function pstClrHide() { if (PST_CLR.el) PST_CLR.el.style.display = 'none'; PST_CLR.at = null; }
 document.addEventListener('mouseover', function (e) { if (!pstHovOk()) return; var el = e.target.closest && e.target.closest('#lotSt [data-fsc]'); if (el) { if (el !== PST_CLR.at) pstClrShow(el); } else if (PST_CLR.at) pstClrHide(); });
