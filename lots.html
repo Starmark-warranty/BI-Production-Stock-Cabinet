@@ -75,6 +75,9 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.70 (2026-10-27 11:41 ผู้ใช้ รูปเกจ “Finish เคลือบ 16/16”: “Finish ตรงนี้ ก็เปลี่ยนเป็น Paint/Membrane ด้วยครับ”)
+        UI ชื่อขั้น Finish → “Paint/Membrane” ทุกที่ (เกจ · หลอด · กล่องสถานะ · แถบซ้าย STAGE · เมนู ADMIN · คำอธิบาย) — หัวช่องตารางยังเป็น “P/M” (1.69)
+            · เกจ: ชื่อยาว = ตัวเล็กลงพอดีกล่อง
     1.69 (2026-10-27 11:36 ผู้ใช้ รูป FOREST-2026-0017 เกจ Finish “เคลือบ 0/16 · ยิง 11:34” ช่องไม่ติ๊ก: “ยิงแล้วทำไมไม่ขึ้น เปลี่ยนหัวช่อง Fin เป็น P/M คือ งานทำสี กับเคลือบครับ”)
         FIX ยิงใหม่ (Scan-Link) หลังที่ ADMIN แก้สถานะ = ใช้ผลยิง — เดิม 1.51: ค่าที่ ADMIN แก้ (ov) ทับทุกอย่างจนกว่าจะแก้ใหม่
             → Lot นี้เคย “ยกเลิกสถานะทั้งหมด” (ov fin = 0 ทุกชิ้น 08:3x) · ยิงเคลือบ 11:34 ไม่ขึ้น · ตอนนี้เทียบเวลา: ยิงใหม่กว่า ovAt = ผลยิงชนะ · ADMIN แก้ทีหลัง = ADMIN ชนะ (ล่าสุดชนะ)
@@ -1011,6 +1014,8 @@
   #lotSt .pst-t td.pck{padding:2px 1px;width:28px}
   #lotSt .pst-t tr.cf th.pck{padding:2px 1px} #lotSt .pst-cfb{padding:1px}
   #lotSt .pst-t td.pck small{margin-left:1px;font-size:9px} #lotSt .pst-t td.pck small.fk{margin-left:0;font-size:8.5px;letter-spacing:-.02em}
+  /* lots 1.70 เกจ Paint/Membrane ชื่อยาว = ตัวเล็กลง */
+  #lotSt .pst-sum[data-pstf=fin] .pst-st > b{font-size:11px;letter-spacing:-.03em;white-space:normal;line-height:1.15}
   /* lots 1.67 ช่อง Fin: สีกรอบช่องติ๊ก = ชนิดงาน (แทนคำ สี / เคลือบ ใต้ช่อง) */
   #lotSt .pst-t tbody td.pck.fk-paint .cb,#lotSt .pst-t tbody td.pck.fk-paint.on .cb,#lotSt .pst-t tbody td.pck[class*=" cs"].fk-paint.on .cb{border:2px solid #e11d48}
   #lotSt .pst-t tbody td.pck.fk-coat .cb,#lotSt .pst-t tbody td.pck.fk-coat.on .cb,#lotSt .pst-t tbody td.pck[class*=" cs"].fk-coat.on .cb{border:2px solid #0d9488}
@@ -1191,7 +1196,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.69';
+var LOTS_VER = '1.70';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -1739,14 +1744,14 @@ var PST_STEPS = [
   { k: 'cut', h: 'Part', th: 'ตัด', t: 'ยิงตัดแล้ว (CHECKPART) — ห่ออุปกรณ์ที่ไม่มีขนาด = “–” (ไม่ต้องตัด)' },
   { k: 'edge', h: 'Edge', th: 'ปิดขอบ', t: 'ปิดขอบ — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Edge = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ)' },
   { k: 'drill', h: 'Drill', th: 'เจาะ&CNC', t: 'เจาะ & CNC — ยิงบาร์โค้ดชิ้นไหนก็ได้ของ Lot ด้วยแอป Scan-Link แล้วกด Drill = ติ๊กทั้ง Lot · ชิ้นที่ Pack แล้ว = ติ๊กให้เอง (✓ กรอบประ) · lots 1.56 ชิ้นสี/เคลือบที่ยิงรับเข้าสี·เคลือบแล้ว = เจาะแล้ว (✓ กรอบประ)' },
-  { k: 'fin', h: 'Finish', th: 'สี·เคลือบ', t: 'รับเข้างานทำสี / งานเคลือบ (lots 1.43) — เฉพาะชิ้นสี (FrontStyle N00S หรือไม้ 34N ใน Lot MU / HG) / ชิ้นเคลือบ (FrontShape ขึ้นต้น M) · lots 1.45 (StarSync v1.22 · lots/fstyle.csv) · lots 1.56 อยู่หลัง Drill (เจาะก่อนทำสี·เคลือบ) · ยิงด้วย Scan-Link: ทำสี / เคลือบ = ติ๊กชิ้นชนิดนั้นทั้ง Lot · Pack แล้วขึ้นไป = ติ๊กให้เอง (✓ กรอบประ)' },
+  { k: 'fin', h: 'Paint/Membrane' /* lots 1.70 (เดิม 'Finish') */, th: 'สี·เคลือบ', t: 'รับเข้างานทำสี / งานเคลือบ (lots 1.43) — เฉพาะชิ้นสี (FrontStyle N00S หรือไม้ 34N ใน Lot MU / HG) / ชิ้นเคลือบ (FrontShape ขึ้นต้น M) · lots 1.45 (StarSync v1.22 · lots/fstyle.csv) · lots 1.56 อยู่หลัง Drill (เจาะก่อนทำสี·เคลือบ) · ยิงด้วย Scan-Link: ทำสี / เคลือบ = ติ๊กชิ้นชนิดนั้นทั้ง Lot · Pack แล้วขึ้นไป = ติ๊กให้เอง (✓ กรอบประ)' },
   { k: 'pk', h: 'Pack', th: 'แพ็ค', t: 'แพ็คแล้ว (CHECKPACK)' },
   { k: 'pi', h: 'Pick', th: 'เตรียมส่งของเข้าคลัง', t: 'เตรียมส่งของเข้าคลัง (CHECKPICK)' },
   { k: 'wh', h: 'Wh', th: 'คลัง', t: 'เข้าคลังแล้ว (WH_STATUS)' },
   { k: 'dl', h: 'Delivery', th: 'จัดส่ง', t: 'ส่งแล้ว (DL_STATUS — ค่าไม่ใช่ว่าง/0 = ✓)' },
   { k: 'si', h: 'Site', th: 'หน้างาน', t: 'ถึงไซต์/ติดตั้งแล้ว — ST_STATUS ใน AX (ค่าไม่ใช่ว่าง/0 = ✓) หรือยิงด้วยแอป Scan-Link (ทั้ง Lot · lots 1.6)' }];
 /* lots 1.13 (ผู้ใช้ 11:27): th = ชื่อไทยตามที่ผู้ใช้ตั้ง (Drill = เจาะ&CNC · Pick = เตรียมส่งของเข้าคลัง · Wh = คลัง) · Delivery/Site เติมเอง (จัดส่ง · หน้างาน) — เดิม เจาะ · หยิบ · เข้าคลัง · ส่ง · ไซต์ */
-function pstStepNm(S0) { return S0.h + '/' + S0.th; }
+function pstStepNm(S0) { return S0.h + (S0.h.indexOf('/') >= 0 ? ' · ' : '/') + S0.th; }   // lots 1.70 ชื่อมี / อยู่แล้ว (Paint/Membrane) = คั่นด้วย ·
 var PST_HS = { fin: 'P/M', dl: 'Dlv' };   // lots 1.69 Fin → P/M (ผู้ใช้ 11:36 “P/M คือ งานทำสี กับเคลือบ”)   // lots 1.64 หัวช่อง State แบบสั้น (ช่องแคบ) — ชี้ = ชื่อเต็ม
 var PST_PKK = { pk: 'แพ็คแล้ว', pi: 'เตรียมส่งแล้ว', wh: 'เข้าคลังแล้ว', dl: 'ส่งแล้ว', si: 'ถึงไซต์แล้ว' };   // lots 1.57 ขั้นที่กดเกจแล้วเปิดกล่องห่อรายห้อง (คำ = ผ่านขั้นนั้นแล้ว)
 var PST_AFTER = ['pk', 'pi', 'wh', 'dl', 'si'];   // lots 1.2: ผ่านขั้นไหนในนี้แล้ว = ผ่าน Edge / Drill แล้ว
@@ -2368,7 +2373,7 @@ function pstScanTip(S0, sc) {
 function pstChip(S0, z, on, sub, rc) {   // lots 1.25: rc = ' cs{i} rch' (ถึงแล้ว = สีของขั้น) / ' cs{i} unr' (ยังไม่ถึง = เทา)
   var na = S0.na || !z || z.n === 0 /* lots 1.43 ไม่มีชิ้นของขั้นนี้ (เช่น ไม่มีงานสี/เคลือบ) */, full = z && z.n > 0 && z.d >= z.n, p = z && z.n ? z.d / z.n : 0;
   return '<button type="button" class="pst-sum' + (na ? ' na' : full ? ' ok' : '') + (on ? ' on' : '') + (rc || '') + '" data-pstf="' + S0.k + '"' + (na ? ' disabled' : '') + ' title="' + esc(S0.t + (na ? '' : PST_PKK[S0.k] ? ' · กด = ห่อรายห้อง (กี่ห้อง · ห้องละกี่ห่อ · ' + PST_PKK[S0.k] + 'กี่ห่อ)' /* lots 1.57 */ : ' · กด = แสดงเฉพาะชิ้นที่ยังไม่ผ่านขั้นนี้')) + '">'
-    + '<span class="pst-st"><b>' + esc(S0.h) + '<span class="pst-th">' + esc(S0.th) + '</span></b><span>' + (S0.na ? 'รอจุดยิง' : z ? fmtN(z.d) + '/' + fmtN(z.n) : '—') + '</span>' + (sub ? '<em>' + esc(sub) + '</em>' : '') + '</span>'   // lots 1.15: ไทยใต้อังกฤษ (1.13: “Part/ตัด” บรรทัดเดียว)
+    + '<span class="pst-st"><b>' + esc(S0.h).replace(/\//g, '/<wbr>') /* lots 1.70 Paint/Membrane ตัดบรรทัดหลัง / ได้ */ + '<span class="pst-th">' + esc(S0.th) + '</span></b><span>' + (S0.na ? 'รอจุดยิง' : z ? fmtN(z.d) + '/' + fmtN(z.n) : '—') + '</span>' + (sub ? '<em>' + esc(sub) + '</em>' : '') + '</span>'   // lots 1.15: ไทยใต้อังกฤษ (1.13: “Part/ตัด” บรรทัดเดียว)
     + pstRing(na ? null : p) + '<i style="width:' + (na ? 0 : Math.round(p * 100)) + '%"></i></button>';
 }
 /* ───────── lots 1.25: หลอดสถานะ (ผู้ใช้ 13:28 “เพิ่มเป็นหลอดสถานะ ใส่ % ในหลอด · ถึงขั้นไหนมีสี ยังไม่ถึงเทา”) ─────────
