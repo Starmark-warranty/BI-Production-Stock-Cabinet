@@ -75,6 +75,13 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.85 (2026-10-28 08:25 ผู้ใช้ รูป RE-0069-0860-MC กล่อง “สถานะ รอตัด · คิวถัดไป · ลำดับ 87” + กล่องรายละเอียด “คิวของเครื่อง 87”:
+         “จริง ๆ มันต้องเป็นคิวของวันนั้นครับ ลำดับด้วย เช่น วันที่ตัดวันอะไร คิวที่เท่าไหร่ของวันนั้น”)
+        UX รอตัด: บอกวันตัด + คิวที่เท่าไหร่ของวันนั้น (ของเครื่องตามแผน) แทนลำดับรวมทั้งคิว
+            · กล่องสถานะ: “ตัด พฤ. 5 พ.ย. · คิวที่ 3” (วันทำงานถัดไป = “ตัดพรุ่งนี้ · คิวที่ 3”) — เดิม “คิวถัดไป · ลำดับ 87”
+            · กล่องรายละเอียด: แถว “คิวของวัน” = ที่ N จาก M Lot ของเครื่องวันนั้น (แทน “คิวของเครื่อง 87”)
+            · นับแบบแท็บรายเครื่องของ Dashboard (วันเดียวกัน เรียงตามที่เครื่องจะตัด · Lot ที่ตัดต่อจากวันก่อน/ค้างตัดอยู่หน้าคิวนับด้วย)
+            · ไม่ได้วางแผนตามเครื่อง (⚙ ปิด) = ลำดับรวมแบบเดิม
     1.84 (2026-10-27 16:59 ผู้ใช้ รูป RE-0069-0015_MU181 “⚠ ขาดส่ง 2 ชิ้น” แต่ชิ้นนั้น Pick ✓ แล้ว: “ตัวขาดส่ง ถ้า Pick แล้ว แสดงว่าไม่มีขาดส่งแล้ว”)
         FIX ขาดส่ง = Delay No ≠ 0 และยังไม่ผ่าน Pick (เดิม = Delay No ≠ 0 อย่างเดียว · AX ไม่ล้างค่า Delay No ตอนของมาครบ)
             · ผ่าน Pick / คลัง / จัดส่ง / หน้างาน แล้ว (AX · ยิง · ADMIN แก้) = ไม่นับขาดส่ง: กล่อง ⚠ ขาดส่ง · ป้ายแดงช่อง Delay No · ⚠ ในป้าย State · ตัวกรอง “ขาดส่ง”
@@ -1284,7 +1291,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.84';
+var LOTS_VER = '1.85';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -2727,12 +2734,33 @@ function pstCurChip(a, mob, solo, cx) {   // lots 1.21: cx = { cutD, cutN, why }
 /* ───────── lots 1.21: รอตัด — Lot นี้อยู่ตรงไหนใน Dashboard (แผนเดียวกับคิวตัดงาน: B.plan = bdPlan() ของ index) ─────────
    ยังไม่มีแผน / เก่าเกิน 2 นาที = โหลดข้อมูลคิว (bdLoadAux: stock · วัตถุดิบ · Cut Rite · ความคืบหน้า) แล้ว bdPlan() เบื้องหลัง · null = ยังไม่รู้ */
 var PST_DB = { at: 0, busy: null, err: null };
+/* ───────── lots 1.85: คิวของวัน (ผู้ใช้ 08:25 “มันต้องเป็นคิวของวันนั้น ลำดับด้วย เช่น วันที่ตัดวันอะไร คิวที่เท่าไหร่ของวันนั้น”) ─────────
+   เดิม: กล่องสถานะ “คิวถัดไป · ลำดับ 87” = g.q (ลำดับใน ready ทั้งโรงงาน) · กล่องรายละเอียด “คิวของเครื่อง 87” (1.77) — ไม่บอกว่าตัดวันไหน คิวที่เท่าไหร่ของวันนั้น
+   ตอนนี้: pstDayQ(g) = Lot นี้ในคิวของเครื่องตามแผน (B.plan.M[].q — ตัวเดียวกับแท็บรายเครื่องของ Dashboard)
+     → วันที่เริ่มตัด (d0) + ลำดับในวันนั้น นับแบบแท็บรายเครื่อง: แถวของวันเดียวกันตามลำดับคิว (Lot ที่ตัดต่อจากวันก่อน ↳ / ค้างตัดต่ออยู่หน้าคิว นับด้วย)
+     null = ไม่ได้วางแผนตามเครื่อง / ไม่เจอในคิวเครื่อง → ใช้ลำดับรวมแบบเดิม */
+function pstDayQ(g) {
+  var P = B.plan; if (!P || !P.M || !g || !g.mq) return null;
+  var m = null; P.M.forEach(function (x) { if (!m && x.n === g.mq.n) m = x; }); if (!m || !m.q) return null;
+  var e0 = null; m.q.forEach(function (e) { if (!e0 && e.g === g && !e.carry) e0 = e; }); if (!e0) return null;
+  var k = e0.d0, rows = [], i = -1, c = 0;
+  m.q.forEach(function (e) { if (e.d0 === k) rows.push({ e: e }); (e.segs || []).forEach(function (x) { if (x.d === k && x.d > e.d0) rows.push({ e: e, cont: 1 }); }); });   // = bdMqPanel ของ index (แบ่งวันตาม segs)
+  rows.forEach(function (r, j) { if (r.cont || r.e.carry) c++; if (i < 0 && !r.cont && r.e === e0) i = j; });
+  if (i < 0) return null;
+  var ms = null, dl = '', ds = ''; try { ms = typeof bdMqDayMs === 'function' ? bdMqDayMs(P, k) : null; dl = typeof bdMqDayTxt === 'function' ? bdMqDayTxt(P, k) : ''; ds = k === 0 && typeof bdTmrW === 'function' ? bdTmrW(P) : ms != null && typeof bdDayTxt === 'function' ? bdDayTxt(ms).replace(/ \d{2}$/, '') : ''; } catch (x) { }
+  return { k: k, i: i + 1, n: rows.length, c: c, mc: m.n, dl: dl, ds: ds };
+}
+function pstDayQShort(g) {   // “ตัด พฤ. 5 พ.ย. · คิวที่ 3” · “ตัดพรุ่งนี้ · คิวที่ 3” · ไม่รู้ = ''
+  var q = pstDayQ(g); if (!q || !q.ds) return '';
+  return 'ตัด' + (/^(พรุ่งนี้|วัน)/.test(q.ds) ? '' : ' ') + q.ds + ' · คิวที่ ' + q.i;
+}
 function pstDashWhy(id) {
   var P = B.plan, g = P && P.G && P.G.get(id); if (!g) return PST_DB.busy ? 'กำลังเช็คคิวตัด…' : null;
   var has = function (a) { return a && a.indexOf(g) >= 0; };
   if (g.closed) return 'ปิดเองว่าจบแล้ว (ไม่เข้าคิว)';
   if (has(P.blocked)) return 'ติด — ' + (g.why || 'ดูใน Dashboard');
   if (has(P.cutting)) return 'Dashboard: ' + (pstCutToday(id) ? 'กำลังตัด' : 'ค้างตัด') /* lots 1.40 */ + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '');
+  if ((has(P.tomorrow) || has(P.next)) && pstDayQShort(g)) return pstDayQShort(g);   // lots 1.85 วันตัด + คิวของวัน
   if (has(P.tomorrow)) return 'อยู่ในแผนตัด' + (g.q ? ' ลำดับ ' + g.q : '');
   if (has(P.next)) return 'คิวถัดไป' + (g.q ? ' ลำดับ ' + g.q : '');
   if (has(P.after)) return 'Dashboard: หลังตัด';
@@ -2768,6 +2796,7 @@ function pstPlanShort(cx) {   // ข้อความในกล่องส�
   if (pl) { var g = pl.g;
     if (pl.k === 'cut' || pl.k === 'carry') return 'ตาม Dashboard' + (g.remP ? ' · เหลือ ' + fmtN(g.remP) + ' ชิ้น' : '');
     if (pl.k === 'blk') return 'ติด — กดดูเหตุ';
+    if ((pl.k === 'tmr' || pl.k === 'next') && pstDayQShort(g)) return pstDayQShort(g);   // lots 1.85 เดิม “คิวถัดไป · ลำดับ 87” (ลำดับรวม)
     if (pl.k === 'tmr') return 'อยู่ในแผนตัด' + (g.q ? ' · ลำดับ ' + g.q : '');
     if (pl.k === 'next') return 'คิวถัดไป' + (g.q ? ' · ลำดับ ' + g.q : '');
     if (pl.k === 'after') return 'หลังตัด (Dashboard)';
@@ -2814,9 +2843,11 @@ function pstPopHtml(c) {
       if (g.mq && ck === 'wait' && pl.k !== 'cut') {   // lots 1.40 แผนเครื่อง/วัน = ของ Lot ที่ยังไม่เริ่มตัด
         h += kv('เครื่อง (แผน)', g.mq.n);   // lots 1.77 เอา “· คิวที่ ' + g.mq.pos” ออก (ผู้ใช้ 13:43 “คิวที่ 21 เอาออก มันคิวที่ 8 ของเครื่องนั้นถูกแล้ว”)
         h += kv('วันตัด (แผน)', pl.day + (pl.day1 ? ' → ' + pl.day1 : ''));
+        var dq0 = (pl.k === 'tmr' || pl.k === 'next') ? pstDayQ(g) : null;   // lots 1.85 คิวของวัน ต่อจากวันตัด (ผู้ใช้ 08:25 “วันที่ตัดวันอะไร คิวที่เท่าไหร่ของวันนั้น”)
+        if (dq0) h += kv('คิวของวัน', 'ที่ ' + dq0.i + ' จาก ' + dq0.n + ' Lot ของวันนั้น' + (dq0.c ? ' (รวมงานต่อจากวันก่อน ' + dq0.c + ' Lot)' : ''));
         h += kv('งาน', (g.mq.p ? fmtN(Math.round(g.mq.p)) + ' ชิ้น' : '') + (g.mq.t > 0 ? ' · ' + pstDur(g.mq.t) : ''));
       } else if (pl.k === 'tmr' || pl.k === 'next') h += kv('เครื่อง (แผน)', g.mc || 'ยังไม่ลงเครื่อง (Dashboard ไม่ได้วางตามเครื่อง)');
-      if (g.q && (pl.k === 'tmr' || pl.k === 'next')) h += kv(g.mq || g.mc ? 'คิวของเครื่อง' : 'ลำดับรวม', String(g.q));   // lots 1.77 รู้เครื่อง = คิวของเครื่องนั้น (เดิม “ลำดับรวม”)
+      if (!((pl.k === 'tmr' || pl.k === 'next') && g.mq && ck === 'wait' && pstDayQ(g)) /* lots 1.85 มีแถวคิวของวันแล้ว = ไม่ซ้ำ */ && g.q && (pl.k === 'tmr' || pl.k === 'next')) h += kv(g.mq || g.mc ? 'คิวของเครื่อง' : 'ลำดับรวม', String(g.q));   // lots 1.77 รู้เครื่อง = คิวของเครื่องนั้น (เดิม “ลำดับรวม”)
       if (pl.k === 'blk') h += kv('ติดเพราะ', g.why || 'ดูใน Dashboard', 'pp-wd miss');
       if (pl.ws) { var wl = ''; try { wl = typeof wdLine === 'function' ? wdLine(pl.w, pl.wk) : ''; } catch (e) { wl = ''; } h += kv('ไม้', pl.ws.t + (wl ? ' · ' + wl : ''), 'pp-wd ' + (pl.ws.c || '')); }
       else if (g.mat === 'short' && g.matWhy && pl.k !== 'blk') h += kv('ไม้', g.matWhy, 'pp-wd miss');
@@ -4070,7 +4101,7 @@ sxmRegister('lots', {
   init: function () { lotBindUi(); pstTabs(); /* lots 1.1 */ lotBarPlace(); /* lots 1.24 */ },
   show: function () { lotShowL12(); if (L.sel && L.byKey.get(L.sel)) lotShowDetail(L.sel); },   // lots 1.2: แท็บสถานะ = หน้าสถานะเลย
   lotShow: lotShowL12, lotRenderFresh: lotRenderFresh, lotBanner: lotBanner, lotRenderSide: lotRenderSide, lotSegOn: lotSegOn, lotRefresh: lotRefresh, lotDraw: lotDraw, lotShowDetail: lotShowDetail, lotCloseDetail: lotCloseDetail, lotKey: lotKey,
-  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstPkData: pstPkData, pstPkBox: pstPkBox /* lots 1.57 */, pstLamLoad: function () { return typeof lamLoad === 'function' ? lamLoad() : null; } /* lots 1.62 ไว้ทดสอบ */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstClrInfo: pstClrInfo, pstClrMel: pstClrMel /* lots 1.74 ไว้ทดสอบ */, pstCoatFilm: pstCoatFilm, pstCoatWarn: pstCoatWarn /* lots 1.76 ไว้ทดสอบ */, pstEbInfo: pstEbInfo, pstEbOf: pstEbOf, pstEbLoad: pstEbLoad, pstVal: pstVal /* lots 1.83 ไว้ทดสอบ */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
+  exports: { PST_ED: PST_ED, pstEdChanges: pstEdChanges /* lots 1.51 ไว้ทดสอบ */, pstPkData: pstPkData, pstPkBox: pstPkBox /* lots 1.57 */, pstLamLoad: function () { return typeof lamLoad === 'function' ? lamLoad() : null; } /* lots 1.62 ไว้ทดสอบ */, pstParseFs: pstParseFs, pstFinKind: pstFinKind, pstLotTypes: pstLotTypes, B: B /* lots 1.45 ไว้ทดสอบ */, lotImport: lotImport, lotCfOpen: lotCfOpen, lotCfSet: lotCfSet, lotBindUi: lotBindUi, lotExport: lotExport, pstOpen: pstOpen, pstClose: pstClose, pstLoad: pstLoad, PST: PST /* lots 1.1 */, pstSelSet: pstSelSet, pstRender: pstRender, pstModeSet: pstModeSet /* lots 1.2 */, L: L, pstLotCur: pstLotCur, pstLotKey: pstLotKey, pstLotStat: pstLotStat, pstDashWhy: pstDashWhy, PST_DB: PST_DB /* lots 1.34 ไว้ทดสอบ */, PST_AX: PST_AX, pstAxLoad: pstAxLoad, pstParseInfo: pstParseInfo, pstParseSt: pstParseSt /* lots 1.35 */, pstPlanOf: pstPlanOf, pstPlanShort: pstPlanShort, pstPopHtml: pstPopHtml /* lots 1.37 */, pstClrInfo: pstClrInfo, pstClrMel: pstClrMel /* lots 1.74 ไว้ทดสอบ */, pstCoatFilm: pstCoatFilm, pstCoatWarn: pstCoatWarn /* lots 1.76 ไว้ทดสอบ */, pstEbInfo: pstEbInfo, pstEbOf: pstEbOf, pstEbLoad: pstEbLoad, pstVal: pstVal /* lots 1.83 ไว้ทดสอบ */, pstDayQ: pstDayQ, pstDayQShort: pstDayQShort /* lots 1.85 ไว้ทดสอบ */, pstLotCutKind: pstLotCutKind, pstLotStatTxt: pstLotStatTxt /* lots 1.40 */ }
 });
 </script>
 <script>
