@@ -75,6 +75,12 @@
     · ห้ามมีข้อความ </script> ในโค้ด · </style> ใน CSS · </template> ในโครงหน้า (ปิดแท็กก่อนเวลา)
 
   CHANGELOG (ของไฟล์นี้ — index.html มีของตัวเอง)
+    1.89 (2026-10-29 15:48 ผู้ใช้ รูป RE-0069-0813-HG51 ช่อง Code Pack …-49160_3 / _2 / _1: “ทำให้หน้า lot ตรงนี้ออก Excel ได้ · ถ้าช่อง Code Pack มี _ ด้านหลังถึงตรงไหน มันคือจำนวนห่อที่เพิ่มขึ้นของรายการตู้นั้น ๆ แต่ถ้าไม่มี _ ตู้นั้นมีห่อเดียว”)
+        FEAT ปุ่ม ⬇ Excel ข้างช่องค้นหาในหน้าสถานะ Part → ไฟล์ .xlsx (เขียนเอง ไม่ใช้ไลบรารี/เน็ต · A4 แนวนอน พอดีหน้ากว้าง · หัวตารางซ้ำทุกหน้า · เลขหน้า)
+            · ชีต สถานะ Part = แถวที่แสดงอยู่ (ตามคำค้น/ตัวกรอง) · State + ✓ ✗ – ทุกขั้น + คอลัมน์ที่เห็น · มีตัวกรอง Excel
+            · ชีต ใบส่ง <Lot> = 1 แถวต่อตู้ (Product Article + ProdId จากท้าย Code Pack) · จำนวนห่อ = Code Pack ไม่ซ้ำ (_1 _2 _3 = 3 ห่อ · ไม่มี _ = 1 ห่อ)
+              · เลข _ สูงสุดมากกว่าห่อที่พบ = หมายเหตุ “ห่ออาจขาด” · ไม่มี Code Pack / Manual = นับ 1 ห่อ + หมายเหตุ · ช่องกรอก ห่อที่รับ → รับครบ (สูตร)
+            · ชีต ห่อ <Lot> = 1 แถวต่อห่อ (ห่อที่ n/N · ชิ้นในห่อ · แพ็คแล้ว) + ช่องติ๊กรับ
     1.88 (2026-10-28 08:37 ผู้ใช้: “หลักที่ 7 เลข 7 ให้ขึ้นคำว่า SN”)
         FEAT กล่อง PE จาก Barcode: หลักที่ 7 = 7 → “PE: SN” (เดิม ไม่รู้ PE)
     1.87 (2026-10-28 08:30 ผู้ใช้ รูปช่อง Barcode 26100220011055…: “เอาเมาส์ไปจี้แล้วให้ขึ้น Box บอกว่า PE คนไหนทำ · 26100220 หลักที่ 7 กับ 8 บอกชื่อ PE
@@ -1311,7 +1317,7 @@
    StarStock · หน้า Lot ผลิต — โค้ด (index.html รันส่วนนี้ด้วย sxmEval = อยู่ในสโคปเดียวกับโค้ดของ index · โหมด strict)
    ประวัติ v1.4–v2.45 ของแต่ละส่วน = คอมเมนต์หัวบล็อกเดิม (ยกมาจาก index.html ทั้งหมด)
    ═══════════════════════════════════════════════════════════════════════ */
-var LOTS_VER = '1.88';
+var LOTS_VER = '1.89';
 /* ชื่อใน index.html ที่โค้ดนี้ใช้ (ตัวแปร/ฟังก์ชันของ StarStock) — ตรวจตอนโหลด: index ไม่มีตัวไหน = เตือนใน console + ข้อความมุมจอ
    ใช้ชื่อใหม่จาก index เพิ่ม = เติมในรายการนี้ด้วย (ไม่เติมก็ทำงาน แค่ไม่ได้ตรวจล่วงหน้า) */
 var LOTS_NEED = [
@@ -3412,6 +3418,206 @@ function pstPickHtml(inline) {
   if (list.length > pkLim) h += '<div class="pst-pkmore">แสดง ' + fmtN(pkLim) + ' Lot แรกจาก ' + fmtN(list.length) + ' — พิมพ์เพื่อกรอง' + (lotPkOn() ? ' <button type="button" class="tbtn" data-lpkmore>แสดงเพิ่ม ' + fmtN(Math.min(PST_PKLIM, list.length - pkLim)) + ' Lot</button>' : '') + '</div>';
   return h + '</div></div>';
 }
+/* ───────── lots 1.89: ⬇ Excel หน้าสถานะ Part + ใบส่งของเข้าคลัง (นับห่อจาก Code Pack) ─────────
+   ผู้ใช้ 2026-10-29 15:48 (รูป RE-0069-0813-HG51 ช่อง Code Pack PD69000047723-49160_3 / _2 / _1):
+     “ทำให้หน้า lot ตรงนี้ออก Excel ได้ · ถ้าช่อง Code Pack มี _ ด้านหลังถึงตรงไหน มันคือจำนวนห่อที่เพิ่มขึ้นของรายการตู้นั้น ๆ
+      แต่ถ้าไม่มี _ ตู้นั้นมีห่อเดียว”
+   เดิม: หน้าสถานะ Part ไม่มีปุ่มส่งออก (⬇ CSV มีเฉพาะตาราง data 6)
+   ตอนนี้: ปุ่ม ⬇ Excel ข้างช่องค้นหา → ไฟล์ .xlsx จริง (เขียนเอง ไม่ใช้ไลบรารี/เน็ต) · พิมพ์ A4 แนวนอนพอดีหน้ากว้าง · หัวตารางซ้ำทุกหน้า
+     · ชีต “สถานะ Part” = แถวที่แสดงอยู่ (ตามคำค้น / ตัวกรอง) · State + 9 ขั้น (✓ ผ่าน · ✗ ยังไม่ผ่าน · – ไม่เกี่ยว) + ทุกคอลัมน์ที่เห็น
+     · ชีต “ใบส่ง <Lot>” (ทุก Lot ที่เลือก · ทั้ง Lot ไม่ขึ้นกับตัวกรอง) = 1 แถวต่อตู้
+         ตู้ = Product Article + ProdId (ProdId = ท้าย Code Pack หลัง “-” ตัด _n ออก) — รหัสตู้ซ้ำแต่ ProdId ต่าง = คนละตู้
+         ห่อ = Code Pack ไม่ซ้ำของตู้ (…-49160_1 · _2 · _3 = 3 ห่อ · ไม่มี _ = 1 ห่อ) · เลข _ สูงสุดไม่ตรงจำนวนห่อที่พบ = หมายเหตุ “ห่ออาจขาด”
+         ไม่มี Code Pack / Manual (อุปกรณ์) = แยกตาม Product Article + Shelf No · นับ 1 ห่อ + หมายเหตุ
+         ช่องกรอก (เหลือง): ห่อที่รับ · หมายเหตุ · รับครบ = สูตรเทียบจำนวนห่อ
+     · ชีต “ห่อ <Lot>” = 1 แถวต่อห่อ (ห่อที่ n/N · ชิ้นในห่อ · แพ็คแล้ว) + ช่องติ๊กรับ — ไว้ตรวจทีละห่อ */
+var PST_XL_CT = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+var PST_XL_CRC = (function () { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function pstXlCrc(b) { var c = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) c = PST_XL_CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+/* zip แบบเก็บเฉย ๆ (stored · ไม่บีบอัด) — Excel / LibreOffice / Google Sheets เปิดได้ */
+function pstXlZip(files) {
+  var enc = new TextEncoder(), parts = [], cen = [], off = 0, d = new Date();
+  var dt = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate(), tm = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+  var u16 = function (v) { return [v & 255, (v >>> 8) & 255]; }, u32 = function (v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255]; };
+  files.forEach(function (f) {
+    var nm = enc.encode(f.n), data = enc.encode(f.d), crc = pstXlCrc(data);
+    var lh = [].concat(u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(tm), u16(dt), u32(crc), u32(data.length), u32(data.length), u16(nm.length), u16(0));
+    parts.push(new Uint8Array(lh), nm, data);
+    cen.push(new Uint8Array([].concat(u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(tm), u16(dt), u32(crc), u32(data.length), u32(data.length), u16(nm.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(off))), nm);
+    off += lh.length + nm.length + data.length;
+  });
+  var cs = 0; cen.forEach(function (a) { cs += a.length; });
+  var end = new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length), u32(cs), u32(off), u16(0)));
+  return new Blob(parts.concat(cen, [end]), { type: PST_XL_CT });
+}
+function pstXlEsc(v) { return String(v == null ? '' : v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function pstXlCol(i) { var s = ''; i++; while (i > 0) { var m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+/* สไตล์ (ดัชนี cellXfs): 0 ปกติ · 1 ช่องกรอบ · 2 หัวตาราง · 3 ชื่อเอกสาร · 4 กรอบกลาง · 5 กรอบตัดบรรทัด · 6 กรอก(เหลือง)กลาง · 7 ยอดรวม · 8 หมายเหตุเล็ก · 9 ตัวหนา · 10 ✓ เขียว · 11 กรอก(เหลือง)ซ้าย · 12 ✗ แดง · 13 กรอบกลางจาง */
+var PST_XL_STY = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+  + '<fonts count="8"><font><sz val="10"/><name val="Arial"/></font><font><b/><sz val="10"/><name val="Arial"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Arial"/></font>'
+  + '<font><b/><sz val="14"/><name val="Arial"/></font><font><i/><sz val="8"/><color rgb="FF595959"/><name val="Arial"/></font><font><b/><sz val="10"/><color rgb="FF00803C"/><name val="Arial"/></font>'
+  + '<font><b/><sz val="10"/><color rgb="FFC00000"/><name val="Arial"/></font><font><sz val="10"/><color rgb="FF808080"/><name val="Arial"/></font></fonts>'
+  + '<fills count="5"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1F3864"/><bgColor indexed="64"/></patternFill></fill>'
+  + '<fill><patternFill patternType="solid"><fgColor rgb="FFFFF2CC"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE2EFDA"/><bgColor indexed="64"/></patternFill></fill></fills>'
+  + '<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF808080"/></left><right style="thin"><color rgb="FF808080"/></right><top style="thin"><color rgb="FF808080"/></top><bottom style="thin"><color rgb="FF808080"/></bottom><diagonal/></border></borders>'
+  + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="14">'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>'
+  + '<xf numFmtId="0" fontId="2" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>'
+  + '<xf numFmtId="0" fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+  + '<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>'
+  + '<xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+  + '<xf numFmtId="0" fontId="1" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+  + '<xf numFmtId="0" fontId="4" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+  + '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="left"/></xf>'
+  + '<xf numFmtId="0" fontId="5" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+  + '<xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>'
+  + '<xf numFmtId="0" fontId="6" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+  + '<xf numFmtId="0" fontId="7" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>'
+  + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+/* ชีต: { name, cols:[กว้าง], rows:[ { c:[ค่า | {v,s} | {f,s}], h } ], merge:['A1:D1'], freeze: แถว, title: แถวหัวที่พิมพ์ซ้ำ, filter:'A5:J5', foot } */
+function pstXlSheet(S) {
+  var x = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+    + '<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>';
+  x += '<sheetViews><sheetView workbookViewId="0">' + (S.freeze ? '<pane ySplit="' + S.freeze + '" topLeftCell="A' + (S.freeze + 1) + '" activePane="bottomLeft" state="frozen"/>' : '') + '</sheetView></sheetViews>';
+  x += '<sheetFormatPr defaultRowHeight="15"/><cols>' + S.cols.map(function (w, i) { return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>'; }).join('') + '</cols><sheetData>';
+  S.rows.forEach(function (R, ri) {
+    if (!R) return; var rn = ri + 1;
+    x += '<row r="' + rn + '"' + (R.h ? ' ht="' + R.h + '" customHeight="1"' : '') + '>';
+    (R.c || []).forEach(function (v, ci) {
+      if (v == null || v === '') return;
+      var o = v !== null && typeof v === 'object' ? v : { v: v }, ref = pstXlCol(ci) + rn, s = o.s ? ' s="' + o.s + '"' : '';
+      if (o.f) x += '<c r="' + ref + '"' + s + (o.str ? ' t="str"' : '') + '><f>' + pstXlEsc(o.f) + '</f></c>';
+      else if (o.v == null || o.v === '') x += '<c r="' + ref + '"' + s + '/>';
+      else if (typeof o.v === 'number' && isFinite(o.v)) x += '<c r="' + ref + '"' + s + '><v>' + o.v + '</v></c>';
+      else x += '<c r="' + ref + '"' + s + ' t="inlineStr"><is><t xml:space="preserve">' + pstXlEsc(o.v) + '</t></is></c>';
+    });
+    x += '</row>';
+  });
+  x += '</sheetData>' + (S.filter ? '<autoFilter ref="' + S.filter + '"/>' : '');
+  if (S.merge && S.merge.length) x += '<mergeCells count="' + S.merge.length + '">' + S.merge.map(function (m) { return '<mergeCell ref="' + m + '"/>'; }).join('') + '</mergeCells>';
+  x += '<printOptions horizontalCentered="1"/><pageMargins left="0.4" right="0.4" top="0.6" bottom="0.6" header="0.3" footer="0.3"/>'
+    + '<pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/>'
+    + '<headerFooter><oddFooter>' + pstXlEsc('&L&8' + (S.foot || S.name).replace(/&/g, '&&') + '&R&8หน้า &P / &N') + '</oddFooter></headerFooter></worksheet>';
+  return x;
+}
+function pstXlBook(sheets) {
+  var used = {}, nm = sheets.map(function (S) {   // ชื่อชีต ≤ 31 ตัว · ห้าม []:*?/\ · ไม่ซ้ำ
+    var b = String(S.name).replace(/[\[\]:*?\/\\]/g, '-').slice(0, 31) || 'Sheet', n = b, i = 2;
+    while (used[n.toUpperCase()]) { var sx = ' (' + i++ + ')'; n = b.slice(0, 31 - sx.length) + sx; }
+    used[n.toUpperCase()] = 1; return n; });
+  var q = function (n) { return "'" + n.replace(/'/g, "''") + "'"; };
+  var files = [
+    { n: '[Content_Types].xml', d: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'
+      + sheets.map(function (S, i) { return '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; }).join('') + '</Types>' },
+    { n: '_rels/.rels', d: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+    { n: 'xl/workbook.xml', d: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>'
+      + nm.map(function (n, i) { return '<sheet name="' + pstXlEsc(n) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>'; }).join('') + '</sheets>'
+      + (sheets.some(function (S) { return S.title; }) ? '<definedNames>' + sheets.map(function (S, i) { return S.title ? '<definedName name="_xlnm.Print_Titles" localSheetId="' + i + '">' + pstXlEsc(q(nm[i]) + '!$' + S.title + ':$' + S.title) + '</definedName>' : ''; }).join('') + '</definedNames>' : '')
+      + '<calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>' },
+    { n: 'xl/_rels/workbook.xml.rels', d: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+      + sheets.map(function (S, i) { return '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>'; }).join('')
+      + '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { n: 'xl/styles.xml', d: PST_XL_STY }];
+  sheets.forEach(function (S, i) { S.name = nm[i]; files.push({ n: 'xl/worksheets/sheet' + (i + 1) + '.xml', d: pstXlSheet(S) }); });
+  return pstXlZip(files);
+}
+/* ตู้ของ Lot: ห่อ = Code Pack ไม่ซ้ำ (…-ProdId · …-ProdId_n) */
+function pstXlPackOf(p) { var v = String(p.pack || '').trim(); return !v || /^manual$/i.test(v) ? '' : v; }
+function pstXlBase(pk) { return pk.replace(/_\d+$/, ''); }
+function pstXlSuf(pk) { var m = /_(\d+)$/.exec(pk); return m ? +m[1] : 1; }
+function pstXlCabs(rows) {
+  var m = new Map(), order = [];
+  rows.forEach(function (p, idx) {
+    var pk = pstXlPackOf(p), base = pk ? pstXlBase(pk) : '', k = String(p.art || '').toUpperCase() + '|' + (base ? base.toUpperCase() : '~' + String(p.shelf || p.cab || '').toUpperCase());
+    var g = m.get(k);
+    if (!g) { g = { art: p.art || '', cab: p.cab || '', base: base, pid: base ? base.slice(base.lastIndexOf('-') + 1) : '', shelf: p.shelf || '', first: idx, prq: parseInt(String(p.prq || ''), 10), parts: [], packs: new Map() }; m.set(k, g); order.push(g); }
+    if (!g.shelf && p.shelf) g.shelf = p.shelf;
+    g.parts.push(p);
+    if (pk) { var pp = g.packs.get(pk); if (!pp) g.packs.set(pk, pp = []); pp.push(p); }
+  });
+  var byPrq = order.every(function (g) { return isFinite(g.prq); });   // Product Seq Total (3/44) มีทุกตู้ = เรียงตามนั้น · ไม่มี = ตามลำดับชิ้น (Rec Id)
+  order.sort(function (a, b) { return byPrq ? a.prq - b.prq || a.first - b.first : a.first - b.first; });
+  return order;
+}
+function pstXlPartTxt(ps) { var c = new Map(); ps.forEach(function (p) { var n = String(p.nm || '').trim() || '?'; c.set(n, (c.get(n) || 0) + 1); }); var a = []; c.forEach(function (v, n) { a.push(v > 1 ? n + ' ×' + v : n); }); return a.join(', '); }
+function pstXlPacked(p) { var it = pstItem(p), q = it.cu.q[PST_STEPI.pk]; return !!q && q.v === true; }
+function pstXlName(art, cab) { var th = PST.an ? pstArtTh(art) : null; return th ? th.n : (cab || ''); }
+function pstXlH(txt, per) { var n = Math.max(1, Math.ceil(String(txt || '').length / (per || 60))); return n > 1 ? Math.min(409, 12.5 * n + 4) : null; }
+/* ชีตใบส่งของเข้าคลัง (1 แถวต่อตู้) */
+function pstXlDlv(x, rows) {
+  var cabs = pstXlCabs(rows), R = [], H = 5, nm = String(x.id);
+  R[0] = { c: [{ v: 'ใบส่งของเข้าคลัง   Lot ' + nm + (x.remark ? '  (' + x.remark + ')' : ''), s: 3 }], h: 22 };
+  R[1] = { c: [{ v: 'วันที่ส่ง', s: 9 }, { v: '', s: 6 }, { v: '', s: 6 }, null, { v: 'ตู้', s: 9 }, null, { v: 'ห่อ', s: 9 }, null, { v: 'ชิ้น', s: 9 }] };
+  R[2] = { c: [{ v: 'ตู้ = Product Article + ProdId (ท้าย Code Pack) · ห่อ = Code Pack ไม่ซ้ำ: _1 _2 _3 = 3 ห่อ · ไม่มี _ = 1 ห่อ · ช่องเหลือง = กรอกตอนรับของ', s: 8 }] };
+  R[H - 1] = { c: ['ลำดับ', 'Shelf No', 'รหัสตู้', 'ชื่อตู้', 'ProdId', 'จำนวนห่อ', 'Code Pack', 'ชิ้น', 'แพ็คแล้ว', 'ห่อที่รับ', 'รับครบ', 'หมายเหตุ'].map(function (h) { return { v: h, s: 2 }; }), h: 30 };
+  cabs.forEach(function (g, i) {
+    var r = H + 1 + i, pks = Array.from(g.packs.keys()).sort(pstPkNat), nP = pks.length || 1, mx = pks.reduce(function (a, k) { return Math.max(a, pstXlSuf(k)); }, 0);
+    var note = !pks.length ? 'ไม่มี Code Pack (นับ 1 ห่อ)' : mx > pks.length ? 'ห่ออาจขาด: เลขห่อสูงสุด _' + mx + ' แต่พบ ' + pks.length + ' ห่อ' : '';
+    var pkTxt = pks.map(pstPkShort).join(', '), done = g.parts.filter(pstXlPacked).length, pTxt = pstXlName(g.art, g.cab);
+    R[r - 1] = { c: [{ v: i + 1, s: 4 }, { v: g.shelf, s: 4 }, { v: g.art, s: 1 }, { v: pTxt, s: 5 }, { v: g.pid ? (isFinite(+g.pid) ? +g.pid : g.pid) : '-', s: 4 }, { v: nP, s: 7 },
+      { v: pkTxt, s: 5 }, { v: g.parts.length, s: 4 }, { v: done, s: done >= g.parts.length ? 10 : 12 }, { v: '', s: 6 },
+      { f: 'IF(J' + r + '="","",IF(J' + r + '=F' + r + ',"ครบ","ไม่ครบ"))', s: 4, str: 1 }, { v: note, s: 11 }], h: Math.max(pstXlH(pkTxt, 30) || 0, pstXlH(pTxt, 26) || 0, pstXlH(note, 24) || 0) || null };
+  });
+  var a = H + 1, b = H + cabs.length, T = b + 1;
+  R[T - 1] = { c: [null, null, null, { v: 'รวม', s: 7 }, { v: '', s: 7 }, { f: 'SUM(F' + a + ':F' + b + ')', s: 7 }, { v: '', s: 7 }, { f: 'SUM(H' + a + ':H' + b + ')', s: 7 }, { f: 'SUM(I' + a + ':I' + b + ')', s: 7 },
+    { f: 'IF(COUNT(J' + a + ':J' + b + ')=0,"",SUM(J' + a + ':J' + b + '))', s: 7 }, { f: 'COUNTIF(K' + a + ':K' + b + ',"ครบ")&"/"&COUNTA(C' + a + ':C' + b + ')', s: 7, str: 1 }, { v: '', s: 7 }] };
+  R[1].c[5] = { f: 'COUNTA(C' + a + ':C' + b + ')', s: 9 }; R[1].c[7] = { f: 'F' + T, s: 9 }; R[1].c[9] = { f: 'H' + T, s: 9 };
+  R[T + 2] = { c: [null, { v: 'ผู้ส่ง ..........................................' }, null, null, null, null, { v: 'ผู้รับ (คลัง) ..........................................' }] };
+  R[T + 3] = { c: [null, { v: 'วันที่ ......................' }, null, null, null, null, { v: 'วันที่ ......................' }] };
+  return { name: 'ใบส่ง ' + nm, foot: 'ใบส่งของเข้าคลัง ' + nm, cols: [6, 11, 16, 24, 9, 8, 30, 7, 8, 9, 8, 24], rows: R, merge: ['B2:C2'], freeze: H, title: H, cabs: cabs };
+}
+/* ชีตรายห่อ (1 แถวต่อห่อ) */
+function pstXlPk(x, cabs) {
+  var R = [], H = 4, nm = String(x.id), r = H;
+  R[0] = { c: [{ v: 'รายการห่อ   Lot ' + nm, s: 3 }], h: 22 };
+  R[1] = { c: [{ v: 'ห่อที่ n/N = เลขท้าย Code Pack (_n) / จำนวนห่อของตู้ · ช่องเหลือง = ติ๊ก ✓ ตอนรับ', s: 8 }] };
+  R[H - 1] = { c: ['ลำดับตู้', 'Shelf No', 'รหัสตู้', 'ProdId', 'Code Pack', 'ห่อที่', 'ชิ้น', 'ชิ้นในห่อ', 'แพ็คแล้ว', 'รับ ✓', 'หมายเหตุ'].map(function (h) { return { v: h, s: 2 }; }), h: 30 };
+  cabs.forEach(function (g, i) {
+    var pks = Array.from(g.packs.keys()).sort(pstPkNat), N = pks.length;
+    var list = N ? pks.map(function (k) { return { k: k, ps: g.packs.get(k), n: pstXlSuf(k) }; }) : [{ k: '', ps: g.parts, n: 1 }];
+    list.forEach(function (o) {
+      r++; var done = o.ps.filter(pstXlPacked).length, txt = pstXlPartTxt(o.ps);
+      R[r - 1] = { c: [{ v: i + 1, s: 4 }, { v: g.shelf, s: 4 }, { v: g.art, s: 1 }, { v: g.pid ? (isFinite(+g.pid) ? +g.pid : g.pid) : '-', s: 4 }, { v: o.k || '(ไม่มี Code Pack)', s: 1 },
+        { v: o.n + '/' + (N || 1), s: 4 }, { v: o.ps.length, s: 4 }, { v: txt, s: 5 }, { v: done, s: done >= o.ps.length ? 10 : 12 }, { v: '', s: 6 }, { v: '', s: 11 }], h: pstXlH(txt, 48) };
+    });
+  });
+  var a = H + 1, T = r + 1;
+  R[T - 1] = { c: [null, null, null, null, { v: 'รวม', s: 7 }, { f: 'COUNTA(E' + a + ':E' + r + ')&" ห่อ"', s: 7, str: 1 }, { f: 'SUM(G' + a + ':G' + r + ')', s: 7 }, { v: '', s: 7 }, { f: 'SUM(I' + a + ':I' + r + ')', s: 7 }, { f: 'COUNTA(J' + a + ':J' + r + ')', s: 7 }, { v: '', s: 7 }] };
+  return { name: 'ห่อ ' + nm, foot: 'รายการห่อ ' + nm, cols: [7, 11, 16, 9, 26, 7, 6, 55, 8, 7, 18], rows: R, freeze: H, title: H };
+}
+/* ชีตสถานะ Part (แถวที่แสดงอยู่ · ตามตัวกรอง) */
+function pstXlState(xl) {
+  var cols = xl.cols, R = [], H = 3, sel = xl.sel;
+  R[0] = { c: [{ v: 'สถานะ Part   ' + sel.map(function (y) { return y.id; }).join(' · '), s: 3 }], h: 22 };
+  R[1] = { c: [{ v: 'แถวที่แสดง ' + xl.shown.length + ' จาก ' + xl.all.length + ' ชิ้น' + (L.stQ.trim() ? ' · ค้นหา “' + L.stQ.trim() + '”' : '') + (pstCfN() ? ' · ' + pstCfDesc() : '') + ' · ✓ ผ่าน · ✗ ยังไม่ผ่าน · – ไม่เกี่ยว · ส่งออก ' + new Date().toLocaleString('th-TH'), s: 8 }] };
+  var hd = ['#', 'State'].concat(PST_STEPS.map(function (S0) { return S0.h; }), cols.map(function (c) { return c.h; }));
+  R[H - 1] = { c: hd.map(function (h) { return { v: h, s: 2 }; }), h: 30 };
+  xl.shown.forEach(function (it, i) {
+    var p = it.p, row = [{ v: i + 1, s: 13 }, { v: pstCurLbl(it.cu.i) + (it.d ? ' · ขาดส่ง' : ''), s: 4 }];
+    PST_STEPS.forEach(function (S0, k) { var q = it.cu.q[k]; row.push(q.v === true ? { v: '✓', s: 10 } : q.nc || q.na ? { v: '–', s: 13 } : q.v === false ? { v: '✗', s: 12 } : { v: '', s: 4 }); });
+    cols.forEach(function (c) {
+      var v = c.k === 'cab' ? pstXlName(p.art, p.cab) : c.f ? c.f(p[c.k], p) : p[c.k];
+      if (c.num && v !== '' && v != null && isFinite(+v)) v = +v;
+      row.push({ v: v == null ? '' : v, s: c.num ? 4 : 1 }); });
+    R[H + i] = { c: row };
+  });
+  var w = [5, 10].concat(PST_STEPS.map(function () { return 6; }), cols.map(function (c) { return { rec: 12, lot: 18, nm: 18, cab: 22, fs: 26, pack: 24, cpt: 22, mat: 24, bc1: 16, pjn: 20, art: 12 }[c.k] || 11; }));
+  return { name: 'สถานะ Part', cols: w, rows: R, freeze: H, title: H, filter: 'A' + H + ':' + pstXlCol(hd.length - 1) + (H + xl.shown.length) };
+}
+function pstXlExport() {
+  var xl = pstRender._xl; if (!xl || !xl.sel.length) { toast('ยังไม่มีรายชิ้นให้ส่งออก'); return; }
+  try {
+    var sheets = [pstXlState(xl)];
+    xl.sel.forEach(function (x) { var rows = pstRowsOf(x); if (!rows || !rows.length) return; var D = pstXlDlv(x, rows); sheets.push(D, pstXlPk(x, D.cabs)); });
+    var blob = pstXlBook(sheets), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (xl.sel.length === 1 ? String(xl.sel[0].id) : xl.sel.length + 'Lot') + '_สถานะPart_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+    toast('ส่งออก Excel แล้ว · ' + sheets.length + ' ชีต');
+  } catch (e) { console.error(e); toast('ส่งออก Excel ไม่ได้ — ' + (e && e.message || e)); }
+}
 function pstRender(keep) {
   var E = $('lotSt'); if (!E || !document.body.classList.contains('lotStOn')) return;
   var ae0 = document.activeElement; if (ae0 && ae0.classList && ae0.classList.contains('pst-lot') && E.contains(ae0)) { pstRender._pend = keep == null ? true : keep; return; }   // lots 1.29: กำลังพิมพ์ชื่อ Lot = ไม่วาดทับ (วาดตอนออกจากช่อง)
@@ -3501,6 +3707,7 @@ function pstRender(keep) {
       + PST_STEPS.map(function (S0, si) { return pstChip(S0, sum[S0.k], L.stCF[S0.k] === '0', subOf(S0.k), pstRc(si)); }).join('');   // lots 1.25 + สีขั้น
     /* lots 1.15: คอม = ช่องค้นหา/จำนวนแถวขึ้นแถวชื่อ Lot (<!--pst-tools-->) — เดิมต่อท้ายแถวยอด ยอดยาวแล้วดันตกบรรทัด (ผู้ใช้ 11:33) · มือถือที่ไม่มีรายชิ้น = ไม่มีช่องค้นหาเหมือนเดิม */
     var toolsH = all.length ? '<div class="pst-tools pst-htools">' + qbox
+      + '<button type="button" class="tbtn" data-pstxl title="ส่งออก Excel (.xlsx · พิมพ์ A4): สถานะ Part (แถวที่แสดงอยู่) + ใบส่งของเข้าคลังราย Lot (1 แถวต่อตู้ · นับห่อจาก Code Pack) + รายการห่อ">⬇<span class="lbl"> Excel</span></button>'   // lots 1.89
       + (ncf ? '<button type="button" class="tbtn" data-pstcfclr title="ล้างตัวกรองทุกช่อง (แถวใต้หัวคอลัมน์ · กล่องยอด)">✕ ล้างตัวกรอง (' + ncf + ')</button>' : '')   // lots 1.10 (เดิม ✕ ยังไม่ผ่าน …)
       + '<span class="pst-cnt" title="แสดง ' + fmtN(shown.length) + ' จาก ' + fmtN(all.length) + ' แถว"><b>' + fmtN(shown.length) + '</b>/' + fmtN(all.length) + ' แถว</span></div>' : '';   // lots 1.22 สั้นลง (แถวชื่อ Lot มีปุ่ม Dashboard เพิ่ม)
     if (!mob) h = h.replace('<!--pst-tools-->', toolsH); else if (all.length) h += '<span class="sp"></span>' + toolsH;
@@ -3540,6 +3747,7 @@ function pstRender(keep) {
       /* lots 1.4: คอลัมน์ตามหัวตาราง AX progress (PST_COLS) — ช่องของ StarSync v1.17 ที่ไฟล์ยังไม่มี = ซ่อน · # + State ติดซ้ายตอนเลื่อนขวา (pstStick)
          เดิม 1.1–1.3: Shelf No · Product Article · Product Name · Part Name · ขนาด (ยาว × กว้าง) · วัสดุ · Code Pack · Barcode · Room · Rec Id (+ Lot เมื่อหลาย Lot) */
       var cols = PST_COLS.filter(function (c) { return !c.ex || (PST.has && PST.has.has(c.k)); });
+      pstRender._xl = { sel: sel, shown: shown, all: its, cols: cols };   // lots 1.89 ข้อมูลของปุ่ม ⬇ Excel (แถวที่แสดง · คอลัมน์ที่เห็น)
       var miss = PST_COLS.filter(function (c) { return c.ex && c.k !== 'fs' /* lots 1.43 บอกแยกข้างล่าง */ && !(PST.has && PST.has.has(c.k)); }).map(function (c) { return c.h; });
       var missTxt = !miss.length ? '' : miss.length === PST_COLS.filter(function (c) { return c.ex && c.k !== 'fs'; }).length ? 'คอลัมน์ ' + miss.join(' · ') + ' ขึ้นเมื่ออัปเดต StarSync เป็น v1.17'
         : 'StarSync หาคอลัมน์ไม่เจอ: ' + miss.join(' · ') + ' (ดู lots/pcols.json · ตั้ง stateCols ใน config.json)';
@@ -3666,7 +3874,8 @@ document.addEventListener('click', function (e) {
   if (L.stPop && e.target.closest && !e.target.closest('.pst-pop,[data-pstcur]') && document.contains(e.target)) { L.stPop = false; pstRender(true); }
   /* lots 1.2: คลิกนอกกล่องเลือก Lot (ลอย) = ปิด */
   if (L.stPk.open && e.target.closest && !e.target.closest('[data-pstpkbox],[data-pstpk],#lotSide,#lotCfBar,.lcfpop') && document.contains(e.target)) { L.stPk.open = false; L.stPk.multi = false; /* lots 1.38 */ pstRender(true); }
-  var t = e.target.closest && e.target.closest('[data-pstty],[data-pstst],[data-pstmulti],[data-pstpopx],[data-pstcurf],[data-pstax],[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall],[data-pstcur],[data-pstdly],[data-pstcfb],[data-pstcfclr],[data-pstmi],[data-pstml],[data-pstmg],[data-pstdash],[data-pstmore]'); if (!t) return;
+  var t = e.target.closest && e.target.closest('[data-pstty],[data-pstst],[data-pstmulti],[data-pstpopx],[data-pstcurf],[data-pstax],[data-lstab],[data-pstgo],[data-pstdet],[data-pstf],[data-pstpk],[data-pstpick],[data-pstall],[data-pstclr],[data-pstrm],[data-pstjump],[data-pstjumpall],[data-pstcur],[data-pstdly],[data-pstcfb],[data-pstcfclr],[data-pstmi],[data-pstml],[data-pstmg],[data-pstdash],[data-pstmore],[data-pstxl]'); if (!t) return;
+  if (t.hasAttribute('data-pstxl')) { e.preventDefault(); pstXlExport(); return; }   // lots 1.89 ⬇ Excel
   if (t.hasAttribute('data-pstpopx')) { e.preventDefault(); L.stPop = false; pstRender(true); return; }   // lots 1.37
   if (t.dataset.pstcurf != null) { e.preventDefault(); var cf1 = t.dataset.pstcurf; if (L.stCF.cur === cf1) delete L.stCF.cur; else L.stCF.cur = cf1; L.stPop = false; pstRender('x'); return; }   // lots 1.37 (เดิม = กดกล่องสถานะ)
   if (t.dataset.pstdash) { e.preventDefault(); L.stPop = false; B.sel = t.dataset.pstdash; try { B.dbGo = pstDashGoInfo(t.dataset.pstdash); } catch (e2) { B.dbGo = { id: t.dataset.pstdash, at: Date.now() }; } /* lots 1.86 */ location.hash = '#board-dash'; return; }   // lots 1.21: เปิด Dashboard + รายละเอียด Lot นี้
