@@ -2594,6 +2594,50 @@ body.tv #bdDash details.dbmcd{display:none!important}
   #ov .box.dg308 .st b{display:block;font-size:17px}
   #ov .box.dg308 .st small{display:block;margin-top:3px;font-size:12.5px;color:var(--ink-dim)}
   #ov .box.dg308 .st.ok b{color:var(--ok, #1f9d55)} #ov .box.dg308 .st.cut b{color:#d97706}
+  /* v3.09: 📥 นำเข้าข้อมูลเอง — ปุ่มต่อท้าย Cutting · Edge Banding · Drill + หน้าต่างเต็มจอ */
+  .bddept .manbtn{position:relative;margin-left:7px}
+  .bddept .manbtn::before{content:'';position:absolute;left:-4px;top:6px;bottom:6px;width:1px;background:rgba(128,128,128,.35)}
+  .bddept .manbtn i{display:inline!important}
+  .bddept .manbtn .mandot{color:#ea580c;font-size:10px;margin-left:2px}
+  .bddept .manbtn.on{color:#c2410c}
+  body[data-theme="dark"] .bddept .manbtn.on{color:#fb923c}
+  .manpane{position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.45);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow:auto}
+  .manpane.hide{display:none}
+  body.manopen{overflow:hidden}
+  .manbox{background:var(--solid,#fff);color:var(--ink,#111);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(1000px,100%);padding:16px 18px 14px;max-height:calc(100vh - 48px);overflow:auto;box-sizing:border-box}
+  .manbox header{display:flex;align-items:flex-start;gap:10px}
+  .manbox h2{margin:0;font-size:19px;flex:1}
+  .manbox h2 small{display:block;font-size:12.5px;font-weight:500;color:var(--ink-dim);margin-top:3px;line-height:1.5}
+  .manmode{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:12px 0;padding:10px 12px;border-radius:10px;background:var(--card2,rgba(128,128,128,.08));font-size:13px}
+  .manmode > span{font-weight:700}
+  .manseg{display:inline-flex;padding:3px;border-radius:10px;background:var(--line,#e7eaf0)}
+  body[data-theme="dark"] .manseg{background:rgba(255,255,255,.08)}
+  .manseg button{border:0;background:none;font:700 13px var(--sans,inherit);padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--ink-dim)}
+  .manseg button.on{background:var(--solid,#fff);color:var(--accent,#2563eb);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  body[data-theme="dark"] .manseg button.on{background:rgba(255,255,255,.14);color:#8fb0f0}
+  .manseg button[data-manmode="1"].on{color:#c2410c}
+  body[data-theme="dark"] .manseg button[data-manmode="1"].on{color:#fb923c}
+  .manseg button:disabled{opacity:.45;cursor:not-allowed}
+  .mancards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
+  .mancard{border:1px solid var(--line,#e2e8f0);border-radius:12px;padding:12px 14px;background:var(--card,#fff)}
+  .mancard h3{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .mann{display:inline-grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent,#2563eb);color:#fff;font-size:12px}
+  .mansub{margin:0 0 8px;font-size:12px;color:var(--ink-dim);line-height:1.5}
+  .manst{font-size:12.5px;margin-bottom:6px}
+  .manpend{font-size:12.5px;margin:4px 0;padding:6px 8px;border-radius:8px;background:rgba(37,99,235,.09);line-height:1.5}
+  .manpend.bad{background:rgba(220,38,38,.1);color:#b91c1c}
+  body[data-theme="dark"] .manpend.bad{color:#fca5a5}
+  .manbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .manbtns label.tbtn{cursor:pointer}
+  .manbox footer{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line,#e2e8f0)}
+  .manbox footer .tbtn.pri{font-size:14px;padding:8px 16px}
+  .manmsg{font-size:13px;color:var(--ink-dim)}
+  .manres{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(22,163,74,.09);font-size:13px}
+  .manres ul{margin:6px 0 0;padding-left:18px}
+  .manfoot{font-size:11.5px;margin:10px 0 0}
+  .manmap{font-size:12px;margin:2px 0 4px;padding:0 8px;color:var(--ink-dim);line-height:1.6}
+  .manmap b{color:var(--ink)} .manno{color:#c2410c;font-weight:700}
+  @media (max-width: 640px){ .manpane{padding:8px} .manbox{padding:12px} }
 </style>
 </head>
 <body>
@@ -2604,7 +2648,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v3.08 · lots.html กำลังโหลด">v3.08</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v3.09 · lots.html กำลังโหลด">v3.09</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3779,10 +3823,11 @@ var GasFS = (function () {
    v3.06 (2026-10-27 17:08 ผู้ใช้: “เอาเป็นกรอบสีส้มเป็นสีเขียวได้ไหม ชื่อจะได้ไม่ยาว ถ้างานสีไม้ไม่ครบก็เป็นกรอบส้ม” — ถาม BO69-0873_HG ไม้ครบแต่ป้ายขึ้นแค่ “🎨 งานสี”) ป้ายงานสีบอกสถานะไม้ทำสีด้วยสี + คำสั้น: เขียว “🎨 ไม้สีครบ” (ไม้ทำสีครบ หรือไม้ทั้ง Lot ครบ) · ส้ม “🎨 ไม้สีไม่ครบ” · เทา “🎨 งานสี” = ยังไม่มีข้อมูลใบเบิกไม้ — เดิม “ไม้สีครบ” ขึ้นเฉพาะไม้สีครบแต่ไม้อื่นไม่ครบ
    v3.07 (2026-10-28 08:13 ผู้ใช้: “หน้านี้ ถ้างานชั้นไม้ไหนเป็นงานสี ช่วยทำระบุ งานสี ตัวเล็ก ๆ ไว้ด้านหลังรหัสไม้ที” รูปกรอบรายละเอียด Lot ตาราง “ไม้ของ Lot นี้ · คลังจ่ายหรือยัง”) รหัสแผ่นที่เป็นไม้ทำสีของ Lot (รหัส N01M0034N ใน Lot ชื่อ MU / HG · ชั้นไม้ที่มีชิ้นผิวบน/ล่าง N00S หรือ FrontShape P) มีป้ายเล็ก “🎨 งานสี” ต่อท้ายรหัส — เงื่อนไขเดียวกับป้าย “🎨 ไม้สี” ของ Daily Plan
    v3.08 (2026-10-28 08:26 ผู้ใช้: “ถ้าเราเปิดหน้านี้ lot ไหน ถ้าเรากด dashboard ให้มันไปเด้งหา lot นี้เลยได้ไหม ตรงแผน ถ้ามี lot นั้น ๆ แต่ถ้าไม่มีก็ให้ขึ้นสถานะตามสถานะ lot นั้น ๆ เช่น ตัดจบแล้ว / เข้าคลังไปแล้ว ถ้ากด ok ก็ให้เข้าหน้าแผนปกติ”) ปุ่ม ↗ Dashboard ของหน้า Lot ผลิต (lots 1.86 — มีทุกขั้นแล้ว) → Dashboard เด้งไปเครื่อง · วัน · แถวของ Lot ในแผน (กรอบเหลืองกะพริบ เหมือน 🔍 ค้นหา · อยู่หลายที่ = ไปที่แรก วันนี้ก่อน) · ไม่อยู่ในแผน = กล่องบอกสถานะ Lot (ตัดจบแล้ว / แพ็คครบแล้ว / เข้าคลังแล้ว … + ขั้นปัจจุบัน · ยังอยู่ขั้นตัด = เหตุที่ไม่อยู่ในแผน) → ตกลง = หน้าแผนปกติ
+   v3.09 (2026-11-03 14:21–15:10 ผู้ใช้: “ตัวโปรแกรมถูกปิดกั้น ทาง IT เจอไวรัส … อยากอัพแผนงานตัด ปิดขอบ เจาะ แบบแมนนวล Import ไฟล์เข้าไป แต่อย่าให้กระทบกับของเดิม” · “มี tab ใส่ข้อมูล Import แล้วกดคำนวณ ให้ทั้งตัด ปิดขอบ เจาะ อัพเดท” · “dashboard ยังไม่ต้องไปยุ่ง” · “เขียนแยกกัน ใช้ได้ทั้ง 2 แบบ เผื่อระบบ auto กลับมา”) แท็บ 📥 นำเข้าข้อมูล (ต่อท้าย Cutting · Edge Banding · Drill): BI CSV (ใช้ร่วม) · Excel Export ของ Cut Rite (ตัด) · CSV รายชิ้นราย Lot (ปิดขอบ + เจาะ) · JSON CountDrill (เจาะ) → ⚙ คำนวณ = เก็บ Google Drive lots/manual/ แล้ว SAW PLAN / Edge Banding / Drill ใช้ข้อมูลนี้ · สลับ ⚡ อัตโนมัติ (StarSync) / 📥 นำเข้าเอง ได้ทุกเมื่อ (ทุกเครื่องตาม) · ไม่เขียนไฟล์ของ StarSync · Dashboard / Daily Plan / Lot ผลิต ใช้ StarSync เหมือนเดิม
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '3.08';
+var VER = '3.09';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -21436,7 +21481,546 @@ bdDashRender = function (P) {
   return r;
 };
 
-window.StarStock = { dg308Proc: dg308Proc, dg308Msg: dg308Msg, dg308Box: dg308Box /* v3.08 */,  rjDetailSecV307: rjDetailSecV307 /* v3.07 */,  pc306St: pc306St, paintChipV306: paintChipV306 /* v3.06 */,  cy305Fit: cy305Fit, dbDayTabsV305: dbDayTabsV305 /* v3.05 */,  dbDaySecV304: dbDaySecV304 /* v3.04 */,  DBK303: DBK303 /* v3.03 */,  dba302Card: dba302Card /* v3.02 */,  DBA301: DBA301, dba301Html: dba301Html, dba301Deco: dba301Deco /* v3.01 */,  tb300Lbl: tb300Lbl /* v3.00 */,  dbCmpDataV298: dbCmpDataV298, DU98: DU98, DBC98: DBC98 /* v2.98 */,  pf97Arm: pf97Arm, DMF_T: DMF_T, dmtSec: dmtSec /* v2.97 */,  dbFindLocsV296: dbFindLocsV296, pmFX: pmF, dbPackOfX: dbPackOf /* v2.96 */,  rnTopV295: rnTopV295 /* v2.95 */,  fs94Parse: fs94Parse, fs94Load: fs94Load, pnb94Of: pnb94Of, pnb94Is: pnb94Is, PNB94: PNB94, PF94: PF94, pf94Set: pf94Set, dpCbTag: dpCbTag, paintTipX: paintTip, pnbName: pnbName, pnbIs: pnbIs /* v2.94 */,  LSF93: LSF93, lsOk93: lsOk93, lsUsedMB93: lsUsedMB93 /* v2.93 */,  dbcTipV292: dbcTipV292 /* v2.92 */,  dbcCls: dbcCls, dbcTip: dbcTip /* v2.91 */,  dbcRing: dbcRing, dbcRings: dbcRings /* v2.90 */,  DBC: DBC, dbCmpData: dbCmpData, dbCmpHtml: dbCmpHtml /* v2.89 */,  SHR: SHR, shrData: shrData, shrDraw: shrDraw, shrWrap: shrWrap, shrMake: shrMake, shrBox: shrBox, shrCanFiles: shrCanFiles /* v2.88 */,  bdDetailV287: bdDetailV287, sw87Add: sw87Add /* v2.87 */,  DO86: DO86, bdCloseDetail: bdCloseDetail /* v2.86 */,  CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* ═════════ v3.09: 📥 นำเข้าข้อมูลเอง (โหมดแมนนวล) — ตัด (SAW PLAN) · ปิดขอบ (Edge Banding) · เจาะ (Drill) ═════════
+   ผู้ใช้ 03/11/2026 14:21–15:10: “ตอนนี้ตัวโปรแกรมถูกปิดกั้น ทาง IT เจอไวรัส … อยากอัพแผนงานตัด ปิดขอบ เจาะ แบบแมนนวล คือ Import ไฟล์เข้าไป แต่อย่าให้กระทบกับของเดิม”
+     → “ทำให้มีหน้า Import BI csv · Import Excel สำหรับงานตัดกับปิดขอบ · งานเจาะเอาเป็น json · bi ใช้ร่วมกัน · มี tab ใส่ข้อมูลอันนึง แล้ว Import แล้วกดคำนวณ ให้ทั้ง ตัด ปิดขอบ เจาะ อัพเดทข้อมูล”
+     → “ตัว dashboard ยังไม่ต้องไปยุ่งกับมัน” · “อย่ากระทบกับโครงสร้างเดิมที่ดึง auto · เขียนแยกกันให้ · อยากให้ใช้ได้ทั้ง 2 แบบ เผื่อระบบ auto กลับมาทำงานได้”
+     · “เพิ่ม tab ไว้ข้าง ๆ cutting edge drill” (ไฟล์ตัวอย่าง: data.csv (BI) · 6941315.xlsx (Export Cut Rite) · BO69-0984.csv (CSV รายชิ้นราย Lot) · countdrill_MPR_CNC_…json)
+   แยกจากระบบ auto ทั้งหมด:
+     · ไฟล์ของโหมดนี้อยู่โฟลเดอร์ Google Drive lots/manual/ (meta.json · bi.csv · saw.json · parts.csv · mpr.csv) — ไม่เขียนทับไฟล์ของ StarSync (lots/*.csv) เลย
+     · Dashboard / Daily Plan / คิวเครื่อง / Lot ผลิต ใช้ข้อมูล StarSync เหมือนเดิมเสมอ (ไม่อ่านโฟลเดอร์นี้)
+     · เฉพาะ 3 หน้า SAW PLAN / Edge Banding / Drill: meta.json on = true (สลับในแท็บนำเข้า · ทุกเครื่องเห็นตาม) = สร้างข้อมูลหน้าจากไฟล์นำเข้า (spBuild / edBuild แบบแมนนวล)
+       on = false = ตัวเดิมทุกอย่าง (StarSync) — ระบบ auto กลับมาเมื่อไร กด “อัตโนมัติ (StarSync)” ก็กลับไปใช้ได้ทันที ข้อมูลนำเข้ายังเก็บไว้
+   ไฟล์ที่รับ:
+     ① BI CSV (รายการ Lot: LotId · prodpoolid · enddate (พ.ศ./ค.ศ.) · TotalPart · CheckPart · LotRemark … · หรือ data 6 แบบเดิม) — ใช้ร่วม 3 งาน
+        SAW PLAN = Lot ที่ยังตัดไม่ครบ (CheckPart < TotalPart) · Edge / Drill = ทุก Lot ในไฟล์
+     ② Excel Export ของ Cut Rite (.xlsx · ชื่อไฟล์ = เลข .saw) — งานตัด: ชั้นไม้ · แผ่น · เวลาผัง (Pattern summary) · ชิ้น/รายการ Part (Part summary) · โหลดกองไม้ (Average book) · ชุดค่าเครื่อง (Input summary)
+     ③ CSV รายชิ้นราย Lot ของ Cut Rite (1 แถว = 1 ชิ้น · edgecode1–4 · groove1–4 · Barcode/Barcode2 · BarcodePart · CutriteMaterialCode) — งานปิดขอบ + เจาะ
+     ④ JSON งานเจาะของ CountDrill (countdrill-snapshot · mpr.entries) — รู / CNC / LED ของไฟล์ .mpr · เก็บเฉพาะ order ที่จับคู่ Barcode ของ ③ ได้ + order 6 เดือนล่าสุด
+     จับคู่ไฟล์ ② ③ กับ Lot ใน BI: ชื่อไฟล์ / Part File (BO69-0984) / ItemIdSet (RE-0069-0984) ตรงกัน หรือ LotId ขึ้นต้นด้วยชื่อนั้น (+ _ - ( ช่องว่าง) · ไม่เจอ = Lot ใหม่ชื่อตามไฟล์
+     นำเข้าซ้ำ: BI = แทนทั้งไฟล์ · Excel / CSV = แทนเฉพาะ Lot ที่นำเข้า (Lot อื่นคงไว้) · JSON = แทนทั้งชุด */
+var MAN_DIR = LOT_DIR + '/manual', MAN_F = { meta: 'meta.json', bi: 'bi.csv', saw: 'saw.json', lc: 'parts.csv', mp: 'mpr.csv' };
+var MAN = { on: false, meta: null, at: 0, err: null, loading: null, v: 0, u: {}, bi: null, saw: null, lc: null, mp: null,
+  pend: { bi: null, saw: null, lc: null, mp: null }, busy: false, last: null };
+function manUp(s) { return String(s == null ? '' : s).trim().toUpperCase(); }
+function manBase(n) { return String(n || '').replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '').trim(); }
+function manCsvCell(v) { v = v == null ? '' : String(v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function manDecode(buf) {
+  var b = new Uint8Array(buf), t;
+  try { t = new TextDecoder('utf-8', { fatal: true }).decode(b); } catch (e) { try { t = new TextDecoder('windows-874').decode(b); } catch (e2) { t = new TextDecoder().decode(b); } }
+  return t.charCodeAt(0) === 0xFEFF ? t.slice(1) : t;
+}
+function manDelim(t) { var h = String(t).split(/\r?\n/, 1)[0] || '', c = function (x) { return h.split(x).length - 1; }; return c(';') > c(',') && c(';') > c('\t') ? 59 : c('\t') > c(',') ? 9 : 44; }
+/* หัวคอลัมน์ → คีย์เทียบ: ตัด “(28)” หน้าชื่อ · ตัวเล็ก · เหลือ a-z0-9 */
+function manKey(h) { return String(h == null ? '' : h).replace(/^﻿/, '').replace(/^\s*\(\d+\)\s*/, '').toLowerCase().replace(/[^a-z0-9ก-๙]+/g, ''); }
+
+/* ① BI CSV → { rows: [{ id, pool, end, parts, cut, remark, shelf, st }], n, dup } */
+function manParseBi(text) {
+  var R = parseCsv(text, manDelim(text)).filter(function (r) { return !(r.length === 1 && r[0] === ''); });
+  if (!R.length) throw new Error('ไฟล์ว่าง');
+  var ix = {}; R[0].forEach(function (h, i) { var k = manKey(h); if (k && ix[k] == null) ix[k] = i; });
+  var pick = function () { for (var i = 0; i < arguments.length; i++) if (ix[arguments[i]] != null) return ix[arguments[i]]; return null; };
+  var cId = pick('lotid', 'lot'), cPool = pick('prodpoolid', 'pool', 'poolid'), cEnd = pick('enddate', 'end'), cTp = pick('totalpart', 'parts'), cCp = pick('checkpart'),
+    cRm = pick('lotremark', 'remark'), cSh = pick('shelf'), cSt = pick('stage');
+  if (cId == null) throw new Error('ไม่พบคอลัมน์ LotId (หัวตารางที่อ่านได้: ' + R[0].slice(0, 8).join(', ') + ')');
+  var g = function (a, c) { return c == null || a[c] == null ? '' : String(a[c]).trim(); }, num = function (s) { var v = parseFloat(String(s).replace(/,/g, '')); return isFinite(v) ? v : null; };
+  var rows = [], seen = {}, dup = 0;
+  for (var r = 1; r < R.length; r++) {
+    var a = R[r], id = g(a, cId); if (!id) continue;
+    var K = manUp(id); if (seen[K]) { dup++; continue; } seen[K] = 1;
+    var st = cSt != null ? lotStage(g(a, cSt)) : null;
+    rows.push({ id: id, pool: poolNorm(g(a, cPool)), end: lotDate(g(a, cEnd)), parts: num(g(a, cTp)), cut: num(g(a, cCp)), remark: g(a, cRm), shelf: g(a, cSh), st: st ? st.n : 1 });
+  }
+  if (!rows.length) throw new Error('ไม่มีแถว Lot (คอลัมน์ LotId ว่างทุกแถว)');
+  return { rows: rows, n: rows.length, dup: dup, hasCut: cCp != null };
+}
+
+/* ③ CSV รายชิ้นราย Lot (Cut Rite) → { name, item, rows: [{ item, art, pid, nm, w, l, t, ef, g, bc1, bc2, bcp, mat }] } — แถวแบบ lots/lotcsv.csv (lcParse) */
+function manParseParts(text, fname) {
+  var R = parseCsv(text, manDelim(text)).filter(function (r) { return !(r.length === 1 && r[0] === ''); });
+  if (R.length < 2) throw new Error('ไม่มีแถวชิ้นงาน');
+  var ix = {}; R[0].forEach(function (h, i) { var k = manKey(h); if (k && ix[k] == null) ix[k] = i; });
+  var pick = function () { for (var i = 0; i < arguments.length; i++) if (ix[arguments[i]] != null) return ix[arguments[i]]; return null; };
+  var c = { item: pick('itemidset'), art: pick('producarticle', 'productarticle'), pid: pick('partid'), nm: pick('partname'), w: pick('finishwidth'), l: pick('finishlength'), t: pick('finishthickness', 'thickness'),
+    bc1: pick('barcode', 'barcode1'), bc2: pick('barcode2'), bp: pick('barcodepart'), mat: pick('cutritematerialcode', 'cutritematerial') };
+  var ec = [1, 2, 3, 4].map(function (i) { return pick('edgecode' + i); }), gc = [1, 2, 3, 4].map(function (i) { return pick('groove' + i); });
+  if (c.w == null || c.l == null || ec[0] == null) throw new Error('ไม่ใช่ CSV รายชิ้นของ Cut Rite (ไม่มีคอลัมน์ finishwidth / finishlength / edgecode1)');
+  var v = function (a, k) { var i = typeof k === 'number' ? k : c[k]; return i == null || a[i] == null ? '' : String(a[i]).trim(); };
+  var rows = [], item = '';
+  for (var r = 1; r < R.length; r++) {
+    var a = R[r], ef = 0, gg = 0;
+    ec.forEach(function (i, j) { var s = v(a, i); if (i != null && s && s !== '0') ef |= 1 << j; });
+    gc.forEach(function (i, j) { var s = v(a, i); if (i != null && s && !/^nogroove$/i.test(s)) gg |= 1 << j; });
+    var it = v(a, 'item'); if (!item && it) item = it;
+    rows.push({ item: it, art: v(a, 'art'), pid: v(a, 'pid'), nm: v(a, 'nm'), w: +v(a, 'w') || 0, l: +v(a, 'l') || 0, t: +v(a, 't') || 0, ef: ef, g: gg, bc1: v(a, 'bc1'), bc2: v(a, 'bc2'), bcp: v(a, 'bp'), mat: v(a, 'mat') });
+  }
+  return { name: manBase(fname), item: item, rows: rows };
+}
+
+/* ② Excel Export ของ Cut Rite → { xf (เลข .saw / Run), title (Part File), item (ItemIdSet), boards: [{ c, ds, thk, bk, q, t, pt, p, pp }], tp, ct, ls, ss, file }
+   = parseCutRite ของ sawplan.html (v1.6.x) + Batch summary (Run · Part File · Total Time) + ชื่อวัสดุ + ItemIdSet */
+function manSec(v, hm) {   // hm = ค่า 2 ส่วนเป็น ชม.:นาที (Batch summary “Total Time” 1:14 = 1 ชม. 14 นาที) · ไม่ใส่ = นาที:วินาที
+  if (v == null || v === '') return 0; if (typeof v === 'number') return Math.round(v * 86400);
+  if (v instanceof Date) return v.getUTCHours() * 3600 + v.getUTCMinutes() * 60 + v.getUTCSeconds();
+  var p = String(v).trim().replace(/\s*hr$/i, '').split(':'); if (p.length === 3) return ((+p[0]) * 3600 + (+p[1]) * 60 + (+p[2])) || 0; if (p.length === 2) return (hm ? (+p[0]) * 3600 + (+p[1]) * 60 : (+p[0]) * 60 + (+p[1])) || 0; return 0;
+}
+function manIsNum(v) { return v !== null && v !== '' && !isNaN(parseFloat(v)) && isFinite(v); }
+function manParseXlsx(XL, buf, fname) {
+  var names = []; try { names = XL.read(buf, { type: 'array', bookSheets: true }).SheetNames || []; } catch (e) { names = []; }
+  var find = function (re) { for (var i = 0; i < names.length; i++) if (re.test(names[i])) return names[i]; return null; };
+  var nPS = find(/pattern.*summary/i), nPA = find(/part.*summary/i), nMS = find(/management.*summary/i), nIS = find(/input.*summary/i), nBS = find(/batch.*summary/i), nDS = find(/distribution.*summary/i);
+  if (!nPS) throw new Error('ไม่ใช่ไฟล์ Export ของ Cut Rite (ไม่พบชีต Pattern summary)');
+  var wb = XL.read(buf, { type: 'array', sheets: [nPS, nPA, nMS, nBS].filter(Boolean) });
+  var rowsOf = function (n, raw) { var s = n ? wb.Sheets[n] : null; return s ? XL.utils.sheet_to_json(s, { header: 1, defval: raw ? null : '', raw: true }) : []; };
+  var out = { xf: '', title: '', item: '', boards: [], tp: 0, ct: 0, ls: 0, ss: '', file: String(fname || '') };
+  var ps = wb.Sheets[nPS]; out.title = ps && ps.B2 ? String(ps.B2.v || '').trim() : '';
+  var cur = null;
+  rowsOf(nPS, true).forEach(function (r) {
+    var c0 = r[0], s0 = c0 == null ? '' : String(c0).trim();
+    if (/^Average book/i.test(s0)) { out.ls = manSec(r[10]); return; }
+    if (s0 === 'Total' || /^(Ptn No|Pattern summary|STARMARK)/.test(s0)) return;
+    if (s0.length > 8 && !manIsNum(s0)) {
+      var th = /Thickness\s+([\d.]+)/i.exec(s0), bk = /Book\s+(\d+)/i.exec(s0), sp = s0.indexOf(' '), ds = sp > 0 ? s0.slice(sp + 1).replace(/\s*Thickness\s+[\d.]+[\s\S]*$/i, '').trim() : '';
+      cur = { c: s0.split(/\s+/)[0], ds: ds, thk: th ? +th[1] : 0, bk: bk ? +bk[1] : 0, q: 0, t: 0, pt: [], p: null, pp: null }; out.boards.push(cur); return;
+    }
+    if (!cur) return;
+    if (s0 === '' && r[5] != null && r[5] !== '') { cur.q = +r[5] || 0; cur.t = manSec(r[10]); return; }
+    if (manIsNum(s0) && +s0 > 0) cur.pt.push([+r[2] || 0, +r[3] || 0, +r[5] || 0, +r[6] || 1, +r[7] || 0, +r[8] || 0, manSec(r[10])]);
+  });
+  out.boards.forEach(function (b) { if (!b.t && b.pt.length) { b.t = b.pt.reduce(function (s, p) { return s + p[6]; }, 0); if (!b.q) b.q = b.pt.reduce(function (s, p) { return s + p[2]; }, 0); } });
+  var pr = rowsOf(nPA, true);
+  if (pr.length) {
+    var hi = -1, col = -1;
+    for (var i = 0; i < Math.min(12, pr.length); i++) { var hr = (pr[i] || []).map(function (x) { return String(x == null ? '' : x).trim().toLowerCase(); }); var j = hr.indexOf('total prod'); if (j < 0) j = hr.indexOf('total req'); if (j >= 0) { hi = i; col = j; break; } }
+    if (hi >= 0) {
+      var cnt = {}, agg = {}, cc = null;
+      for (var r = hi + 1; r < pr.length; r++) { var row = pr[r] || [], a = row[0], sa = a == null ? '' : String(a).trim();
+        if (sa.length > 8 && !manIsNum(sa) && (row[1] == null || row[1] === '')) { cc = sa.split(/\s+/)[0]; if (cnt[cc] == null) { cnt[cc] = 0; agg[cc] = {}; } continue; }
+        if (cc && manIsNum(sa)) { var qn = +row[col] || 0; cnt[cc] += qn;
+          var nm = String(row[1] == null ? '' : row[1]).trim(), pl = Math.round((+row[2] || 0) * 10) / 10, pw = Math.round((+row[3] || 0) * 10) / 10, key = nm + '|' + pl + '|' + pw;
+          if (agg[cc][key]) agg[cc][key][3] += qn; else agg[cc][key] = [nm, pl, pw, qn]; } }
+      var given = {}, ppOf = function (c) { return Object.keys(agg[c] || {}).map(function (k) { return agg[c][k]; }); };
+      out.boards.forEach(function (b) { if (cnt[b.c] != null && !given[b.c] && (b.q > 0 || b.pt.length)) { b.p = cnt[b.c]; b.pp = ppOf(b.c); given[b.c] = 1; } });
+      out.boards.forEach(function (b) { if (b.p == null && cnt[b.c] != null) { b.p = given[b.c] ? 0 : cnt[b.c]; if (!given[b.c]) { b.pp = ppOf(b.c); given[b.c] = 1; } } });
+    }
+  }
+  rowsOf(nMS).forEach(function (r) { var l = String(r[0] || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (l.indexOf('total parts') === 0 && +r[1] > 0) out.tp = Math.round(+r[1]);
+    if (l.indexOf('required parts') === 0 && +r[1] > 0 && !out.tp) out.tp = Math.round(+r[1]);
+    if ((l.indexOf('cutting time') >= 0 || l.indexOf('cuttingtime') >= 0) && !out.ct) out.ct = manSec(r[1], true); });
+  var bs = rowsOf(nBS), bh = -1;
+  bs.forEach(function (r, i) { if (bh < 0 && String(r[0]).trim().toLowerCase() === 'run') bh = i; });
+  if (bh >= 0 && bs[bh + 1]) {
+    var hb = bs[bh].map(function (x) { return String(x).trim().toLowerCase(); }), rb = bs[bh + 1];
+    var gi = function (k) { var i = hb.indexOf(k); return i >= 0 ? rb[i] : ''; };
+    out.xf = String(gi('run') || '').trim(); if (!out.title) out.title = String(gi('part file') || '').trim();
+    if (!out.ct) out.ct = manSec(gi('total time'), true); if (!out.tp && +gi('qty parts') > 0) out.tp = +gi('qty parts');
+  }
+  if (nIS) try { var w2 = XL.read(buf, { type: 'array', sheets: [nIS], sheetRows: 30 }), is = w2.Sheets[nIS];
+    if (is) XL.utils.sheet_to_json(is, { header: 1, defval: '', raw: true }).forEach(function (r) { var k = String(r[0]).trim().toLowerCase();
+      if (k === 'saw' && !out.ss) out.ss = String(r[1] || '').trim() + '/' + String(r[2] || '').trim();
+      if (k === 'run' && !out.xf) out.xf = String(r[1] || '').trim();
+      if (!out.item) { var j = r.findIndex(function (x) { return /^\(1\)ItemIdSet$/i.test(String(x).trim()); }); if (j >= 0) out.itemCol = j; else if (out.itemCol != null && manIsNum(r[0]) && r[out.itemCol]) out.item = String(r[out.itemCol]).trim(); } });
+  } catch (e) { }
+  if (!out.item && nDS) try { var w3 = XL.read(buf, { type: 'array', sheets: [nDS], sheetRows: 12 }), ds = w3.Sheets[nDS], ci = -1;
+    if (ds) XL.utils.sheet_to_json(ds, { header: 1, defval: '', raw: true }).forEach(function (r) { if (out.item) return; var j = r.findIndex(function (x) { return /^\(1\)ItemIdSet$/i.test(String(x).trim()); }); if (j >= 0) { ci = j; return; } if (ci >= 0 && manIsNum(r[0]) && r[ci]) out.item = String(r[ci]).trim(); });
+  } catch (e) { }
+  delete out.itemCol;
+  if (!out.xf) { var m = /(\d{5,})/.exec(manBase(fname)); out.xf = m ? m[1] : manBase(fname); }
+  if (!out.boards.length) throw new Error('ไม่มีชั้นไม้ในชีต Pattern summary');
+  return out;
+}
+
+/* ④ JSON CountDrill → รายการ order (แบบ mpParse) */
+function manMpEntry(e) {
+  var files = String(e.fpack || '').split(',').filter(Boolean).map(function (tok) { var p = tok.split(':'); return { n: p[0], h: +p[2] || 0, m: +p[3] || 0, c: +p[4] || 0, l: +p[5] || 0 }; });
+  return { folderPrefix: String(e.folderPrefix || '').trim(), folderName: String(e.folderName || ''), holes: +e.holes || 0, cnc: +e.cnc || 0, led: +e.led || 0, ledMM: +e.ledMM || 0, cncK: +e.cncK || 0,
+    ledW: e.ledW && typeof e.ledW === 'object' ? e.ledW : {}, cncW: e.cncW && typeof e.cncW === 'object' ? e.cncW : {}, fileCount: +e.fileCount || files.length, files: files, idx: null, fp: String(e.fpack || '') };
+}
+function manMpIndex(list) {
+  var byKey = new Map(), byName = new Map();
+  list.forEach(function (e) { if (!byKey.has(e.folderPrefix)) byKey.set(e.folderPrefix, e); var nl = e.folderName.toLowerCase(); if (!byName.has(nl)) byName.set(nl, e); });
+  var short = list.filter(function (e) { return e.folderPrefix.length < 10; }).sort(function (x, y) { return (y.folderPrefix.length - x.folderPrefix.length) || (x.folderPrefix < y.folderPrefix ? -1 : 1); });
+  return { list: list, byKey: byKey, byName: byName, short: short };
+}
+function manParseDrill(obj) {
+  var E = obj && obj.mpr && Array.isArray(obj.mpr.entries) ? obj.mpr.entries : Array.isArray(obj && obj.entries) ? obj.entries : null;
+  if (!E) throw new Error('ไม่ใช่ไฟล์ JSON ของ CountDrill (ไม่มี mpr.entries)');
+  var list = E.filter(function (e) { return e && e.folderPrefix; }).map(manMpEntry);
+  return { list: list, savedAt: obj.savedAt || 0, folderCount: list.length, fileCount: list.reduce(function (s, e) { return s + (e.fileCount || 0); }, 0) };
+}
+/* เก็บเฉพาะ order ที่ Barcode ของชิ้นงาน (CSV ราย Lot) จับคู่ได้ + order 6 เดือนล่าสุด (4 หลักแรก = ปี ค.ศ. 2 หลัก + เดือน) */
+function manMpFilter(list, lcMap) {
+  var M = manMpIndex(list), keep = new Set();
+  if (lcMap) lcMap.forEach(function (o) { o.rows.forEach(function (r) {
+    [r.bc1, r.bc2].forEach(function (b) { if (!b) return; var e = drMatch(M, b); if (e) keep.add(e); }); }); });
+  var d = new Date(); d.setMonth(d.getMonth() - 6); var yy = function (y) { return String(y % 100).padStart(2, '0'); }, cut = yy(d.getFullYear()) + String(d.getMonth() + 1).padStart(2, '0'), top = yy(new Date().getFullYear() + 1);   // เลข order = ปี ค.ศ. 2 หลัก + เดือน (2610… = ต.ค. 2026)
+  list.forEach(function (e) { var p = e.folderPrefix; if (p.length >= 4 && /^\d{4}/.test(p) && p.slice(0, 4) >= cut && p.slice(0, 2) <= top) keep.add(e); });
+  return list.filter(function (e) { return keep.has(e); });
+}
+function manMpCsv(list) {
+  var w = function (o) { return Object.keys(o || {}).map(function (k) { return k + ':' + o[k]; }).join(';'); };
+  return ['key,name,files,holes,cnc,led,ledmm,cnck,ledw,cncw,fp'].concat(list.map(function (e) {
+    return [e.folderPrefix, e.folderName, e.fileCount, e.holes, e.cnc, e.led, e.ledMM, e.cncK, w(e.ledW), w(e.cncW), e.fp].map(manCsvCell).join(',');
+  })).join('\n');
+}
+/* CSV ราย Lot → lots/manual/parts.csv (หัวเดียวกับ lots/lotcsv.csv · ค่าตรง ๆ ไม่ย่อ ^) */
+function manLcCsv(map) {
+  var q = function (v) { v = v == null ? '' : String(v); if (v === '^' || v.charAt(0) === '=') v = '=' + v; return manCsvCell(v); };
+  var out = ['lot,item,art,pid,nm,w,l,t,ef,g,bc1,bc2,bp,mat'];
+  map.forEach(function (o) { o.rows.forEach(function (r) { out.push([q(o.lot), q(r.item), q(r.art), manCsvCell(r.pid), manCsvCell(r.nm), r.w, r.l, r.t, r.ef, r.g, manCsvCell(r.bc1), manCsvCell(r.bc2), r.bcp ? manCsvCell('=' + r.bcp) : '', q(r.mat)].join(',')); }); });
+  return out.join('\n');
+}
+/* อ่าน parts.csv / mpr.csv ด้วยตัวอ่านเดิม แต่ไม่ให้แตะตัวนับของ StarSync (B.lc.n / B.mp.n) */
+function manLcParse(t) { var n0 = B.lc.n; try { return lcParse(t); } finally { B.lc.n = n0; } }
+function manMpParse(t) { var n0 = B.mp.n; try { var o = mpParse(t); o.files = B.mp.n; return o; } finally { B.mp.n = n0; } }
+
+/* จับคู่ชื่อ (ไฟล์ / Part File / ItemIdSet) กับ LotId ใน BI */
+function manMatch(cands, bi) {
+  if (!bi) return null;
+  var ids = bi.idx || (bi.idx = new Map(bi.rows.map(function (x) { return [manUp(x.id), x.id]; })));
+  for (var i = 0; i < cands.length; i++) { var c = manUp(cands[i]); if (c && ids.has(c)) return ids.get(c); }
+  for (var j = 0; j < cands.length; j++) {
+    var p = manUp(cands[j]); if (!p || p.length < 6) continue;
+    var hit = bi.rows.filter(function (x) { var U = manUp(x.id); return U.indexOf(p) === 0 && /^[_\-( ]/.test(U.slice(p.length)); });
+    if (hit.length === 1) return hit[0].id;
+  }
+  return null;
+}
+
+/* ── Google Drive: lots/manual/ ── */
+async function manLoad(force) {
+  var fs = ensureFs(); if (!fs) return false;
+  if (MAN.loading) return MAN.loading;
+  MAN.loading = (async function () {
+    var ch = false;
+    try {
+      var Ld = await retryNet(async function () { try { return await fs.list(MAN_DIR, true); } catch (e) { if (e && e.name === 'NotFoundError') return null; throw e; } }, 'รายการไฟล์ ' + MAN_DIR);
+      var F = Ld && Ld.ok ? Ld.files : {};
+      var rd = async function (k) { var f = F[MAN_F[k]]; if (!f) { if (MAN.u[k]) { MAN.u[k] = 0; ch = true; return null; } return undefined; } if (!force && MAN.u[k] === f.u) return undefined; var t = await readText(MAN_DIR, MAN_F[k]); MAN.u[k] = f.u; ch = true; return t; };
+      var t = await rd('meta');
+      if (t !== undefined) { try { MAN.meta = t ? JSON.parse(t) : null; } catch (e) { MAN.meta = null; } }
+      var m = MAN.meta || {};
+      if ((t = await rd('bi')) !== undefined) MAN.bi = t ? manParseBi(t) : null;
+      if ((t = await rd('saw')) !== undefined) { try { MAN.saw = t ? JSON.parse(t) : null; } catch (e) { MAN.saw = null; } }
+      if ((t = await rd('lc')) !== undefined) MAN.lc = t ? manLcParse(t) : null;
+      if ((t = await rd('mp')) !== undefined) MAN.mp = t ? manMpParse(t) : null;
+      var on = !!(m.on && MAN.bi); if (on !== MAN.on) { MAN.on = on; ch = true; }
+      if (ch) MAN.v++;
+      MAN.at = Date.now(); MAN.err = null;
+    } catch (e) { console.warn('StarStock v3.09: อ่านข้อมูลนำเข้าเอง (' + MAN_DIR + ') ไม่ได้', e); MAN.err = e; MAN.at = MAN.at || Date.now(); }
+    finally { MAN.loading = null; }
+    return ch;
+  })();
+  return MAN.loading;
+}
+async function manWrite(name, text) {
+  var fs = ensureFs(); if (!fs) throw new Error('ยังไม่ได้เชื่อม Google Drive');
+  try { await fs.call({ a: 'fsMkdir', p: MAN_DIR }); fs._dirAdd(MAN_DIR); } catch (e) { }   // แบบ lots/plan (TP_DIR)
+  return fs.write(MAN_DIR, name, new TextEncoder().encode(text));
+}
+
+/* ── Lot ของโหมดนี้ ── */
+function manG(x) { return { id: String(x.id), pool: x.pool || '', end: x.end != null ? x.end : null, partsU: x.parts || 0, rows: [{ pool: x.pool || '', week: x.end != null ? sqlWeek(new Date(x.end)) : null }], st: x.st, man: x }; }
+function manExtra(map, seen) { var out = []; if (map) (map.forEach ? map : new Map(Object.entries(map))).forEach(function (o, K) { if (!seen[K]) { seen[K] = 1; out.push(manG({ id: o.lot || K, pool: '', end: null, parts: o.tp || 0, st: 1, extra: true })); } }); return out; }
+function manDueCmp(a, b) { var due = function (g) { try { return bdDashDue(g); } catch (e) { return g.end; } }, x = due(a), y = due(b); return ((x == null ? 9e15 : x) - (y == null ? 9e15 : y)) || ((a.end == null ? 9e15 : a.end) - (b.end == null ? 9e15 : b.end)) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0); }
+function manWho() { var m = MAN.meta || {}; return (m.by ? m.by + ' · ' : '') + (m.at ? String(m.at).replace('T', ' ').slice(5, 16) : ''); }
+
+/* SAW PLAN — รูปแบบ A เดียวกับ spLotA */
+function manSpLotA(g) {
+  var rec = MAN.saw && MAN.saw.lots ? MAN.saw.lots[manUp(g.id)] : null;
+  var d = { id: g.id, pn: String(g.pool || '').replace(/\D+/g, ''), pl: poolNorm(g.pool || ''), wn: g.end != null ? sqlWeek(new Date(g.end)) : 0, ed: spDmy(g.end), qty: 0, sec: 0, xf: '', ct: '', tp: g.partsU || 0, nColor: 0, colorSec: 0, nb: 0, boards: [] };
+  if (!rec || !rec.boards || !rec.boards.length) { d.nd = 'saw'; d.np = g.partsU || 0; return spPaintA(d); }
+  rec.boards.forEach(function (b) {
+    var o = { c: b.c, ds: b.ds || '', q: +b.q || 0, t: tgHms(+b.t || 0), n: false, w: null, dv: '0:00:00', mc: '0:00:00' };
+    if (+b.thk > 0) o.th = +b.thk; if (+b.bk > 0) o.bk = +b.bk; if (b.p != null) o.p = +b.p;
+    if (b.pt && b.pt.length) o.pt = b.pt; if (b.pp && b.pp.length) o.pp = b.pp;
+    d.boards.push(o); d.sec += +b.t || 0; d.qty += +b.q || 0;
+  });
+  d.nb = d.boards.length; d.xf = String(rec.xf || ''); d.ct = tgHms(+rec.ct || d.sec + (+rec.ls || 0)); if (+rec.tp > 0) d.tp = +rec.tp;
+  d.ls = +rec.ls || 0; d.ss = rec.ss || '';
+  return spPaintA(d);
+}
+var MANC = { k: '', v: null };
+function manSpBuild() {
+  var k = 'saw|' + MAN.v; if (MANC.k === k && MANC.v) return MANC.v;
+  var seen = {}, lots = MAN.bi.rows.filter(function (x) { seen[manUp(x.id)] = 1; return x.st !== 3 && !(x.parts > 0 && x.cut != null && x.cut >= x.parts); }).map(manG)
+    .concat(manExtra(MAN.saw && MAN.saw.lots, seen)).sort(manDueCmp);
+  var A = lots.map(manSpLotA), now = new Date(), wk = sqlWeek(now), aj = JSON.stringify(A), sig = spHash(aj);
+  var nx = A.filter(function (d) { return !d.nd; }).length;
+  var o = { v: 1, A: A, wk: wk, title: 'SAW W' + wk, hdr: '📅 ' + bdDayTxt(lotToday()) + ' · Week ' + wk + ' · 📥 ข้อมูลนำเข้าเอง (BI + Excel Cut Rite ' + fmtN(nx) + ' Lot)', gen: spGenOf(sig), sig: 'starstock-sawplan', asig: sig, by: me(), ver: VER, man: 1 };
+  var v = { json: JSON.stringify(o), sig: sig, n: A.length, nd: A.filter(function (d) { return d.nd; }).length };
+  MANC.k = k; MANC.v = v; return v;
+}
+/* Edge / Drill — แบบ edBuild แต่ Lot จาก BI นำเข้า · CSV ราย Lot / MPR จากไฟล์นำเข้า */
+var MANE = { k: '', v: null };
+function manEdBuild(kind) {
+  var k = kind + '|' + MAN.v; if (MANE.k === k && MANE.v) return MANE.v;
+  var seen = {}, lots = MAN.bi.rows.filter(function (x) { seen[manUp(x.id)] = 1; return x.st !== 3; }).map(manG).concat(manExtra(MAN.lc, seen));
+  var lc = MAN.lc, now = new Date(), wk = sqlWeek(now), csv = [], none = [];
+  lots.forEach(function (g) { var o = lc ? lc.get(manUp(g.id)) : null; if (o && o.rows.length) csv.push({ g: g, rows: o.rows }); else none.push(g); });
+  csv.sort(function (a, b) { return edCmp(a.g, b.g); });
+  none.sort(function (a, b) { return ((a.end == null ? 9e15 : a.end) - (b.end == null ? 9e15 : b.end)) || edCmp(a, b); });
+  var m = MAN.meta || {}, o = { v: 1, kind: kind, wk: wk, by: me(), ver: VER, nCsv: csv.length, nNo: none.length, rows: csv.reduce(function (s, x) { return s + x.rows.length; }, 0), csvAt: m.lc && m.lc.at || '', man: 1 };
+  if (kind === 'edge') { o.lots = csv.map(function (x) { return edRec(x.g, x.rows); }).concat(none.map(function (g) { return edRec(g, []); })); o.title = 'Edge_W' + wk; }
+  else {
+    var M = MAN.mp, ALL = [], PARTS = {};
+    csv.forEach(function (x) { var r = drRec(x.g, x.rows, M, wk); ALL.push(r.a); PARTS[r.a.lot] = r.p; });
+    o.ALL = ALL; o.PARTS = PARTS; o.title = 'Drill CNC LED W' + wk;
+    o.mpr = { have: !!M, files: M ? M.files || 0 : 0, entries: M ? M.list.length : 0, pending: 0, missing: 0, at: m.mp && m.mp.at || '' };
+  }
+  o.hdr = '📅 ' + bdDayTxt(lotToday()) + ' · Week ' + wk + ' · ' + fmtN(csv.length) + ' Lot' + (kind === 'edge' && none.length ? ' (+ ไม่มี CSV ' + fmtN(none.length) + ')' : '') + ' · 📥 ข้อมูลนำเข้าเอง';
+  var body = JSON.stringify(kind === 'edge' ? o.lots : [o.ALL, o.PARTS]), sig = spHash(body);
+  o.sig = sig; o.gen = spGenOf('ed-' + sig);
+  var v = { o: o, sig: sig, n: csv.length, nNo: none.length };
+  MANE.k = k; MANE.v = v; return v;
+}
+
+/* ── ต่อเข้า 3 หน้า (โหมดนำเข้าเองเท่านั้น · โหมด StarSync = ตัวเดิมทุกบรรทัด) ── */
+var spBuildV309 = spBuild;
+spBuild = function (P) {
+  if (MAN.on && MAN.bi) { try { return manSpBuild(); } catch (e) { console.warn('StarStock v3.09: SAW PLAN จากข้อมูลนำเข้าเอง', e); } }
+  return spBuildV309.apply(this, arguments);
+};
+var edBuildV309 = edBuild;
+edBuild = function (kind, P) {
+  if (MAN.on && MAN.bi) { try { return manEdBuild(kind); } catch (e) { console.warn('StarStock v3.09: ' + kind + ' จากข้อมูลนำเข้าเอง', e); } }
+  return edBuildV309.apply(this, arguments);
+};
+/* อ่านโหมด (meta.json) ก่อนสร้างหน้าครั้งแรก · ทุก 60 วิ ตรวจซ้ำ — เปลี่ยน = แถบ “🔄 มีข้อมูลใหม่” ของหน้า (แบบเดิม) */
+function manEnsure(after) {
+  if (MAN.loading) { MAN.loading.then(after); return true; }
+  if (!MAN.at) { manLoad().then(after, after); return true; }
+  if (Date.now() - MAN.at > 60000) manLoad().then(function (ch) { if (ch) after(); });
+  return false;
+}
+var spRenderV309 = spRender;
+spRender = function (P, force) {
+  var E = $('bdSaw');
+  if (E && !SPX.frame && manEnsure(function () { if (view() === 'board' && B.tab === 'saw') spRender(B.plan, force); })) { if (!E.innerHTML) E.innerHTML = '<div class="muted" style="padding:40px;text-align:center">กำลังตรวจโหมดข้อมูล (StarSync / นำเข้าเอง)…</div>'; return; }
+  if (SPX.frame) manEnsure(function () { if (view() === 'board' && B.tab === 'saw') spRender(B.plan); });
+  return spRenderV309.apply(this, arguments);
+};
+var edRenderV309 = edRender;
+edRender = function (kind, P, force) {
+  var E = $('bdDept');
+  if (E && !EDX.frame && manEnsure(function () { if (view() === 'board' && B.tab === kind) edRender(kind, B.plan, force); })) { E.innerHTML = '<div class="muted" style="padding:40px;text-align:center">กำลังตรวจโหมดข้อมูล (StarSync / นำเข้าเอง)…</div>'; return; }
+  if (EDX.frame) manEnsure(function () { if (view() === 'board' && B.tab === kind) edRender(kind, B.plan); });
+  /* โหมดนำเข้าเอง: ไม่ต้องรอ / ใช้ lots/lotcsv.csv · mpr.csv ของ StarSync — ด่านเดิมดู B.lc.at / B.mp.at / B.lc.map → ให้ผ่านเฉพาะระหว่างเรียก (คืนค่าทันที · ตัวโหลดของ StarSync ไม่ถูกแตะ) */
+  var man = MAN.on && MAN.bi, sv = { map: B.lc.map, la: B.lc.at, ma: B.mp.at };
+  if (man && E && !EDX.frame && !B.edp.at && !B.edp.err) {   // ค่าที่ปรับร่วม (lots/edplan.json) ยังต้องใช้ — รอเฉพาะไฟล์นี้ (ไม่รอไฟล์ของ StarSync)
+    E.classList.remove('edmode'); E.innerHTML = '<div class="muted" style="padding:40px;text-align:center">กำลังเตรียมข้อมูล' + (kind === 'edge' ? 'ปิดขอบ' : 'เจาะ') + ' (ข้อมูลนำเข้าเอง)…</div>';
+    edpLoad().then(function () { if (view() === 'board' && B.tab === kind) edRender(kind, B.plan); }, function () { edAgain(4000); });
+    return;
+  }
+  if (man) { if (!B.lc.map) B.lc.map = MAN.lc || new Map(); if (!B.lc.at) B.lc.at = 1; if (!B.mp.at) B.mp.at = 1; }
+  try { return edRenderV309.apply(this, arguments); } finally { if (man) { B.lc.map = sv.map; B.lc.at = sv.la; B.mp.at = sv.ma; } }
+};
+/* แถบบนของหน้า: บอกแหล่งข้อมูล */
+function manBarTxt(kind) {
+  var m = MAN.meta || {}, t = '📥 ข้อมูลนำเข้าเอง' + (manWho() ? ' (' + esc(manWho()) + ')' : '');
+  if (kind === 'saw') t += ' · Excel Cut Rite ' + fmtN(m.saw ? m.saw.n || 0 : 0) + ' Lot';
+  else t += ' · CSV ราย Lot ' + fmtN(m.lc ? m.lc.n || 0 : 0) + ' Lot' + (kind === 'drill' ? ' · MPR (JSON) ' + fmtN(MAN.mp ? MAN.mp.list.length : 0) + ' order' : '');
+  return t + ' · <a href="#" data-manimp>เปลี่ยน / กลับไปใช้ StarSync</a>';
+}
+var spBarHtmlV309 = spBarHtml;
+spBarHtml = function (stale) {
+  var h = spBarHtmlV309.apply(this, arguments);
+  if (!(MAN.on && MAN.bi)) return h;
+  return h.replace(/<span class="spmeta">[\s\S]*?<\/span>(?=<label)/, '<span class="spmeta">จัดแผนหน้างาน · ' + fmtN(SPX.n) + ' Lot' + (SPX.nd ? ' (ไม่มีข้อมูล SAW ' + fmtN(SPX.nd) + ')' : '') + ' · ' + manBarTxt('saw') + '</span>')
+    .replace('มีข้อมูลใหม่จาก StarSync', 'มีข้อมูลใหม่');
+};
+var edBarHtmlV309 = edBarHtml;
+edBarHtml = function (kind, stale) {
+  var h = edBarHtmlV309.apply(this, arguments);
+  if (!(MAN.on && MAN.bi)) return h;
+  return h.replace(/<span class="spmeta">[\s\S]*?<\/span>(?=<span class="edsave")/, '<span class="spmeta">' + (kind === 'edge' ? 'ปิดขอบ' : 'เจาะ · CNC · LED') + ' · ' + fmtN(EDX.n) + ' Lot' + (kind === 'edge' && EDX.nNo ? ' (ยังไม่มีไฟล์ CSV ' + fmtN(EDX.nNo) + ' Lot)' : '') + ' · ' + manBarTxt(kind) + '</span>')
+    .replace('มีข้อมูลใหม่จาก StarSync', 'มีข้อมูลใหม่');
+};
+
+/* ── แท็บ “📥 นำเข้าข้อมูล” (ต่อท้าย Cutting · Edge Banding · Drill) = หน้าต่างเต็มจอ ── */
+var bdDeptBarV309 = bdDeptBar;
+bdDeptBar = function () {
+  var h = bdDeptBarV309.apply(this, arguments);
+  return h.replace(/<\/div>$/, '<button type="button" class="manbtn' + (MAN.on ? ' on' : '') + '" data-manimp title="นำเข้าไฟล์เอง (BI CSV · Excel Cut Rite · CSV ราย Lot · JSON งานเจาะ) แล้วกดคำนวณ = อัปเดต SAW PLAN · Edge Banding · Drill — ใช้แทน StarSync ชั่วคราว · Dashboard ไม่เปลี่ยน' + (MAN.on ? '\nตอนนี้ 3 หน้านี้ใช้ข้อมูลนำเข้าเอง' : '') + '"><i aria-hidden="true">📥</i>นำเข้าข้อมูล' + (MAN.on ? '<b class="mandot" aria-label="ใช้ข้อมูลนำเข้าเองอยู่">●</b>' : '') + '</button></div>');
+};
+function manStoredTxt(k) {
+  var m = MAN.meta || {}, x = m[k]; if (!x) return '<span class="muted">ยังไม่มี</span>';
+  var at = x.at ? String(x.at).replace('T', ' ').slice(5, 16) : '';
+  if (k === 'bi') return esc(x.file || 'BI') + ' · <b>' + fmtN(x.n || 0) + '</b> Lot' + (x.cutDone != null ? ' (ตัดครบแล้ว ' + fmtN(x.cutDone) + ')' : '') + ' · ' + esc(at) + (x.by ? ' · ' + esc(x.by) : '');
+  if (k === 'saw') return '<b>' + fmtN(x.n || 0) + '</b> Lot · ' + fmtN(x.boards || 0) + ' ชั้นไม้' + (x.nb ? ' · ไม่อยู่ใน BI ' + fmtN(x.nb) : '') + ' · ' + esc(at);
+  if (k === 'lc') return '<b>' + fmtN(x.n || 0) + '</b> Lot · ' + fmtN(x.rows || 0) + ' ชิ้น' + (x.nb ? ' · ไม่อยู่ใน BI ' + fmtN(x.nb) : '') + ' · ' + esc(at);
+  if (k === 'mp') return '<b>' + fmtN(x.n || 0) + '</b> order · ' + fmtN(x.files || 0) + ' ไฟล์ .mpr' + (x.matched != null ? ' (จับคู่ชิ้นงาน ' + fmtN(x.matched) + ' order)' : '') + (x.src ? ' · ' + esc(x.src) : '') + ' · ' + esc(at);
+  return '';
+}
+function manPendTxt(k) {
+  var p = MAN.pend[k]; if (!p) return '';
+  if (p.err) return '<div class="manpend bad">⚠ ' + esc(p.err) + '</div>';
+  if (k === 'mp' ? !p.data : k === 'bi' ? !p.data : !p.items) return '<div class="manpend">กำลังอ่าน ' + esc(p.file || 'ไฟล์') + '…</div>';
+  if (k === 'bi') return '<div class="manpend">เลือกแล้ว: <b>' + esc(p.file) + '</b> · ' + fmtN(p.data.n) + ' Lot' + (p.data.dup ? ' (ซ้ำ ' + p.data.dup + ' แถว — ใช้แถวแรก)' : '') + ' — รอกดคำนวณ</div>';
+  if (k === 'mp') return '<div class="manpend">เลือกแล้ว: <b>' + esc(p.file) + '</b> · ' + fmtN(p.data.list.length) + ' order · ' + fmtN(p.data.fileCount) + ' ไฟล์ .mpr' + (p.data.savedAt ? ' · บันทึกเมื่อ ' + esc(fDT(p.data.savedAt)) : '') + ' — รอกดคำนวณ</div>';
+  var ok = p.items.filter(function (x) { return !x.err; }), bad = p.items.filter(function (x) { return x.err; });
+  var s = '<div class="manpend">เลือกแล้ว ' + fmtN(p.items.length) + ' ไฟล์ · ใช้ได้ <b>' + fmtN(ok.length) + '</b>';
+  if (k === 'lc') s += ' · ' + fmtN(ok.reduce(function (a, x) { return a + x.data.rows.length; }, 0)) + ' ชิ้น';
+  s += ' — รอกดคำนวณ</div>';
+  var bi = MAN.pend.bi && MAN.pend.bi.data ? MAN.pend.bi.data : MAN.bi;   // ไฟล์ไหน → Lot ไหน (5 ไฟล์แรก)
+  if (ok.length) s += '<div class="manmap">' + ok.slice(0, 5).map(function (x) { var d = x.data, c = k === 'saw' ? [d.title, manBase(x.file), d.item] : [d.name, d.item], hit = manMatch(c, bi);
+    return esc(x.file) + ' → <b>' + esc(hit || c[0] || c[1] || '?') + '</b>' + (k === 'saw' ? ' · ' + fmtN(d.boards.length) + ' ชั้นไม้ · ' + esc(tgHms(d.ct)) : ' · ' + fmtN(d.rows.length) + ' ชิ้น') + (hit ? '' : bi ? ' <span class="manno">ไม่อยู่ใน BI</span>' : ''); }).join('<br>') + (ok.length > 5 ? '<br>… อีก ' + fmtN(ok.length - 5) + ' ไฟล์' : '') + '</div>';
+  if (bad.length) s += '<div class="manpend bad">⚠ อ่านไม่ได้ ' + fmtN(bad.length) + ' ไฟล์: ' + bad.slice(0, 4).map(function (x) { return esc(x.file) + ' (' + esc(x.err) + ')'; }).join(' · ') + (bad.length > 4 ? ' …' : '') + '</div>';
+  return s;
+}
+function manCard(k, no, title, sub, acc, multi) {
+  return '<section class="mancard" data-mank="' + k + '"><h3><span class="mann">' + no + '</span>' + title + '</h3><p class="mansub">' + sub + '</p>'
+    + '<div class="manst">บน Drive: ' + manStoredTxt(k) + '</div>' + manPendTxt(k)
+    + '<div class="manbtns"><label class="tbtn">📄 เลือกไฟล์<input type="file" data-manf="' + k + '" accept="' + acc + '"' + (multi ? ' multiple' : '') + ' hidden></label>'
+    + (multi ? '<label class="tbtn">📁 เลือกทั้งโฟลเดอร์<input type="file" data-manf="' + k + '" webkitdirectory directory multiple hidden></label>' : '')
+    + (MAN.pend[k] ? '<button type="button" class="tbtn" data-manclr="' + k + '">✕ ไม่ใช้ไฟล์ที่เลือก</button>' : '') + '</div></section>';
+}
+function manHtml() {
+  var on = MAN.on && MAN.bi, any = Object.keys(MAN.pend).some(function (k) { return MAN.pend[k] && !MAN.pend[k].err; });
+  var last = MAN.last;
+  return '<div class="manbox" role="dialog" aria-label="นำเข้าข้อมูลเอง"><header><h2>📥 นำเข้าข้อมูลเอง<small>ตัด (SAW PLAN) · ปิดขอบ (Edge Banding) · เจาะ (Drill) — ใช้แทนข้อมูลอัตโนมัติ (StarSync) ชั่วคราว · Dashboard ไม่เปลี่ยน</small></h2><button type="button" class="tbtn" data-manx aria-label="ปิด">✕</button></header>'
+    + '<div class="manmode"><span>3 หน้านี้ใช้ข้อมูล:</span><div class="manseg" role="radiogroup">'
+    + '<button type="button" data-manmode="0" class="' + (on ? '' : 'on') + '" aria-pressed="' + !on + '">⚡ อัตโนมัติ (StarSync)</button>'
+    + '<button type="button" data-manmode="1" class="' + (on ? 'on' : '') + '" aria-pressed="' + !!on + '"' + (MAN.bi ? '' : ' disabled title="ยังไม่มีข้อมูลนำเข้า — เลือกไฟล์แล้วกดคำนวณก่อน"') + '>📥 นำเข้าเอง</button></div>'
+    + '<small class="muted">' + (on ? 'กำลังใช้ข้อมูลนำเข้าเอง' + (manWho() ? ' (คำนวณล่าสุด ' + esc(manWho()) + ')' : '') + ' · ระบบ auto กลับมาแล้ว กด ⚡ อัตโนมัติ — ข้อมูลนำเข้ายังเก็บไว้' : 'กำลังใช้ข้อมูลอัตโนมัติจาก StarSync (แบบเดิม)') + ' · เปลี่ยนแล้วทุกเครื่องเปลี่ยนตาม</small></div>'
+    + (MAN.err ? '<p class="manpend bad">⚠ อ่านข้อมูลนำเข้าบน Google Drive ไม่ได้ — ' + esc(netMsg(MAN.err)) + '</p>' : '')
+    + '<div class="mancards">'
+    + manCard('bi', '1', 'BI (CSV) — ใช้ร่วม ตัด · ปิดขอบ · เจาะ', 'รายการ Lot: LotId · prodpoolid · enddate · TotalPart · CheckPart (data.csv จาก BI · data 6 แบบเดิมก็ได้) — SAW PLAN แสดงเฉพาะ Lot ที่ CheckPart ยังไม่ครบ TotalPart', '.csv,.txt,.tsv,text/csv', false)
+    + manCard('saw', '2', 'Excel Cut Rite (.xlsx) — งานตัด', 'ไฟล์ Export ของ Cut Rite (ชื่อไฟล์ = เลข .saw เช่น 6941315.xlsx) · ชั้นไม้ · แผ่น · เวลาผัง · รายการ Part · เลือกหลายไฟล์ / ทั้งโฟลเดอร์ได้ · ไม่ต้องใช้ไฟล์ .saw', '.xlsx', true)
+    + manCard('lc', '3', 'CSV รายชิ้นราย Lot — ปิดขอบ + เจาะ', 'CSV ของ Cut Rite 1 แถว = 1 ชิ้น (edgecode1–4 · groove · Barcode · BarcodePart) เช่น BO69-0984.csv · เลือกหลายไฟล์ / ทั้งโฟลเดอร์ได้', '.csv,.txt,text/csv', true)
+    + manCard('mp', '4', 'JSON งานเจาะ (CountDrill)', 'countdrill_MPR_CNC_….json — รู / CNC / LED ของไฟล์ .mpr · เก็บเฉพาะ order ที่จับคู่บาร์โค้ดชิ้นงานได้ + 6 เดือนล่าสุด', '.json,application/json', false)
+    + '</div><footer><button type="button" class="tbtn pri" data-mancalc' + (MAN.busy || (!any && !MAN.bi) ? ' disabled' : '') + '>⚙ คำนวณ — อัปเดต ตัด · ปิดขอบ · เจาะ</button><span class="manmsg" aria-live="polite">' + (MAN.busy ? esc(MAN.busy) : '') + '</span></footer>'
+    + (last ? '<div class="manres"><b>✓ คำนวณแล้ว ' + esc(last.at) + '</b><ul>' + last.lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ul>'
+      + '<div class="manbtns"><button type="button" class="tbtn" data-mango="saw">✂ ไป SAW PLAN</button><button type="button" class="tbtn" data-mango="edge">▭ ไป Edge Banding</button><button type="button" class="tbtn" data-mango="drill">⦿ ไป Drill</button></div></div>' : '')
+    + '<p class="manfoot muted">ไฟล์เก็บที่ Google Drive โฟลเดอร์ lots/manual (ไม่ทับไฟล์ของ StarSync) · นำเข้าซ้ำ: BI แทนทั้งไฟล์ · Excel / CSV แทนเฉพาะ Lot ที่เลือก · JSON แทนทั้งชุด</p></div>';
+}
+function manOpen() {
+  var el = $('manPane'); if (!el) { el = document.createElement('div'); el.id = 'manPane'; el.className = 'manpane'; document.body.appendChild(el); }
+  el.innerHTML = manHtml(); el.classList.remove('hide'); document.body.classList.add('manopen');
+  if (!MAN.loading && Date.now() - MAN.at > 5000) manLoad().then(function () { if (manIsOpen()) manPaint(); });
+}
+function manIsOpen() { var el = $('manPane'); return !!(el && !el.classList.contains('hide')); }
+function manPaint() { var el = $('manPane'); if (el && !el.classList.contains('hide')) { var bx = el.querySelector('.manbox'), st = bx ? bx.scrollTop : 0; el.innerHTML = manHtml(); var b2 = el.querySelector('.manbox'); if (b2) b2.scrollTop = st; } }
+function manClose() { var el = $('manPane'); if (el) el.classList.add('hide'); document.body.classList.remove('manopen'); }
+async function manPick(k, files) {
+  files = Array.from(files || []); if (!files.length) return;
+  try {
+    if (k === 'bi') { var f = files[0]; MAN.pend.bi = { file: f.name, text: null, data: null }; var t = manDecode(await f.arrayBuffer()); MAN.pend.bi.text = t; MAN.pend.bi.data = manParseBi(t); }
+    else if (k === 'mp') { var fj = files[0]; MAN.pend.mp = { file: fj.name }; manPaint(); var o = JSON.parse(manDecode(await fj.arrayBuffer())); MAN.pend.mp.data = manParseDrill(o); }
+    else {
+      var re = k === 'saw' ? /\.xlsx$/i : /\.(csv|txt)$/i, fl = files.filter(function (x) { return re.test(x.name); });
+      if (!fl.length) throw new Error(k === 'saw' ? 'ไม่มีไฟล์ .xlsx ในที่เลือก' : 'ไม่มีไฟล์ .csv ในที่เลือก');
+      var XL = k === 'saw' ? await xlLib() : null, items = [];
+      MAN.busy = 'กำลังอ่าน ' + fmtN(fl.length) + ' ไฟล์…'; manPaint();
+      for (var i = 0; i < fl.length; i++) {
+        var x = fl[i], it = { file: x.name };
+        try { var buf = await x.arrayBuffer(); it.data = k === 'saw' ? manParseXlsx(XL, buf, x.name) : manParseParts(manDecode(buf), x.name); } catch (e) { it.err = String(e && e.message || e); }
+        items.push(it);
+        if (i % 20 === 19) { MAN.busy = 'กำลังอ่าน ' + fmtN(i + 1) + ' / ' + fmtN(fl.length) + ' ไฟล์…'; manPaint(); await new Promise(function (r) { setTimeout(r, 0); }); }
+      }
+      MAN.pend[k] = { items: items };
+    }
+  } catch (e) { MAN.pend[k] = Object.assign(MAN.pend[k] || {}, { err: (files[0] ? files[0].name + ': ' : '') + String(e && e.message || e) }); }
+  MAN.busy = false; manPaint();
+}
+/* คำนวณ = รวมของที่เลือกกับของเดิมบน Drive → เขียน lots/manual/* → เปิดโหมดนำเข้าเอง → วาด 3 หน้าใหม่ */
+async function manCalc() {
+  if (MAN.busy) return; if (!ensureFs()) { connectDialog('เชื่อมต่อ Google Drive ก่อน แล้วค่อยนำเข้าไฟล์'); return; }
+  MAN.busy = 'กำลังเตรียมข้อมูล…'; manPaint();
+  try {
+    await manLoad(true);
+    var P = MAN.pend, meta = Object.assign({ v: 1 }, MAN.meta || {}), now = nowIso(), who = me(), lines = [];
+    var bi = P.bi && P.bi.data ? P.bi.data : MAN.bi; if (!bi) throw new Error('ยังไม่มีไฟล์ BI (CSV) — เลือกไฟล์ที่ 1 ก่อน');
+    bi.idx = null;
+    if (P.bi && P.bi.data) {
+      MAN.busy = 'กำลังบันทึก BI…'; manPaint();
+      await manWrite(MAN_F.bi, P.bi.text);
+      meta.bi = { file: P.bi.file, n: bi.n, cutDone: bi.rows.filter(function (x) { return x.parts > 0 && x.cut != null && x.cut >= x.parts; }).length, at: now, by: who };
+      lines.push('BI: ' + esc(P.bi.file) + ' · ' + fmtN(bi.n) + ' Lot');
+    }
+    /* Excel: แทนเฉพาะ Lot ที่นำเข้า */
+    var saw = MAN.saw && MAN.saw.lots ? JSON.parse(JSON.stringify(MAN.saw)) : { v: 1, lots: {} };
+    if (P.saw && P.saw.items) {
+      var nIn = 0, nNo = 0;
+      P.saw.items.forEach(function (it) { if (it.err) return; var d = it.data, id = manMatch([d.title, manBase(it.file), d.item], bi) || d.title || d.item || manBase(it.file); if (!manMatch([d.title, manBase(it.file), d.item], bi)) nNo++;
+        saw.lots[manUp(id)] = { lot: id, xf: d.xf, title: d.title, item: d.item, file: it.file, boards: d.boards, tp: d.tp, ct: d.ct, ls: d.ls, ss: d.ss, at: now }; nIn++; });
+      MAN.busy = 'กำลังบันทึก Excel Cut Rite…'; manPaint();
+      await manWrite(MAN_F.saw, JSON.stringify(saw));
+      var nL = Object.keys(saw.lots).length;
+      meta.saw = { n: nL, boards: Object.keys(saw.lots).reduce(function (s, k) { return s + (saw.lots[k].boards || []).length; }, 0), nb: Object.keys(saw.lots).filter(function (k) { return !manMatch([saw.lots[k].lot], bi); }).length, at: now, by: who };
+      lines.push('Excel Cut Rite: นำเข้า ' + fmtN(nIn) + ' ไฟล์ (ไม่เจอใน BI ' + fmtN(nNo) + ') · รวมบน Drive ' + fmtN(nL) + ' Lot');
+    }
+    /* CSV ราย Lot: แทนเฉพาะ Lot ที่นำเข้า */
+    var lc = new Map(); if (MAN.lc) MAN.lc.forEach(function (o, K) { lc.set(K, o); });
+    if (P.lc && P.lc.items) {
+      var nC = 0, nCn = 0, merged = new Map();
+      P.lc.items.forEach(function (it) { if (it.err) return; var d = it.data, hit = manMatch([d.name, d.item], bi), id = hit || d.name || d.item; if (!hit) nCn++;
+        var K = manUp(id), o = merged.get(K); if (!o) merged.set(K, o = { lot: id, rows: [] }); o.rows = o.rows.concat(d.rows); nC++; });
+      merged.forEach(function (o, K) { lc.set(K, o); });
+      MAN.busy = 'กำลังบันทึก CSV ราย Lot…'; manPaint();
+      await manWrite(MAN_F.lc, manLcCsv(lc));
+      var nR = 0; lc.forEach(function (o) { nR += o.rows.length; });
+      meta.lc = { n: lc.size, rows: nR, nb: Array.from(lc.values()).filter(function (o) { return !manMatch([o.lot], bi); }).length, at: now, by: who };
+      lines.push('CSV ราย Lot: นำเข้า ' + fmtN(nC) + ' ไฟล์ (ไม่เจอใน BI ' + fmtN(nCn) + ') · รวมบน Drive ' + fmtN(lc.size) + ' Lot · ' + fmtN(nR) + ' ชิ้น');
+    }
+    /* JSON งานเจาะ */
+    if (P.mp && P.mp.data) {
+      MAN.busy = 'กำลังจับคู่ไฟล์ .mpr กับชิ้นงาน…'; manPaint(); await new Promise(function (r) { setTimeout(r, 0); });
+      var sel = manMpFilter(P.mp.data.list, lc), Mi = manMpIndex(sel), matched = new Set();
+      lc.forEach(function (o) { o.rows.forEach(function (r) { [r.bc1, r.bc2].forEach(function (b) { var e = b ? drMatch(Mi, b) : null; if (e) matched.add(e.folderName); }); }); });
+      MAN.busy = 'กำลังบันทึกข้อมูลงานเจาะ…'; manPaint();
+      await manWrite(MAN_F.mp, manMpCsv(sel));
+      meta.mp = { n: sel.length, files: sel.reduce(function (s, e) { return s + (e.fileCount || 0); }, 0), matched: matched.size, src: P.mp.file, savedAt: P.mp.data.savedAt || 0, at: now, by: who };
+      lines.push('JSON งานเจาะ: ' + esc(P.mp.file) + ' → เก็บ ' + fmtN(sel.length) + ' order (จับคู่ชิ้นงาน ' + fmtN(matched.size) + ' · จากทั้งหมด ' + fmtN(P.mp.data.list.length) + ')');
+    }
+    meta.on = true; meta.at = now; meta.by = who;
+    MAN.busy = 'กำลังเปิดโหมดนำเข้าเอง…'; manPaint();
+    await manWrite(MAN_F.meta, JSON.stringify(meta));
+    MAN.pend = { bi: null, saw: null, lc: null, mp: null };
+    await manLoad(true);
+    var sv = manSpBuild(), ve = manEdBuild('edge'), vd = manEdBuild('drill');
+    lines.push('<b>SAW PLAN</b> ' + fmtN(sv.n) + ' Lot (ไม่มี Excel ' + fmtN(sv.nd) + ') · <b>Edge Banding</b> ' + fmtN(ve.n) + ' Lot มี CSV (ไม่มี ' + fmtN(ve.nNo) + ') · <b>Drill</b> ' + fmtN(vd.n) + ' Lot');
+    MAN.last = { at: fDT(Date.now()), lines: lines };
+    manReopen();
+  } catch (e) { console.warn('StarStock v3.09: คำนวณข้อมูลนำเข้าเอง', e); MAN.busy = false; manPaint(); toast('⚠ ' + String(e && e.message || e), 6000); return; }
+  MAN.busy = false; manPaint(); toast('✓ อัปเดต SAW PLAN · Edge Banding · Drill จากข้อมูลนำเข้าแล้ว', 3500);
+}
+/* โหมดเปลี่ยน / ข้อมูลเปลี่ยน → ปิดหน้า 3 แท็บที่เปิดค้าง (ส่งแผนที่ค้างก่อน) ให้สร้างใหม่ตอนเข้า */
+function manReopen() {
+  MANC.k = ''; MANE.k = '';
+  try { if (SPX.frame) spClose(); else SPX.json = ''; } catch (e) { }
+  try { if (EDX.frame) edClose(); else EDX.json = ''; } catch (e) { }
+  try { if (view() === 'board' && B.plan) { if (B.tab === 'saw') setTimeout(function () { spRender(B.plan); }, 300); else if (B.tab === 'edge' || B.tab === 'drill') setTimeout(function () { edRender(B.tab, B.plan); }, 300); } } catch (e) { }
+  try { document.querySelectorAll('.bddept').forEach(function (bar) { bar.outerHTML = bdDeptBar(); }); } catch (e) { }
+}
+async function manSetMode(on) {
+  if (MAN.busy) return; if (!ensureFs()) { connectDialog('เชื่อมต่อ Google Drive ก่อน'); return; }
+  if (on && !MAN.bi) { toast('ยังไม่มีข้อมูลนำเข้า — เลือกไฟล์แล้วกดคำนวณก่อน'); return; }
+  MAN.busy = on ? 'กำลังเปลี่ยนเป็นข้อมูลนำเข้าเอง…' : 'กำลังกลับไปใช้ StarSync…'; manPaint();
+  try { await manLoad(true); var meta = Object.assign({ v: 1 }, MAN.meta || {}); meta.on = !!on; meta.modeAt = nowIso(); meta.modeBy = me(); await manWrite(MAN_F.meta, JSON.stringify(meta)); await manLoad(true); manReopen(); }
+  catch (e) { toast('⚠ เปลี่ยนโหมดไม่ได้ — ' + String(e && e.message || e), 5000); }
+  MAN.busy = false; manPaint();
+  toast(on ? '📥 SAW PLAN · Edge · Drill ใช้ข้อมูลนำเข้าเอง' : '⚡ SAW PLAN · Edge · Drill กลับไปใช้ข้อมูลอัตโนมัติ (StarSync)', 3500);
+}
+document.addEventListener('click', function (e) {
+  var t = e.target && e.target.closest ? e.target.closest('[data-manimp],[data-manx],[data-manmode],[data-mancalc],[data-manclr],[data-mango]') : null;
+  if (!t) { var pane = $('manPane'); if (pane && e.target === pane) manClose(); return; }
+  e.preventDefault(); e.stopPropagation();
+  if (t.hasAttribute('data-manimp')) { manOpen(); return; }
+  if (t.hasAttribute('data-manx')) { manClose(); return; }
+  if (t.hasAttribute('data-manmode')) { if (!t.disabled) manSetMode(t.getAttribute('data-manmode') === '1'); return; }
+  if (t.hasAttribute('data-mancalc')) { if (!t.disabled) manCalc(); return; }
+  if (t.hasAttribute('data-manclr')) { MAN.pend[t.getAttribute('data-manclr')] = null; manPaint(); return; }
+  if (t.hasAttribute('data-mango')) { var k = t.getAttribute('data-mango'); manClose(); bdTabGo(k); return; }
+}, true);
+document.addEventListener('change', function (e) {
+  var t = e.target; if (!t || !t.getAttribute || !t.hasAttribute('data-manf')) return;
+  var k = t.getAttribute('data-manf'), fl = Array.from(t.files || []); t.value = ''; manPick(k, fl);
+}, true);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && manIsOpen() && !MAN.busy) { e.stopPropagation(); manClose(); } }, true);
+
+window.StarStock = { MAN: MAN, manParseBi: manParseBi, manParseParts: manParseParts, manParseXlsx: manParseXlsx, manParseDrill: manParseDrill, manMpFilter: manMpFilter, manMatch: manMatch, manLoad: manLoad, manCalc: manCalc, manSetMode: manSetMode, manOpen: manOpen, manPick: manPick, manSpBuild: manSpBuild, manEdBuild: manEdBuild, manLcCsv: manLcCsv, manMpCsv: manMpCsv /* v3.09 */,  dg308Proc: dg308Proc, dg308Msg: dg308Msg, dg308Box: dg308Box /* v3.08 */,  rjDetailSecV307: rjDetailSecV307 /* v3.07 */,  pc306St: pc306St, paintChipV306: paintChipV306 /* v3.06 */,  cy305Fit: cy305Fit, dbDayTabsV305: dbDayTabsV305 /* v3.05 */,  dbDaySecV304: dbDaySecV304 /* v3.04 */,  DBK303: DBK303 /* v3.03 */,  dba302Card: dba302Card /* v3.02 */,  DBA301: DBA301, dba301Html: dba301Html, dba301Deco: dba301Deco /* v3.01 */,  tb300Lbl: tb300Lbl /* v3.00 */,  dbCmpDataV298: dbCmpDataV298, DU98: DU98, DBC98: DBC98 /* v2.98 */,  pf97Arm: pf97Arm, DMF_T: DMF_T, dmtSec: dmtSec /* v2.97 */,  dbFindLocsV296: dbFindLocsV296, pmFX: pmF, dbPackOfX: dbPackOf /* v2.96 */,  rnTopV295: rnTopV295 /* v2.95 */,  fs94Parse: fs94Parse, fs94Load: fs94Load, pnb94Of: pnb94Of, pnb94Is: pnb94Is, PNB94: PNB94, PF94: PF94, pf94Set: pf94Set, dpCbTag: dpCbTag, paintTipX: paintTip, pnbName: pnbName, pnbIs: pnbIs /* v2.94 */,  LSF93: LSF93, lsOk93: lsOk93, lsUsedMB93: lsUsedMB93 /* v2.93 */,  dbcTipV292: dbcTipV292 /* v2.92 */,  dbcCls: dbcCls, dbcTip: dbcTip /* v2.91 */,  dbcRing: dbcRing, dbcRings: dbcRings /* v2.90 */,  DBC: DBC, dbCmpData: dbCmpData, dbCmpHtml: dbCmpHtml /* v2.89 */,  SHR: SHR, shrData: shrData, shrDraw: shrDraw, shrWrap: shrWrap, shrMake: shrMake, shrBox: shrBox, shrCanFiles: shrCanFiles /* v2.88 */,  bdDetailV287: bdDetailV287, sw87Add: sw87Add /* v2.87 */,  DO86: DO86, bdCloseDetail: bdCloseDetail /* v2.86 */,  CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
