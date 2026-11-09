@@ -2696,6 +2696,11 @@ body.tv #bdDash details.dbmcd{display:none!important}
   body[data-theme="dark"] .man315blk{color:#fdba74}
   .manwait small b{display:inline;color:inherit}
   .manwait small{white-space:normal}
+  /* v3.16 ช่วงวันที่ Excel · ปุ่มหยุด / ยกเลิกระหว่างโหลด */
+  .man316d{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0 2px;font-size:12px;color:var(--ink-dim)}
+  .man316d select{font:inherit;font-size:12px;padding:3px 6px;border-radius:7px;border:1px solid var(--line,#e2e8f0);background:var(--card,#fff);color:var(--ink,#0f172a)}
+  .man316b{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .man316b .tbtn{font-size:12px;padding:3px 10px}
   @media (max-width: 640px){ .manpane{padding:8px} .manbox{padding:12px} }
 </style>
 </head>
@@ -2707,7 +2712,7 @@ body.tv #bdDash details.dbmcd{display:none!important}
   <span class="tsep"></span>
   <div class="brand" title="กลับหน้า HOME">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="20" rx="3" fill="#E8901F"/><path d="M3 13h26" stroke="#fff" stroke-width="1.6" opacity=".7"/><rect x="12" y="15.5" width="8" height="3.2" rx="1.2" fill="#fff"/><path d="M16 2.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="#1971c2"/></svg>
-    <span class="bname">StarStock</span> <span class="ver" title="index.html v3.15 · lots.html กำลังโหลด">v3.15</span>
+    <span class="bname">StarStock</span> <span class="ver" title="index.html v3.16 · lots.html กำลังโหลด">v3.16</span>
   </div>
   <span class="vtag" id="viewTag">HOME</span>
   <div id="bdTabsTop" class="boardOnly"></div>
@@ -3889,10 +3894,11 @@ var GasFS = (function () {
    v3.13 (2026-11-03 16:33–16:36 ผู้ใช้: “กดเลือกไฟล์อะไรไม่ได้เลย” · “กดเลือกทั้งโฟลเดอร์แล้ว มันนิ่งเลยอะ ไม่มีให้รอว่าโหลดเท่าไหร่ อันนี้ผมโหลดใน server .6 ของโรงงาน”) หน้าต่าง 📥 นำเข้าข้อมูล: ① แก้เลือกไฟล์แล้วเงียบ — ช่องเลือกไฟล์อยู่ในหน้าต่างที่ถูกวาดใหม่ตอนอ่าน Drive เสร็จ ระหว่าง Chrome ยังอ่านโฟลเดอร์บน server → ผลการเลือกหาย · ย้ายช่องเลือกไฟล์ไปไว้นอกหน้าต่าง (#manInputs · ปุ่ม = label for) ② กดเลือกปุ๊บ การ์ดขึ้น 📂 รอเลือก → ⏳ เบราว์เซอร์กำลังอ่านรายชื่อไฟล์ในโฟลเดอร์ ผ่านไป x วินาที + วิธีแก้ถ้าช้า · ✕ เลิกรอ ③ เลือกทั้งโฟลเดอร์ + มี BI = เก็บเฉพาะ Lot ที่อยู่ใน BI (CSV กรองชื่อไฟล์ก่อนอ่าน · Excel กรองหลังอ่าน) · แถบเขียวบอกจำนวนที่ข้าม · เลือกทีละไฟล์ = เก็บทุกไฟล์เหมือนเดิม (manHtml / manPick / manPendTxt เดิมไม่แก้)
    v3.14 (2026-11-03 16:47–16:48 ผู้ใช้: “กดเลือกทั้งโฟลเดอร์อีก tap ตัวโหลดมันตามมาด้วย … งง” · “โหลดไฟล์พร้อมกันได้ไหม เช่น 2 กดโหลด ปล่อยให้มันโหลด แล้ว 3 กดโหลดอีก” · “ตัวโชว์ว่าโหลดให้อยู่ tap ใคร tap มัน”) หน้าต่าง 📥 นำเข้าข้อมูล: สถานะรอแยกรายการ์ด (MAN.waits) — กดการ์ดอื่น กล่องของการ์ดเดิมอยู่ที่เดิม เวลาเดินต่อ · โหลดหลายการ์ดพร้อมกันได้ · ⚙ คำนวณ รอจนทุกการ์ดที่กำลังอ่านโฟลเดอร์เสร็จ (บอกว่ารอการ์ดไหน) · ✕ เลิกรอ / ยกเลิกหน้าต่างเลือก = ปิดเฉพาะการ์ดนั้น (v3.13 ไม่ลบ — MAN.wait ถูกย้ายเข้า MAN.waits)
    v3.15 (2026-11-03 16:55–16:56 ผู้ใช้: “กด tap 2 เลือกโหลดโฟลเดอร์แล้ว พอกด tap 3 … มันขึ้นเหมือน tap 2 เลย มันต้องไป browser หาตำแหน่งใหม่ซิ” · “พอกดเลิกรอ พอไปกดเลือกทั้งโฟลเดอร์ กลับขึ้นหน้าโหลดมาอีก งง มาก”) หน้าต่าง 📥 นำเข้าข้อมูล: 📁 เลือกทั้งโฟลเดอร์ ใช้ showDirectoryPicker — หน้าต่างปิดทันทีที่เลือก แล้วหน้าเว็บสำรวจเอง (พบ n ไฟล์ · ดูแล้ว m · โฟลเดอร์ย่อย · ผ่านไป x วินาที · ✕ หยุด) → ระหว่างนั้นกดการ์ดอื่นได้จริง · แต่ละการ์ดจำโฟลเดอร์ของตัวเอง · CSV ไม่อยู่ใน BI ข้ามตั้งแต่สำรวจ · (เดิม input webkitdirectory: Chrome อ่านรายชื่อทั้งโฟลเดอร์ก่อน และระหว่างนั้นเปิดหน้าต่างเลือกอันใหม่ไม่ได้ = การ์ด 3 ขึ้นรอเลือกหลอก) · ไม่มี showDirectoryPicker = แบบเดิม แต่พักปุ่มการ์ดอื่นระหว่าง Chrome อ่านโฟลเดอร์ + บอกเหตุผล · ⚙ คำนวณ รอจนสำรวจเสร็จทุกการ์ด
+   v3.16 (2026-11-09 10:05–10:06 ผู้ใช้: “ถือว่าช้ามากเลยนะ โปรแกรมเก่า ถ้าผมเอาไฟล์ไว้ไดรฟ์ D ที่เครื่องโหลดแปปเดียว … ช่วยสลับ ไฟล์ CSV มาอันที่ 2 ส่วนไฟล์ CutRite Excel ไปอันที่ 3” · “ให้มีปุ่ม cancel ด้วยนะ” · “หรือยกเลิก”) หน้าต่าง 📥 นำเข้าข้อมูล: ① 📅 การ์ด Excel เลือกทั้งโฟลเดอร์ = อ่านเฉพาะไฟล์ที่แก้ไขใน 60 วันล่าสุด (เลือกได้ · จำในเครื่อง · ข้ามตั้งแต่สำรวจ ดูแค่วันที่ไฟล์) ② อ่านพร้อมกัน: CSV ทีละ 8 · Excel แกะใน Web Worker 2–6 ตัวขนาน · ตรวจวันที่ไฟล์ทีละ 16 (Worker ใช้ไม่ได้ = แกะในหน้าเว็บ) ③ ระหว่างโหลด ⏹ หยุด · ใช้ไฟล์ที่อ่านแล้ว / ✕ ยกเลิก + เหลือประมาณ x นาที ④ สลับการ์ด 2 = CSV · 3 = Excel (manPick v3.12 ยังเป็นแกน — ส่งไฟล์ตัวแทนที่ arrayBuffer() คืนผลจากคิวขนาน)
    ═══════════════════════════════════════════════════════════════════════ */
 (function () {
 'use strict';
-var VER = '3.15';
+var VER = '3.16';
 var $ = function (id) { return document.getElementById(id); };
 var PREF_K = 'sxlocaltrial:furnitech:stockPrefs', USER_K = 'sxlocaltrial:furnitech:stockUser';
 var CAT_COLORS = ['#1971c2', '#2b8a3e', '#e8590c', '#9c36b5', '#c2255c', '#0b7285', '#5c940d', '#f59f00', '#364fc7', '#a61e4d'];
@@ -22519,7 +22525,190 @@ document.addEventListener('click', function (e) {   // ลงทะเบีย�
     });
 }, true);
 
-window.StarStock = { man315Run: man315Run, man315Walk: man315Walk, man315Fsa: man315Fsa /* v3.15 */,  man314Wait: man314Wait, manPickV314: manPickV314 /* v3.14 */,  manPickV313: manPickV313, man313In: man313In /* v3.13 */,  manPickV312: manPickV312, man312Act: man312Act, man312Upd: man312Upd /* v3.12 */,  manHtmlV311: manHtmlV311 /* v3.11 */,  man310St: man310St, man310Steps: man310Steps, manHtmlV310: manHtmlV310 /* v3.10 */,  MAN: MAN, manParseBi: manParseBi, manParseParts: manParseParts, manParseXlsx: manParseXlsx, manParseDrill: manParseDrill, manMpFilter: manMpFilter, manMatch: manMatch, manLoad: manLoad, manCalc: manCalc, manSetMode: manSetMode, manOpen: manOpen, manPick: manPick, manSpBuild: manSpBuild, manEdBuild: manEdBuild, manLcCsv: manLcCsv, manMpCsv: manMpCsv /* v3.09 */,  dg308Proc: dg308Proc, dg308Msg: dg308Msg, dg308Box: dg308Box /* v3.08 */,  rjDetailSecV307: rjDetailSecV307 /* v3.07 */,  pc306St: pc306St, paintChipV306: paintChipV306 /* v3.06 */,  cy305Fit: cy305Fit, dbDayTabsV305: dbDayTabsV305 /* v3.05 */,  dbDaySecV304: dbDaySecV304 /* v3.04 */,  DBK303: DBK303 /* v3.03 */,  dba302Card: dba302Card /* v3.02 */,  DBA301: DBA301, dba301Html: dba301Html, dba301Deco: dba301Deco /* v3.01 */,  tb300Lbl: tb300Lbl /* v3.00 */,  dbCmpDataV298: dbCmpDataV298, DU98: DU98, DBC98: DBC98 /* v2.98 */,  pf97Arm: pf97Arm, DMF_T: DMF_T, dmtSec: dmtSec /* v2.97 */,  dbFindLocsV296: dbFindLocsV296, pmFX: pmF, dbPackOfX: dbPackOf /* v2.96 */,  rnTopV295: rnTopV295 /* v2.95 */,  fs94Parse: fs94Parse, fs94Load: fs94Load, pnb94Of: pnb94Of, pnb94Is: pnb94Is, PNB94: PNB94, PF94: PF94, pf94Set: pf94Set, dpCbTag: dpCbTag, paintTipX: paintTip, pnbName: pnbName, pnbIs: pnbIs /* v2.94 */,  LSF93: LSF93, lsOk93: lsOk93, lsUsedMB93: lsUsedMB93 /* v2.93 */,  dbcTipV292: dbcTipV292 /* v2.92 */,  dbcCls: dbcCls, dbcTip: dbcTip /* v2.91 */,  dbcRing: dbcRing, dbcRings: dbcRings /* v2.90 */,  DBC: DBC, dbCmpData: dbCmpData, dbCmpHtml: dbCmpHtml /* v2.89 */,  SHR: SHR, shrData: shrData, shrDraw: shrDraw, shrWrap: shrWrap, shrMake: shrMake, shrBox: shrBox, shrCanFiles: shrCanFiles /* v2.88 */,  bdDetailV287: bdDetailV287, sw87Add: sw87Add /* v2.87 */,  DO86: DO86, bdCloseDetail: bdCloseDetail /* v2.86 */,  CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
+/* v3.16 (ผู้ใช้ 09/11 10:05 รูปการ์ด Excel “กำลังโหลด 405 / 7,532 ไฟล์ · ผ่านไป 135 วินาที” + CSV 392 ไฟล์ 90 วินาที:
+   “ถือว่าช้ามากเลยนะ โปรแกรมเก่า ถ้าผมเอาไฟล์ไว้ไดรฟ์ D ที่เครื่องโหลดแปปเดียวเอง อันนี้ทำไมมันนานจัง กับ เดี๋ยวช่วยสลับ ไฟล์ CSV มาอันที่ 2 ส่วนไฟล์ CutRite Excel ไปอันที่ 3 นะ”
+   · 10:06 “ให้มีปุ่ม cancel ด้วยนะ” · “หรือยกเลิก”):
+   ช้าเพราะ ① โฟลเดอร์ server มี Excel ทุกงานย้อนหลัง (7,532 ไฟล์) ② อ่าน + แกะทีละไฟล์ผ่าน network (Excel ~0.3 วิ/ไฟล์ · CSV ~0.2 วิ/ไฟล์ ส่วนใหญ่คือรอ network)
+   แก้: ① 📅 การ์ด Excel: เลือกทั้งโฟลเดอร์ = อ่านเฉพาะไฟล์ที่แก้ไขใน 60 วันล่าสุด (เลือก 14 / 30 / 60 / 90 วัน / 6 เดือน / 1 ปี / ทั้งหมด · จำไว้ในเครื่อง)
+          ไฟล์เก่าข้ามตั้งแต่ตอนสำรวจ (ดูแค่วันที่ไฟล์ ไม่เปิดไฟล์) · แถบเขียวบอกจำนวนที่ข้าม · เลือกทีละไฟล์ (📄) ไม่กรองวันที่
+        ② อ่านพร้อมกันหลายไฟล์: CSV ทีละ 8 · Excel แกะใน Web Worker 2–6 ตัว (ตามจำนวน CPU) ขนานกัน · ตรวจวันที่ไฟล์ตอนสำรวจทีละ 16
+           Worker ใช้ไม่ได้ (โหลด SheetJS ใน Worker ไม่ได้ ฯลฯ) = กลับไปแกะในหน้าเว็บเหมือนเดิม (ยังอ่านไฟล์ขนาน)
+        ③ ระหว่างโหลด: ปุ่ม ⏹ หยุด · ใช้ไฟล์ที่อ่านแล้ว และ ✕ ยกเลิก (กลับไปเหมือนก่อนเลือก) + “เหลือประมาณ x นาที” · ระหว่างสำรวจ ✕ หยุด → ✕ ยกเลิก
+        ④ สลับการ์ด: 2 = CSV รายชิ้นราย Lot · 3 = Excel Cut Rite (แถบขั้นตอน “CSV · Excel · JSON”)
+   — ของเดิมไม่ลบ: manPick (v3.12 แกนอ่านทีละไฟล์) ยังเป็นตัวทำงาน — ตัวนี้ส่ง “ไฟล์ตัวแทน” ที่ arrayBuffer() คืนผลจากคิวอ่านขนาน
+     และ manParseXlsx คืนผลที่ Worker แกะไว้แล้ว · man315Walk / man312Txt / man315Txt / man315Html / manPendTxt / manHtml ห่อ */
+var M316_AB = '__m316abort', M316 = { w: null, q: [], seq: 0, cb: {}, broken: 0 };
+MAN.run316 = {};
+var manPickV316 = manPick, manParseXlsxV316 = manParseXlsx, manPendTxtV316 = manPendTxt, manHtmlV316 = manHtml, man312TxtV316 = man312Txt, man315TxtV316 = man315Txt, man315HtmlV316 = man315Html, man315WalkV316 = man315Walk;
+function man316Days() { if (MAN.d316 == null) { var v = 60; try { var s = localStorage.getItem('starstock.man316days'); if (s != null && s !== '' && !isNaN(+s)) v = +s; } catch (e) { } MAN.d316 = v; } return MAN.d316; }
+function man316DaysTxt(d) { return d >= 365 ? '1 ปี' : d >= 180 ? '6 เดือน' : d + ' วัน'; }
+/* ── Web Worker แกน Excel (ใช้ manParseXlsx ตัวเดิมทั้งก้อน) ── */
+function man316Workers() {
+  if (M316.w) return M316.w;
+  M316.w = []; if (M316.broken) return M316.w;
+  try {
+    var src = 'importScripts(' + JSON.stringify(XL_SRC) + ');\n' + manSec + '\n' + manIsNum + '\n' + manBase + '\n' + manParseXlsxV316 + '\n'
+      + 'onmessage=function(e){var d=e.data;d.f.arrayBuffer().then(function(b){var r;try{r={id:d.id,out:manParseXlsx(XLSX,new Uint8Array(b),d.f.name)};}catch(x){r={id:d.id,err:String(x&&x.message||x)};}postMessage(r);},function(x){postMessage({id:d.id,err:String(x&&x.message||x)});});};';
+    var url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' })), n = Math.max(2, Math.min(6, (navigator.hardwareConcurrency || 4) - 1));
+    for (var i = 0; i < n; i++) { var wk = new Worker(url); wk.busy = 0; wk.onmessage = man316Msg; wk.onerror = man316Broken; M316.w.push(wk); }
+  } catch (e) { M316.w = []; M316.broken = 1; }
+  return M316.w;
+}
+function man316Next() {
+  if (M316.broken) { while (M316.q.length) M316.q.shift().b({ m316nw: 1 }); return; }
+  (M316.w || []).forEach(function (wk) {
+    while (!wk.busy && M316.q.length) {
+      var j = M316.q.shift(); if (j.run && j.run.abort) { j.b(new Error(M316_AB)); continue; }
+      var id = ++M316.seq; wk.busy = id; M316.cb[id] = { j: j, wk: wk };
+      try { wk.postMessage({ id: id, f: j.f }); } catch (e) { wk.busy = 0; delete M316.cb[id]; j.b({ m316nw: 1 }); }
+    }
+  });
+}
+function man316Msg(e) { var d = e.data || {}, c = M316.cb[d.id]; if (!c) return; delete M316.cb[d.id]; c.wk.busy = 0; c.j.a(d.err ? { __m316: 1, err: d.err } : { __m316: 1, out: d.out }); man316Next(); }
+function man316Broken(ev) {   // importScripts ไม่ได้ / Worker ล้ม → ทุกงานกลับไปแกะในหน้าเว็บ
+  try { ev.preventDefault(); } catch (x) { }
+  if (window.console) console.warn('[man] v3.16 worker → แกะในหน้าเว็บแทน', ev && ev.message);
+  M316.broken = 1; Object.keys(M316.cb).forEach(function (id) { var c = M316.cb[id]; delete M316.cb[id]; c.j.b({ m316nw: 1 }); });
+  (M316.w || []).forEach(function (wk) { try { wk.terminate(); } catch (x) { } }); M316.w = []; man316Next();
+}
+function man316Parse(f, run) { return new Promise(function (a, b) { M316.q.push({ f: f, a: a, b: b, run: run }); man316Next(); }); }
+/* ── คิวอ่านขนาน: เริ่มตามลำดับ · พร้อมกันได้ C ไฟล์ · ยกเลิก = ทุกไฟล์ที่ยังไม่เสร็จ reject ทันที ── */
+function man316Pool(k, list, run) {
+  var map = new Map(), next = 0, act = 0, W = k === 'saw' ? man316Workers() : [], C = k === 'saw' ? (W.length || 3) : 8;
+  list.forEach(function (f) { var d = {}; d.p = new Promise(function (a, b) { d.a = a; d.b = b; }); d.p.catch(function () { }); map.set(f, d); });
+  var task = function (f) {
+    if (k !== 'saw' || M316.broken || !(M316.w && M316.w.length)) return f.arrayBuffer();
+    return man316Parse(f, run).catch(function (e) { if (e && e.m316nw) return f.arrayBuffer(); throw e; });
+  };
+  var pump = function () {
+    if (run.abort) { map.forEach(function (d) { d.b(new Error(M316_AB)); }); man316Next(); return; }
+    while (act < C && next < list.length) { (function (f) { var d = map.get(f); act++; task(f).then(d.a, d.b).then(function () { act--; pump(); }); })(list[next]); next++; }
+  };
+  run.pump = pump; pump(); return map;
+}
+manParseXlsx = function (XL, buf, fname) {   // ผลที่ Worker แกะไว้แล้ว
+  if (buf && buf.__m316) { if (buf.err) throw new Error(buf.err); return buf.out; }
+  return manParseXlsxV316.apply(this, arguments);
+};
+man312Txt = function (g) {   // + เหลือประมาณ
+  var t = man312TxtV316.apply(this, arguments);
+  try { if (g && g.n > 1 && g.i >= 5 && g.i < g.n) { var el = (Date.now() - g.t0) / 1000, left = (g.n - g.i) / (g.i / Math.max(el, 0.1)); t.s += ' · เหลือประมาณ ' + (left < 60 ? Math.max(1, Math.ceil(left)) + ' วินาที' : Math.ceil(left / 60) + ' นาที'); } } catch (e) { }
+  return t;
+};
+/* ── สำรวจโฟลเดอร์ (showDirectoryPicker): รายชื่อก่อน แล้วตรวจวันที่ไฟล์ขนาน 16 · Excel เก่ากว่าช่วงวันที่ = ข้าม ── */
+man315Walk = async function (k, dh, w) {
+  var re = k === 'saw' ? /\.xlsx$/i : /\.(csv|txt)$/i, bi = MAN.pend.bi && MAN.pend.bi.data ? MAN.pend.bi.data : MAN.bi, hs = [], last = 0;
+  var days = k === 'saw' ? man316Days() : 0, cut = days > 0 ? Date.now() - days * 864e5 : 0;
+  w.bi = !!bi; w.old = 0; w.days = days; w.st = 0; w.stN = 0; w.bad = 0;
+  var walk = async function (h, rel, depth) {
+    for await (var e of h.values()) {
+      if (w.abort) return;
+      if (e.kind === 'directory') { if (depth < 4) { w.dirs++; await walk(e, rel + e.name + '/', depth + 1); } continue; }
+      w.seen++;
+      if (!re.test(e.name) || /^~\$/.test(e.name)) w.other++;
+      else if (k === 'lc' && bi && !manMatch([manBase(e.name)], bi)) w.nobi++;
+      else { hs.push([e, rel + e.name]); w.found = hs.length; }
+      if (Date.now() - last > 150) { last = Date.now(); man315Upd(k); await new Promise(function (r) { setTimeout(r, 0); }); }
+    }
+  };
+  await walk(dh, dh.name + '/', 0);
+  if (w.abort) return [];
+  w.stN = hs.length; man315Upd(k);
+  var out = new Array(hs.length), i = 0;
+  var one = async function () {
+    while (i < hs.length && !w.abort) {
+      var j = i++, f = null;
+      try { f = await hs[j][0].getFile(); } catch (e) { w.bad++; }
+      w.st++;
+      if (f) { if (cut && f.lastModified && f.lastModified < cut) w.old++; else { try { Object.defineProperty(f, 'webkitRelativePath', { value: hs[j][1] }); } catch (x) { } out[j] = f; } }
+      if (Date.now() - last > 150) { last = Date.now(); man315Upd(k); }
+    }
+  };
+  var ps = []; for (var n = 0; n < Math.min(16, hs.length); n++) ps.push(one());
+  await Promise.all(ps);
+  return out.filter(Boolean);
+};
+man315Txt = function (k, w) {
+  var t = man315TxtV316.apply(this, arguments);
+  if (w && w.stN) t += ' · ' + (k === 'saw' && w.days ? 'ตรวจวันที่ไฟล์ ' : 'เตรียมไฟล์ ') + fmtN(w.st) + ' / ' + fmtN(w.stN);
+  if (w && w.old) t += ' · เก่ากว่า ' + man316DaysTxt(w.days) + ' (ข้าม) ' + fmtN(w.old);
+  return t;
+};
+man315Html = function (k, w) { return man315HtmlV316.apply(this, arguments).replace('>✕ หยุด</button>', '>✕ ยกเลิก</button>'); };
+manPick = async function (k, files) {
+  files = Array.from(files || []);
+  if (!(k === 'saw' || k === 'lc') || files.length < 2 || (MAN.prog && MAN.prog[k] && !MAN.prog[k].done)) return manPickV316.apply(this, arguments);
+  var w = MAN.w315 && MAN.w315[k], dir = files.some(function (f) { return !!f.webkitRelativePath; }), old = 0, nobi0 = 0, days = 0, keep;
+  var re = k === 'saw' ? /\.xlsx$/i : /\.(csv|txt)$/i, bi = MAN.pend.bi && MAN.pend.bi.data ? MAN.pend.bi.data : MAN.bi;
+  var fail = function (msg) { if (w && MAN.w315) delete MAN.w315[k]; MAN.prog = MAN.prog || {}; MAN.prog[k] = { i: 0, n: 0, t0: Date.now(), done: Date.now(), bad: 0, skip: 0 }; MAN.pend[k] = { err: msg }; manPaint(); };
+  if (k === 'saw' && dir && (days = man316Days()) > 0) {   // เลือกทั้งโฟลเดอร์แบบเดิม (input) — กรองวันที่ที่นี่ · แบบใหม่กรองตอนสำรวจแล้ว
+    var cut = Date.now() - days * 864e5; keep = files.filter(function (f) { return !re.test(f.name) || !f.lastModified || f.lastModified >= cut; }); old = files.length - keep.length; files = keep;
+  }
+  if (k === 'lc' && dir && bi) { keep = files.filter(function (f) { return !re.test(f.name) || manMatch([manBase(f.name)], bi); }); nobi0 = files.length - keep.length; files = keep; }
+  var list = files.filter(function (f) { return re.test(f.name) && !/^~\$/.test(f.name); }), oldAll = old + (w && w.old || 0);
+  if (!list.length) {
+    if (k === 'saw' && oldAll) return fail('ไม่มีไฟล์ .xlsx ที่แก้ไขใน ' + man316DaysTxt(days || (w && w.days) || 0) + 'ล่าสุด (ข้ามไฟล์เก่า ' + fmtN(oldAll) + ' ไฟล์) — เปลี่ยนช่วง 📅 ที่การ์ดนี้แล้วเลือกใหม่');
+    if (k === 'lc' && nobi0) return fail('ไม่มี CSV ของ Lot ที่อยู่ใน BI ในโฟลเดอร์นี้ (ข้าม ' + fmtN(nobi0) + ' ไฟล์ — ชื่อไฟล์ต้องเป็นชื่อ Lot เช่น BO69-0984.csv)');
+    return manPickV316.call(this, k, files);
+  }
+  var run = MAN.run316[k] = { abort: null, prev: MAN.pend[k], prevG: MAN.prog && MAN.prog[k] }, map = man316Pool(k, list, run);
+  var px = files.map(function (f) { var d = map.get(f); return d ? { name: f.name, size: f.size, lastModified: f.lastModified, webkitRelativePath: f.webkitRelativePath || '', arrayBuffer: function () { return d.p; } } : f; });
+  try { await manPickV316.call(this, k, px); } finally { if (MAN.run316[k] === run) delete MAN.run316[k]; }
+  var g = MAN.prog && MAN.prog[k], p = MAN.pend[k];
+  var restore = function () { if (run.prev) MAN.pend[k] = run.prev; else delete MAN.pend[k]; if (run.prevG) MAN.prog[k] = run.prevG; else if (MAN.prog) delete MAN.prog[k]; manPaint(); };
+  if (run.abort === 'cancel') return restore();
+  if (run.abort === 'stop' && p && p.items) {
+    var its = p.items.filter(function (it) { return !(it.err && it.err.indexOf(M316_AB) >= 0); });
+    if (!its.length) return restore();
+    p.items = its; if (g) { g.stopped = its.length; g.n = its.length; g.bad = its.filter(function (x) { return x.err; }).length; }
+  }
+  if (g) { g.old = (g.old || 0) + oldAll; g.days = days || (w && w.days) || 0; g.nobi = (g.nobi || 0) + nobi0; }
+  manPaint();
+};
+manPendTxt = function (k) {
+  var h = manPendTxtV316.apply(this, arguments), g = MAN.prog && MAN.prog[k];
+  try {
+    if (g && !g.done && MAN.run316[k] && /^<div class="manprog"/.test(h))
+      h = h.replace(/<\/div><\/div>$/, '<div class="man316b"><button type="button" class="tbtn" data-man316="stop:' + k + '" title="หยุดอ่านต่อ แล้วใช้เฉพาะไฟล์ที่อ่านเสร็จแล้ว">⏹ หยุด · ใช้ไฟล์ที่อ่านแล้ว</button><button type="button" class="tbtn" data-man316="cancel:' + k + '" title="ทิ้งที่อ่านมา กลับไปเหมือนก่อนเลือก">✕ ยกเลิก</button></div></div></div>');
+    if (g && g.done && (g.old || g.stopped)) h = h.replace(/(<div class="mandone">)([\s\S]*?)(<\/div>)/, function (m, a, b, c) {
+      return a + (g.stopped ? b.replace('✓ โหลดเสร็จ', '⏹ หยุดแล้ว — ใช้') : b) + (g.old ? ' · ข้ามไฟล์เก่ากว่า ' + man316DaysTxt(g.days) + ' ' + fmtN(g.old) + ' ไฟล์' : '') + c; });
+    if (g && g.done && g.old && MAN.pend[k] && MAN.pend[k].err) h = h.replace(/(<div class="manpend bad">[\s\S]*?)(<\/div>)/, function (m, a, c) {   // อ่านแล้วไม่เจอ Lot ใน BI — อาจเพราะ Lot เก่ากว่าช่วงวันที่
+      return a + '<br>· ข้ามไฟล์เก่ากว่า ' + man316DaysTxt(g.days) + ' ' + fmtN(g.old) + ' ไฟล์ — ถ้า Lot ที่ต้องการเก่ากว่านั้น เปลี่ยนช่วง 📅 แล้วเลือกใหม่' + c; });
+  } catch (e) { }
+  return h;
+};
+manHtml = function () {
+  var h = manHtmlV316.apply(this, arguments);
+  try {
+    var secs = {};
+    h.replace(/<section class="mancard[^"]*" data-mank="(\w+)">[\s\S]*?<\/section>/g, function (m, k) { secs[k] = m; return m; });
+    if (secs.saw) {   // 📅 ช่วงวันที่ (การ์ด Excel)
+      var d = man316Days(), opt = [14, 30, 60, 90, 180, 365, 0].map(function (v) { return '<option value="' + v + '"' + (v === d ? ' selected' : '') + '>' + (v ? man316DaysTxt(v) + 'ล่าสุด' : 'ทั้งหมด (ช้า)') + '</option>'; }).join('');
+      var s2 = secs.saw.replace('<div class="manbtns">', '<label class="man316d">📅 เลือกทั้งโฟลเดอร์ = อ่านเฉพาะไฟล์ที่แก้ไขใน <select data-man316d>' + opt + '</select></label><div class="manbtns">');
+      h = h.replace(secs.saw, function () { return s2; }); secs.saw = s2;
+    }
+    if (secs.saw && secs.lc) {   // สลับ: 2 = CSV · 3 = Excel
+      var A = secs.saw.replace('<span class="mann">2</span>', '<span class="mann">3</span>'), Bc = secs.lc.replace('<span class="mann">3</span>', '<span class="mann">2</span>');
+      h = h.replace(secs.saw, function () { return '\u0001M316SAW\u0001'; }).replace(secs.lc, function () { return A; }).replace('\u0001M316SAW\u0001', function () { return Bc; });
+    }
+    h = h.replace('Excel · CSV · JSON', 'CSV · Excel · JSON');
+  } catch (e) { if (window.console) console.warn('[man] v3.16', e); }
+  return h;
+};
+document.addEventListener('click', function (e) {
+  var t = e.target && e.target.closest ? e.target.closest('[data-man316]') : null; if (!t) return;
+  e.preventDefault(); e.stopPropagation();
+  var a = String(t.getAttribute('data-man316')).split(':'), k = a[1], run = MAN.run316[k], g = MAN.prog && MAN.prog[k]; if (!run || run.abort) return;
+  run.abort = a[0] === 'stop' ? 'stop' : 'cancel'; if (g) g.lbl = run.abort === 'stop' ? 'กำลังหยุด…' : 'กำลังยกเลิก…';
+  [].forEach.call(document.querySelectorAll('#manPane [data-man316$=":' + k + '"]'), function (b) { b.disabled = true; });
+  run.pump(); man312Upd(k);
+}, true);
+document.addEventListener('change', function (e) {
+  var t = e.target; if (!t || !t.hasAttribute || !t.hasAttribute('data-man316d')) return;
+  MAN.d316 = +t.value || 0; try { localStorage.setItem('starstock.man316days', String(MAN.d316)); } catch (x) { }
+}, true);
+
+window.StarStock = { M316: M316, man316Days: man316Days, man316Workers: man316Workers, manParseXlsxV316: manParseXlsxV316 /* v3.16 */,  man315Run: man315Run, man315Walk: man315Walk, man315Fsa: man315Fsa /* v3.15 */,  man314Wait: man314Wait, manPickV314: manPickV314 /* v3.14 */,  manPickV313: manPickV313, man313In: man313In /* v3.13 */,  manPickV312: manPickV312, man312Act: man312Act, man312Upd: man312Upd /* v3.12 */,  manHtmlV311: manHtmlV311 /* v3.11 */,  man310St: man310St, man310Steps: man310Steps, manHtmlV310: manHtmlV310 /* v3.10 */,  MAN: MAN, manParseBi: manParseBi, manParseParts: manParseParts, manParseXlsx: manParseXlsx, manParseDrill: manParseDrill, manMpFilter: manMpFilter, manMatch: manMatch, manLoad: manLoad, manCalc: manCalc, manSetMode: manSetMode, manOpen: manOpen, manPick: manPick, manSpBuild: manSpBuild, manEdBuild: manEdBuild, manLcCsv: manLcCsv, manMpCsv: manMpCsv /* v3.09 */,  dg308Proc: dg308Proc, dg308Msg: dg308Msg, dg308Box: dg308Box /* v3.08 */,  rjDetailSecV307: rjDetailSecV307 /* v3.07 */,  pc306St: pc306St, paintChipV306: paintChipV306 /* v3.06 */,  cy305Fit: cy305Fit, dbDayTabsV305: dbDayTabsV305 /* v3.05 */,  dbDaySecV304: dbDaySecV304 /* v3.04 */,  DBK303: DBK303 /* v3.03 */,  dba302Card: dba302Card /* v3.02 */,  DBA301: DBA301, dba301Html: dba301Html, dba301Deco: dba301Deco /* v3.01 */,  tb300Lbl: tb300Lbl /* v3.00 */,  dbCmpDataV298: dbCmpDataV298, DU98: DU98, DBC98: DBC98 /* v2.98 */,  pf97Arm: pf97Arm, DMF_T: DMF_T, dmtSec: dmtSec /* v2.97 */,  dbFindLocsV296: dbFindLocsV296, pmFX: pmF, dbPackOfX: dbPackOf /* v2.96 */,  rnTopV295: rnTopV295 /* v2.95 */,  fs94Parse: fs94Parse, fs94Load: fs94Load, pnb94Of: pnb94Of, pnb94Is: pnb94Is, PNB94: PNB94, PF94: PF94, pf94Set: pf94Set, dpCbTag: dpCbTag, paintTipX: paintTip, pnbName: pnbName, pnbIs: pnbIs /* v2.94 */,  LSF93: LSF93, lsOk93: lsOk93, lsUsedMB93: lsUsedMB93 /* v2.93 */,  dbcTipV292: dbcTipV292 /* v2.92 */,  dbcCls: dbcCls, dbcTip: dbcTip /* v2.91 */,  dbcRing: dbcRing, dbcRings: dbcRings /* v2.90 */,  DBC: DBC, dbCmpData: dbCmpData, dbCmpHtml: dbCmpHtml /* v2.89 */,  SHR: SHR, shrData: shrData, shrDraw: shrDraw, shrWrap: shrWrap, shrMake: shrMake, shrBox: shrBox, shrCanFiles: shrCanFiles /* v2.88 */,  bdDetailV287: bdDetailV287, sw87Add: sw87Add /* v2.87 */,  DO86: DO86, bdCloseDetail: bdCloseDetail /* v2.86 */,  CE85: CE85, ce85Fit: ce85Fit, ce85Use: ce85Use, bdEstMin: bdEstMin, ce85Lbl: ce85Lbl, bdSettings: bdSettings /* v2.85 */,  T84: T84, tlAdm: tlAdm, tlHid: tlHid, tlBox2: tlBox2, tlAskName: tlAskName, TL: TL, tlWrite: tlWrite, tlLoad: tlLoad /* v2.84 */,  DBK83: DBK83 /* v2.83 */,  tpNotesIn: tpNotesIn /* v2.82 */,  tdDue: tdDue, dueBottom: dueBottom /* v2.81 */,  rnTop: rnTop, CW: CW, cwDeco: cwDeco, cwLoad: cwLoad, TOV: TOV, tovWhere: tovWhere /* v2.79 */,  tpSortT: tpSortT /* v2.78 */,  xn77Lines: xn77Lines, w7NoteShort: w7NoteShort /* v2.77 */,  pnbOf: pnbOf, pnbIs: pnbIs, pnbName: pnbName /* v2.76 */,  pn5Deco: pn5Deco, XL75: XL75, pn5Day: pn5Day /* v2.75 */,  lkTag: lkTag, lkDeco: lkDeco /* v2.74 */,  cpAutoBox: cpAutoBox /* v2.72 */,  cpSawStat: cpSawStat, CPS: CPS /* v2.71 */,  cpSendSaw: cpSendSaw, cpSawOps: cpSawOps, cpMcName: cpMcName, PF270: PF270, pfWant: pfWant /* v2.70 */,  BDA: BDA, cpMdBar: cpMdBar /* v2.69 */,  cpFromSaw: cpFromSaw, cpView: cpView, cpSaveCells: cpSaveCells, cpCommit: cpCommit, adjSetMany: adjSetMany, cellSetMany: cellSetMany, adjHeld: adjHeld, brdLk: brdLk, brdShare: brdShare, CPO: CPO /* v2.68 */,  cpMatTxt: cpMatTxt, cpMdOf: cpMdOf /* v2.67 */, CP: CP, cpRender: cpRender, cpCells: cpCells, cpLots: cpLots, cpXlBook: cpXlBook, adjLock: adjLock, cpPrevTxt: cpPrevTxt /* v2.66 */, LDO: LDO, ldTick: ldTick /* v2.65 */, xlSum2Build: xlSum2Build, xlSum2Items: xlSum2Items, xlSum2Cols: xlSum2Cols /* v2.64 */, xlSumMcBuild: xlSumMcBuild, xlSumMcSheet: xlSumMcSheet /* v2.63 */, TL: TL, tlLoad: tlLoad, tlHid: tlHid, tlHash: tlHash, tlPwOk: tlPwOk, tlApply: tlApply, tlBox: tlBox /* v2.62 */, dpMvMap: dpMvMap, dpMvRem: dpMvRem, DPMV: DPMV /* v2.60 */, tmbHtml: tmbHtml, tmbData: tmbData /* v2.58 */, dbSplitDeco: dbSplitDeco /* v2.50 */, dmtSec: dmtSec /* v2.49 */, dmsApply: dmsApply /* v2.48 */, dmfApply: dmfApply, dmfKind: dmfKind, bdDashMcView: bdDashMcView /* v2.47 */, /* v2.46: lotImport · lotCfOpen · lotCfSet … lots.html เติมเองตอนโหลดเสร็จ (sxmRegister) */ qtyU: qtyU, wdCodeSt: wdCodeSt, xlRichLot: xlRichLot /* v2.43 */, tpStopInfo: tpStopInfo, tpStatus: tpStatus /* v2.42 */, dbFindLocHtml: dbFindLocHtml, dbFindSt: dbFindSt, dbDaySec: dbDaySec /* v2.41 */, bdCutWt: bdCutWt, ptLive: ptLive, ptOf: ptOf, w7Green: w7Green, w7MatLot: w7MatLot, w7Row: w7Row, W7N: W7N /* v2.37 */, inmLoad: inmLoad, inmOf: inmOf /* v2.36 */, bnParse: bnParse, bnLoad: bnLoad, bnOf: bnOf, bnByKey: bnByKey /* v2.35 */, rmNameOf: rmNameOf, w7Split: w7Split, w7Short: w7Short, w7NoteShort: w7NoteShort /* v2.34 */, cyLive: cyLive, cyLive0: cyLive0, dbCyTip: dbCyTip, tpAllPcs: tpAllPcs, CYL: CYL /* v2.33 */, lamParse: lamParse, lamLoad: lamLoad, lamOf: lamOf, lamOpen: lamOpen, lamBoard: lamBoard, lamApply: lamApply, lamSec: lamSec, lamDone: lamDone /* v2.32 */, rjInfSec: rjInfSec, rjInfRows: rjInfRows, wdInf: wdInf, wdOf0: wdOf0, rjNoReq: rjNoReq, rjDetailSec: rjDetailSec, rjDetailHtml: rjDetailHtml /* v2.31 */, dbCyLeft: dbCyLeft /* v2.29 */, spOth: spOth, spOthSet: spOthSet, spOthCnt: spOthCnt, spOthWhy: spOthWhy, spNoSaw: spNoSaw /* v2.24 */, spCutGrps: spCutGrps /* v2.22 */, w7Fit: w7Fit, w7Prep: w7Prep /* v2.19 */, w7Mc: w7Mc, w7Cols: w7Cols, w7Sheet: w7Sheet, w7SzMap: w7SzMap /* v2.18 */, sxsSetPatch: sxsSetPatch, sxsSetFlush: sxsSetFlush /* v2.17 */, spCyRows: spCyRows, spCyRow: spCyRow, cyFracNow: cyFracNow /* v2.15 */, tmStTxt: tmStTxt, tmLotTxt: tmLotTxt, tmTipCy: tmTipCy, tmTipToday: tmTipToday /* v2.14 */, plRowsOf: plRowsOf, plTableHtml: plTableHtml, plLotSec: plLotSec /* v2.13 */, tpSnapMaps: tpSnapMaps, cutCalSnapLoad: cutCalSnapLoad /* v2.12 */, w6Mc: w6Mc, w6Cols: w6Cols, w6Boards: w6Boards, w6CellTxt: w6CellTxt /* v2.11 */, bdCutShift: bdCutShift, bdProdToday: bdProdToday, cpProd: cpProd, cutPrevLoad: cutPrevLoad, CUT: CUT /* v2.10 */, cyMini: cyMini /* v2.05 */, w5Mc: w5Mc, w5Cols: w5Cols, w5Lots: w5Lots, w5Boards: w5Boards, tpTodaySets: tpTodaySets, pmF: pmF, cyOfDay: cyOfDay, TPF: TPF /* v2.04 */, mcTodayOv2: mcTodayOv2 /* v2.03 */, w2Mc: w2Mc, w2Cols: w2Cols, w2Mats: w2Mats /* v2.01 */, wsMc: wsMc, wsCols: wsCols, wsDetSheet: wsDetSheet /* v2.00 */, woName: woName, woNameIdx: woNameIdx /* v1.99 */, woMc: woMc, woCols: woCols, woBoards: woBoards, woWdTxt: woWdTxt, woBadSheet: woBadSheet, WO_C: WO_C, woDbDay: woDbDay /* v1.98 */, mcDayFlush: mcDayFlush /* v1.96 */, lot14: lot14, bdOrdKey: bdOrdKey /* v1.95 */, bdLotPjTip: bdLotPjTip /* v1.94 */, spCutOn: spCutOn, spCutOnSet: spCutOnSet, spShow2: spShow2 /* v1.93 */, sxsTodayMap: sxsTodayMap, sxsLst: sxsLst /* v1.90 */, dbCapP: dbCapP /* v1.84 */, DBNX: DBNX /* v1.82 */, tpNoWood: tpNoWood /* v1.77 */, tpAddTxt: tpAddTxt /* v1.76 */, rjDetailSec: rjDetailSec, rjRowSt: rjRowSt /* v1.75 */, tpPaidLeft: tpPaidLeft, tpCutDoneWood: tpCutDoneWood /* v1.73 */, DBK: DBK /* v1.70 */, dbSmallTips: dbSmallTips /* v1.66 */, tpNorm: tpNorm, tpDrop: tpDrop, tpTier: tpTier /* v1.65 */, sxsLotPlan: sxsLotPlan /* v1.64 */, sxsLotInfo: sxsLotInfo, sxsBoardSt: sxsBoardSt, sxsDays: sxsDays, sxsLotDays: sxsLotDays, sxsFind: sxsFind /* v1.63 SAW PLAN */, dbPickSlot: dbPickSlot, wdAlertBox: wdAlertBox, dbFindOpen: dbFindOpen, dbFindRun: dbFindRun, dbFindLocs: dbFindLocs, dbFindGo: dbFindGo, dbFindClose: dbFindClose, FND: FND /* v1.62 */, bdTabHid: bdTabHid, bdTabsShow: bdTabsShow, bdTabsSet: bdTabsSet, bdTabsBox: bdTabsBox, dbMcNow: dbMcNow, dbAllNow: dbAllNow, dbTmrUse: dbTmrUse, bdHomeDash: bdHomeDash, bdMcMin: bdMcMin, sxsMcDay: sxsMcDay, dbMcDayBar: dbMcDayBar /* v1.61 */, wdTodo: wdTodo, wdShort: wdShort, wdLine: wdLine, wdCodeSt: wdCodeSt, wdSumBox: wdSumBox, mcOnBar: mcOnBar, mcOnSet: mcOnSet, mcDaySet: mcDaySet, mcDayBar: mcDayBar, bdCapD: bdCapD /* v1.60 */, wdOf: wdOf, wdTag: wdTag, wdPill: wdPill, wdMq: wdMq, wdCell: wdCell, wdOrder: wdOrder, wdAlerts: wdAlerts, wdBoard: wdBoard, spWdRm: spWdRm, spRmBoardTag: spRmBoardTag, spDue: spDue, spAlerts: spAlerts, cutDueSave: cutDueSave, spAutoRows: spAutoRows, spSugRows: spSugRows, spRmCat: spRmCat, spRmKeys: spRmKeys, spEstA: spEstA, bdDashDue: bdDashDue, bdCutDueDays: bdCutDueDays /* v1.59 */, nsHas: nsHas, nsOrder: nsOrder, nsSet: nsSet, nsOff: nsOff, tpRefresh: tpRefresh, tpBuildToday: tpBuildToday, tpToday: tpToday, dpCard: dpCard /* v1.58 */, rjParse: rjParse, rjMiss: rjMiss, rjMissBoard: rjMissBoard, rjKey: rjKey, rjLoad: rjLoad, rjOf: rjOf, rjSpRm: rjSpRm, bdAlloc: bdAlloc /* v1.57 */, scanUse: scanUse, cpDriveLoad: cpDriveLoad, cpApplyRow: cpApplyRow, scanRows: scanRows, bdLoadCp: bdLoadCp, cphFetchDay: cphFetchDay /* v1.56 */, bdColMvSet: bdColMvSet /* v1.54 */, bdColOrd: bdColOrd, bdColOrdDef: bdColOrdDef, bdColJoin: bdColJoin, BO: BO /* v1.53 */, poolNorm: poolNorm, poolChip: poolChip, lotPoolOf: lotPoolOf, ssVer: ssVer, plWhy: plWhy, plLcRows: plLcRows, bdCutFinOf: bdCutFinOf, bdColZ: bdColZ /* v1.52 */, edBootJson: edBootJson, edSave: edSave, edSaved: edSaved, edpFlush: edpFlush, edpLoad: edpLoad, edBuild: edBuild, edRec: edRec, drRec: drRec, drMatch: drMatch, lcLoad: lcLoad, mpLoad: mpLoad, lcParse: lcParse, mpParse: mpParse, edRender: edRender, edClose: edClose, edLotsOf: edLotsOf, EDX: EDX, EDC: EDC /* v1.52 ปิดขอบ/เจาะ */, plRowsOf: plRowsOf, paLoad: paLoad, plLotSec: plLotSec, dpPlRow: dpPlRow, DPL_B: DPL_B, plLeftOf: plLeftOf /* v1.51 Part */, dpXl: dpXl, dbXl: dbXl, dpXlBook: dpXlBook, dbXlBook: dbXlBook, xlLib: xlLib, xlSave: xlSave /* v1.51 */, paintOf: paintOf, paintLoad: paintLoad, plLoad: plLoad, bdCutDueDays: bdCutDueDays, paintChip: paintChip, spCutParts: spCutParts, spCutPartMatch: spCutPartMatch /* v1.50 */, tgHms: tgHms, tgBoardSec: tgBoardSec, spBootJson: spBootJson, spSyncDir: spSyncDir, spBuild: spBuild, spLotA: spLotA, spLotsOf: spLotsOf, spDetLoad: spDetLoad, spRender: spRender, spClose: spClose, spSuggest: spSuggest, SPX: SPX, spRm: spRm, spRmBlock: spRmBlock, spRmGate: spRmGate /* v1.44 */, spRmPass: spRmPass, spRmShow: spRmShow /* v1.45 */, spRmShowSet: spRmShowSet, spRmCount: spRmCount /* v1.46 */, spCut: spCut, spCutShow: spCutShow, spCutShowSet: spCutShowSet, spRmCountIds: spRmCountIds /* v1.47 */, spRmHas: spRmHas, spRmToggle: spRmToggle /* v1.48 */, spCutBoard: spCutBoard /* v1.49 */, brdList: brdList, brdItems: brdItems, mcCan: mcCan, mcCanLot: mcCanLot, dbDayLots: dbDayLots, bdMqDayMs: bdMqDayMs, dbPackOf: dbPackOf, adjSet: adjSet, adjLoad: adjLoad, adjOf: adjOf, adjDayIdx: adjDayIdx, tpKey: tpKey, tpClockLeft: tpClockLeft, bdSettings: bdSettings, crxDur: crxDur, bdCloseDetail: bdCloseDetail, tgOf: tgOf, tgBundles: tgBundles, tgIncl: tgIncl, tgTxt: tgTxt, dpRender: dpRender, dpRows: dpRows, dpPrintDoc: dpPrintDoc, dpMachines: dpMachines, DP: DP, bdDeptPage: bdDeptPage, dbTodayPlan: dbTodayPlan, tpLive: tpLive, tpLoad: tpLoad, tpBuild: tpBuild, tpSaveMaybe: tpSaveMaybe, lotCopy: lotCopy, ptLoad: ptLoad, ptOf: ptOf, ptLeft: ptLeft, bdPackOne: bdPackOne, bdLotMin: bdLotMin, dbSelDay: dbSelDay, dbDayLots: dbDayLots, bdNormSet: bdNormSet, bdTmrW: bdTmrW, bdTmrDay: bdTmrDay, dbSelMc: dbSelMc, bdDashRender: bdDashRender, bdDashStat: bdDashStat, bdTabHash: bdTabHash, DB: DB, rcLoad: rcLoad, rcOf: rcOf, rcAgg: rcAgg, bdMqPick: bdMqPick, bdMqUnpick: bdMqUnpick, bdMqCrSheets: bdMqCrSheets, crxLoad: crxLoad, crxOf: crxOf, cphLoad: cphLoad, cphEnsure: cphEnsure, bdMqWeek: bdMqWeek, BQ: BQ, bdTabGo: bdTabGo, bdMqRender: bdMqRender, bdMqMachines: bdMqMachines, S: S, refresh: refresh, showDetail: showDetail, saveEdits: saveEdits, op: op, pollOnce: pollOnce, uploadImage: uploadImage, boot: boot, VER: VER,
   L: L, H: H, go: go, route: route, lotLoad: lotLoad, lotBuild: lotBuild, lotShowDetail: lotShowDetail, lotRefresh: lotRefresh, renderHome: renderHome,
   B: B, bdPlan: bdPlan, bdRender: bdRender, bdLoadAux: bdLoadAux, bdDetail: bdDetail, bdLoadExt: bdLoadExt, bdStage: bdStage, bdLoadCp: bdLoadCp, rmLoad: rmLoad, bdLoadStock: bdLoadStock, rmAllocIdx: rmAllocIdx, openItem: openItem, openLot: openLot, LD: LD, ldDo: ldDo, ldOf: ldOf, ldBulk: ldBulk, BF: BF, RX: RX, rxOpen: rxOpen, isBoardCode: isBoardCode, pgLoad: pgLoad, bdScanIdx: bdScanIdx, CB: CB, cabLoad: cabLoad, cabShow: cabShow, cabOpen: cabOpen, cabRender: cabRender, cabSave: cabSave, cabAddFiles: cabAddFiles, cabSaveAs: cabSaveAs, cabListOp: cabListOp, cabListMgr: cabListMgr };
 bindUi(); lotBindUi(); bdBindUi(); applyTheme(); route();   // v1.4: เดิม bindUi(); boot(); — เข้า STOCK ทันที
